@@ -146,7 +146,7 @@ export function HeroSection() {
             <div className="absolute w-64 h-64 md:w-96 md:h-96 rounded-full bg-accent/10 blur-2xl animate-glow-pulse-gold" />
 
             {/* Palm illustration container */}
-            <div className="relative w-80 h-80 md:w-[450px] md:h-[450px]">
+            <div className="relative w-[400px] h-[400px] md:w-[550px] md:h-[550px] lg:w-[700px] lg:h-[700px]">
               {/* Outer rotating ring with dots */}
               <motion.div
                 animate={{
@@ -182,16 +182,11 @@ export function HeroSection() {
               </motion.div>
 
               {/* Mystical Palm Image */}
-              <div className="absolute inset-0 flex items-center justify-end pr-6 md:pr-12">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <motion.img
                   alt="Mystical Palm Reading"
                   src="/lovable-uploads/4e0c4a4d-2bb0-4763-9311-5cff33718e67.png"
-                  className="
-      object-contain
-      w-[320px] h-[320px]
-      md:w-[520px] md:h-[520px]
-      lg:w-[620px] lg:h-[620px]
-    "
+                  className="object-contain w-[380px] h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px]"
                   animate={{
                     y: [0, -18, 0],
                     scale: [1, 1.03, 1],
@@ -202,7 +197,7 @@ export function HeroSection() {
                     ease: "easeInOut",
                   }}
                   style={{
-                    filter: "drop-shadow(0 0 50px hsl(42 87% 55% / 0.55))",
+                    filter: "drop-shadow(0 0 60px hsl(var(--gold) / 0.6))",
                   }}
                 />
               </div>
