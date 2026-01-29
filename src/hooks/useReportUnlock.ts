@@ -64,33 +64,23 @@ export function useReportUnlock(
     }
 
     try {
-      // First check for active subscription
-      const { data: subscription, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select('*')
-        .eq('user_email', userEmail)
-        .eq('status', 'active')
-        .maybeSingle();
+      // Use secure edge function to check unlock status
+      const { data, error } = await supabase.functions.invoke('get-unlock-status', {
+        body: {
+          user_email: userEmail,
+          report_id: reportId,
+        },
+      });
 
-      if (subscription && !subError) {
-        setHasSubscription(true);
-        setIsUnlocked(true);
+      if (error) {
+        console.error('Error checking unlock status:', error);
         setIsLoading(false);
         return;
       }
 
-      // Then check for specific report unlock
-      if (reportId) {
-        const { data: unlock, error: unlockError } = await supabase
-          .from('report_unlocks')
-          .select('*')
-          .eq('user_email', userEmail)
-          .eq('report_id', reportId)
-          .maybeSingle();
-
-        if (unlock && !unlockError) {
-          setIsUnlocked(true);
-        }
+      if (data?.success) {
+        setHasSubscription(data.hasSubscription || false);
+        setIsUnlocked(data.isUnlocked || false);
       }
 
       setIsLoading(false);
