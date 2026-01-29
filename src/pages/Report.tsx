@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -23,67 +23,93 @@ import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
 import type { PalmReading, StoredData } from '@/components/report/types';
 
+interface SessionData extends StoredData {
+  imageUrl?: string;
+  reportId?: string;
+  reading?: PalmReading;
+  validation?: {
+    confidence: number;
+    quality: string;
+  };
+  generatedAt?: string;
+}
+
 export default function Report() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { id: reportId } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
   const [reading, setReading] = useState<PalmReading | null>(null);
-  const [userData, setUserData] = useState<StoredData | null>(null);
+  const [userData, setUserData] = useState<SessionData | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchReading = async () => {
+    const loadReport = async () => {
+      // First, try to load from sessionStorage (just generated)
       const storedData = sessionStorage.getItem('palmMitraData');
       
-      if (!storedData) {
+      if (storedData) {
+        try {
+          const data: SessionData = JSON.parse(storedData);
+          setUserData(data);
+          
+          // If reading is already in session (from just generating)
+          if (data.reading) {
+            setReading(data.reading);
+            setGeneratedAt(data.generatedAt || new Date().toISOString());
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing session data:', e);
+        }
+      }
+
+      // If we have a report ID, try to load from database
+      if (reportId) {
+        try {
+          const { data: report, error: dbError } = await supabase
+            .from('palm_reports')
+            .select('*')
+            .eq('id', reportId)
+            .single();
+
+          if (dbError) {
+            throw dbError;
+          }
+
+          if (report) {
+            setUserData({
+              name: report.user_name,
+              age: report.user_age || '',
+              email: report.user_email || '',
+              readingType: (report.reading_type as StoredData['readingType']) || 'full',
+              palmImage: report.image_url,
+              imageUrl: report.image_url,
+            });
+            setReading(report.report_json as unknown as PalmReading);
+            setGeneratedAt(report.created_at || new Date().toISOString());
+            setLoading(false);
+            return;
+          }
+        } catch (err) {
+          console.error('Error loading report from database:', err);
+        }
+      }
+
+      // No data available - redirect to upload
+      if (!storedData && !reportId) {
         navigate('/upload');
         return;
       }
 
-      const data: StoredData = JSON.parse(storedData);
-      setUserData(data);
-
-      try {
-        const { data: response, error: functionError } = await supabase.functions.invoke('analyze-palm', {
-          body: {
-            palmImage: data.palmImage,
-            name: data.name,
-            age: data.age,
-            readingType: data.readingType,
-          },
-        });
-
-        if (functionError) {
-          console.error('Function error:', functionError);
-          throw new Error(functionError.message || 'Failed to analyze palm');
-        }
-
-        if (response?.error) {
-          throw new Error(response.error);
-        }
-
-        if (response?.reading) {
-          setReading(response.reading);
-          setGeneratedAt(response.generatedAt || new Date().toISOString());
-        } else {
-          throw new Error('No reading data received');
-        }
-      } catch (err) {
-        console.error('Error fetching reading:', err);
-        setError(err instanceof Error ? err.message : 'Failed to generate reading');
-        toast({
-          title: "Error",
-          description: err instanceof Error ? err.message : 'Failed to generate reading',
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
+      setError('Report not found');
+      setLoading(false);
     };
 
-    fetchReading();
-  }, [navigate, toast]);
+    loadReport();
+  }, [navigate, reportId, toast]);
 
   // Loading State
   if (loading) {
@@ -109,14 +135,11 @@ export default function Report() {
               transition={{ duration: 2, repeat: Infinity }}
               className="text-2xl font-serif font-bold text-foreground mb-2"
             >
-              AI Reading Your Palm...
+              Loading Your Report...
             </motion.h2>
-            <p className="text-muted-foreground mb-4">
-              Analyzing your unique palm patterns with advanced AI
-            </p>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
-              This may take 10-15 seconds
+              Please wait
             </div>
           </div>
         </main>
@@ -136,7 +159,7 @@ export default function Report() {
               <span className="text-4xl">😔</span>
             </div>
             <h2 className="text-2xl font-serif font-bold text-foreground mb-4">
-              Unable to Generate Reading
+              Unable to Load Report
             </h2>
             <p className="text-muted-foreground mb-8">
               {error || 'Something went wrong. Please try again.'}
@@ -146,7 +169,7 @@ export default function Report() {
               className="btn-gold"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Try Again
+              New Reading
             </Button>
           </div>
         </main>
@@ -170,7 +193,7 @@ export default function Report() {
             generatedAt={generatedAt}
             confidenceScore={reading.confidenceScore}
             headlineSummary={reading.headlineSummary}
-            palmImage={userData?.palmImage}
+            palmImage={userData?.imageUrl || userData?.palmImage}
           />
 
           {/* 2. Major Lines Analysis */}
