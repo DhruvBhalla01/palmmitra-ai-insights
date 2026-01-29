@@ -1,96 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* PalmMitra Design System
+   Premium Indian Spiritual Luxury Theme
+   All colors in HSL format
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base colors - Soft cream/white */
+    --background: 40 33% 98%;
+    --foreground: 240 10% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card - Warm white */
+    --card: 40 30% 99%;
+    --card-foreground: 240 10% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Popover */
+    --popover: 40 30% 99%;
+    --popover-foreground: 240 10% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Deep Indigo */
+    --primary: 245 58% 25%;
+    --primary-foreground: 40 33% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Muted indigo */
+    --secondary: 245 30% 92%;
+    --secondary-foreground: 245 58% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted */
+    --muted: 40 20% 94%;
+    --muted-foreground: 240 5% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Gold */
+    --accent: 42 87% 55%;
+    --accent-foreground: 240 10% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 33% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Border & Input */
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 245 58% 25%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom PalmMitra tokens */
+    --gold: 42 87% 55%;
+    --gold-glow: 42 100% 65%;
+    --indigo-deep: 245 58% 18%;
+    --indigo-light: 245 40% 35%;
+    --cream: 40 33% 98%;
+    --cream-dark: 40 25% 92%;
+    
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(42 87% 55%), hsl(38 90% 62%));
+    --gradient-indigo: linear-gradient(135deg, hsl(245 58% 25%), hsl(260 50% 35%));
+    --gradient-mystic: linear-gradient(180deg, hsl(245 58% 18%) 0%, hsl(260 45% 25%) 50%, hsl(280 40% 30%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(245 58% 25% / 0.1);
+    --shadow-gold: 0 4px 30px -4px hsl(42 87% 55% / 0.4);
+    --shadow-elevated: 0 20px 50px -12px hsl(245 58% 25% / 0.15);
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 40 30% 97%;
+    --sidebar-foreground: 240 10% 10%;
+    --sidebar-primary: 245 58% 25%;
+    --sidebar-primary-foreground: 40 33% 98%;
+    --sidebar-accent: 40 25% 92%;
+    --sidebar-accent-foreground: 240 10% 10%;
+    --sidebar-border: 40 20% 88%;
+    --sidebar-ring: 245 58% 25%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode - Deep mystical theme */
+    --background: 245 58% 8%;
+    --foreground: 40 33% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 245 50% 12%;
+    --card-foreground: 40 33% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 245 50% 12%;
+    --popover-foreground: 40 33% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 42 87% 55%;
+    --primary-foreground: 245 58% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 245 40% 20%;
+    --secondary-foreground: 40 33% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 245 40% 18%;
+    --muted-foreground: 40 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 42 87% 55%;
+    --accent-foreground: 245 58% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 40 33% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 245 40% 20%;
+    --input: 245 40% 20%;
+    --ring: 42 87% 55%;
+
+    --indigo-deep: 245 58% 8%;
+    --indigo-light: 245 40% 45%;
+    --cream: 40 33% 95%;
+    --cream-dark: 40 20% 85%;
+
+    --sidebar-background: 245 50% 10%;
+    --sidebar-foreground: 40 33% 95%;
+    --sidebar-primary: 42 87% 55%;
+    --sidebar-primary-foreground: 245 58% 8%;
+    --sidebar-accent: 245 40% 18%;
+    --sidebar-accent-foreground: 40 33% 95%;
+    --sidebar-border: 245 40% 20%;
+    --sidebar-ring: 42 87% 55%;
   }
 }
 
@@ -99,7 +130,156 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  /* Gold CTA Button */
+  .btn-gold {
+    @apply relative overflow-hidden rounded-2xl px-8 py-4 font-semibold text-foreground transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(38 90% 62%));
+    box-shadow: 0 4px 20px -4px hsl(var(--gold) / 0.5);
+  }
+
+  .btn-gold:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px -4px hsl(var(--gold) / 0.6);
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply backdrop-blur-md border border-white/20;
+    background: hsl(var(--background) / 0.8);
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-md border border-white/10;
+    background: hsl(var(--primary) / 0.3);
+  }
+
+  /* Glow effects */
+  .glow-gold {
+    box-shadow: 0 0 40px hsl(var(--gold) / 0.3);
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 60px hsl(var(--primary) / 0.2);
+  }
+
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--primary)), hsl(var(--gold)));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* Pulse animation for upload border */
+  .pulse-border {
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% {
+      border-color: hsl(var(--gold) / 0.5);
+      box-shadow: 0 0 20px hsl(var(--gold) / 0.2);
+    }
+    50% {
+      border-color: hsl(var(--gold));
+      box-shadow: 0 0 40px hsl(var(--gold) / 0.4);
+    }
+  }
+
+  /* Floating particles animation */
+  .particle {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-20px) rotate(180deg);
+      opacity: 1;
+    }
+  }
+
+  /* Chakra spin animation */
+  .chakra-spin {
+    animation: chakra-spin 3s linear infinite;
+  }
+
+  @keyframes chakra-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Palm glow animation */
+  .palm-glow {
+    animation: palm-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes palm-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 20px hsl(var(--gold) / 0.4));
+    }
+    50% {
+      filter: drop-shadow(0 0 40px hsl(var(--gold) / 0.7));
+    }
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(38 90% 65%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-mystic {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(280 50% 50%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(38 90% 62%));
+  }
+
+  .bg-gradient-indigo {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(260 50% 35%));
+  }
+
+  .bg-gradient-mystic {
+    background: linear-gradient(180deg, hsl(245 58% 12%) 0%, hsl(260 45% 18%) 50%, hsl(280 35% 22%) 100%);
   }
 }
