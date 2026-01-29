@@ -139,7 +139,7 @@ export function HeroSection() {
               </motion.div>
 
               {/* Mystical Palm Image */}
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-end">
                 <motion.img alt="Mystical Palm Reading" className="w-64 h-64 md:w-80 md:h-80 object-contain rounded-full" animate={{
                 y: [0, -15, 0],
                 scale: [1, 1.02, 1]
