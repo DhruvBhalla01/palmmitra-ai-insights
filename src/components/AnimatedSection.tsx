@@ -6,6 +6,7 @@ interface AnimatedSectionProps {
   className?: string;
   delay?: number;
   direction?: 'up' | 'down' | 'left' | 'right';
+  id?: string;
 }
 
 const directionVariants = {
@@ -19,12 +20,14 @@ export function AnimatedSection({
   children, 
   className = '', 
   delay = 0,
-  direction = 'up'
+  direction = 'up',
+  id
 }: AnimatedSectionProps) {
   const initial = directionVariants[direction];
 
   return (
     <motion.div
+      id={id}
       initial={{ opacity: 0, ...initial }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}

@@ -6,6 +6,7 @@ import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { SampleReportTeaser } from '@/components/home/SampleReportTeaser';
 import { Testimonials } from '@/components/home/Testimonials';
 import { PricingSection } from '@/components/home/PricingSection';
+import { AboutSection } from '@/components/home/AboutSection';
 import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { SectionDivider } from '@/components/SectionDivider';
@@ -28,6 +29,8 @@ const Index = () => {
         <SectionDivider variant="gradient" />
         <Testimonials />
         <SectionDivider variant="mandala" />
+        <AboutSection />
+        <SectionDivider variant="ornate" />
         <PricingSection />
       </main>
       <Footer />

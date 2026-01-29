@@ -16,21 +16,22 @@ export function ActionButtons({ isUnlocked = true, onUnlockClick }: ActionButton
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleShare = async () => {
+    const shareUrl = window.location.href;
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'My PalmMitra AI Reading',
           text: 'Check out my personalized AI palm reading!',
-          url: window.location.origin,
+          url: shareUrl,
         });
       } catch {
         // Cancelled or not supported
       }
     } else {
-      await navigator.clipboard.writeText(window.location.origin);
+      await navigator.clipboard.writeText(shareUrl);
       toast({
         title: "Link Copied!",
-        description: "Share link copied to clipboard",
+        description: "Report link copied to clipboard",
       });
     }
   };
