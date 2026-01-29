@@ -61,12 +61,14 @@ export function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Button 
-                variant="outline" 
-                className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl"
-              >
-                Try Free Preview
-              </Button>
+              <Link to="/upload">
+                <Button 
+                  variant="outline" 
+                  className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl"
+                >
+                  Try Free Preview
+                </Button>
+              </Link>
             </div>
 
             {/* Trust indicators */}

@@ -46,7 +46,7 @@ export function MobileCTABar() {
               <span>•</span>
               <span>AI Powered</span>
               <span>•</span>
-              <span>₹199 only</span>
+              <span>₹99 only</span>
             </div>
           </div>
         </motion.div>

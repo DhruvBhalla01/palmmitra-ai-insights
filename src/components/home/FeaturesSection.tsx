@@ -92,7 +92,7 @@ export function FeaturesSection() {
             <AnimatedSection delay={0.5} className="mt-10">
               <Link to="/upload">
                 <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl shadow-gold-lg">
-                  Unlock Full Report @ ₹199
+                  Unlock Full Report @ ₹99
                 </Button>
               </Link>
             </AnimatedSection>
