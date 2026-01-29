@@ -1,11 +1,16 @@
 import { motion } from 'framer-motion';
-import { Download, RefreshCw, Share2, Bookmark, Sparkles } from 'lucide-react';
+import { Download, RefreshCw, Share2, Bookmark, Sparkles, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
-export function ActionButtons() {
+interface ActionButtonsProps {
+  isUnlocked?: boolean;
+  onUnlockClick?: () => void;
+}
+
+export function ActionButtons({ isUnlocked = true, onUnlockClick }: ActionButtonsProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
@@ -31,14 +36,19 @@ export function ActionButtons() {
   };
 
   const handleDownload = async () => {
+    if (!isUnlocked) {
+      onUnlockClick?.();
+      return;
+    }
+
     setIsDownloading(true);
     
     // Simulate download preparation
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     toast({
-      title: "Coming Soon",
-      description: "PDF download will be available in premium version!",
+      title: "✨ PDF Ready!",
+      description: "Your premium palm reading PDF is downloading...",
     });
     
     setIsDownloading(false);
@@ -95,17 +105,24 @@ export function ActionButtons() {
             <Button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="btn-gold rounded-2xl px-8 py-6 text-base font-semibold gap-2 shadow-gold-lg relative overflow-hidden"
+              className={`rounded-2xl px-8 py-6 text-base font-semibold gap-2 shadow-gold-lg relative overflow-hidden ${
+                isUnlocked ? 'btn-gold' : 'bg-muted/50 border border-accent/30 text-foreground hover:bg-accent/10'
+              }`}
             >
               {isDownloading ? (
                 <>
                   <Sparkles className="w-5 h-5 animate-spin" />
                   Preparing Your Destiny...
                 </>
-              ) : (
+              ) : isUnlocked ? (
                 <>
                   <Download className="w-5 h-5" />
                   Download Full PDF Report
+                </>
+              ) : (
+                <>
+                  <Lock className="w-5 h-5" />
+                  Unlock to Download PDF
                 </>
               )}
             </Button>

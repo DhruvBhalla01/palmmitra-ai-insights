@@ -53,6 +53,124 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          plan_type: string
+          razorpay_order_id: string
+          razorpay_payment_id: string | null
+          report_id: string | null
+          status: string
+          user_email: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          plan_type: string
+          razorpay_order_id: string
+          razorpay_payment_id?: string | null
+          report_id?: string | null
+          status?: string
+          user_email: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          plan_type?: string
+          razorpay_order_id?: string
+          razorpay_payment_id?: string | null
+          report_id?: string | null
+          status?: string
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "palm_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_unlocks: {
+        Row: {
+          id: string
+          payment_id: string | null
+          report_id: string
+          unlocked_at: string
+          user_email: string
+        }
+        Insert: {
+          id?: string
+          payment_id?: string | null
+          report_id: string
+          unlocked_at?: string
+          user_email: string
+        }
+        Update: {
+          id?: string
+          payment_id?: string | null
+          report_id?: string
+          unlocked_at?: string
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_unlocks_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_unlocks_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "palm_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_subscriptions: {
+        Row: {
+          id: string
+          payment_id: string | null
+          plan: string
+          started_at: string
+          status: string
+          user_email: string
+        }
+        Insert: {
+          id?: string
+          payment_id?: string | null
+          plan?: string
+          started_at?: string
+          status?: string
+          user_email: string
+        }
+        Update: {
+          id?: string
+          payment_id?: string | null
+          plan?: string
+          started_at?: string
+          status?: string
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

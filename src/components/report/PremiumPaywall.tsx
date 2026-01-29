@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
-import { Lock, Gem, Calendar, Briefcase, Sparkles } from 'lucide-react';
+import { Lock, Gem, Calendar, Briefcase, Sparkles, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 
 interface PremiumPaywallProps {
   premiumInsights: {
@@ -9,18 +8,10 @@ interface PremiumPaywallProps {
     careerBreakthrough: string;
     gemstoneRecommendation: string;
   };
+  onUnlockClick?: () => void;
 }
 
-export function PremiumPaywall({ premiumInsights }: PremiumPaywallProps) {
-  const { toast } = useToast();
-
-  const handleUnlock = () => {
-    toast({
-      title: "Premium Coming Soon",
-      description: "Payment integration will be available soon!",
-    });
-  };
-
+export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywallProps) {
   const lockedItems = [
     { 
       icon: Calendar, 
@@ -53,7 +44,7 @@ export function PremiumPaywall({ premiumInsights }: PremiumPaywallProps) {
       transition={{ duration: 0.5 }}
       className="mb-12"
     >
-      <div className="relative glass rounded-3xl overflow-hidden border-2 border-accent/30">
+      <div className="relative glass-premium rounded-3xl overflow-hidden border-2 border-accent/30 shadow-gold">
         {/* Lock overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 pointer-events-none" />
         
@@ -96,23 +87,38 @@ export function PremiumPaywall({ premiumInsights }: PremiumPaywallProps) {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="text-center">
+          {/* CTA Buttons */}
+          <div className="space-y-3">
             <motion.div 
               whileHover={{ scale: 1.02 }} 
               whileTap={{ scale: 0.98 }}
-              className="inline-block"
             >
               <Button
-                onClick={handleUnlock}
-                className="btn-gold rounded-2xl px-10 py-6 text-lg font-semibold gap-2 shadow-xl"
+                onClick={onUnlockClick}
+                className="w-full btn-gold rounded-2xl px-10 py-6 text-lg font-semibold gap-2 shadow-xl"
               >
                 <Sparkles className="w-5 h-5" />
-                Unlock Premium Reading ₹199
+                Unlock Full Report @ ₹99
               </Button>
             </motion.div>
-            <p className="text-xs text-muted-foreground mt-3">
-              One-time payment • Instant access • Detailed predictions
+            
+            <motion.div 
+              whileHover={{ scale: 1.02 }} 
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                onClick={onUnlockClick}
+                variant="outline"
+                className="w-full rounded-2xl px-10 py-5 font-semibold gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent"
+              >
+                <Crown className="w-5 h-5 text-accent" />
+                Get Unlimited Plan @ ₹999
+                <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-accent/20 text-accent">Best Value</span>
+              </Button>
+            </motion.div>
+
+            <p className="text-xs text-muted-foreground text-center mt-3">
+              One-time payment • Instant access • Secure with Razorpay
             </p>
           </div>
         </div>
