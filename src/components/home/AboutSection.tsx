@@ -3,6 +3,7 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { Brain, Shield, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import mandalaOrnament from '@/assets/mandala-ornament.png';
 
 const highlights = [
   {
@@ -76,7 +77,7 @@ export function AboutSection() {
             </AnimatedSection>
           </div>
 
-          {/* Right Content - Visual */}
+          {/* Right Content - Visual with Mandala */}
           <AnimatedSection direction="right" className="relative hidden lg:block">
             <div className="relative">
               {/* Glows */}
@@ -91,13 +92,24 @@ export function AboutSection() {
                 transition={{ duration: 5, repeat: Infinity, delay: 1 }}
               />
 
-              {/* Stats Card */}
+              {/* Stats Card with Mandala */}
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                className="glass-premium rounded-3xl p-8 border border-accent/20"
+                className="glass-premium rounded-3xl p-8 border border-accent/20 relative overflow-hidden"
               >
-                <div className="text-center mb-8">
+                {/* Mandala Background */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                  <motion.img 
+                    src={mandalaOrnament} 
+                    alt="" 
+                    className="w-96 h-96 object-contain"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+                  />
+                </div>
+
+                <div className="text-center mb-8 relative z-10">
                   <motion.div
                     animate={{ 
                       scale: [1, 1.05, 1],
@@ -116,7 +128,7 @@ export function AboutSection() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 relative z-10">
                   {[
                     { value: '50,000+', label: 'Readings' },
                     { value: '4.9★', label: 'Rating' },

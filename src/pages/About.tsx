@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Brain, Shield, Heart, Users, Star } from 'lucide-react';
+import mysticalPalm from '@/assets/mystical-palm.png';
 
 const values = [
   {
@@ -72,19 +73,19 @@ export default function About() {
                   </p>
                 </div>
                 <div className="flex justify-center">
-                  <motion.div
+                  <motion.img
+                    src={mysticalPalm}
+                    alt="Mystical Palm"
+                    className="w-48 h-48 md:w-64 md:h-64 object-contain rounded-full"
                     animate={{ 
                       y: [0, -10, 0],
-                      rotateY: [0, 5, 0, -5, 0],
+                      scale: [1, 1.03, 1],
                     }}
                     transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                    className="text-[120px] md:text-[150px]"
                     style={{
                       filter: 'drop-shadow(0 0 40px hsl(42 87% 55% / 0.4))'
                     }}
-                  >
-                    🖐️
-                  </motion.div>
+                  />
                 </div>
               </div>
             </div>
