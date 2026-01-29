@@ -52,6 +52,8 @@
 
     /* Custom PalmMitra tokens */
     --gold: 42 87% 55%;
+    --gold-light: 42 90% 65%;
+    --gold-dark: 38 85% 45%;
     --gold-glow: 42 100% 65%;
     --indigo-deep: 245 58% 18%;
     --indigo-light: 245 40% 35%;
@@ -67,6 +69,7 @@
     --shadow-soft: 0 4px 20px -4px hsl(245 58% 25% / 0.1);
     --shadow-gold: 0 4px 30px -4px hsl(42 87% 55% / 0.4);
     --shadow-elevated: 0 20px 50px -12px hsl(245 58% 25% / 0.15);
+    --shadow-premium: 0 25px 60px -15px hsl(245 58% 25% / 0.2), 0 10px 30px -10px hsl(42 87% 55% / 0.15);
 
     /* Sidebar */
     --sidebar-background: 40 30% 97%;
@@ -145,22 +148,91 @@
 }
 
 @layer components {
-  /* Gold CTA Button */
+  /* Premium Gold Button with Shimmer */
   .btn-gold {
     @apply relative overflow-hidden rounded-2xl px-8 py-4 font-semibold text-foreground transition-all duration-300;
-    background: linear-gradient(135deg, hsl(var(--gold)), hsl(38 90% 62%));
-    box-shadow: 0 4px 20px -4px hsl(var(--gold) / 0.5);
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)), hsl(var(--gold)));
+    background-size: 200% 200%;
+    box-shadow: 
+      0 4px 20px -4px hsl(var(--gold) / 0.5),
+      inset 0 1px 0 hsl(var(--gold-light) / 0.3);
+  }
+
+  .btn-gold::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(0 0% 100% / 0.3),
+      transparent
+    );
+    transition: left 0.5s ease;
   }
 
   .btn-gold:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 30px -4px hsl(var(--gold) / 0.6);
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 
+      0 8px 35px -4px hsl(var(--gold) / 0.6),
+      0 0 20px hsl(var(--gold) / 0.3),
+      inset 0 1px 0 hsl(var(--gold-light) / 0.4);
+    background-position: 100% 100%;
   }
 
-  /* Glassmorphism */
+  .btn-gold:hover::before {
+    left: 100%;
+  }
+
+  .btn-gold:active {
+    transform: scale(0.98);
+  }
+
+  /* Premium Secondary Button */
+  .btn-secondary-premium {
+    @apply relative overflow-hidden rounded-2xl px-6 py-3 font-semibold transition-all duration-300;
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--gold) / 0.2);
+    color: hsl(var(--foreground));
+  }
+
+  .btn-secondary-premium:hover {
+    border-color: hsl(var(--gold) / 0.5);
+    box-shadow: 
+      0 0 20px hsl(var(--gold) / 0.15),
+      inset 0 0 20px hsl(var(--gold) / 0.05);
+  }
+
+  /* Premium Glassmorphism */
   .glass {
     @apply backdrop-blur-md border border-white/20;
     background: hsl(var(--background) / 0.8);
+  }
+
+  .glass-premium {
+    backdrop-filter: blur(20px);
+    background: linear-gradient(
+      135deg, 
+      hsl(var(--background) / 0.95), 
+      hsl(var(--background) / 0.8)
+    );
+    border: 1px solid hsl(var(--gold) / 0.15);
+    box-shadow: 
+      0 8px 32px hsl(var(--primary) / 0.08),
+      inset 0 1px 0 hsl(var(--gold) / 0.1),
+      inset 0 -1px 0 hsl(var(--primary) / 0.05);
+  }
+
+  .glass-premium:hover {
+    border-color: hsl(var(--gold) / 0.3);
+    box-shadow: 
+      0 20px 50px hsl(var(--primary) / 0.12),
+      0 0 0 1px hsl(var(--gold) / 0.2),
+      inset 0 1px 0 hsl(var(--gold) / 0.15);
   }
 
   .glass-dark {
@@ -168,9 +240,32 @@
     background: hsl(var(--primary) / 0.3);
   }
 
+  /* Premium Card with Hover */
+  .card-premium {
+    @apply rounded-3xl transition-all duration-500;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .card-premium:hover {
+    transform: translateY(-6px);
+    border-color: hsl(var(--gold) / 0.3);
+    box-shadow: 
+      var(--shadow-premium),
+      0 0 0 1px hsl(var(--gold) / 0.15);
+  }
+
   /* Glow effects */
   .glow-gold {
     box-shadow: 0 0 40px hsl(var(--gold) / 0.3);
+  }
+
+  .glow-gold-intense {
+    box-shadow: 
+      0 0 20px hsl(var(--gold) / 0.4),
+      0 0 40px hsl(var(--gold) / 0.3),
+      0 0 60px hsl(var(--gold) / 0.2);
   }
 
   .glow-indigo {
@@ -193,6 +288,30 @@
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
+  }
+
+  /* Premium Section Divider */
+  .section-divider {
+    @apply relative h-24 overflow-hidden;
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--gold) / 0.5), transparent);
+  }
+
+  /* Sanskrit accent text */
+  .sanskrit-accent {
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    color: hsl(var(--gold) / 0.7);
+    font-style: italic;
   }
 
   /* Pulse animation for upload border */
@@ -254,11 +373,114 @@
       filter: drop-shadow(0 0 40px hsl(var(--gold) / 0.7));
     }
   }
+
+  /* Premium shimmer animation */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--gold) / 0.2),
+      transparent
+    );
+    animation: shimmer-sweep 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer-sweep {
+    0% { left: -100%; }
+    50%, 100% { left: 100%; }
+  }
+
+  /* Sparkle effect */
+  .sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+
+  /* Destiny reveal animation */
+  .destiny-reveal {
+    animation: destiny-reveal 1.5s ease-out forwards;
+  }
+
+  @keyframes destiny-reveal {
+    0% {
+      opacity: 0;
+      transform: scale(0.8) translateY(20px);
+      filter: blur(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  /* Hologram effect */
+  .hologram {
+    position: relative;
+  }
+
+  .hologram::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    background: conic-gradient(
+      from 0deg,
+      transparent,
+      hsl(var(--gold) / 0.1),
+      transparent,
+      hsl(var(--primary) / 0.1),
+      transparent
+    );
+    animation: hologram-rotate 10s linear infinite;
+    border-radius: 50%;
+  }
+
+  @keyframes hologram-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Progress chakra dots */
+  .chakra-dot {
+    @apply w-3 h-3 rounded-full transition-all duration-300;
+    background: hsl(var(--muted));
+  }
+
+  .chakra-dot.active {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+    box-shadow: 0 0 10px hsl(var(--gold) / 0.5);
+    transform: scale(1.2);
+  }
+
+  .chakra-dot.completed {
+    background: hsl(var(--gold));
+  }
 }
 
 @layer utilities {
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(var(--gold)), hsl(38 90% 65%));
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -272,7 +494,7 @@
   }
 
   .bg-gradient-gold {
-    background: linear-gradient(135deg, hsl(var(--gold)), hsl(38 90% 62%));
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
   }
 
   .bg-gradient-indigo {
@@ -281,5 +503,25 @@
 
   .bg-gradient-mystic {
     background: linear-gradient(180deg, hsl(245 58% 12%) 0%, hsl(260 45% 18%) 50%, hsl(280 35% 22%) 100%);
+  }
+
+  /* Premium radial background */
+  .bg-premium-radial {
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% 0%, hsl(var(--gold) / 0.05), transparent),
+      radial-gradient(ellipse 60% 40% at 0% 50%, hsl(var(--primary) / 0.03), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 50%, hsl(var(--primary) / 0.03), transparent),
+      hsl(var(--background));
+  }
+
+  /* Luxury text shadow */
+  .text-shadow-luxury {
+    text-shadow: 0 2px 10px hsl(var(--gold) / 0.3);
+  }
+
+  /* Border glow */
+  .border-glow-gold {
+    border-color: hsl(var(--gold) / 0.3);
+    box-shadow: 0 0 15px hsl(var(--gold) / 0.2);
   }
 }

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Calendar, Target } from 'lucide-react';
+import { Sparkles, Calendar, Target, Shield } from 'lucide-react';
 
 interface ReportHeaderProps {
   name: string;
@@ -38,44 +38,100 @@ export function ReportHeader({
       transition={{ duration: 0.6 }}
       className="relative mb-12"
     >
+      {/* Key Destiny Message Box */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border border-accent/30 relative overflow-hidden"
+      >
+        {/* Shimmer effect */}
+        <div className="absolute inset-0 shimmer pointer-events-none" />
+        
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-accent" />
+          </div>
+          <span className="text-sm font-semibold text-accent uppercase tracking-wide">
+            Key Destiny Insight
+          </span>
+        </div>
+        <p className="text-lg md:text-xl font-serif text-foreground leading-relaxed">
+          "{headlineSummary}"
+        </p>
+      </motion.div>
+
       {/* Premium Summary Card */}
-      <div className="glass rounded-3xl p-8 md:p-10 border border-accent/20 overflow-hidden relative">
-        {/* Background glow */}
+      <div className="glass-premium rounded-3xl p-8 md:p-10 overflow-hidden relative">
+        {/* Background decorations */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
         
         <div className="relative z-10">
-          {/* Top row: Badge + Confidence */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">
+          {/* Top row: Badges */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <motion.div 
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl glass-premium border-accent/20"
+              whileHover={{ scale: 1.02 }}
+            >
+              <Sparkles className="w-4 h-4 text-accent" />
+              <span className="text-sm font-semibold text-foreground">
                 {readingTypeLabels[readingType] || 'Palm Reading'}
               </span>
-            </div>
+            </motion.div>
             
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-600">
-              <Target className="w-4 h-4" />
-              <span className="text-sm font-semibold">
-                AI Confidence: {confidenceScore}%
-              </span>
+            <div className="flex items-center gap-3">
+              <motion.div 
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500/10 border border-green-500/20"
+                whileHover={{ scale: 1.02 }}
+              >
+                <Target className="w-4 h-4 text-green-500" />
+                <span className="text-sm font-bold text-green-600">
+                  {confidenceScore}% Confidence
+                </span>
+              </motion.div>
+              
+              <motion.div 
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20"
+                whileHover={{ scale: 1.02 }}
+              >
+                <Shield className="w-4 h-4 text-blue-500" />
+                <span className="text-sm font-medium text-blue-600">
+                  Verified
+                </span>
+              </motion.div>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-            {/* Palm Image */}
+            {/* Palm Image with premium frame */}
             {palmImage && (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-accent/30 shadow-xl flex-shrink-0"
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="relative group"
               >
-                <img 
-                  src={palmImage} 
-                  alt="Your palm" 
-                  className="w-full h-full object-cover"
-                />
+                <div className="absolute -inset-1 bg-gradient-gold rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
+                <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-4 border-accent/40 shadow-gold-lg">
+                  <img 
+                    src={palmImage} 
+                    alt="Your palm" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Scan line effect */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <motion.div
+                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent/50 to-transparent"
+                    animate={{ top: ['0%', '100%'] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  />
+                </motion.div>
               </motion.div>
             )}
 
@@ -83,25 +139,24 @@ export function ReportHeader({
             <div className="flex-1 text-center md:text-left">
               {/* User Info */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
-                <span className="font-medium text-foreground text-lg">
-                  Reading for <span className="text-accent">{name}</span>
+                <span className="font-semibold text-foreground text-xl">
+                  Reading for <span className="text-gradient-gold">{name}</span>
                 </span>
                 <span className="hidden md:inline text-accent">•</span>
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   {formattedDate}
                 </span>
               </div>
 
-              {/* Headline */}
-              <motion.h1 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground leading-tight"
-              >
-                "{headlineSummary}"
-              </motion.h1>
+              {/* Sanskrit accent */}
+              <p className="sanskrit-accent mb-3">ॐ Bhavishya Darshan</p>
+
+              {/* Report summary */}
+              <p className="text-muted-foreground leading-relaxed">
+                This comprehensive analysis reveals the unique patterns in your palm, 
+                offering insights into your personality, life path, and spiritual journey.
+              </p>
             </div>
           </div>
 
@@ -109,8 +164,8 @@ export function ReportHeader({
           <motion.div 
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="mt-8 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="mt-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"
           />
         </div>
       </div>
