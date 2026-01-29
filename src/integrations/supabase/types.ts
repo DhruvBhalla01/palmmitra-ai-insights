@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      palm_reports: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string
+          reading_type: string | null
+          report_json: Json | null
+          user_age: string | null
+          user_email: string | null
+          user_name: string
+          validation_confidence: number | null
+          validation_quality: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url: string
+          reading_type?: string | null
+          report_json?: Json | null
+          user_age?: string | null
+          user_email?: string | null
+          user_name: string
+          validation_confidence?: number | null
+          validation_quality?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          reading_type?: string | null
+          report_json?: Json | null
+          user_age?: string | null
+          user_email?: string | null
+          user_name?: string
+          validation_confidence?: number | null
+          validation_quality?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

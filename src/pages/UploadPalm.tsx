@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Upload, X, Loader2, Mail, User, Calendar } from 'lucide-react';
+import { Upload, X, Loader2, Mail, User, Calendar, AlertCircle, CheckCircle, Hand, Camera, Sun, Eye } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { AnimatedSection } from '@/components/AnimatedSection';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 type ReadingType = 'full' | 'career' | 'love' | 'wealth';
+
+type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
 
 interface FormData {
   name: string;
@@ -25,12 +29,19 @@ interface FormData {
   readingType: ReadingType;
 }
 
+interface ValidationError {
+  reason: string;
+  suggestions: string[];
+}
+
 export default function UploadPalm() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [image, setImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [processingStep, setProcessingStep] = useState<ProcessingStep>('idle');
+  const [validationError, setValidationError] = useState<ValidationError | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     age: '',
@@ -51,18 +62,34 @@ export default function UploadPalm() {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    setValidationError(null);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
       processImage(file);
+    } else {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a JPG or PNG image only.",
+        variant: "destructive",
+      });
     }
-  }, []);
+  }, [toast]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    setValidationError(null);
     if (file) {
-      processImage(file);
+      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+        processImage(file);
+      } else {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload a JPG or PNG image only.",
+          variant: "destructive",
+        });
+      }
     }
-  }, []);
+  }, [toast]);
 
   const processImage = (file: File) => {
     setImageFile(file);
@@ -76,30 +103,128 @@ export default function UploadPalm() {
   const removeImage = () => {
     setImage(null);
     setImageFile(null);
+    setValidationError(null);
+  };
+
+  const uploadToStorage = async (file: File): Promise<string> => {
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.type.split('/')[1]}`;
+    
+    const { data, error } = await supabase.storage
+      .from('palm-uploads')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Storage upload error:', error);
+      throw new Error('Failed to upload image to storage');
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('palm-uploads')
+      .getPublicUrl(data.path);
+
+    return publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!image || !formData.name || !formData.email || !formData.age) {
+    if (!imageFile || !formData.name || !formData.email || !formData.age) {
       return;
     }
 
-    setIsLoading(true);
+    setValidationError(null);
     
-    // Store form data in sessionStorage for the report page
-    sessionStorage.setItem('palmMitraData', JSON.stringify({
-      ...formData,
-      palmImage: image,
-    }));
+    try {
+      // Step 1: Upload to Supabase Storage
+      setProcessingStep('uploading');
+      const imageUrl = await uploadToStorage(imageFile);
+      console.log('Image uploaded:', imageUrl);
 
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    navigate('/report');
+      // Step 2: Validate palm image
+      setProcessingStep('validating');
+      
+      // Step 3: Analyze (validation + reading happens in edge function)
+      setProcessingStep('analyzing');
+      
+      const { data: response, error: functionError } = await supabase.functions.invoke('analyze-palm', {
+        body: {
+          imageUrl,
+          name: formData.name,
+          age: formData.age,
+          email: formData.email,
+          readingType: formData.readingType,
+        },
+      });
+
+      if (functionError) {
+        console.error('Function error:', functionError);
+        throw new Error(functionError.message || 'Failed to analyze palm');
+      }
+
+      // Check if validation failed
+      if (!response.validated) {
+        setProcessingStep('error');
+        setValidationError({
+          reason: response.message || response.validation?.reason || 'This does not appear to be a palm image.',
+          suggestions: [
+            'Use an open palm facing the camera',
+            'Ensure good lighting on the palm',
+            'Avoid blurry or unclear images',
+            'Show only one hand, not both',
+            'Make sure palm lines are visible'
+          ]
+        });
+        return;
+      }
+
+      // Step 4: Save complete
+      setProcessingStep('saving');
+      
+      // Store response in sessionStorage for report page
+      sessionStorage.setItem('palmMitraData', JSON.stringify({
+        ...formData,
+        imageUrl,
+        reportId: response.reportId,
+        reading: response.reading,
+        validation: response.validation,
+        generatedAt: response.generatedAt,
+      }));
+
+      setProcessingStep('complete');
+      
+      // Navigate to report
+      setTimeout(() => {
+        navigate('/report');
+      }, 500);
+
+    } catch (err) {
+      console.error('Error:', err);
+      setProcessingStep('error');
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : 'Something went wrong. Please try again.',
+        variant: "destructive",
+      });
+    }
   };
 
   const isFormValid = image && formData.name && formData.email && formData.age;
+  const isLoading = processingStep !== 'idle' && processingStep !== 'error' && processingStep !== 'complete';
+
+  const getStepLabel = (step: ProcessingStep) => {
+    switch (step) {
+      case 'uploading': return 'Uploading to PalmMitra Vault...';
+      case 'validating': return 'AI Checking Palm Quality...';
+      case 'analyzing': return 'AI Reading Your Destiny...';
+      case 'saving': return 'Saving Your Report...';
+      case 'complete': return 'Report Ready!';
+      default: return '';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -127,6 +252,8 @@ export default function UploadPalm() {
                   className={`relative rounded-3xl border-2 border-dashed transition-all duration-300 overflow-hidden ${
                     isDragging
                       ? 'border-accent bg-accent/5 scale-[1.02]'
+                      : validationError
+                      ? 'border-destructive bg-destructive/5'
                       : image
                       ? 'border-accent/50'
                       : 'border-border hover:border-accent/50 pulse-border'
@@ -153,11 +280,21 @@ export default function UploadPalm() {
                         >
                           <X className="w-5 h-5" />
                         </button>
-                        <div className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-sm rounded-xl p-3 text-center">
-                          <p className="text-sm font-medium text-foreground">
-                            ✓ Palm image uploaded successfully
-                          </p>
-                        </div>
+                        {validationError ? (
+                          <div className="absolute bottom-4 left-4 right-4 bg-destructive/90 backdrop-blur-sm rounded-xl p-3 text-center">
+                            <p className="text-sm font-medium text-destructive-foreground flex items-center justify-center gap-2">
+                              <AlertCircle className="w-4 h-4" />
+                              Palm verification failed
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-sm rounded-xl p-3 text-center">
+                            <p className="text-sm font-medium text-foreground flex items-center justify-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-green-500" />
+                              Image uploaded successfully
+                            </p>
+                          </div>
+                        )}
                       </motion.div>
                     ) : (
                       <motion.label
@@ -181,11 +318,11 @@ export default function UploadPalm() {
                           or click to browse from your device
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Supports: JPG, PNG, WEBP (Max 10MB)
+                          Supports: JPG, PNG only (Max 10MB)
                         </p>
                         <input
                           type="file"
-                          accept="image/*"
+                          accept="image/jpeg,image/png"
                           onChange={handleFileSelect}
                           className="hidden"
                         />
@@ -193,7 +330,77 @@ export default function UploadPalm() {
                     )}
                   </AnimatePresence>
                 </div>
+
+                {/* Photo Guidelines */}
+                <div className="mt-4 p-4 bg-muted/30 rounded-2xl border border-border">
+                  <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-accent" />
+                    Photo Guidelines for Best Results
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Hand className="w-4 h-4 text-accent/70" />
+                      Open palm facing camera
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-4 h-4 text-accent/70" />
+                      Good lighting on palm
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-accent/70" />
+                      Palm lines clearly visible
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-accent/70" />
+                      Only one hand visible
+                    </div>
+                  </div>
+                </div>
               </AnimatedSection>
+
+              {/* Validation Error Card */}
+              <AnimatePresence>
+                {validationError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="bg-destructive/10 border border-destructive/30 rounded-2xl p-6"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                        <AlertCircle className="w-6 h-6 text-destructive" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground mb-2">
+                          ❌ This does not look like a clear palm photo
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {validationError.reason}
+                        </p>
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-foreground">Suggestions:</p>
+                          <ul className="text-sm text-muted-foreground space-y-1">
+                            {validationError.suggestions.map((suggestion, i) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                                {suggestion}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={removeImage}
+                          className="mt-4 btn-gold"
+                        >
+                          Reupload Photo
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Form Fields */}
               <AnimatedSection delay={0.2} className="space-y-6">
@@ -285,10 +492,10 @@ export default function UploadPalm() {
                   {isLoading ? (
                     <span className="flex items-center gap-3">
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Generating Your Reading...
+                      {getStepLabel(processingStep)}
                     </span>
                   ) : (
-                    'Generate My Palm Reading'
+                    'Start Palm Scan'
                   )}
                 </Button>
               </AnimatedSection>
@@ -306,7 +513,7 @@ export default function UploadPalm() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-background/95 backdrop-blur-md z-50 flex items-center justify-center"
           >
-            <div className="text-center">
+            <div className="text-center max-w-md mx-auto px-4">
               {/* Chakra Animation */}
               <motion.div
                 animate={{ rotate: 360 }}
@@ -324,12 +531,49 @@ export default function UploadPalm() {
               <motion.h2
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="text-2xl font-serif font-bold text-foreground mb-2"
+                className="text-2xl font-serif font-bold text-foreground mb-4"
               >
-                AI Reading Your Palm...
+                {getStepLabel(processingStep)}
               </motion.h2>
-              <p className="text-muted-foreground">
-                Analyzing your unique palm lines and patterns
+
+              {/* Progress Steps */}
+              <div className="space-y-3 text-left bg-card/50 rounded-2xl p-4 border border-border">
+                {[
+                  { step: 'uploading', label: 'Uploading to PalmMitra Vault', icon: Upload },
+                  { step: 'validating', label: 'AI Checking Palm Quality', icon: Eye },
+                  { step: 'analyzing', label: 'AI Reading Your Destiny', icon: Hand },
+                  { step: 'saving', label: 'Saving Your Report', icon: CheckCircle },
+                ].map(({ step, label, icon: Icon }) => {
+                  const stepOrder = ['uploading', 'validating', 'analyzing', 'saving'];
+                  const currentIndex = stepOrder.indexOf(processingStep);
+                  const stepIndex = stepOrder.indexOf(step);
+                  const isComplete = stepIndex < currentIndex;
+                  const isCurrent = step === processingStep;
+                  
+                  return (
+                    <div 
+                      key={step}
+                      className={`flex items-center gap-3 transition-all ${
+                        isComplete ? 'text-green-500' : isCurrent ? 'text-accent' : 'text-muted-foreground'
+                      }`}
+                    >
+                      {isComplete ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : isCurrent ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Icon className="w-5 h-5 opacity-50" />
+                      )}
+                      <span className={`text-sm ${isCurrent ? 'font-medium' : ''}`}>
+                        {label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="text-sm text-muted-foreground mt-4">
+                This may take 15-20 seconds
               </p>
             </div>
           </motion.div>

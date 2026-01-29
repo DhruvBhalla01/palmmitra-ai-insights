@@ -1,1 +1,4 @@
 project_id = "wattznplwrigmjrottdy"
+
+[functions.analyze-palm]
+verify_jwt = false
