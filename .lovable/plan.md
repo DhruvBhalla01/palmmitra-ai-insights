@@ -1,302 +1,342 @@
 
 
-# PalmMitra Premium UI Redesign Plan
+# PalmMitra Monetization System with Razorpay + Lovable Cloud
 
-Transform PalmMitra into India's #1 AI destiny brand with Apple-level polish and authentic Indian spiritual luxury aesthetics.
+A complete, production-ready payment and unlock system with 3 pricing tiers, secure backend verification, and premium UX.
 
 ---
 
 ## Overview
 
-This redesign will elevate every visual element across the entire website to create an immersive, premium experience that Indian users will trust and pay for. The upgrade focuses on 9 key areas: atmospheric backgrounds, premium cards, expensive buttons, luxury typography, section dividers, report page redesign, enhanced animations, brand moments, and mobile optimization.
+This implementation adds a full monetization layer to PalmMitra with:
+
+- **Tier 1: Free Preview** (always available) - Basic summary + Life Line preview + 1 Remedy
+- **Tier 2: Detailed Report Unlock** (Rs 99) - Unlocks one specific report permanently
+- **Tier 3: Unlimited Reports Plan** (Rs 999) - Lifetime access to all reports
+
+The system uses Razorpay for payments with a secure two-step flow: backend order creation followed by signature verification before unlocking content.
 
 ---
 
-## 1. Global Premium Background System
+## Architecture
 
-**New Component: `PremiumBackground.tsx`**
-
-Create a signature atmospheric background that renders across all pages:
-
-- Multi-layer radial gradients (cream center fading to light gold, then subtle indigo at edges)
-- Floating spiritual particles (40-60 small circles with varying opacity and float animations)
-- Very faint mandala SVG watermark positioned in hero and report sections
-- Subtle noise texture overlay for depth
-
-**Implementation:**
-- Add to Index, UploadPalm, and Report pages as wrapper component
-- Use CSS custom properties for easy theming
-- Particles use Framer Motion with staggered delays and varied durations
-
----
-
-## 2. Premium Glassmorphism Card System
-
-**Update: `src/index.css`**
-
-Enhance the `.glass` class and create new premium card variants:
-
-```css
-.glass-premium {
-  backdrop-blur: 16px;
-  background: linear-gradient(
-    135deg, 
-    hsl(var(--background) / 0.9), 
-    hsl(var(--background) / 0.7)
-  );
-  border: 1px solid hsl(var(--gold) / 0.2);
-  box-shadow: 
-    0 8px 32px hsl(var(--primary) / 0.1),
-    inset 0 1px 0 hsl(var(--gold) / 0.1);
-}
-
-.card-hover-premium {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card-hover-premium:hover {
-  transform: translateY(-6px);
-  box-shadow: 
-    0 20px 40px hsl(var(--primary) / 0.15),
-    0 0 0 1px hsl(var(--gold) / 0.3);
-}
-```
-
-**Apply to all cards:**
-- HowItWorks step cards
-- Pricing cards  
-- Feature cards
-- Report section cards
-- Upload area
-
----
-
-## 3. Premium Button System
-
-**Update: `src/index.css` and `button.tsx`**
-
-Create three button tiers:
-
-**Primary Gold Button (`.btn-gold-premium`):**
-- Animated gradient background (gold shifting through 3 hues)
-- Shimmer sweep animation on hover (white highlight moving left to right)
-- Outer glow pulse on hover
-- Scale 1.03 with press ripple effect
-- Minimum padding: 16px 32px
-
-**Secondary Button (`.btn-secondary-premium`):**
-- Frosted glass background
-- Gold border that animates on hover
-- Subtle inner shadow
-- No scale, only glow transition
-
-**Ghost Button:**
-- Transparent with gold text
-- Underline animation on hover
-
-**Add shimmer keyframe:**
-```css
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-```
-
----
-
-## 4. Premium Typography System
-
-**Update: `tailwind.config.ts` and `src/index.css`**
-
-**Heading Sizes:**
-- Hero h1: 5xl on mobile, 6xl on tablet, 7xl on desktop
-- Section h2: 3xl on mobile, 4xl on tablet, 5xl on desktop
-- Card titles: xl to 2xl with tighter tracking
-
-**Add Sanskrit accent support:**
-Create a `.sanskrit-accent` class for decorative text:
-```css
-.sanskrit-accent {
-  font-size: 0.875rem;
-  letter-spacing: 0.2em;
-  color: hsl(var(--gold) / 0.7);
-  font-style: italic;
-}
-```
-
-**Apply to section headers:**
-Each major section will have a small Sanskrit-style phrase beneath the title:
-- How It Works: "ॐ Margadarshan"
-- Features: "ॐ Gyan Shakti"  
-- Report: "ॐ Bhavishya Darshan"
-
----
-
-## 5. Section Dividers & Flow
-
-**New Component: `SectionDivider.tsx`**
-
-Create 3 divider variants:
-
-1. **Wave Divider:** SVG wave with gradient fill (cream to transparent)
-2. **Mandala Line:** Thin horizontal line with centered mandala icon
-3. **Gradient Fade:** Soft blur gradient break
-
-**Implementation:**
-- Add between each homepage section
-- Use Framer Motion for fade-in on scroll
-- Alternate between divider types
-
----
-
-## 6. Premium Report Page Redesign
-
-**Update: `src/pages/Report.tsx` and all report components**
-
-**Destiny Document Layout:**
-- Add vertical progress indicator (chakra-style dots) on left side
-- Each section wrapped in premium glass card
-- Highlighted "Key Destiny Message" box at top with gold border
-- Timeline visualization for Career Peak Window
-- Interactive expandable cards for mounts
-
-**Loading Animation Upgrade:**
-- "Destiny Reveal" animation: circular mandala pattern expanding outward
-- Staggered section reveals with 0.15s delays
-- Gold sparkle particles on completion
-
-**Progress Indicator:**
-Create left-side chakra dots showing report sections:
 ```text
-1. Summary (active)
-2. Major Lines
-3. Mounts
-4. Personality
-5. Career
-6. Love
-7. Life Phase
-8. Remedies
-9. Blessing
++------------------+     +--------------------+     +------------------+
+|                  |     |                    |     |                  |
+|  Report Page     |---->|  create-order      |---->|  Razorpay API    |
+|  (React)         |     |  (Edge Function)   |     |  (Order Create)  |
+|                  |<----|                    |<----|                  |
++------------------+     +--------------------+     +------------------+
+        |                                                    |
+        | Razorpay Checkout SDK                              |
+        v                                                    |
++------------------+                                         |
+|  Razorpay        |<----------------------------------------+
+|  Checkout Modal  |
+|                  |
++--------+---------+
+         |
+         | Payment Success Response
+         v
++------------------+     +--------------------+     +------------------+
+|                  |     |                    |     |                  |
+|  Report Page     |---->|  verify-payment    |---->|  Razorpay        |
+|  (React)         |     |  (Edge Function)   |     |  (Signature)     |
+|                  |<----|                    |     |                  |
++------------------+     +--------+-----------+     +------------------+
+                                  |
+                                  | If Valid
+                                  v
+                         +--------------------+
+                         |  Supabase DB       |
+                         |  - payments        |
+                         |  - report_unlocks  |
+                         |  - subscriptions   |
+                         +--------------------+
 ```
 
 ---
 
-## 7. Animation System Upgrade
+## Database Schema
 
-**Update: `tailwind.config.ts` and components**
+Three new tables will be created to track payments and unlocks:
 
-**New Keyframes:**
-- `float-gentle`: Subtle 8px vertical float
-- `glow-pulse-gold`: Gold shadow pulsing
-- `reveal-up`: Slide up with scale and fade
-- `shimmer-sweep`: Horizontal light sweep
-- `sparkle`: Random opacity twinkle
+**payments** - Records all payment transactions
+- `id` (uuid, primary key)
+- `user_email` (text, not null) - User identifier
+- `report_id` (uuid, nullable) - Links to palm_reports for single report purchases
+- `plan_type` (text) - "report99" or "unlimited999"
+- `razorpay_order_id` (text, not null)
+- `razorpay_payment_id` (text, nullable)
+- `amount` (integer) - Amount in paise
+- `status` (text) - "pending", "success", "failed"
+- `created_at` (timestamp)
 
-**Scroll Animations:**
-- All sections use staggered reveal (children animate in sequence)
-- Report bullets reveal with 0.1s stagger
-- Hover states use cubic-bezier easing for premium feel
+**report_unlocks** - Tracks which reports are unlocked for which users
+- `id` (uuid, primary key)
+- `user_email` (text, not null)
+- `report_id` (uuid, references palm_reports)
+- `payment_id` (uuid, references payments)
+- `unlocked_at` (timestamp)
 
-**Page Transitions:**
-- Wrap routes in AnimatePresence
-- Exit animation: fade out + slide up
-- Enter animation: fade in + slide down
+**user_subscriptions** - Tracks unlimited plan subscribers
+- `id` (uuid, primary key)
+- `user_email` (text, not null, unique)
+- `plan` (text) - "unlimited999"
+- `payment_id` (uuid, references payments)
+- `status` (text) - "active" or "cancelled"
+- `started_at` (timestamp)
 
----
-
-## 8. Brand WOW Moments
-
-**Three signature experiences:**
-
-**1. Hero Palm Hologram (`HeroSection.tsx`):**
-- Large 3D-style palm with layered glow rings
-- Slow rotation (15s per cycle) with subtle tilt
-- Floating symbols orbit around palm
-- Holographic scan line effect
-
-**2. Destiny Reveal (`Report.tsx`):**
-- When report loads, display full-screen mandala
-- Mandala expands with gold particles
-- Fades to reveal report content
-- Sound-optional (muted by default)
-
-**3. Download PDF Sparkle (`ActionButtons.tsx`):**
-- On hover: gold particles emanate from button
-- On click: burst animation
-- Button text changes to "Preparing Your Destiny..."
+RLS Policies will allow public read/write since users are identified by email (no auth implemented yet).
 
 ---
 
-## 9. Mobile Premium Experience
+## Edge Functions
 
-**Responsive Enhancements:**
+Two new backend functions will be created:
 
-**Sticky CTA Bar:**
-- Fixed bottom bar on mobile (visible after hero scroll)
-- Glass background with gold CTA button
-- "Get Your Reading" persistent
+**1. create-razorpay-order**
 
-**Collapsible Sections:**
-- Report page mounts section becomes accordion on mobile
-- Smooth height animations
-- Touch-friendly hit areas (min 44px)
+Endpoint: POST /create-razorpay-order
 
-**Card Adjustments:**
-- Full-width cards with reduced padding on mobile
-- Horizontal scroll for multi-card sections on small screens
-- Larger touch targets for all interactive elements
+Input:
+```json
+{
+  "user_email": "user@example.com",
+  "report_id": "uuid" (optional for unlimited plan),
+  "plan": "report99" | "unlimited999"
+}
+```
+
+Logic:
+1. Validate input parameters
+2. Set amount based on plan (9900 paise for report99, 99900 for unlimited999)
+3. Create Razorpay order using the secret key
+4. Save order to payments table with "pending" status
+5. Return order_id, amount, currency to frontend
+
+Output:
+```json
+{
+  "success": true,
+  "order_id": "order_xxx",
+  "amount": 9900,
+  "currency": "INR",
+  "payment_id": "uuid"
+}
+```
+
+**2. verify-razorpay-payment**
+
+Endpoint: POST /verify-razorpay-payment
+
+Input:
+```json
+{
+  "razorpay_payment_id": "pay_xxx",
+  "razorpay_order_id": "order_xxx",
+  "razorpay_signature": "xxx",
+  "payment_id": "uuid"
+}
+```
+
+Logic:
+1. Retrieve payment record from database
+2. Generate expected signature: HMAC-SHA256(order_id + "|" + payment_id, secret)
+3. Compare with received signature
+4. If valid:
+   - Update payment status to "success"
+   - For report99: Create report_unlock entry
+   - For unlimited999: Create user_subscription entry
+5. If invalid: Update status to "failed"
+
+Output:
+```json
+{
+  "success": true,
+  "unlocked": true,
+  "subscription": true | false
+}
+```
 
 ---
 
-## File Changes Summary
+## Frontend Components
 
-### New Files to Create:
-1. `src/components/PremiumBackground.tsx` - Atmospheric background with particles
-2. `src/components/SectionDivider.tsx` - Decorative section dividers
-3. `src/components/MobileCTABar.tsx` - Sticky mobile bottom bar
-4. `src/components/DestinyRevealLoader.tsx` - Premium loading animation
+**1. PaymentModal Component**
 
-### Files to Update:
-1. `src/index.css` - New CSS classes, animations, premium utilities
-2. `tailwind.config.ts` - Extended keyframes, colors, shadows
-3. `src/pages/Index.tsx` - Wrap with PremiumBackground, add dividers
-4. `src/pages/UploadPalm.tsx` - Premium background, enhanced cards
-5. `src/pages/Report.tsx` - Destiny reveal, progress indicator, premium layout
-6. `src/components/home/HeroSection.tsx` - Enhanced palm hologram
-7. `src/components/home/HowItWorks.tsx` - Premium cards, Sanskrit accent
-8. `src/components/home/FeaturesSection.tsx` - Premium styling
-9. `src/components/home/PricingSection.tsx` - Enhanced card hover
-10. `src/components/home/Testimonials.tsx` - Glassmorphism upgrade
-11. `src/components/home/SampleReportTeaser.tsx` - Premium blur effect
-12. `src/components/Navbar.tsx` - Enhanced glass effect
-13. `src/components/Footer.tsx` - Gradient refinement
-14. `src/components/ui/button.tsx` - Premium button variants
-15. `src/components/report/ReportHeader.tsx` - Premium glass card
-16. `src/components/report/MajorLinesSection.tsx` - Card hover effects
-17. `src/components/report/MountsSection.tsx` - Interactive expansion
-18. `src/components/report/ActionButtons.tsx` - Sparkle effect
-19. `src/App.tsx` - Page transitions with AnimatePresence
+A new premium modal for payment selection:
+
+- Title: "Unlock Your Complete Destiny Report"
+- Two plan options displayed as radio cards:
+  - Rs 99 Detailed Report (highlights single unlock)
+  - Rs 999 Unlimited Plan (shows "Best Value" badge)
+- Trust signals: "UPI / Cards / Wallets", "Secure Payment", "Instant Unlock"
+- Primary CTA: "Pay Securely with Razorpay"
+- Legal disclaimer at bottom
+- Premium animations: fade-in, scale effects, gold accents
+
+**2. LockedSection Wrapper Component**
+
+A reusable component to wrap sections that should be locked:
+
+```text
+Props:
+- isUnlocked: boolean
+- sectionName: string
+- children: React content
+- onUnlockClick: function
+```
+
+When locked, displays:
+- Blurred overlay (backdrop-blur-md)
+- Lock icon centered
+- "Unlock for Rs 99" button
+- Teaser text visible but blurred
+
+**3. UnlockSuccessOverlay Component**
+
+Celebration screen after successful payment:
+
+- Full-screen overlay with gold sparkle animation
+- Mandala expanding animation
+- "Your Destiny Report is Now Unlocked!" message
+- Action buttons: Download PDF, Share, New Reading
+- Auto-dismisses after 3 seconds or on click
+
+**4. useReportUnlock Hook**
+
+Custom hook to manage unlock state:
+
+```text
+const { 
+  isUnlocked,
+  hasSubscription,
+  isLoading,
+  checkUnlockStatus,
+  initiatePayment
+} = useReportUnlock(reportId, userEmail)
+```
+
+Logic:
+1. On mount, check if user has active subscription
+2. If not, check if specific report is unlocked
+3. Cache result in state
+4. Provide method to trigger payment flow
+
+---
+
+## Report Page Modifications
+
+The Report.tsx page will be restructured with tiered content:
+
+**Free Preview (Always Visible):**
+- Report Header with palm summary
+- Life Line card only (from Major Lines)
+- First personality trait only
+- First remedy preview only
+- All other sections show LockedSection wrapper
+
+**Premium Content (Unlocked after payment):**
+- All 5 Major Lines with full details
+- All Mounts analysis
+- All 5 Personality Traits
+- Career and Wealth section
+- Love and Relationships section
+- Life Phases timeline
+- All Spiritual Remedies
+- Download PDF button enabled
+- Premium Insights revealed (marriage timing, career breakthrough, gemstone)
+
+**Paywall Section Changes:**
+- Move PremiumPaywall component higher in the page
+- Show after free preview sections
+- Display both Rs 99 and Rs 999 options
+- Include comparison of what each tier unlocks
+
+---
+
+## Payment Flow Sequence
+
+1. User views report page with free preview
+2. User clicks "Unlock Full Report Rs 99" or "Get Unlimited Rs 999"
+3. PaymentModal opens with plan selection
+4. User confirms plan and clicks "Pay with Razorpay"
+5. Frontend calls create-razorpay-order edge function
+6. Edge function creates Razorpay order and returns order_id
+7. Frontend opens Razorpay Checkout with order details
+8. User completes payment in Razorpay modal
+9. Razorpay returns payment response to frontend
+10. Frontend calls verify-razorpay-payment edge function
+11. Edge function verifies signature and updates database
+12. If successful, UnlockSuccessOverlay displays
+13. Report page refreshes to show unlocked content
+
+---
+
+## Files to Create
+
+1. `supabase/functions/create-razorpay-order/index.ts` - Order creation logic
+2. `supabase/functions/verify-razorpay-payment/index.ts` - Payment verification
+3. `src/components/payment/PaymentModal.tsx` - Payment selection modal
+4. `src/components/payment/LockedSection.tsx` - Blur wrapper for locked content
+5. `src/components/payment/UnlockSuccessOverlay.tsx` - Celebration screen
+6. `src/hooks/useReportUnlock.ts` - Unlock state management hook
+7. `src/lib/razorpay.ts` - Razorpay SDK helper functions
+
+## Files to Modify
+
+1. `index.html` - Add Razorpay Checkout SDK script
+2. `supabase/config.toml` - Register new edge functions
+3. `src/pages/Report.tsx` - Integrate unlock logic and locked sections
+4. `src/components/report/PremiumPaywall.tsx` - Update with payment modal trigger
+5. `src/components/report/MajorLinesSection.tsx` - Show only Life Line when locked
+6. `src/components/report/PersonalityTraits.tsx` - Show only first trait when locked
+7. `src/components/report/SpiritualRemediesSection.tsx` - Show preview when locked
+8. `src/components/report/ActionButtons.tsx` - Disable PDF download when locked
+9. `src/components/home/PricingSection.tsx` - Update prices to Rs 99/Rs 999
+
+---
+
+## Required Secrets
+
+A new Razorpay secret needs to be configured:
+
+- **RAZORPAY_KEY_ID** - Public key (safe to expose to frontend via edge function response)
+- **RAZORPAY_KEY_SECRET** - Private key (backend only, used for order creation and signature verification)
+
+Both will be added as Supabase secrets and accessed only in edge functions.
+
+---
+
+## Security Considerations
+
+1. **No direct frontend unlocks** - All unlock logic happens after backend verification
+2. **Signature verification** - Uses HMAC-SHA256 to verify payment authenticity
+3. **Database-backed state** - Unlock status is always checked against database
+4. **RLS policies** - Restrict access to payment and unlock tables
+5. **Email-based identification** - Users identified by email (simple MVP approach)
 
 ---
 
 ## Implementation Order
 
-1. **Foundation** - Update CSS/Tailwind with new utilities and animations
-2. **Components** - Create PremiumBackground, SectionDivider, MobileCTABar
-3. **Homepage** - Apply to all homepage sections with dividers
-4. **Upload Page** - Premium background and enhanced upload area
-5. **Report Page** - Full premium overhaul with progress and reveal
-6. **Mobile** - Sticky CTA and responsive refinements
-7. **Polish** - Add all hover effects, transitions, and brand moments
+1. **Secrets Setup** - Add Razorpay API keys
+2. **Database Migration** - Create payments, report_unlocks, user_subscriptions tables
+3. **Edge Functions** - Implement create-order and verify-payment
+4. **Frontend Hook** - Build useReportUnlock hook
+5. **UI Components** - Create PaymentModal, LockedSection, UnlockSuccessOverlay
+6. **Report Integration** - Wrap sections with LockedSection
+7. **Testing** - End-to-end payment flow verification
 
 ---
 
 ## Technical Notes
 
-- All animations use Framer Motion for consistency
-- CSS custom properties enable easy theming
-- Performance: Use `will-change` sparingly, prefer `transform` and `opacity`
-- Particles use `pointer-events: none` to avoid interaction blocking
-- Lazy load heavy decorative elements
-- Test on mobile devices for smooth 60fps animations
+- Razorpay Checkout SDK loaded via CDN in index.html
+- Uses Razorpay test mode keys for development
+- Amount stored in paise (Rs 99 = 9900 paise)
+- User email serves as identifier (can upgrade to auth later)
+- Session storage caches unlock status for better UX
+- Edge functions use verify_jwt = false (public endpoints with email-based auth)
 
