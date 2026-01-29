@@ -3,6 +3,7 @@ import { Lock, Sparkles, Eye } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import mysticalPalm from '@/assets/mystical-palm.png';
 
 const sampleInsights = [
   { title: 'Life Line Analysis', preview: 'Strong vitality indicated, with a notable branch around age 35...' },
@@ -41,7 +42,7 @@ export function SampleReportTeaser() {
             whileHover={{ y: -4 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Header */}
+            {/* Header with palm image */}
             <div className="bg-gradient-indigo p-8 text-center relative overflow-hidden">
               {/* Animated pattern */}
               <motion.div
@@ -55,13 +56,17 @@ export function SampleReportTeaser() {
               />
               
               <motion.div 
-                className="text-7xl mb-3 relative z-10"
+                className="mb-3 relative z-10 flex justify-center"
                 animate={{ 
                   filter: ['drop-shadow(0 0 20px rgba(255,193,7,0.4))', 'drop-shadow(0 0 40px rgba(255,193,7,0.7))', 'drop-shadow(0 0 20px rgba(255,193,7,0.4))']
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                🖐️
+                <img 
+                  src={mysticalPalm} 
+                  alt="Palm Reading" 
+                  className="w-24 h-24 object-contain rounded-full"
+                />
               </motion.div>
               <h3 className="text-2xl font-serif font-bold text-primary-foreground relative z-10">
                 Your Personal Palm Reading

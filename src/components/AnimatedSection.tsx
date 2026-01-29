@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 interface AnimatedSectionProps {
   children: ReactNode;
@@ -16,17 +16,18 @@ const directionVariants = {
   right: { x: -40, y: 0 },
 };
 
-export function AnimatedSection({ 
+export const AnimatedSection = forwardRef<HTMLDivElement, AnimatedSectionProps>(({ 
   children, 
   className = '', 
   delay = 0,
   direction = 'up',
   id
-}: AnimatedSectionProps) {
+}, ref) => {
   const initial = directionVariants[direction];
 
   return (
     <motion.div
+      ref={ref}
       id={id}
       initial={{ opacity: 0, ...initial }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -41,4 +42,6 @@ export function AnimatedSection({
       {children}
     </motion.div>
   );
-}
+});
+
+AnimatedSection.displayName = 'AnimatedSection';

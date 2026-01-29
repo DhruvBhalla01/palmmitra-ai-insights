@@ -4,41 +4,47 @@ import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 
+import avatarPriya from '@/assets/avatar-priya.jpg';
+import avatarRohit from '@/assets/avatar-rohit.jpg';
+import avatarAnanya from '@/assets/avatar-ananya.jpg';
+import avatarVikram from '@/assets/avatar-vikram.jpg';
+import avatarMeera from '@/assets/avatar-meera.jpg';
+
 const testimonials = [
   {
     name: 'Priya Sharma',
     location: 'Delhi',
     rating: 5,
     text: 'It felt extremely accurate! The career prediction matched what I was experiencing. The AI picked up details that amazed me.',
-    avatar: '👩',
+    avatar: avatarPriya,
   },
   {
     name: 'Rohit Patel',
     location: 'Bangalore',
     rating: 5,
     text: 'Career clarity instantly. I was confused about my next move, and PalmMitra gave me the confidence to pursue my startup idea.',
-    avatar: '👨',
+    avatar: avatarRohit,
   },
   {
     name: 'Ananya Reddy',
     location: 'Mumbai',
     rating: 5,
     text: 'Premium UI and trustworthy. I was skeptical at first, but the detailed analysis won me over. Highly recommend!',
-    avatar: '👩',
+    avatar: avatarAnanya,
   },
   {
     name: 'Vikram Singh',
     location: 'Jaipur',
     rating: 5,
     text: 'The spiritual remedies section was incredibly helpful. I feel more aligned with my life purpose now.',
-    avatar: '👨',
+    avatar: avatarVikram,
   },
   {
     name: 'Meera Iyer',
     location: 'Chennai',
     rating: 5,
     text: 'Accurate marriage predictions! My reading predicted a significant relationship this year, and it happened!',
-    avatar: '👩',
+    avatar: avatarMeera,
   },
 ];
 
@@ -116,14 +122,20 @@ export function Testimonials() {
                 {/* Background quote icon */}
                 <Quote className="absolute top-6 left-6 w-16 h-16 text-accent/10" />
                 
-                {/* Avatar with glow */}
+                {/* Avatar with real photo */}
                 <motion.div 
-                  className="text-7xl mb-6 relative inline-block"
+                  className="relative inline-block mb-6"
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  {testimonials[currentIndex].avatar}
-                  <div className="absolute inset-0 blur-2xl bg-accent/20 rounded-full" />
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-4 border-accent/30 shadow-gold relative">
+                    <img 
+                      src={testimonials[currentIndex].avatar} 
+                      alt={testimonials[currentIndex].name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute inset-0 rounded-full blur-xl bg-accent/20 -z-10" />
                 </motion.div>
 
                 {/* Stars */}

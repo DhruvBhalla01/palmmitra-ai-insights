@@ -2,13 +2,29 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import heroVideo from '@/assets/hero-video.mp4';
+import mysticalPalm from '@/assets/mystical-palm.png';
 
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px]" />
+      </div>
+
       {/* Hologram glow behind palm */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/10 blur-[100px] animate-glow-pulse pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/10 blur-[100px] animate-glow-pulse pointer-events-none z-[1]" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -89,7 +105,7 @@ export function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right Content - Premium Holographic Palm */}
+          {/* Right Content - Mystical Palm Image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -121,62 +137,26 @@ export function HeroSection() {
                   ))}
                 </svg>
               </motion.div>
-              
-              {/* Middle ring */}
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-8"
-              >
-                <svg className="w-full h-full" viewBox="0 0 200 200">
-                  <circle cx="100" cy="100" r="90" fill="none" stroke="hsl(var(--accent) / 0.15)" strokeWidth="1" />
-                </svg>
-              </motion.div>
 
-              {/* Inner decorative ring */}
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-16"
-              >
-                <svg className="w-full h-full" viewBox="0 0 200 200">
-                  <circle cx="100" cy="100" r="85" fill="none" stroke="hsl(var(--primary) / 0.1)" strokeWidth="0.5" strokeDasharray="2 6" />
-                </svg>
-              </motion.div>
-
-              {/* Palm visual with hologram effect */}
-              <div className="absolute inset-0 flex items-center justify-center hologram">
-                <motion.div
+              {/* Mystical Palm Image */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.img
+                  src={mysticalPalm}
+                  alt="Mystical Palm Reading"
+                  className="w-64 h-64 md:w-80 md:h-80 object-contain rounded-full"
                   animate={{ 
                     y: [0, -15, 0],
-                    rotateY: [0, 5, 0, -5, 0],
-                    rotateX: [0, 3, 0, -3, 0],
+                    scale: [1, 1.02, 1],
                   }}
                   transition={{ 
-                    duration: 8, 
+                    duration: 6, 
                     repeat: Infinity, 
                     ease: 'easeInOut' 
                   }}
-                  className="text-[140px] md:text-[200px] select-none relative"
                   style={{
-                    filter: 'drop-shadow(0 0 30px hsl(42 87% 55% / 0.5)) drop-shadow(0 0 60px hsl(42 87% 55% / 0.3))'
+                    filter: 'drop-shadow(0 0 30px hsl(42 87% 55% / 0.4))'
                   }}
-                >
-                  🖐️
-                  
-                  {/* Holographic scan line */}
-                  <motion.div
-                    className="absolute inset-0 overflow-hidden pointer-events-none"
-                    animate={{ opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <motion.div
-                      className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent/50 to-transparent"
-                      animate={{ top: ['0%', '100%', '0%'] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                    />
-                  </motion.div>
-                </motion.div>
+                />
               </div>
 
               {/* Floating symbols with premium styling */}
