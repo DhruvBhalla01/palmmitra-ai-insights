@@ -118,15 +118,15 @@ export default function Report() {
 
       if (reportId) {
         try {
-          const { data: report, error: dbError } = await supabase
-            .from('palm_reports')
-            .select('*')
-            .eq('id', reportId)
-            .maybeSingle();
+          // Use secure edge function to fetch report
+          const { data, error: fetchError } = await supabase.functions.invoke('get-report', {
+            body: { report_id: reportId },
+          });
 
-          if (dbError) throw dbError;
+          if (fetchError) throw fetchError;
 
-          if (report) {
+          if (data?.success && data?.report) {
+            const report = data.report;
             setUserData({
               name: report.user_name,
               age: report.user_age || '',
