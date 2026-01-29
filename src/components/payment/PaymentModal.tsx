@@ -43,12 +43,7 @@ export function PaymentModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="
-    fixed left-1/2 top-1/2 
-    -translate-x-1/2 -translate-y-1/2
-    w-[92%] max-w-lg
-    z-50 overflow-y-auto max-h-[90vh]
-  "
+            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-lg md:w-full z-50 overflow-y-auto max-h-[90vh]"
           >
             <div className="glass-premium rounded-3xl p-6 md:p-8 border border-accent/30 shadow-gold-lg relative">
               {/* Close button */}
