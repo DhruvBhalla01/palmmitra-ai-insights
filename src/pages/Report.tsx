@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { PremiumBackground } from '@/components/PremiumBackground';
+import { DestinyRevealLoader } from '@/components/DestinyRevealLoader';
+import { ReportProgressIndicator } from '@/components/report/ReportProgressIndicator';
 
 // Report components
 import { ReportHeader } from '@/components/report/ReportHeader';
@@ -34,19 +37,32 @@ interface SessionData extends StoredData {
   generatedAt?: string;
 }
 
+const reportSections = [
+  { id: 'summary', label: 'Summary' },
+  { id: 'lines', label: 'Major Lines' },
+  { id: 'mounts', label: 'Mounts' },
+  { id: 'personality', label: 'Personality' },
+  { id: 'career', label: 'Career' },
+  { id: 'love', label: 'Love' },
+  { id: 'phases', label: 'Life Phase' },
+  { id: 'remedies', label: 'Remedies' },
+  { id: 'blessing', label: 'Blessing' },
+];
+
 export default function Report() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { id: reportId } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
+  const [showReveal, setShowReveal] = useState(true);
   const [reading, setReading] = useState<PalmReading | null>(null);
   const [userData, setUserData] = useState<SessionData | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
   const [error, setError] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState('summary');
 
   useEffect(() => {
     const loadReport = async () => {
-      // First, try to load from sessionStorage (just generated)
       const storedData = sessionStorage.getItem('palmMitraData');
       
       if (storedData) {
@@ -54,7 +70,6 @@ export default function Report() {
           const data: SessionData = JSON.parse(storedData);
           setUserData(data);
           
-          // If reading is already in session (from just generating)
           if (data.reading) {
             setReading(data.reading);
             setGeneratedAt(data.generatedAt || new Date().toISOString());
@@ -66,7 +81,6 @@ export default function Report() {
         }
       }
 
-      // If we have a report ID, try to load from database
       if (reportId) {
         try {
           const { data: report, error: dbError } = await supabase
@@ -75,9 +89,7 @@ export default function Report() {
             .eq('id', reportId)
             .single();
 
-          if (dbError) {
-            throw dbError;
-          }
+          if (dbError) throw dbError;
 
           if (report) {
             setUserData({
@@ -98,7 +110,6 @@ export default function Report() {
         }
       }
 
-      // No data available - redirect to upload
       if (!storedData && !reportId) {
         navigate('/upload');
         return;
@@ -111,38 +122,36 @@ export default function Report() {
     loadReport();
   }, [navigate, reportId, toast]);
 
-  // Loading State
+  // Handle scroll to update active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = reportSections.map(s => ({
+        id: s.id,
+        element: document.getElementById(`section-${s.id}`)
+      }));
+      
+      for (const section of sections) {
+        if (section.element) {
+          const rect = section.element.getBoundingClientRect();
+          if (rect.top <= 200 && rect.bottom >= 200) {
+            setActiveSection(section.id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Loading State with Destiny Reveal
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background relative">
+        <PremiumBackground showMandala intensity="full" />
         <Navbar />
-        <main className="pt-24 pb-20 flex items-center justify-center min-h-[80vh]">
-          <div className="text-center">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              className="w-32 h-32 mx-auto mb-8 relative"
-            >
-              <div className="absolute inset-0 rounded-full border-4 border-accent/30" />
-              <div className="absolute inset-2 rounded-full border-2 border-accent/50" />
-              <div className="absolute inset-4 rounded-full border border-accent" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-5xl">🖐️</span>
-              </div>
-            </motion.div>
-            <motion.h2
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-2xl font-serif font-bold text-foreground mb-2"
-            >
-              Loading Your Report...
-            </motion.h2>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Please wait
-            </div>
-          </div>
-        </main>
+        <DestinyRevealLoader isLoading={true} />
         <Footer />
       </div>
     );
@@ -151,12 +160,17 @@ export default function Report() {
   // Error State
   if (error || !reading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background relative">
+        <PremiumBackground showMandala={false} intensity="light" />
         <Navbar />
-        <main className="pt-24 pb-20 flex items-center justify-center min-h-[80vh]">
-          <div className="text-center max-w-md mx-auto px-4">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center">
-              <span className="text-4xl">😔</span>
+        <main className="pt-24 pb-20 flex items-center justify-center min-h-[80vh] relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center max-w-md mx-auto px-4"
+          >
+            <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-destructive/10 flex items-center justify-center">
+              <span className="text-5xl">😔</span>
             </div>
             <h2 className="text-2xl font-serif font-bold text-foreground mb-4">
               Unable to Load Report
@@ -171,7 +185,7 @@ export default function Report() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               New Reading
             </Button>
-          </div>
+          </motion.div>
         </main>
         <Footer />
       </div>
@@ -180,67 +194,107 @@ export default function Report() {
 
   // Success State - Premium Report
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <PremiumBackground showMandala intensity="light" />
       <Navbar />
       
-      <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-5xl">
-          
-          {/* 1. Report Header */}
-          <ReportHeader
-            name={userData?.name || 'User'}
-            readingType={userData?.readingType || 'full'}
-            generatedAt={generatedAt}
-            confidenceScore={reading.confidenceScore}
-            headlineSummary={reading.headlineSummary}
-            palmImage={userData?.imageUrl || userData?.palmImage}
+      {/* Destiny Reveal Animation on first load */}
+      <AnimatePresence>
+        {showReveal && (
+          <DestinyRevealLoader 
+            isLoading={false} 
+            onComplete={() => setShowReveal(false)} 
           />
+        )}
+      </AnimatePresence>
+      
+      <main className="pt-24 pb-20 relative z-10">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex gap-8">
+            {/* Progress Indicator - Desktop */}
+            <div className="hidden lg:block w-20 flex-shrink-0">
+              <ReportProgressIndicator 
+                sections={reportSections} 
+                activeSection={activeSection} 
+              />
+            </div>
 
-          {/* 2. Major Lines Analysis */}
-          <MajorLinesSection lines={reading.majorLines} />
+            {/* Main Report Content */}
+            <div className="flex-1 max-w-4xl">
+              {/* 1. Report Header */}
+              <div id="section-summary">
+                <ReportHeader
+                  name={userData?.name || 'User'}
+                  readingType={userData?.readingType || 'full'}
+                  generatedAt={generatedAt}
+                  confidenceScore={reading.confidenceScore}
+                  headlineSummary={reading.headlineSummary}
+                  palmImage={userData?.imageUrl || userData?.palmImage}
+                />
+              </div>
 
-          {/* 3. Mounts Analysis */}
-          <MountsSection mounts={reading.mounts} />
+              {/* 2. Major Lines Analysis */}
+              <div id="section-lines">
+                <MajorLinesSection lines={reading.majorLines} />
+              </div>
 
-          {/* 4. Personality Traits */}
-          <PersonalityTraits traits={reading.personalityTraits} />
+              {/* 3. Mounts Analysis */}
+              <div id="section-mounts">
+                <MountsSection mounts={reading.mounts} />
+              </div>
 
-          {/* 5. Career & Wealth */}
-          <CareerWealth
-            bestFields={reading.careerWealth.bestFields}
-            turningPointAge={reading.careerWealth.turningPointAge}
-            wealthStyle={reading.careerWealth.wealthStyle}
-            peakPeriods={reading.careerWealth.peakPeriods}
-          />
+              {/* 4. Personality Traits */}
+              <div id="section-personality">
+                <PersonalityTraits traits={reading.personalityTraits} />
+              </div>
 
-          {/* 6. Love & Relationships */}
-          <LoveRelationships
-            emotionalStyle={reading.loveRelationships.emotionalStyle}
-            commitmentTendency={reading.loveRelationships.commitmentTendency}
-            relationshipAdvice={reading.loveRelationships.relationshipAdvice}
-          />
+              {/* 5. Career & Wealth */}
+              <div id="section-career">
+                <CareerWealth
+                  bestFields={reading.careerWealth.bestFields}
+                  turningPointAge={reading.careerWealth.turningPointAge}
+                  wealthStyle={reading.careerWealth.wealthStyle}
+                  peakPeriods={reading.careerWealth.peakPeriods}
+                />
+              </div>
 
-          {/* 7. Life Phases */}
-          <LifePhaseSection phases={reading.lifePhases} />
+              {/* 6. Love & Relationships */}
+              <div id="section-love">
+                <LoveRelationships
+                  emotionalStyle={reading.loveRelationships.emotionalStyle}
+                  commitmentTendency={reading.loveRelationships.commitmentTendency}
+                  relationshipAdvice={reading.loveRelationships.relationshipAdvice}
+                />
+              </div>
 
-          {/* 8. Spiritual Remedies */}
-          <SpiritualRemediesSection remedies={reading.spiritualRemedies} />
+              {/* 7. Life Phases */}
+              <div id="section-phases">
+                <LifePhaseSection phases={reading.lifePhases} />
+              </div>
 
-          {/* 9. Final Blessing */}
-          <FinalBlessing 
-            message={reading.finalBlessing} 
-            name={userData?.name || 'User'} 
-          />
+              {/* 8. Spiritual Remedies */}
+              <div id="section-remedies">
+                <SpiritualRemediesSection remedies={reading.spiritualRemedies} />
+              </div>
 
-          {/* 10. Action Buttons */}
-          <ActionButtons />
+              {/* 9. Final Blessing */}
+              <div id="section-blessing">
+                <FinalBlessing 
+                  message={reading.finalBlessing} 
+                  name={userData?.name || 'User'} 
+                />
+              </div>
 
-          {/* 11. Premium Paywall */}
-          <PremiumPaywall premiumInsights={reading.premiumInsights} />
+              {/* 10. Action Buttons */}
+              <ActionButtons />
 
-          {/* 12. Legal Disclaimer */}
-          <LegalDisclaimer />
+              {/* 11. Premium Paywall */}
+              <PremiumPaywall premiumInsights={reading.premiumInsights} />
 
+              {/* 12. Legal Disclaimer */}
+              <LegalDisclaimer />
+            </div>
+          </div>
         </div>
       </main>
 

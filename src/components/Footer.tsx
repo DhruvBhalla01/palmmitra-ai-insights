@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const footerLinks = {
   company: [
     { name: 'About PalmMitra', path: '/about' },
     { name: 'How It Works', path: '/#how-it-works' },
-    { name: 'Pricing', path: '/pricing' },
+    { name: 'Pricing', path: '/#pricing' },
   ],
   legal: [
     { name: 'Privacy Policy', path: '/privacy' },
@@ -13,41 +14,51 @@ const footerLinks = {
   ],
   support: [
     { name: 'Contact Us', path: '/contact' },
-    { name: 'FAQ', path: '/pricing#faq' },
+    { name: 'FAQ', path: '/#pricing' },
     { name: 'Help Center', path: '/help' },
   ],
 };
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground py-16">
-      <div className="container mx-auto px-4">
+    <footer className="relative bg-gradient-mystic text-primary-foreground py-20 overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+      <div className="absolute top-0 left-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-accent/5 rounded-full blur-3xl" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-gold flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-2.5 mb-6">
+              <motion.div 
+                className="w-11 h-11 rounded-2xl bg-gradient-gold flex items-center justify-center shadow-gold"
+                whileHover={{ scale: 1.05 }}
+              >
                 <span className="text-xl">🖐️</span>
-              </div>
+              </motion.div>
               <span className="text-2xl font-serif font-bold">
                 Palm<span className="text-accent">Mitra</span>
               </span>
             </Link>
-            <p className="text-primary-foreground/70 text-sm leading-relaxed">
+            <p className="text-primary-foreground/70 text-sm leading-relaxed mb-4">
               AI Powered Palm Reading, Inspired by Ancient India. Discover your destiny through the wisdom of your palms.
             </p>
+            <p className="sanskrit-accent text-xs">ॐ Bhavishya Darshan</p>
           </div>
 
           {/* Company Links */}
           <div>
-            <h4 className="font-serif font-bold mb-4">Company</h4>
-            <ul className="space-y-2">
+            <h4 className="font-serif font-bold mb-5 text-lg">Company</h4>
+            <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm"
+                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
+                    <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
                   </Link>
                 </li>
@@ -57,14 +68,15 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className="font-serif font-bold mb-4">Legal</h4>
-            <ul className="space-y-2">
+            <h4 className="font-serif font-bold mb-5 text-lg">Legal</h4>
+            <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm"
+                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
+                    <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
                   </Link>
                 </li>
@@ -74,14 +86,15 @@ export function Footer() {
 
           {/* Support Links */}
           <div>
-            <h4 className="font-serif font-bold mb-4">Support</h4>
-            <ul className="space-y-2">
+            <h4 className="font-serif font-bold mb-5 text-lg">Support</h4>
+            <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm"
+                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
+                    <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
                   </Link>
                 </li>
@@ -92,11 +105,13 @@ export function Footer() {
 
         {/* Disclaimer */}
         <div className="border-t border-primary-foreground/10 pt-8">
-          <p className="text-primary-foreground/50 text-xs text-center max-w-3xl mx-auto leading-relaxed">
-            <strong>Disclaimer:</strong> PalmMitra provides spiritual guidance and AI-based insights for entertainment and self-reflection purposes. 
-            Results may vary and should not be considered as medical, legal, financial, or professional advice. 
-            By using our services, you acknowledge that palmistry is a traditional practice and outcomes are not guaranteed.
-          </p>
+          <div className="glass-premium rounded-2xl p-6 max-w-4xl mx-auto">
+            <p className="text-primary-foreground/60 text-xs text-center leading-relaxed">
+              <strong className="text-primary-foreground/80">Disclaimer:</strong> PalmMitra provides spiritual guidance and AI-based insights for entertainment and self-reflection purposes. 
+              Results may vary and should not be considered as medical, legal, financial, or professional advice. 
+              By using our services, you acknowledge that palmistry is a traditional practice and outcomes are not guaranteed.
+            </p>
+          </div>
         </div>
 
         {/* Copyright */}

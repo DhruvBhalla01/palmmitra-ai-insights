@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 
@@ -63,15 +63,16 @@ export function Testimonials() {
   };
 
   const variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({ x: dir < 0 ? 300 : -300, opacity: 0 }),
+    enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0, scale: 0.95 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (dir: number) => ({ x: dir < 0 ? 300 : -300, opacity: 0, scale: 0.95 }),
   };
 
   return (
-    <section className="py-20 md:py-32 bg-gradient-to-b from-secondary/30 to-background">
+    <section className="py-24 md:py-32 relative">
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-12">
+          <p className="sanskrit-accent mb-3">ॐ Jana Vani</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
             What Our <span className="text-gradient-gold">Users</span> Say
           </h2>
@@ -85,7 +86,7 @@ export function Testimonials() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 z-10 rounded-full border-border hover:bg-accent/10 hover:border-accent"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 z-10 rounded-full glass-premium border-accent/20 hover:border-accent/50 hover:bg-accent/10 w-12 h-12"
             onClick={() => navigate(-1)}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -93,14 +94,14 @@ export function Testimonials() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 z-10 rounded-full border-border hover:bg-accent/10 hover:border-accent"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 z-10 rounded-full glass-premium border-accent/20 hover:border-accent/50 hover:bg-accent/10 w-12 h-12"
             onClick={() => navigate(1)}
           >
             <ChevronRight className="w-5 h-5" />
           </Button>
 
           {/* Testimonial card */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden px-4">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={currentIndex}
@@ -110,29 +111,47 @@ export function Testimonials() {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.4, ease: 'easeInOut' }}
-                className="bg-card rounded-3xl p-8 md:p-12 border border-border shadow-soft text-center"
+                className="glass-premium rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
               >
-                {/* Avatar */}
-                <div className="text-6xl mb-6">{testimonials[currentIndex].avatar}</div>
+                {/* Background quote icon */}
+                <Quote className="absolute top-6 left-6 w-16 h-16 text-accent/10" />
+                
+                {/* Avatar with glow */}
+                <motion.div 
+                  className="text-7xl mb-6 relative inline-block"
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  {testimonials[currentIndex].avatar}
+                  <div className="absolute inset-0 blur-2xl bg-accent/20 rounded-full" />
+                </motion.div>
 
                 {/* Stars */}
-                <div className="flex justify-center gap-1 mb-6">
+                <div className="flex justify-center gap-1.5 mb-6">
                   {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                    <motion.div
+                      key={i}
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: i * 0.1, duration: 0.3 }}
+                    >
+                      <Star className="w-6 h-6 fill-accent text-accent" />
+                    </motion.div>
                   ))}
                 </div>
 
                 {/* Quote */}
-                <p className="text-lg md:text-xl text-foreground mb-6 font-medium leading-relaxed">
+                <p className="text-lg md:text-xl text-foreground mb-8 font-medium leading-relaxed max-w-xl mx-auto">
                   "{testimonials[currentIndex].text}"
                 </p>
 
                 {/* Name & Location */}
                 <div>
-                  <p className="font-serif font-bold text-foreground">
+                  <p className="font-serif font-bold text-foreground text-lg">
                     {testimonials[currentIndex].name}
                   </p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                     {testimonials[currentIndex].location}
                   </p>
                 </div>
@@ -141,7 +160,7 @@ export function Testimonials() {
           </div>
 
           {/* Dots indicator */}
-          <div className="flex justify-center gap-2 mt-8">
+          <div className="flex justify-center gap-3 mt-8">
             {testimonials.map((_, index) => (
               <button
                 key={index}
@@ -149,10 +168,10 @@ export function Testimonials() {
                   setDirection(index > currentIndex ? 1 : -1);
                   setCurrentIndex(index);
                 }}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex 
-                    ? 'w-8 bg-accent' 
-                    : 'bg-border hover:bg-muted-foreground'
+                    ? 'w-10 bg-gradient-gold shadow-gold' 
+                    : 'w-2 bg-border hover:bg-muted-foreground'
                 }`}
               />
             ))}

@@ -14,19 +14,20 @@ export function FinalBlessing({ message, name }: FinalBlessingProps) {
       transition={{ duration: 0.6 }}
       className="mb-12"
     >
-      <div className="relative rounded-3xl overflow-hidden">
+      <div className="relative rounded-3xl overflow-hidden glass-premium border border-accent/30">
         {/* Premium gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-primary/10 to-accent/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10" />
+        <div className="absolute inset-0 shimmer pointer-events-none" />
         
         {/* Content */}
-        <div className="relative p-8 md:p-12 text-center">
+        <div className="relative p-10 md:p-14 text-center">
           <motion.span 
             initial={{ scale: 0.5, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2, duration: 0.4 }}
-            className="text-5xl md:text-6xl block mb-6"
+            className="text-6xl md:text-7xl block mb-6"
+            style={{ filter: 'drop-shadow(0 0 20px hsl(42 87% 55% / 0.5))' }}
           >
             🙏
           </motion.span>
@@ -46,9 +47,12 @@ export function FinalBlessing({ message, name }: FinalBlessingProps) {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.6, duration: 0.4 }}
-            className="mt-6 text-accent font-medium"
+            className="mt-8"
           >
-            — Your PalmMitra Reading for {name}
+            <p className="text-gradient-gold font-semibold text-lg">
+              — Your PalmMitra Reading for {name}
+            </p>
+            <p className="sanskrit-accent mt-2">ॐ शुभ आशीर्वाद</p>
           </motion.div>
         </div>
       </div>
