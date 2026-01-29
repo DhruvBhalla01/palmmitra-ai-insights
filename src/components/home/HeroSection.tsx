@@ -142,8 +142,8 @@ export function HeroSection() {
             className="relative flex items-center justify-center"
           >
             {/* Multiple glow layers */}
-            <div className="absolute w-80 h-80 md:w-[450px] md:h-[450px] rounded-full bg-accent/20 blur-3xl animate-glow-pulse" />
-            <div className="absolute w-64 h-64 md:w-96 md:h-96 rounded-full bg-accent/10 blur-2xl animate-glow-pulse-gold" />
+            <div className="absolute w-[380px] h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] rounded-full bg-accent/20 blur-3xl animate-glow-pulse" />
+            <div className="absolute w-[320px] h-[320px] md:w-[450px] md:h-[450px] lg:w-[580px] lg:h-[580px] rounded-full bg-accent/10 blur-2xl animate-glow-pulse-gold" />
 
             {/* Palm illustration container */}
             <div className="relative w-[400px] h-[400px] md:w-[550px] md:h-[550px] lg:w-[700px] lg:h-[700px]">
@@ -206,32 +206,32 @@ export function HeroSection() {
               {[
                 {
                   symbol: "✨",
-                  x: "5%",
-                  y: "20%",
+                  x: "8%",
+                  y: "15%",
                   delay: 0,
                 },
                 {
                   symbol: "🔮",
-                  x: "90%",
-                  y: "30%",
+                  x: "88%",
+                  y: "25%",
                   delay: 0.5,
                 },
                 {
                   symbol: "⭐",
-                  x: "0%",
-                  y: "70%",
+                  x: "5%",
+                  y: "75%",
                   delay: 1,
                 },
                 {
                   symbol: "🌙",
-                  x: "95%",
-                  y: "75%",
+                  x: "92%",
+                  y: "78%",
                   delay: 1.5,
                 },
                 {
                   symbol: "ॐ",
                   x: "50%",
-                  y: "5%",
+                  y: "2%",
                   delay: 0.8,
                 },
               ].map(({ symbol, x, y, delay }, i) => (
