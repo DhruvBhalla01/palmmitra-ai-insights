@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { SmartLink } from '@/components/SmartLink';
 
 const footerLinks = {
   company: [
@@ -14,7 +15,7 @@ const footerLinks = {
   ],
   support: [
     { name: 'Contact Us', path: '/contact' },
-    { name: 'FAQ', path: '/#pricing' },
+    { name: 'FAQ', path: '/help#faq' },
     { name: 'Help Center', path: '/help' },
   ],
 };
@@ -54,13 +55,13 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link
+                  <SmartLink
                     to={link.path}
                     className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
-                  </Link>
+                  </SmartLink>
                 </li>
               ))}
             </ul>
@@ -72,13 +73,13 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link
+                  <SmartLink
                     to={link.path}
                     className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
-                  </Link>
+                  </SmartLink>
                 </li>
               ))}
             </ul>
@@ -90,13 +91,13 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link
+                  <SmartLink
                     to={link.path}
                     className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
-                  </Link>
+                  </SmartLink>
                 </li>
               ))}
             </ul>

@@ -6,9 +6,13 @@ import { Footer } from "@/components/Footer";
 import { PremiumBackground } from "@/components/PremiumBackground";
 import { Button } from "@/components/ui/button";
 import { Home, Sparkles, ArrowLeft } from "lucide-react";
+import { useHashScroll } from "@/hooks/useHashScroll";
 
 const NotFound = () => {
   const location = useLocation();
+  
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);

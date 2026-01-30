@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SmartLink } from '@/components/SmartLink';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -57,14 +58,14 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link
+            <SmartLink
               key={link.name}
               to={link.path}
               className="relative text-muted-foreground hover:text-foreground transition-colors font-medium group"
             >
               {link.name}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent rounded-full group-hover:w-full transition-all duration-300" />
-            </Link>
+            </SmartLink>
           ))}
         </div>
 
@@ -128,12 +129,13 @@ export function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Link
+                  <SmartLink
                     to={link.path}
                     className="block text-foreground font-medium py-3 px-4 hover:bg-accent/10 rounded-xl transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.name}
-                  </Link>
+                  </SmartLink>
                 </motion.div>
               ))}
               <motion.div

@@ -31,7 +31,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 md:py-32 relative">
+    <section id="how-it-works" className="py-24 md:py-32 relative scroll-mt-20">
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-16">
           <p className="sanskrit-accent mb-3">ॐ Margadarshan</p>

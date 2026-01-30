@@ -11,8 +11,12 @@ import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { SectionDivider } from '@/components/SectionDivider';
 import { MobileCTABar } from '@/components/MobileCTABar';
+import { useHashScroll } from '@/hooks/useHashScroll';
 
 const Index = () => {
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
+
   return (
     <div className="min-h-screen bg-background relative">
       <PremiumBackground showMandala intensity="medium" />

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Brain, Shield, Heart, Users, Star } from 'lucide-react';
 import mysticalPalm from '@/assets/mystical-palm.png';
+import { useHashScroll } from '@/hooks/useHashScroll';
 
 const values = [
   {
@@ -34,6 +35,9 @@ const stats = [
 ];
 
 export default function About() {
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
+
   return (
     <div className="min-h-screen bg-background relative">
       <PremiumBackground showMandala intensity="light" />
@@ -67,7 +71,7 @@ export default function About() {
                     in our modern digital age.
                   </p>
                   <p className="text-muted-foreground leading-relaxed">
-                    We've combined the wisdom of <strong className="text-foreground">Hasta Samudrika Shastra</strong> 
+                    We've combined the wisdom of <strong className="text-foreground">Hasta Samudrika Shastra</strong>
                     {' '}with state-of-the-art AI to create personalized readings that offer genuine 
                     insights into your personality, potential, and path forward.
                   </p>

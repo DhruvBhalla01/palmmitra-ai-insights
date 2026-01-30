@@ -3,6 +3,7 @@ import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Shield, Eye, Lock, Trash2, Server, Mail } from 'lucide-react';
+import { useHashScroll } from '@/hooks/useHashScroll';
 
 const sections = [
   {
@@ -48,6 +49,9 @@ const sections = [
 ];
 
 export default function Privacy() {
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
+
   return (
     <div className="min-h-screen bg-background relative">
       <PremiumBackground showMandala intensity="light" />
@@ -130,35 +134,37 @@ export default function Privacy() {
             </div>
           </AnimatedSection>
 
-          {/* Disclaimer Section */}
-          <AnimatedSection delay={0.45} className="mb-8" id="disclaimer">
-            <div className="glass-premium rounded-2xl p-8 border border-accent/40 bg-accent/5">
-              <h2 className="text-xl md:text-2xl font-serif font-bold text-foreground mb-4">
-                ⚠️ Disclaimer
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  <strong className="text-foreground">For Entertainment Purposes:</strong> PalmMitra provides AI-based 
-                  palm reading insights for entertainment and self-reflection purposes only. Our readings should not 
-                  be considered as professional medical, legal, financial, or psychological advice.
-                </p>
-                <p>
-                  <strong className="text-foreground">No Guarantees:</strong> Palmistry is a traditional practice, 
-                  and while our AI strives for accuracy based on historical palmistry principles, we cannot guarantee 
-                  the accuracy or reliability of any predictions or insights provided.
-                </p>
-                <p>
-                  <strong className="text-foreground">Personal Decisions:</strong> Any decisions you make based on 
-                  your palm reading are your own responsibility. We encourage you to consult qualified professionals 
-                  for important life decisions.
-                </p>
-                <p>
-                  <strong className="text-foreground">Results May Vary:</strong> Individual experiences with palmistry 
-                  vary widely, and past results are not indicative of future outcomes.
-                </p>
+          {/* Disclaimer Section - with proper scroll target ID */}
+          <div id="disclaimer" className="scroll-mt-24">
+            <AnimatedSection delay={0.45} className="mb-8">
+              <div className="glass-premium rounded-2xl p-8 border border-accent/40 bg-accent/5">
+                <h2 className="text-xl md:text-2xl font-serif font-bold text-foreground mb-4">
+                  ⚠️ Disclaimer
+                </h2>
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    <strong className="text-foreground">For Entertainment Purposes:</strong> PalmMitra provides AI-based 
+                    palm reading insights for entertainment and self-reflection purposes only. Our readings should not 
+                    be considered as professional medical, legal, financial, or psychological advice.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">No Guarantees:</strong> Palmistry is a traditional practice, 
+                    and while our AI strives for accuracy based on historical palmistry principles, we cannot guarantee 
+                    the accuracy or reliability of any predictions or insights provided.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Personal Decisions:</strong> Any decisions you make based on 
+                    your palm reading are your own responsibility. We encourage you to consult qualified professionals 
+                    for important life decisions.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Results May Vary:</strong> Individual experiences with palmistry 
+                    vary widely, and past results are not indicative of future outcomes.
+                  </p>
+                </div>
               </div>
-            </div>
-          </AnimatedSection>
+            </AnimatedSection>
+          </div>
 
           {/* Contact */}
           <AnimatedSection delay={0.5} className="mb-8">
