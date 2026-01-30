@@ -95,6 +95,7 @@ export function useReportUnlock(
   }, [checkUnlockStatus]);
 
   const initiatePayment = useCallback(async (plan: 'report99' | 'unlimited999') => {
+    // Validate email
     if (!userEmail) {
       toast({
         title: 'Email Required',
@@ -104,16 +105,24 @@ export function useReportUnlock(
       return;
     }
 
+    // For single report purchase, we need the report ID
     if (plan === 'report99' && !reportId) {
+      console.error('Payment blocked: No reportId available for report99 plan');
       toast({
         title: 'Report Not Found',
-        description: 'Unable to identify the report to unlock.',
+        description: 'Unable to identify the report to unlock. Please try refreshing the page or generating a new reading.',
         variant: 'destructive',
       });
       return;
     }
 
+    // For unlimited plan, reportId is optional but we log if missing
+    if (plan === 'unlimited999' && !reportId) {
+      console.log('Unlimited plan selected without specific reportId - this is OK');
+    }
+
     setIsProcessing(true);
+    console.log('Initiating payment:', { plan, reportId, userEmail });
 
     try {
       // Step 1: Create order via backend
