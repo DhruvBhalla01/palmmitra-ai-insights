@@ -56,7 +56,7 @@ const reportSections = [
 export default function Report() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { id: reportId } = useParams<{ id: string }>();
+  const { id: urlReportId } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
   const [showReveal, setShowReveal] = useState(true);
   const [reading, setReading] = useState<PalmReading | null>(null);
@@ -70,17 +70,20 @@ export default function Report() {
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
   const [successIsSubscription, setSuccessIsSubscription] = useState(false);
 
+  // Resolve reportId: prefer URL param, fallback to session data
+  const resolvedReportId = urlReportId || userData?.reportId;
+
   // Get user email from session data
   const userEmail = userData?.email || '';
   
-  // Use the unlock hook
+  // Use the unlock hook with resolved report ID
   const { 
     isUnlocked, 
     hasSubscription, 
     isLoading: unlockLoading,
     isProcessing,
     initiatePayment 
-  } = useReportUnlock(reportId, userEmail);
+  } = useReportUnlock(resolvedReportId, userEmail);
 
   // Listen for payment success events
   useEffect(() => {
@@ -116,11 +119,11 @@ export default function Report() {
         }
       }
 
-      if (reportId) {
+      if (urlReportId) {
         try {
           // Use secure edge function to fetch report
           const { data, error: fetchError } = await supabase.functions.invoke('get-report', {
-            body: { report_id: reportId },
+            body: { report_id: urlReportId },
           });
 
           if (fetchError) throw fetchError;
@@ -134,6 +137,7 @@ export default function Report() {
               readingType: (report.reading_type as StoredData['readingType']) || 'full',
               palmImage: report.image_url,
               imageUrl: report.image_url,
+              reportId: urlReportId, // Store reportId in userData for unlock flow
             });
             setReading(report.report_json as unknown as PalmReading);
             setGeneratedAt(report.created_at || new Date().toISOString());
@@ -145,7 +149,7 @@ export default function Report() {
         }
       }
 
-      if (!storedData && !reportId) {
+      if (!storedData && !urlReportId) {
         navigate('/upload');
         return;
       }
@@ -155,7 +159,7 @@ export default function Report() {
     };
 
     loadReport();
-  }, [navigate, reportId, toast]);
+  }, [navigate, urlReportId, toast]);
 
   // Handle scroll to update active section
   useEffect(() => {
@@ -189,10 +193,24 @@ export default function Report() {
       });
       return;
     }
+    
+    // Verify we have a report context before opening payment modal
+    if (!resolvedReportId) {
+      console.error('handleUnlockClick: No reportId available');
+      toast({
+        title: 'Report Context Missing',
+        description: 'Unable to identify your report. Please try refreshing the page.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    console.log('Opening payment modal for report:', resolvedReportId);
     setShowPaymentModal(true);
   };
 
   const handleSelectPlan = (plan: 'report99' | 'unlimited999') => {
+    console.log('Plan selected:', plan, 'for report:', resolvedReportId);
     initiatePayment(plan);
   };
 
