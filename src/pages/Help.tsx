@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { HelpCircle, Camera, CreditCard, Shield, Zap, MessageCircle } from 'lucide-react';
+import { useHashScroll } from '@/hooks/useHashScroll';
 
 const faqCategories = [
   {
@@ -92,6 +93,9 @@ const faqCategories = [
 ];
 
 export default function Help() {
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
+
   return (
     <div className="min-h-screen bg-background relative">
       <PremiumBackground showMandala intensity="light" />
@@ -112,37 +116,40 @@ export default function Help() {
             </p>
           </AnimatedSection>
 
-          {/* FAQ Categories */}
-          {faqCategories.map((category, categoryIndex) => (
-            <AnimatedSection key={category.title} delay={0.1 + categoryIndex * 0.1} className="mb-10">
-              <div className="glass-premium rounded-3xl p-6 md:p-8 border border-accent/20">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <category.icon className="w-6 h-6 text-accent" />
+          {/* FAQ Section with scroll target ID */}
+          <div id="faq" className="scroll-mt-24">
+            {/* FAQ Categories */}
+            {faqCategories.map((category, categoryIndex) => (
+              <AnimatedSection key={category.title} delay={0.1 + categoryIndex * 0.1} className="mb-10">
+                <div className="glass-premium rounded-3xl p-6 md:p-8 border border-accent/20">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <category.icon className="w-6 h-6 text-accent" />
+                    </div>
+                    <h2 className="text-xl md:text-2xl font-serif font-bold text-foreground">
+                      {category.title}
+                    </h2>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-serif font-bold text-foreground">
-                    {category.title}
-                  </h2>
+                  <Accordion type="single" collapsible className="space-y-3">
+                    {category.questions.map((faq, index) => (
+                      <AccordionItem 
+                        key={index} 
+                        value={`${category.title}-${index}`}
+                        className="border border-accent/10 rounded-xl px-4 data-[state=open]:bg-accent/5"
+                      >
+                        <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-4">
+                          {faq.q}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground pb-4 leading-relaxed">
+                          {faq.a}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
                 </div>
-                <Accordion type="single" collapsible className="space-y-3">
-                  {category.questions.map((faq, index) => (
-                    <AccordionItem 
-                      key={index} 
-                      value={`${category.title}-${index}`}
-                      className="border border-accent/10 rounded-xl px-4 data-[state=open]:bg-accent/5"
-                    >
-                      <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-4">
-                        {faq.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground pb-4 leading-relaxed">
-                        {faq.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            </AnimatedSection>
-          ))}
+              </AnimatedSection>
+            ))}
+          </div>
 
           {/* Contact CTA */}
           <AnimatedSection delay={0.5}>

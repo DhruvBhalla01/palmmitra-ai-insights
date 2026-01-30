@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, MessageCircle, Clock, Send, MapPin, Sparkles } from 'lucide-react';
 import { z } from 'zod';
+import { Link } from 'react-router-dom';
+import { useHashScroll } from '@/hooks/useHashScroll';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
@@ -41,6 +43,9 @@ const contactInfo = [
 ];
 
 export default function Contact() {
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
+
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
@@ -143,12 +148,11 @@ export default function Contact() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Don't wait! Get your AI palm reading in minutes.
                   </p>
-                  <Button 
-                    onClick={() => window.location.href = '/upload'} 
-                    className="btn-gold text-foreground w-full"
-                  >
-                    Start Now
-                  </Button>
+                  <Link to="/upload">
+                    <Button className="btn-gold text-foreground w-full">
+                      Start Now
+                    </Button>
+                  </Link>
                 </div>
               </AnimatedSection>
             </div>

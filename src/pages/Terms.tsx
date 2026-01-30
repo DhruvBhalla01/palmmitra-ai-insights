@@ -3,6 +3,7 @@ import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { FileText, Check, AlertTriangle, CreditCard, Scale, Ban } from 'lucide-react';
+import { useHashScroll } from '@/hooks/useHashScroll';
 
 const sections = [
   {
@@ -54,6 +55,9 @@ const sections = [
 ];
 
 export default function Terms() {
+  // Enable smooth hash-based scrolling with navbar offset
+  useHashScroll();
+
   return (
     <div className="min-h-screen bg-background relative">
       <PremiumBackground showMandala intensity="light" />
