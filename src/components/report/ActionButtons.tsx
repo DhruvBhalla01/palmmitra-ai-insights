@@ -51,6 +51,9 @@ export function ActionButtons({
     }
   };
 
+  // Determine if download is available
+  const isReportDataReady = Boolean(reading && reading.headlineSummary && reading.majorLines);
+  
   const handleDownload = async () => {
     // Check unlock status first
     if (!isUnlocked) {
@@ -58,11 +61,26 @@ export function ActionButtons({
       return;
     }
 
-    // Validate reading data exists
+    // Validate reading data exists with detailed check
     if (!reading) {
+      console.error('PDF Download failed: reading prop is null/undefined');
       toast({
         title: "Report Not Ready",
-        description: "Unable to generate PDF. Report data is missing.",
+        description: "Unable to generate PDF. Please wait for the report to load completely.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate reading has required structure
+    if (!reading.headlineSummary || !reading.majorLines) {
+      console.error('PDF Download failed: reading data incomplete', {
+        hasHeadline: Boolean(reading.headlineSummary),
+        hasMajorLines: Boolean(reading.majorLines),
+      });
+      toast({
+        title: "Report Incomplete",
+        description: "Some report sections are still loading. Please try again in a moment.",
         variant: "destructive",
       });
       return;
@@ -144,15 +162,22 @@ export function ActionButtons({
             
             <Button
               onClick={handleDownload}
-              disabled={isDownloading}
+              disabled={isDownloading || !isReportDataReady}
               className={`rounded-2xl px-8 py-6 text-base font-semibold gap-2 shadow-gold-lg relative overflow-hidden ${
-                isUnlocked ? 'btn-gold' : 'bg-muted/50 border border-accent/30 text-foreground hover:bg-accent/10'
+                isUnlocked && isReportDataReady 
+                  ? 'btn-gold' 
+                  : 'bg-muted/50 border border-accent/30 text-foreground hover:bg-accent/10'
               }`}
             >
               {isDownloading ? (
                 <>
                   <Sparkles className="w-5 h-5 animate-spin" />
                   Preparing Your Destiny...
+                </>
+              ) : !isReportDataReady ? (
+                <>
+                  <Sparkles className="w-5 h-5 animate-pulse" />
+                  Loading Report...
                 </>
               ) : isUnlocked ? (
                 <>
