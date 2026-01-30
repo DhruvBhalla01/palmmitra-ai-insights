@@ -4,13 +4,28 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { generateReportPDF } from '@/lib/generateReportPDF';
+import type { PalmReading } from './types';
+
+interface UserDataForPDF {
+  name: string;
+  readingType: 'full' | 'career' | 'love' | 'wealth';
+  generatedAt: string;
+}
 
 interface ActionButtonsProps {
   isUnlocked?: boolean;
   onUnlockClick?: () => void;
+  reading?: PalmReading | null;
+  userData?: UserDataForPDF | null;
 }
 
-export function ActionButtons({ isUnlocked = true, onUnlockClick }: ActionButtonsProps) {
+export function ActionButtons({ 
+  isUnlocked = true, 
+  onUnlockClick,
+  reading,
+  userData 
+}: ActionButtonsProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
@@ -37,22 +52,46 @@ export function ActionButtons({ isUnlocked = true, onUnlockClick }: ActionButton
   };
 
   const handleDownload = async () => {
+    // Check unlock status first
     if (!isUnlocked) {
       onUnlockClick?.();
       return;
     }
 
+    // Validate reading data exists
+    if (!reading) {
+      toast({
+        title: "Report Not Ready",
+        description: "Unable to generate PDF. Report data is missing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsDownloading(true);
     
-    // Simulate download preparation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    toast({
-      title: "✨ PDF Ready!",
-      description: "Your premium palm reading PDF is downloading...",
-    });
-    
-    setIsDownloading(false);
+    try {
+      // Generate the PDF
+      generateReportPDF(reading, {
+        name: userData?.name || 'User',
+        readingType: userData?.readingType || 'full',
+        generatedAt: userData?.generatedAt || new Date().toISOString(),
+      });
+      
+      toast({
+        title: "✨ PDF Downloaded!",
+        description: "Your premium Destiny Report has been saved.",
+      });
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      toast({
+        title: "Download Failed",
+        description: "Unable to generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleSave = () => {

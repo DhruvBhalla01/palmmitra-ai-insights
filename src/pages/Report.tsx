@@ -611,7 +611,16 @@ export default function Report() {
               </div>
 
               {/* 10. Action Buttons - PDF locked */}
-              <ActionButtons isUnlocked={isUnlocked} onUnlockClick={handleUnlockClick} />
+              <ActionButtons 
+                isUnlocked={isUnlocked} 
+                onUnlockClick={handleUnlockClick}
+                reading={reading}
+                userData={{
+                  name: userData?.name || 'User',
+                  readingType: userData?.readingType || 'full',
+                  generatedAt: generatedAt,
+                }}
+              />
 
               {/* 11. Premium Paywall - Only show if not unlocked */}
               {!isUnlocked && (
