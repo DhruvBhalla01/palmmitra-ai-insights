@@ -1019,22 +1019,7 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     y += 6;
   });
 
-  // Note about cultural practices (no specific gemstone to avoid inconsistency)
   y += 4;
-  setFillColor(COLORS.cream);
-  doc.roundedRect(margin, y, contentWidth, 18, 2, 2, 'F');
-  
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  setColor(COLORS.mutedText);
-  doc.text('Traditional Practice Note:', margin + 4, y + 6);
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  const practiceNote = `Some traditions recommend gemstones for planetary alignment. If interested, consulting a qualified practitioner may provide personalized guidance. This is cultural information, not medical advice.`;
-  const noteLines = doc.splitTextToSize(practiceNote, contentWidth - 10);
-  doc.text(noteLines, margin + 4, y + 12);
-  y += 24;
 
   drawGoldDivider();
 
