@@ -1,199 +1,226 @@
 
 
-# Implement Premium PDF Download Feature
+# PalmMitra Premium Landing Page Enhancement
 
-## Overview
+## Current State Analysis
 
-This plan implements a complete, branded PDF download feature for PalmMitra's Destiny Report. The PDF will be generated client-side using **jsPDF** library, matching PalmMitra's Indian Spiritual Luxury theme with Indigo + Gold colors and professional typography.
+After a thorough codebase review, PalmMitra already has an excellent foundation with:
+- Premium Hero with video background and floating palm hologram
+- Glass-morphic Navbar with smooth scroll navigation
+- Trust Strip with social proof icons
+- How It Works 3-step flow
+- Features Section with animated cards
+- Sample Report Teaser with blur paywall
+- Testimonials carousel with real avatars
+- About Section with stats
+- Pricing with 3 tiers (Free/Detailed/Unlimited)
+- Premium Footer with all required links
+- Mobile sticky CTA bar
+- Full design system (Playfair Display + Inter, Gold + Indigo + Cream)
+- Extensive Framer Motion animations
+- Responsive design
 
----
+## Enhancement Plan
 
-## Current State
+### 1. Homepage FAQ Section (New Component)
 
-- The `ActionButtons` component has a Download PDF button that currently simulates a download with `setTimeout`
-- The button correctly checks `isUnlocked` status before allowing download
-- All report data (`PalmReading` type) is available in the `Report.tsx` page
-- No PDF library is currently installed
+**File:** `src/components/home/FAQSection.tsx` (Create)
 
----
+Add a dedicated FAQ section to the homepage before Pricing. This improves SEO, reduces friction, and answers objections before the pricing decision.
 
-## Technical Approach
-
-### Library Choice: jsPDF
-- **Why jsPDF**: Lightweight, no server-side dependencies, excellent browser support, works on mobile
-- **Alternative considered**: html2pdf.js (heavier, relies on html2canvas which can be flaky)
-- jsPDF gives us precise control over styling, colors, and layout
-
----
-
-## Implementation Steps
-
-### Step 1: Install jsPDF Package
-
-Add jsPDF to package.json dependencies:
-```json
-"jspdf": "^2.5.2"
-```
+Content:
+- 6-8 key questions covering accuracy, privacy, payment, and process
+- Accordion UI matching the Help page style
+- Sanskrit accent header with premium styling
 
 ---
 
-### Step 2: Create PDF Generator Utility
+### 2. Email Capture CTA Section (New Component)
 
-Create `src/lib/generateReportPDF.ts` - a dedicated module for PDF generation.
+**File:** `src/components/home/EmailCaptureSection.tsx` (Create)
 
-**Key Features:**
-- Uses PalmMitra brand colors (Indigo: RGB 48, 38, 100 | Gold: RGB 212, 175, 55)
-- Clean section-based layout with proper spacing
-- Header with user name, report type, and generation date
-- All sections: Summary, Major Lines, Mounts, Career, Love, Remedies, Blessing
-- Footer with PalmMitra branding and disclaimer
-
-**PDF Structure:**
-```text
-┌─────────────────────────────────────┐
-│  🕉 PALMMITRA DESTINY REPORT        │
-│  ═══════════════════════════════════│
-│  For: [User Name]                   │
-│  Type: [Full/Career/Love/Wealth]    │
-│  Generated: [Date]                  │
-├─────────────────────────────────────┤
-│  KEY DESTINY INSIGHT                │
-│  "[Headline Summary]"               │
-├─────────────────────────────────────┤
-│  MAJOR PALM LINES                   │
-│  ─────────────────                  │
-│  • Life Line: [Strength] - [Text]   │
-│  • Heart Line: [Strength] - [Text]  │
-│  • Head Line: [Strength] - [Text]   │
-│  • Fate Line: [Strength] - [Text]   │
-│  • Sun Line: [Strength] - [Text]    │
-├─────────────────────────────────────┤
-│  PALM MOUNTS ANALYSIS               │
-│  ─────────────────────              │
-│  [Mount descriptions...]            │
-├─────────────────────────────────────┤
-│  CAREER & WEALTH                    │
-│  ───────────────                    │
-│  Best Fields: [...]                 │
-│  Turning Point: [...]               │
-│  Wealth Style: [...]                │
-├─────────────────────────────────────┤
-│  LOVE & RELATIONSHIPS               │
-│  ────────────────────               │
-│  [Relationship insights...]         │
-├─────────────────────────────────────┤
-│  SPIRITUAL REMEDIES                 │
-│  ───────────────────                │
-│  1. [Remedy 1]                      │
-│  2. [Remedy 2]                      │
-│  ...                                │
-├─────────────────────────────────────┤
-│  FINAL BLESSING                     │
-│  "[Divine message...]"              │
-├─────────────────────────────────────┤
-│  www.palmmitra.com | ॐ              │
-│  For entertainment purposes only    │
-└─────────────────────────────────────┘
-```
+Add a high-conversion email capture section after About section:
+- Headline: "Get Your Free Palm Insights Preview"
+- Email input with gold CTA button
+- Trust indicators (No spam, unsubscribe anytime)
+- Animated sparkle effects
+- Stores emails in database for future campaigns
 
 ---
 
-### Step 3: Update ActionButtons Component
+### 3. Sample Report Preview Modal (New Component)
 
-Modify `src/components/report/ActionButtons.tsx`:
+**File:** `src/components/home/SampleReportModal.tsx` (Create)
 
-1. Accept new props for report data:
-   - `reading: PalmReading`
-   - `userData: { name, readingType, generatedAt, palmImage }`
+Create a full-screen modal that opens when clicking "See Sample Report":
+- Premium modal with glassmorphism
+- Mock report preview with blurred premium sections
+- Animated line-by-line reveal
+- CTA to upload own palm
+- Close button with smooth transition
 
-2. Update `handleDownload` function:
-   - Validate `isUnlocked` before proceeding
-   - Check that reading data exists
-   - Call `generateReportPDF()` function
-   - Show success/error toast
-   - Handle errors gracefully
+**Update:** `src/components/home/HeroSection.tsx`
+- Link secondary CTA to open the modal
 
 ---
 
-### Step 4: Update Report.tsx
+### 4. Performance Optimizations
 
-Modify `src/pages/Report.tsx` to pass required data to `ActionButtons`:
+**File:** `src/pages/Index.tsx` (Modify)
 
+Add lazy loading for below-fold sections:
 ```tsx
-<ActionButtons 
-  isUnlocked={isUnlocked} 
-  onUnlockClick={handleUnlockClick}
-  reading={reading}
-  userData={{
-    name: userData?.name || 'User',
-    readingType: userData?.readingType || 'full',
-    generatedAt: generatedAt,
-    palmImage: userData?.imageUrl || userData?.palmImage
-  }}
-/>
+const FeaturesSection = lazy(() => import('@/components/home/FeaturesSection'));
 ```
+
+**File:** `src/components/home/HeroSection.tsx` (Modify)
+- Add `loading="lazy"` and `fetchpriority` to images
+- Add `preload` hints for hero video
+
+**File:** `index.html` (Modify)
+- Add preconnect hints for fonts
+- Add proper structured data (JSON-LD)
+
+---
+
+### 5. Accessibility Improvements
+
+**Files:** Multiple components
+
+Add across all interactive elements:
+- `aria-label` on icon-only buttons
+- `role="region"` with `aria-labelledby` for sections
+- Skip navigation link
+- Proper heading hierarchy (h1 > h2 > h3)
+- Focus visible states for keyboard navigation
+- `alt` text audit on all images
+
+---
+
+### 6. Hero Section Polish
+
+**File:** `src/components/home/HeroSection.tsx` (Modify)
+
+Enhance headline and subheading:
+- Primary headline: "Discover Your Future Through AI Palm Insights"
+- Subheading: "Upload your palm photo & get instant life guidance on career, love, and destiny"
+- Update CTAs:
+  - Primary: "Analyze My Palm" with arrow
+  - Secondary: "See Sample Report" (opens modal)
+
+---
+
+### 7. Index Page Updates
+
+**File:** `src/pages/Index.tsx` (Modify)
+
+Add new sections in optimal order:
+1. Hero
+2. Trust Strip
+3. How It Works
+4. Features
+5. Sample Report Teaser
+6. Testimonials
+7. FAQ Section (New)
+8. About
+9. Email Capture (New)
+10. Pricing
+
+---
+
+### 8. Navbar Enhancement
+
+**File:** `src/components/Navbar.tsx` (Modify)
+
+Update navigation links to include all sections:
+- Home, Features, How It Works, Testimonials, FAQ, Pricing
+
+---
+
+### 9. SEO Structured Data
+
+**File:** `index.html` (Modify)
+
+Add JSON-LD structured data for:
+- Organization
+- WebApplication
+- FAQ schema
 
 ---
 
 ## File Changes Summary
 
-| File | Action | Description |
-|------|--------|-------------|
-| `package.json` | Modify | Add jspdf dependency |
-| `src/lib/generateReportPDF.ts` | Create | PDF generation utility with premium styling |
-| `src/components/report/ActionButtons.tsx` | Modify | Accept reading data, implement real PDF download |
-| `src/pages/Report.tsx` | Modify | Pass reading data to ActionButtons |
+| File | Action | Purpose |
+|------|--------|---------|
+| `src/components/home/FAQSection.tsx` | Create | Homepage FAQ accordion |
+| `src/components/home/EmailCaptureSection.tsx` | Create | Email capture with CTA |
+| `src/components/home/SampleReportModal.tsx` | Create | Sample report preview modal |
+| `src/pages/Index.tsx` | Modify | Add new sections, lazy loading |
+| `src/components/home/HeroSection.tsx` | Modify | Enhanced copy, modal trigger |
+| `src/components/Navbar.tsx` | Modify | Updated navigation links |
+| `index.html` | Modify | JSON-LD structured data |
 
 ---
 
-## PDF Styling Details
+## Visual Hierarchy After Changes
 
-**Colors:**
-- Header Background: Deep Indigo (#302664)
-- Accent/Highlights: Gold (#D4AF37)
-- Body Text: Dark Gray (#1A1A1A)
-- Secondary Text: Medium Gray (#666666)
-- Section Borders: Light Gold with transparency
-
-**Typography:**
-- jsPDF includes Helvetica (clean, professional)
-- Section headers: Bold, 14pt
-- Body text: Regular, 11pt
-- Emphasis: Bold or color accents
-
-**Layout:**
-- A4 size (210mm x 297mm)
-- 20mm margins
-- Clear section breaks
-- Consistent spacing
-
----
-
-## Access Control
-
-The existing unlock check remains in place:
-```tsx
-if (!isUnlocked) {
-  onUnlockClick?.();  // Opens payment modal
-  return;
-}
+```text
++------------------------------------------+
+|            NAVBAR (glass, sticky)        |
++------------------------------------------+
+|                                          |
+|   HERO SECTION                           |
+|   - Premium headline                     |
+|   - Emotional subheading                 |
+|   - 2 CTAs (Primary + Sample Modal)      |
+|   - Floating palm hologram               |
+|   - Video background                     |
+|                                          |
++------------------------------------------+
+|   TRUST STRIP (4 icons)                  |
++------------------------------------------+
+|   HOW IT WORKS (3 steps)                 |
++------------------------------------------+
+|   FEATURES GRID (5 cards)                |
++------------------------------------------+
+|   SAMPLE REPORT TEASER (blur preview)    |
++------------------------------------------+
+|   TESTIMONIALS CAROUSEL (5 users)        |
++------------------------------------------+
+|   FAQ SECTION (6-8 questions)            |  <-- NEW
++------------------------------------------+
+|   ABOUT SECTION + STATS                  |
++------------------------------------------+
+|   EMAIL CAPTURE CTA                      |  <-- NEW
++------------------------------------------+
+|   PRICING CARDS (3 plans)                |
++------------------------------------------+
+|   FOOTER (links + disclaimer)            |
++------------------------------------------+
+|   MOBILE CTA BAR (sticky, mobile only)   |
++------------------------------------------+
 ```
 
-Only premium users (₹99 single or ₹999 unlimited) can download PDFs.
-
 ---
 
-## Error Handling
+## Implementation Notes
 
-1. **Missing Data**: If `reading` is null, show error toast
-2. **PDF Generation Failure**: Catch errors and display user-friendly message
-3. **Browser Compatibility**: jsPDF handles cross-browser issues internally
+### Design Consistency
+- All new components follow existing patterns:
+  - `glass-premium` for card backgrounds
+  - `sanskrit-accent` for section labels
+  - `text-gradient-gold` for highlights
+  - `btn-gold` for primary CTAs
+  - Framer Motion for all animations
 
----
+### No Breaking Changes
+- All existing components remain functional
+- New components integrate seamlessly
+- Mobile responsive throughout
 
-## Future Enhancements (Not in this implementation)
-
-- Optional: Save PDF to Supabase Storage for re-download
-- Optional: Email PDF to user
-- Optional: Include palm image in PDF (requires image encoding)
+### Lighthouse Optimizations
+- React.lazy() for code splitting
+- Image lazy loading with native browser support
+- Preconnect hints for external resources
+- Efficient animation with GPU-accelerated transforms
 
