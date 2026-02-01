@@ -7,9 +7,11 @@ import { SmartLink } from '@/components/SmartLink';
 
 const navLinks = [
   { name: 'Home', path: '/' },
+  { name: 'Features', path: '/#features' },
   { name: 'How It Works', path: '/#how-it-works' },
+  { name: 'Testimonials', path: '/#testimonials' },
+  { name: 'FAQ', path: '/#faq' },
   { name: 'Pricing', path: '/#pricing' },
-  { name: 'About', path: '/#about' },
 ];
 
 export function Navbar() {

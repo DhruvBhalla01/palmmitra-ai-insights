@@ -23,6 +23,79 @@
     
     <!-- Razorpay Checkout SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PalmMitra",
+      "description": "AI-powered palm reading app blending ancient Indian palmistry with modern technology",
+      "url": "https://palm-aura-insight.lovable.app",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "99",
+        "priceCurrency": "INR"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "50000"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "PalmMitra",
+      "url": "https://palm-aura-insight.lovable.app",
+      "logo": "https://palm-aura-insight.lovable.app/favicon.ico",
+      "sameAs": []
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How accurate is PalmMitra's AI palm reading?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our AI is trained on thousands of palm readings and traditional Indian palmistry principles. While we strive for accuracy, palmistry is a traditional practice and results should be taken as guidance for self-reflection rather than absolute predictions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which hand should I photograph?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We recommend photographing your dominant hand (right hand for right-handed people, left for left-handed). Your dominant hand shows your current path and potential."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does it take to get my reading?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your palm reading is generated instantly! Once you upload your palm image, our AI analyzes it in under 30 seconds and presents your personalized report."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my palm image stored permanently?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Your palm images are processed securely and are not stored permanently. We only retain the generated report data for your future access. Your privacy is our priority."
+          }
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>

@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Eye } from "lucide-react";
 import heroVideo from "@/assets/hero-video.mp4";
-import mysticalPalm from "@/assets/mystical-palm.png";
+import { SampleReportModal } from "./SampleReportModal";
+
 export function HeroSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
       {/* Video Background */}
       <div className="absolute inset-0 z-0">
@@ -58,28 +61,31 @@ export function HeroSection() {
             </motion.p>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-foreground leading-tight mb-6">
-              Discover Your <span className="text-gradient-gold text-shadow-luxury">Destiny</span> Through AI Palm
-              Reading
+              Discover Your Future Through{" "}
+              <span className="text-gradient-gold text-shadow-luxury">AI Palm Insights</span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              PalmMitra blends ancient Indian palmistry with modern AI to reveal insights about your life, career, love,
-              and future.
+              Upload your palm photo & get instant life guidance on career, love, and destiny.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link to="/upload">
                 <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg">
-                  Upload Your Palm
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Analyze My Palm
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link to="/upload">
-                <Button variant="outline" className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl">
-                  Try Free Preview
-                </Button>
-              </Link>
+              <Button 
+                variant="outline" 
+                className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Eye className="w-5 h-5 mr-2" />
+                See Sample Report
+              </Button>
             </div>
 
             {/* Trust indicators */}
@@ -198,5 +204,8 @@ export function HeroSection() {
           </motion.div>
         </div>
       </div>
+
+      {/* Sample Report Modal */}
+      <SampleReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>;
 }
