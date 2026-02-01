@@ -137,7 +137,7 @@ export function HeroSection() {
 
               {/* Mystical Palm Image */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <motion.img alt="Mystical Palm Reading" src="/lovable-uploads/4e0c4a4d-2bb0-4763-9311-5cff33718e67.png" className="object-contain w-[380px] h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] opacity-95" animate={{
+                <motion.img alt="Mystical Palm Reading" className="object-contain w-[380px] h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] opacity-95" animate={{
                 y: [0, -18, 0],
                 scale: [1, 1.03, 1]
               }} transition={{
@@ -146,7 +146,7 @@ export function HeroSection() {
                 ease: "easeInOut"
               }} style={{
                 filter: "drop-shadow(0 0 60px hsl(var(--gold) / 0.6))"
-              }} />
+              }} src="/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.png" />
               </div>
 
               {/* Floating symbols with premium styling */}
