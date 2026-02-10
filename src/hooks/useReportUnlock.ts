@@ -16,15 +16,9 @@ interface RazorpayOptions {
   description: string;
   order_id: string;
   handler: (response: RazorpayResponse) => void;
-  prefill: {
-    email: string;
-  };
-  theme: {
-    color: string;
-  };
-  modal?: {
-    ondismiss?: () => void;
-  };
+  prefill: { email: string };
+  theme: { color: string };
+  modal?: { ondismiss?: () => void };
 }
 
 interface RazorpayInstance {
@@ -38,13 +32,21 @@ interface RazorpayResponse {
   razorpay_signature: string;
 }
 
+type PlanType = 'basic299' | 'standard699' | 'premium1499';
+
+const PLAN_DESCRIPTIONS: Record<PlanType, string> = {
+  basic299: 'Basic Palm Reading (₹299)',
+  standard699: 'Standard Detailed Report (₹699)',
+  premium1499: 'Premium Extended Report (₹1,499)',
+};
+
 interface UseReportUnlockResult {
   isUnlocked: boolean;
   hasSubscription: boolean;
   isLoading: boolean;
   isProcessing: boolean;
   checkUnlockStatus: () => Promise<void>;
-  initiatePayment: (plan: 'report99' | 'unlimited999') => Promise<void>;
+  initiatePayment: (plan: PlanType) => Promise<void>;
 }
 
 export function useReportUnlock(
@@ -58,31 +60,17 @@ export function useReportUnlock(
   const [isProcessing, setIsProcessing] = useState(false);
 
   const checkUnlockStatus = useCallback(async () => {
-    if (!userEmail) {
-      setIsLoading(false);
-      return;
-    }
+    if (!userEmail) { setIsLoading(false); return; }
 
     try {
-      // Use secure edge function to check unlock status
       const { data, error } = await supabase.functions.invoke('get-unlock-status', {
-        body: {
-          user_email: userEmail,
-          report_id: reportId,
-        },
+        body: { user_email: userEmail, report_id: reportId },
       });
 
-      if (error) {
-        console.error('Error checking unlock status:', error);
-        setIsLoading(false);
-        return;
-      }
-
-      if (data?.success) {
+      if (!error && data?.success) {
         setHasSubscription(data.hasSubscription || false);
         setIsUnlocked(data.isUnlocked || false);
       }
-
       setIsLoading(false);
     } catch (error) {
       console.error('Error checking unlock status:', error);
@@ -90,51 +78,26 @@ export function useReportUnlock(
     }
   }, [reportId, userEmail]);
 
-  useEffect(() => {
-    checkUnlockStatus();
-  }, [checkUnlockStatus]);
+  useEffect(() => { checkUnlockStatus(); }, [checkUnlockStatus]);
 
-  const initiatePayment = useCallback(async (plan: 'report99' | 'unlimited999') => {
-    // Validate email
+  const initiatePayment = useCallback(async (plan: PlanType) => {
     if (!userEmail) {
-      toast({
-        title: 'Email Required',
-        description: 'Please provide your email to proceed with payment.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Email Required', description: 'Please provide your email to proceed with payment.', variant: 'destructive' });
       return;
     }
 
-    // For single report purchase, we need the report ID
-    if (plan === 'report99' && !reportId) {
-      console.error('Payment blocked: No reportId available for report99 plan');
-      toast({
-        title: 'Report Not Found',
-        description: 'Unable to identify the report to unlock. Please try refreshing the page or generating a new reading.',
-        variant: 'destructive',
-      });
+    if (!reportId) {
+      toast({ title: 'Report Not Found', description: 'Unable to identify the report. Please try refreshing.', variant: 'destructive' });
       return;
-    }
-
-    // For unlimited plan, reportId is optional but we log if missing
-    if (plan === 'unlimited999' && !reportId) {
-      console.log('Unlimited plan selected without specific reportId - this is OK');
     }
 
     setIsProcessing(true);
     console.log('Initiating payment:', { plan, reportId, userEmail });
 
     try {
-      // Step 1: Create order via backend
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
         'create-razorpay-order',
-        {
-          body: {
-            user_email: userEmail,
-            report_id: plan === 'report99' ? reportId : undefined,
-            plan,
-          },
-        }
+        { body: { user_email: userEmail, report_id: reportId, plan } }
       );
 
       if (orderError || !orderData?.success) {
@@ -143,24 +106,17 @@ export function useReportUnlock(
 
       const { order_id, amount, currency, payment_id, key_id } = orderData;
 
-      // Step 2: Load Razorpay SDK if not loaded
-      if (!window.Razorpay) {
-        await loadRazorpayScript();
-      }
+      if (!window.Razorpay) { await loadRazorpayScript(); }
 
-      // Step 3: Open Razorpay checkout
       const options: RazorpayOptions = {
         key: key_id,
         amount,
         currency,
         name: 'PalmMitra',
-        description: plan === 'report99' 
-          ? 'Detailed Palm Reading Report' 
-          : 'Unlimited Palm Readings - Lifetime',
+        description: PLAN_DESCRIPTIONS[plan],
         order_id,
         handler: async (response: RazorpayResponse) => {
           try {
-            // Step 4: Verify payment via backend
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
               'verify-razorpay-payment',
               {
@@ -177,46 +133,29 @@ export function useReportUnlock(
               throw new Error(verifyData?.error || 'Payment verification failed');
             }
 
-            // Success!
             setIsUnlocked(true);
-            if (verifyData.subscription) {
-              setHasSubscription(true);
-            }
+            if (verifyData.subscription) setHasSubscription(true);
 
             toast({
               title: '🎉 Payment Successful!',
-              description: plan === 'report99'
-                ? 'Your report is now unlocked!'
-                : 'You now have unlimited access to all reports!',
+              description: 'Your report is now unlocked! PDF download available.',
             });
 
-            // Trigger custom event for UI update
-            window.dispatchEvent(new CustomEvent('paymentSuccess', { 
-              detail: { plan, subscription: verifyData.subscription } 
+            window.dispatchEvent(new CustomEvent('paymentSuccess', {
+              detail: { plan, subscription: verifyData.subscription }
             }));
 
           } catch (error) {
             console.error('Payment verification error:', error);
-            toast({
-              title: 'Verification Failed',
-              description: 'Please contact support if amount was deducted.',
-              variant: 'destructive',
-            });
+            toast({ title: 'Verification Failed', description: 'Please contact support if amount was deducted.', variant: 'destructive' });
           }
         },
-        prefill: {
-          email: userEmail,
-        },
-        theme: {
-          color: '#D4AF37', // Gold theme
-        },
+        prefill: { email: userEmail },
+        theme: { color: '#D4AF37' },
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
-            toast({
-              title: 'Payment Cancelled',
-              description: 'You can try again anytime.',
-            });
+            toast({ title: 'Payment Cancelled', description: 'You can try again anytime.' });
           },
         },
       };
@@ -224,42 +163,23 @@ export function useReportUnlock(
       const razorpay = new window.Razorpay(options);
       razorpay.on('payment.failed', () => {
         setIsProcessing(false);
-        toast({
-          title: 'Payment Failed',
-          description: 'Please try again or use a different payment method.',
-          variant: 'destructive',
-        });
+        toast({ title: 'Payment Failed', description: 'Please try again or use a different method.', variant: 'destructive' });
       });
       razorpay.open();
 
     } catch (error) {
       console.error('Payment initiation error:', error);
-      toast({
-        title: 'Payment Error',
-        description: error instanceof Error ? error.message : 'Something went wrong',
-        variant: 'destructive',
-      });
+      toast({ title: 'Payment Error', description: error instanceof Error ? error.message : 'Something went wrong', variant: 'destructive' });
       setIsProcessing(false);
     }
   }, [reportId, userEmail, toast]);
 
-  return {
-    isUnlocked,
-    hasSubscription,
-    isLoading,
-    isProcessing,
-    checkUnlockStatus,
-    initiatePayment,
-  };
+  return { isUnlocked, hasSubscription, isLoading, isProcessing, checkUnlockStatus, initiatePayment };
 }
 
 function loadRazorpayScript(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (window.Razorpay) {
-      resolve();
-      return;
-    }
-
+    if (window.Razorpay) { resolve(); return; }
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
