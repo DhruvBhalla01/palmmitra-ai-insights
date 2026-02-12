@@ -209,21 +209,9 @@ export default function Report() {
     setShowPaymentModal(true);
   };
 
-  const handleSelectPlan = (plan: 'basic299' | 'standard699' | 'premium1499') => {
+  const handleSelectPlan = (plan: 'report99' | 'unlimited999') => {
     console.log('Plan selected:', plan, 'for report:', resolvedReportId);
     initiatePayment(plan);
-  };
-
-  const handleDownloadPDF = () => {
-    if (reading) {
-      import('@/lib/generateReportPDF').then(({ generateReportPDF }) => {
-        generateReportPDF(reading, {
-          name: userData?.name || 'User',
-          readingType: userData?.readingType || 'full',
-          generatedAt: generatedAt,
-        });
-      });
-    }
   };
 
   // Loading State with Destiny Reveal
@@ -303,7 +291,6 @@ export default function Report() {
         isVisible={showSuccessOverlay}
         isSubscription={successIsSubscription}
         onDismiss={() => setShowSuccessOverlay(false)}
-        onDownloadPDF={handleDownloadPDF}
       />
       
       <main className="pt-24 pb-20 relative z-10">

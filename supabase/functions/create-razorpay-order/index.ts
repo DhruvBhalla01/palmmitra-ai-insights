@@ -2,24 +2,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
-
-type PlanType = 'basic299' | 'standard699' | 'premium1499';
-
-const PLAN_AMOUNTS: Record<PlanType, number> = {
-  basic299: 29900,      // ₹299 in paise
-  standard699: 69900,   // ₹699 in paise
-  premium1499: 149900,  // ₹1499 in paise
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 interface CreateOrderRequest {
   user_email: string;
   report_id?: string;
-  plan: PlanType;
+  plan: 'report99' | 'unlimited999';
 }
 
 Deno.serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -27,6 +20,7 @@ Deno.serve(async (req) => {
   try {
     const { user_email, report_id, plan }: CreateOrderRequest = await req.json();
 
+    // Validate input
     if (!user_email || !plan) {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields: user_email and plan' }),
@@ -34,20 +28,22 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (!PLAN_AMOUNTS[plan]) {
+    if (!['report99', 'unlimited999'].includes(plan)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid plan type' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (!report_id) {
+    // For report99, report_id is required
+    if (plan === 'report99' && !report_id) {
       return new Response(
-        JSON.stringify({ success: false, error: 'report_id is required' }),
+        JSON.stringify({ success: false, error: 'report_id is required for report99 plan' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    // Get Razorpay credentials
     const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
     const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
 
@@ -59,9 +55,11 @@ Deno.serve(async (req) => {
       );
     }
 
-    const amount = PLAN_AMOUNTS[plan];
+    // Set amount based on plan (in paise)
+    const amount = plan === 'report99' ? 9900 : 99900;
     const currency = 'INR';
 
+    // Create Razorpay order
     const razorpayOrderPayload = {
       amount,
       currency,
@@ -69,7 +67,7 @@ Deno.serve(async (req) => {
       notes: {
         user_email,
         plan,
-        report_id,
+        report_id: report_id || 'unlimited',
       },
     };
 
@@ -94,6 +92,7 @@ Deno.serve(async (req) => {
     const razorpayOrder = await razorpayResponse.json();
     console.log('Razorpay order created:', razorpayOrder.id);
 
+    // Save order to database
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -102,7 +101,7 @@ Deno.serve(async (req) => {
       .from('payments')
       .insert({
         user_email,
-        report_id,
+        report_id: report_id || null,
         plan_type: plan,
         razorpay_order_id: razorpayOrder.id,
         amount,
@@ -128,7 +127,7 @@ Deno.serve(async (req) => {
         amount,
         currency,
         payment_id: payment.id,
-        key_id: razorpayKeyId,
+        key_id: razorpayKeyId, // Public key for frontend
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
