@@ -1,12 +1,11 @@
 import { motion } from 'framer-motion';
-import { Lock, Gem, Calendar, Briefcase, Sparkles, Crown } from 'lucide-react';
+import { Lock, Calendar, Briefcase, Sparkles, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PremiumPaywallProps {
   premiumInsights: {
     marriageTiming: string;
     careerBreakthrough: string;
-    gemstoneRecommendation: string;
   };
   onUnlockClick?: () => void;
 }
@@ -26,13 +25,6 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
       preview: premiumInsights.careerBreakthrough.slice(0, 20) + '...',
       color: 'text-blue-500',
       bg: 'bg-blue-500/10'
-    },
-    { 
-      icon: Gem, 
-      title: 'Personalized Gemstone Suggestion',
-      preview: premiumInsights.gemstoneRecommendation.slice(0, 20) + '...',
-      color: 'text-purple-500',
-      bg: 'bg-purple-500/10'
     },
   ];
 

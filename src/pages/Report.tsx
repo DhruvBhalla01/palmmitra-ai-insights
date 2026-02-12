@@ -293,6 +293,16 @@ export default function Report() {
         onDismiss={() => setShowSuccessOverlay(false)}
       />
       
+      {/* Unlock Loading Overlay */}
+      {unlockLoading && (
+        <div className="fixed inset-0 bg-background/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-muted-foreground">Checking access...</p>
+          </div>
+        </div>
+      )}
+
       <main className="pt-24 pb-20 relative z-10">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Subscription Badge */}

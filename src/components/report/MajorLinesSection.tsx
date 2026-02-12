@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Heart, Brain, Star, Sun } from 'lucide-react';
 import type { MajorLine } from './types';
@@ -28,91 +29,97 @@ const strengthToPercent: Record<string, number> = {
   'Faint': 20,
 };
 
-export function MajorLinesSection({ lines }: MajorLinesSectionProps) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="mb-12"
-    >
-      <div className="flex items-center gap-3 mb-2">
-        <span className="text-3xl">🔥</span>
-        <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-          Major Palm Lines Breakdown
-        </h2>
-      </div>
-      <p className="sanskrit-accent mb-8 ml-12">ॐ Rekha Vigyan</p>
+export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>(
+  function MajorLinesSection({ lines }, ref) {
+    return (
+      <motion.section
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="mb-12"
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-3xl">🔥</span>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
+            Major Palm Lines Breakdown
+          </h2>
+        </div>
+        <p className="sanskrit-accent mb-2 ml-12">ॐ Rekha Vigyan</p>
+        <p className="text-xs text-muted-foreground mb-8 ml-12">
+          These readings reflect traditional interpretations and may suggest potential patterns.
+        </p>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {lineConfig.map(({ key, name, subtitle, icon: Icon, color, bgColor, borderColor }, index) => {
-          const line = lines[key];
-          const strengthPercent = strengthToPercent[line.strength] || 50;
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {lineConfig.map(({ key, name, subtitle, icon: Icon, color, bgColor, borderColor }, index) => {
+            const line = lines[key];
+            const strengthPercent = strengthToPercent[line.strength] || 50;
 
-          return (
-            <motion.div
-              key={key}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.4 }}
-              whileHover={{ y: -6, scale: 1.02 }}
-              className={`glass-premium rounded-2xl p-6 border ${borderColor} hover:border-accent/40 transition-all duration-300 group cursor-default`}
-            >
-              {/* Header */}
-              <div className="flex items-center gap-3 mb-5">
-                <motion.div 
-                  className={`w-14 h-14 rounded-2xl ${bgColor}/10 flex items-center justify-center relative`}
-                  whileHover={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Icon className={`w-7 h-7 ${color}`} />
-                  <div className={`absolute inset-0 rounded-2xl ${bgColor}/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
-                </motion.div>
-                <div>
-                  <h3 className="font-serif font-bold text-foreground text-lg">{name}</h3>
-                  <p className="text-xs text-muted-foreground">{subtitle}</p>
-                </div>
-              </div>
-
-              {/* Strength Meter */}
-              <div className="mb-5">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-muted-foreground font-medium">Strength</span>
-                  <span className={`text-xs font-bold ${color} px-2 py-0.5 rounded-full ${bgColor}/10`}>
-                    {line.strength}
-                  </span>
-                </div>
-                <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${strengthPercent}%` }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + index * 0.1, duration: 0.8, ease: 'easeOut' }}
-                    className={`h-full ${bgColor} rounded-full relative`}
+            return (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                className={`glass-premium rounded-2xl p-6 border ${borderColor} hover:border-accent/40 transition-all duration-300 group cursor-default`}
+              >
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-5">
+                  <motion.div 
+                    className={`w-14 h-14 rounded-2xl ${bgColor}/10 flex items-center justify-center relative`}
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.5 }}
                   >
-                    <div className="absolute inset-0 shimmer" />
+                    <Icon className={`w-7 h-7 ${color}`} />
+                    <div className={`absolute inset-0 rounded-2xl ${bgColor}/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
                   </motion.div>
+                  <div>
+                    <h3 className="font-serif font-bold text-foreground text-lg">{name}</h3>
+                    <p className="text-xs text-muted-foreground">{subtitle}</p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Meaning */}
-              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                {line.meaning}
-              </p>
+                {/* Strength Meter */}
+                <div className="mb-5">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-muted-foreground font-medium">Strength</span>
+                    <span className={`text-xs font-bold ${color} px-2 py-0.5 rounded-full ${bgColor}/10`}>
+                      {line.strength}
+                    </span>
+                  </div>
+                  <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${strengthPercent}%` }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + index * 0.1, duration: 0.8, ease: 'easeOut' }}
+                      className={`h-full ${bgColor} rounded-full relative`}
+                    >
+                      <div className="absolute inset-0 shimmer" />
+                    </motion.div>
+                  </div>
+                </div>
 
-              {/* Key Insight */}
-              <div className="pt-4 border-t border-border/50">
-                <p className="text-sm font-medium text-accent flex items-start gap-2">
-                  <span className="text-accent/70 flex-shrink-0">💡</span>
-                  <span>{line.keyInsight}</span>
+                {/* Meaning */}
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                  {line.meaning}
                 </p>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-    </motion.section>
-  );
-}
+
+                {/* Key Insight */}
+                <div className="pt-4 border-t border-border/50">
+                  <p className="text-sm font-medium text-accent flex items-start gap-2">
+                    <span className="text-accent/70 flex-shrink-0">💡</span>
+                    <span>{line.keyInsight}</span>
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.section>
+    );
+  }
+);
