@@ -79,7 +79,6 @@ export interface PalmReading {
   premiumInsights: {
     marriageTiming: string;
     careerBreakthrough: string;
-    gemstoneRecommendation: string;
   };
 }
 

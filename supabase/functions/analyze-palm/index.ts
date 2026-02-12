@@ -149,9 +149,18 @@ Life phases must always follow:
 - Meditation
 - Journaling
 - Temple/nature grounding
-Gemstones are OPTIONAL traditions only, not guaranteed outcomes.
+Do NOT recommend gemstones.
 
 5. Tone must feel like a luxury paid report:
+Warm, spiritual, Indian, premium, highly believable.
+
+6. Output must be valid JSON ONLY.
+No markdown, no extra text.
+
+7. USE TRUST-SAFE LANGUAGE:
+- Never say "you will", "you are destined to", "guaranteed"
+- Instead use: "may suggest", "indicates potential", "patterns reveal"
+- This protects both user expectations and legal safety
 Warm, spiritual, Indian, premium, highly believable.
 
 6. Output must be valid JSON ONLY.
@@ -268,8 +277,7 @@ Format your response as a JSON object with this EXACT structure:
   
   "premiumInsights": {
     "marriageTiming": "Locked insight about marriage timing",
-    "careerBreakthrough": "Locked insight about career breakthrough year",
-    "gemstoneRecommendation": "Locked gemstone suggestion"
+    "careerBreakthrough": "Locked insight about career breakthrough year"
   }
 }
 
@@ -441,7 +449,6 @@ const generatePalmReading = async (
       premiumInsights: {
         marriageTiming: "Favorable period between 2027-2029",
         careerBreakthrough: "Major advancement expected around 2028",
-        gemstoneRecommendation: "Yellow Sapphire for Jupiter's blessings",
       },
     };
   }
