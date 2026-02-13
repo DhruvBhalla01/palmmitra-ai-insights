@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SmartLink } from '@/components/SmartLink';
+import { useTheme } from '@/hooks/useTheme';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -18,6 +19,8 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,7 +75,17 @@ export function Navbar() {
         </div>
 
         {/* CTA Button */}
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-pressed={isDark}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            className="btn-secondary-premium w-10 h-10 p-0 rounded-xl flex items-center justify-center"
+          >
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
           <Link to="/upload">
             <Button className="btn-gold text-foreground font-semibold px-6 py-5 rounded-xl shadow-gold">
               <Sparkles className="w-4 h-4 mr-2" />
@@ -86,6 +99,9 @@ export function Navbar() {
           className="md:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           whileTap={{ scale: 0.95 }}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-nav"
         >
           <AnimatePresence mode="wait">
             {isMobileMenuOpen ? (
@@ -122,6 +138,7 @@ export function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
             className="md:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
+            id="mobile-nav"
           >
             <div className="p-4 flex flex-col gap-2">
               {navLinks.map((link, index) => (
@@ -144,8 +161,18 @@ export function Navbar() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="mt-2"
+                className="mt-2 grid gap-2"
               >
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                  aria-pressed={isDark}
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-foreground font-medium hover:bg-accent/10 transition-colors"
+                >
+                  <span>{isDark ? "Light mode" : "Dark mode"}</span>
+                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
                 <Link to="/upload">
                   <Button className="btn-gold w-full text-foreground font-semibold py-5">
                     <Sparkles className="w-4 h-4 mr-2" />

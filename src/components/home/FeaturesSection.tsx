@@ -44,7 +44,7 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 md:py-32 relative">
+    <section id="features" className="py-24 md:py-32 relative">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Features list */}

@@ -75,7 +75,7 @@ export function Testimonials() {
   };
 
   return (
-    <section className="py-24 md:py-32 relative">
+    <section id="testimonials" className="py-24 md:py-32 relative">
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-12">
           <p className="sanskrit-accent mb-3">ॐ Jana Vani</p>

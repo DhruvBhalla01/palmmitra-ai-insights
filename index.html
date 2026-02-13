@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>PalmMitra — AI Powered Palm Reading | Discover Your Destiny</title>
     <meta name="description" content="PalmMitra blends ancient Indian palmistry with modern AI to reveal insights about your life, career, love, and future. Upload your palm and discover your destiny." />
     <meta name="author" content="PalmMitra" />
@@ -16,6 +17,22 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@PalmMitra" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Theme bootstrap (prevents flash) -->
+    <script>
+      (function () {
+        try {
+          var storageKey = "theme";
+          var stored = localStorage.getItem(storageKey);
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = stored === "dark" || stored === "light" ? stored : (prefersDark ? "dark" : "light");
+          var root = document.documentElement;
+          if (theme === "dark") root.classList.add("dark");
+          else root.classList.remove("dark");
+          root.setAttribute("data-theme", theme);
+        } catch (e) {}
+      })();
+    </script>
     
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,7 +115,7 @@
     </script>
   </head>
 
-  <body>
+  <body class="theme-transition">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

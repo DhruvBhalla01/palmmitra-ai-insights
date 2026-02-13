@@ -319,7 +319,7 @@ export default function Report() {
             </motion.div>
           )}
 
-          <div className="flex gap-8">
+          <div className="flex flex-col lg:flex-row gap-8">
             {/* Progress Indicator - Desktop */}
             <div className="hidden lg:block w-20 flex-shrink-0">
               <ReportProgressIndicator 

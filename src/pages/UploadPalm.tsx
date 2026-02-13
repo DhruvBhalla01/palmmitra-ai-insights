@@ -196,9 +196,10 @@ export default function UploadPalm() {
 
       setProcessingStep('complete');
       
-      // Navigate to report
+      // Navigate to report (use report ID for shareable URL when available)
       setTimeout(() => {
-        navigate('/report');
+        const reportPath = response.reportId ? `/report/${response.reportId}` : '/report';
+        navigate(reportPath);
       }, 500);
 
     } catch (err) {
@@ -302,7 +303,7 @@ export default function UploadPalm() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col items-center justify-center p-12 cursor-pointer"
+                        className="flex flex-col items-center justify-center p-8 sm:p-12 cursor-pointer"
                       >
                         <motion.div
                           animate={{ y: [0, -8, 0] }}
@@ -337,7 +338,7 @@ export default function UploadPalm() {
                     <Camera className="w-4 h-4 text-accent" />
                     Photo Guidelines for Best Results
                   </p>
-                  <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Hand className="w-4 h-4 text-accent/70" />
                       Open palm facing camera

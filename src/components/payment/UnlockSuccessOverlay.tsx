@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Download, Share2, RefreshCw, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface UnlockSuccessOverlayProps {
   isVisible: boolean;
@@ -15,6 +16,7 @@ export function UnlockSuccessOverlay({
   onDismiss 
 }: UnlockSuccessOverlayProps) {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   return (
     <AnimatePresence>
@@ -144,6 +146,18 @@ export function UnlockSuccessOverlay({
                       title: 'PalmMitra Reading',
                       text: 'Check out my palm reading from PalmMitra!',
                       url: window.location.href,
+                    });
+                  } else if (navigator.clipboard) {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast({
+                      title: 'Link Copied!',
+                      description: 'Report link copied to clipboard.',
+                    });
+                  } else {
+                    toast({
+                      title: 'Share Unavailable',
+                      description: 'Your browser does not support sharing.',
+                      variant: 'destructive',
                     });
                   }
                 }}

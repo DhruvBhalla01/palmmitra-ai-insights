@@ -1,17 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye } from "lucide-react";
 import heroVideo from "@/assets/hero-video.mp4";
+import heroPoster from "@/assets/hero-bg.jpg";
 import { SampleReportModal } from "./SampleReportModal";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "video";
+    link.href = heroVideo;
+    link.type = "video/mp4";
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
+
   return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
       {/* Video Background */}
       <div className="absolute inset-0 z-0">
-        <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+        <img
+          src={heroPoster}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isVideoReady ? "opacity-0" : "opacity-100"}`}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster={heroPoster}
+          disablePictureInPicture
+          className={`w-full h-full object-cover transition-opacity duration-700 ${isVideoReady ? "opacity-100" : "opacity-0"}`}
+          onLoadedData={() => setIsVideoReady(true)}
+          onCanPlay={() => setIsVideoReady(true)}
+        >
           <source src={heroVideo} type="video/mp4" />
         </video>
         {/* Overlay for better text readability */}
@@ -122,11 +157,11 @@ export function HeroSection() {
           delay: 0.4
         }} className="relative flex items-center justify-center">
             {/* Multiple glow layers */}
-            <div className="absolute w-[380px] h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] rounded-full bg-accent/20 blur-3xl animate-glow-pulse" />
-            <div className="absolute w-[320px] h-[320px] md:w-[450px] md:h-[450px] lg:w-[580px] lg:h-[580px] rounded-full bg-accent/10 blur-2xl animate-glow-pulse-gold" />
+            <div className="absolute w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] rounded-full bg-accent/20 blur-3xl animate-glow-pulse" />
+            <div className="absolute w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[450px] md:h-[450px] lg:w-[580px] lg:h-[580px] rounded-full bg-accent/10 blur-2xl animate-glow-pulse-gold" />
 
             {/* Palm illustration container */}
-            <div className="relative w-[400px] h-[400px] md:w-[550px] md:h-[550px] lg:w-[700px] lg:h-[700px]">
+            <div className="relative w-[260px] h-[260px] sm:w-[360px] sm:h-[360px] md:w-[520px] md:h-[520px] lg:w-[700px] lg:h-[700px]">
               {/* Outer rotating ring with dots */}
               <motion.div animate={{
               rotate: 360
@@ -143,7 +178,7 @@ export function HeroSection() {
 
               {/* Mystical Palm Image */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <motion.img alt="Mystical Palm Reading" className="object-contain w-[380px] h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] opacity-95" animate={{
+                <motion.img alt="Mystical Palm Reading" className="object-contain w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] opacity-95" animate={{
                 y: [0, -18, 0],
                 scale: [1, 1.03, 1]
               }} transition={{

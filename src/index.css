@@ -11,6 +11,7 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     /* Base colors - Soft cream/white */
     --background: 40 33% 98%;
     --foreground: 240 10% 10%;
@@ -83,6 +84,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     /* Dark mode - Deep mystical theme */
     --background: 245 58% 8%;
     --foreground: 40 33% 95%;
@@ -140,10 +142,39 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  [role="button"],
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  body.theme-transition * {
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, fill 200ms ease, stroke 200ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.theme-transition,
+    body.theme-transition * {
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+    }
   }
 }
 
@@ -156,6 +187,7 @@
     box-shadow: 
       0 4px 20px -4px hsl(var(--gold) / 0.5),
       inset 0 1px 0 hsl(var(--gold-light) / 0.3);
+    min-height: 44px;
   }
 
   .btn-gold::before {
@@ -198,6 +230,7 @@
     backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--gold) / 0.2);
     color: hsl(var(--foreground));
+    min-height: 44px;
   }
 
   .btn-secondary-premium:hover {
@@ -476,6 +509,18 @@
   .chakra-dot.completed {
     background: hsl(var(--gold));
   }
+
+  @media (max-width: 640px) {
+    .btn-gold,
+    .btn-secondary-premium {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .sanskrit-accent {
+      letter-spacing: 0.12em;
+    }
+  }
 }
 
 @layer utilities {
@@ -523,5 +568,9 @@
   .border-glow-gold {
     border-color: hsl(var(--gold) / 0.3);
     box-shadow: 0 0 15px hsl(var(--gold) / 0.2);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
   }
 }
