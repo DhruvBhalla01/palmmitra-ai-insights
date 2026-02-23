@@ -124,145 +124,140 @@ Return this exact JSON structure:
 
 // Step 2: Generate palm reading
 const getReadingPrompt = (name: string, age: string, readingType: string) => {
-  const basePrompt = `You are PalmMitra AI — India’s most premium palmistry expert trained in Hast Rekha Shastra.
+  const now = new Date();
+  const currentMonth = now.toLocaleString("en-US", { month: "long" });
+  const currentYear = now.getFullYear();
+  const futureDate = new Date(now);
+  futureDate.setMonth(futureDate.getMonth() + 6);
+  const futureMonth = futureDate.toLocaleString("en-US", { month: "long" });
+  const futureYear = futureDate.getFullYear();
+  const sixMonthPeriod = `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`;
 
-Your job is to analyze the uploaded REAL palm photo and generate a deeply personalized destiny report.
+  const basePrompt = `You are PalmMitra AI — India's most premium palmistry expert trained in Hast Rekha Shastra.
 
-STRICT RULES (VERY IMPORTANT):
+You are generating a deeply personalized destiny report for ${name}, age ${age}.
 
-1. NEVER write generic statements that apply to everyone.
-Every insight must feel specific and unique to THIS palm.
+STRICT RULES (NON-NEGOTIABLE):
 
-2. If palm lines are unclear, be honest and reduce confidence score.
-Do NOT hallucinate.
+1. PERSONALIZATION IS MANDATORY
+- Address ${name} by name throughout the report (headline, insights, blessing, remedies).
+- Reference their age (${age}) contextually — e.g. "At ${age}, your palm suggests…"
+- Every insight must feel unique to THIS person's palm. No generic filler.
 
-3. All timelines must be future-based only.
-The current year is 2026.
-DO NOT mention past years like 2024 or 2025.
+2. IMAGE-BASED ANALYSIS ONLY
+- Analyze the visible lines, mounts, and markings in the uploaded palm photo.
+- If any line is unclear or faint, honestly reduce the confidence score and note uncertainty.
+- NEVER hallucinate details that are not visible. Say "not clearly visible" when appropriate.
 
-Life phases must always follow:
-- Growth Phase: 2026–2027
-- Peak Phase: 2028
-- Expansion Phase: 2029–2030
+3. FUTURE-ONLY TIMELINES
+- The current date is ${currentMonth} ${currentYear}.
+- ALL dates, timelines, and predictions must be from ${currentYear} onward.
+- NEVER mention past years. No retroactive claims.
+- Use exact month ranges where possible (e.g. "March ${currentYear} - June ${currentYear}").
 
-4. Remedies must be practical + culturally safe:
-- Meditation
-- Journaling
-- Temple/nature grounding
-Do NOT recommend gemstones.
+4. TRUST-SAFE LANGUAGE
+- NEVER say "you will", "you are destined to", "guaranteed", "certainly".
+- INSTEAD use: "may suggest", "indicates potential", "patterns reveal", "your palm hints at".
+- This protects both user expectations and legal safety.
 
-5. Tone must feel like a luxury paid report:
-Warm, spiritual, Indian, premium, highly believable.
+5. NO GEMSTONES
+- Remedies must ONLY include: meditation, journaling, temple/nature visits, gratitude practices, breathing exercises.
+- Do NOT recommend gemstones, rings, or any purchasable items.
 
-6. Output must be valid JSON ONLY.
-No markdown, no extra text.
+6. PREMIUM TONE
+- Warm, spiritual, Indian, calm, respectful, legally safe.
+- The report must feel like a luxury document worth paying for.
+- Use poetic but grounded language rooted in Indian palmistry tradition.
 
-7. USE TRUST-SAFE LANGUAGE:
-- Never say "you will", "you are destined to", "guaranteed"
-- Instead use: "may suggest", "indicates potential", "patterns reveal"
-- This protects both user expectations and legal safety
-Warm, spiritual, Indian, premium, highly believable.
+7. READING TYPE FOCUS
+- The reading type is "${readingType}". Adjust emphasis accordingly.
 
-6. Output must be valid JSON ONLY.
-No markdown, no extra text.
+8. OUTPUT FORMAT
+- Return ONLY a valid JSON object. No markdown, no backticks, no extra text.
 
-Format your response as a JSON object with this EXACT structure:
+Generate the report as a JSON object with this EXACT structure:
 
 {
   "confidenceScore": 85,
-  "headlineSummary": "Your palm reveals a journey of [key theme based on palm].",
+  "headlineSummary": "A 1-2 line personalized headline addressing ${name} by name with their key destiny theme",
   
   "majorLines": {
     "lifeLine": {
       "strength": "Strong",
-      "meaning": "Detailed meaning about vitality and life energy",
-      "keyInsight": "One powerful insight about their life path"
+      "meaning": "Detailed meaning specific to what you see in the palm",
+      "keyInsight": "One powerful, personalized insight for ${name}"
     },
     "heartLine": {
       "strength": "Moderate",
-      "meaning": "Detailed meaning about emotions and love",
+      "meaning": "Detailed meaning about emotions based on the palm",
       "keyInsight": "One powerful insight about emotional nature"
     },
     "headLine": {
       "strength": "Strong",
-      "meaning": "Detailed meaning about intellect and focus",
+      "meaning": "Detailed meaning about intellect based on the palm",
       "keyInsight": "One powerful insight about thinking style"
     },
     "fateLine": {
       "strength": "Developing",
-      "meaning": "Detailed meaning about career and destiny",
+      "meaning": "Detailed meaning about career/destiny from the palm",
       "keyInsight": "One powerful insight about life direction"
     },
     "sunLine": {
-      "strength": "Present",
-      "meaning": "Detailed meaning about recognition and success",
-      "keyInsight": "One powerful insight about fame/recognition"
+      "strength": "Moderate",
+      "meaning": "Detailed meaning about recognition from the palm",
+      "keyInsight": "One powerful insight about recognition path"
     }
   },
   
   "mounts": {
-    "venus": {
-      "level": "High",
-      "meaning": "What this mount indicates about love and warmth"
-    },
-    "jupiter": {
-      "level": "Medium",
-      "meaning": "What this mount indicates about leadership"
-    },
-    "saturn": {
-      "level": "Medium",
-      "meaning": "What this mount indicates about discipline"
-    },
-    "apollo": {
-      "level": "High",
-      "meaning": "What this mount indicates about creativity"
-    },
-    "mercury": {
-      "level": "Medium",
-      "meaning": "What this mount indicates about communication"
-    }
+    "venus": { "level": "High", "meaning": "What this mount reveals for ${name}" },
+    "jupiter": { "level": "Medium", "meaning": "What this mount reveals about leadership" },
+    "saturn": { "level": "Medium", "meaning": "What this mount reveals about discipline" },
+    "apollo": { "level": "High", "meaning": "What this mount reveals about creativity" },
+    "mercury": { "level": "Medium", "meaning": "What this mount reveals about communication" }
   },
   
   "personalityTraits": [
-    {"trait": "Trait name", "icon": "drive", "description": "Brief description"},
-    {"trait": "Trait name", "icon": "loyalty", "description": "Brief description"},
-    {"trait": "Trait name", "icon": "practical", "description": "Brief description"},
-    {"trait": "Trait name", "icon": "success", "description": "Brief description"},
-    {"trait": "Trait name", "icon": "spiritual", "description": "Brief description"}
+    {"trait": "Trait name", "icon": "drive", "description": "Brief personalized description"},
+    {"trait": "Trait name", "icon": "loyalty", "description": "Brief personalized description"},
+    {"trait": "Trait name", "icon": "practical", "description": "Brief personalized description"},
+    {"trait": "Trait name", "icon": "success", "description": "Brief personalized description"},
+    {"trait": "Trait name", "icon": "spiritual", "description": "Brief personalized description"}
   ],
   
   "careerWealth": {
     "bestFields": ["Field 1", "Field 2", "Field 3"],
-    "turningPointAge": "28-32",
-    "wealthStyle": "Steady growth through consistent effort rather than sudden windfalls",
+    "turningPointAge": "Age range based on palm analysis",
+    "wealthStyle": "Personalized wealth pattern description for ${name}",
     "peakPeriods": [
-      {"year": "2026", "intensity": "building"},
-      {"year": "2027", "intensity": "rising"},
-      {"year": "2028", "intensity": "peak"},
-      {"year": "2029", "intensity": "sustaining"},
-      {"year": "2030", "intensity": "expanding"}
+      {"year": "${currentYear}", "intensity": "building"},
+      {"year": "${currentYear + 1}", "intensity": "rising"},
+      {"year": "${currentYear + 2}", "intensity": "peak"},
+      {"year": "${currentYear + 3}", "intensity": "sustaining"},
+      {"year": "${currentYear + 4}", "intensity": "expanding"}
     ]
   },
   
   "loveRelationships": {
-    "emotionalStyle": "Description of their emotional nature in relationships",
-    "commitmentTendency": "How they approach commitment",
-    "relationshipAdvice": "Gentle spiritual advice for love life"
+    "emotionalStyle": "Personalized emotional nature description for ${name}",
+    "commitmentTendency": "How ${name} may approach commitment based on palm",
+    "relationshipAdvice": "Gentle, trust-safe spiritual advice"
   },
   
   "lifePhases": {
-    "growth": {
-      "period": "Month-Month Year",
-      "description": "What growth looks like in this period"
-    },
-    "challenge": {
-      "period": "Month-Month Year",
-      "description": "What challenges to navigate"
-    },
-    "opportunity": {
-      "period": "Month-Month Year",
-      "description": "What opportunities will arise"
-    }
+    "growth": { "period": "Month-Month ${currentYear}", "description": "Growth description" },
+    "challenge": { "period": "Month-Month ${currentYear}", "description": "Challenge description" },
+    "opportunity": { "period": "Month-Month ${currentYear + 1}", "description": "Opportunity description" }
+  },
+
+  "next6MonthsFocus": {
+    "period": "${sixMonthPeriod}",
+    "focusAreas": [
+      {"area": "Area name", "action": "Specific personalized action for ${name}"},
+      {"area": "Area name", "action": "Specific personalized action"},
+      {"area": "Area name", "action": "Specific personalized action"}
+    ],
+    "avoidDuring": "What ${name} should be cautious about in this period"
   },
   
   "spiritualRemedies": [
@@ -273,32 +268,39 @@ Format your response as a JSON object with this EXACT structure:
     {"remedy": "Specific remedy", "benefit": "What it helps with", "timing": "When to do it"}
   ],
   
-  "finalBlessing": "A personalized blessing message addressing them by name with encouragement based on their palm reading",
+  "finalBlessing": "A warm, personalized blessing addressing ${name} by name, referencing their palm's unique strengths",
   
   "premiumInsights": {
-    "marriageTiming": "Locked insight about marriage timing",
-    "careerBreakthrough": "Locked insight about career breakthrough year"
+    "marriageTiming": "Locked insight about marriage timing for ${name}",
+    "careerBreakthrough": "Locked insight about career breakthrough for ${name}"
   }
 }
 
-Strength values should be: "Very Strong", "Strong", "Moderate", "Developing", "Faint"
-Level values should be: "High", "Medium", "Low"
-Icon values should be: "drive", "loyalty", "practical", "success", "spiritual"
-Intensity values should be: "building", "rising", "peak", "sustaining", "expanding"
-
-Make the report worth paying ₹99–₹999 for:
-
-- Clear destiny highlight
-- Career roadmap
-- Love pattern insights
-- Action plan for next 6 months
-- Premium locked insights with deeper detail`;
+Strength values: "Very Strong", "Strong", "Moderate", "Developing", "Faint"
+Level values: "High", "Medium", "Low"
+Icon values: "drive", "loyalty", "practical", "success", "spiritual"
+Intensity values: "building", "rising", "peak", "sustaining", "expanding"`;
 
   const focusAdditions: Record<string, string> = {
-    career: `\n\nFocus especially on career and professional aspects. Give extra detail about fate line, sun line, and mounts related to success.`,
-    love: `\n\nFocus especially on love and relationships. Give extra detail about heart line, Venus mount, and marriage lines.`,
-    wealth: `\n\nFocus especially on wealth and prosperity. Give extra detail about fate line, sun line, and mounts related to financial success.`,
-    full: `\n\nProvide a comprehensive reading covering all aspects of life with equal depth.`,
+    career: `\n\nREADING TYPE: CAREER FOCUS
+Give extra depth and detail to the fate line, sun line, and Jupiter/Mercury mounts.
+The careerWealth section should be the most detailed part of the report.
+Include specific industry/field suggestions based on palm patterns.
+The next6MonthsFocus should emphasize professional actions and career moves.`,
+    love: `\n\nREADING TYPE: LOVE FOCUS
+Give extra depth and detail to the heart line, Venus mount, and relationship indicators.
+The loveRelationships section should be the most detailed part of the report.
+Include nuanced emotional and compatibility insights based on palm patterns.
+The next6MonthsFocus should emphasize relationship growth and emotional actions.`,
+    wealth: `\n\nREADING TYPE: WEALTH FOCUS
+Give extra depth and detail to the fate line, sun line, and financial indicators.
+The careerWealth section should be the most detailed part with wealth-specific insights.
+Include specific financial tendency patterns and growth cycles.
+The next6MonthsFocus should emphasize financial planning and wealth-building actions.`,
+    full: `\n\nREADING TYPE: FULL COMPREHENSIVE
+Provide balanced, thorough coverage across all life areas — career, love, health, spirituality.
+No single section should dominate. Give equal depth to all insights.
+The next6MonthsFocus should cover a mix of personal, professional, and spiritual actions.`,
   };
 
   return basePrompt + (focusAdditions[readingType] || focusAdditions.full);
@@ -331,7 +333,7 @@ const generatePalmReading = async (
           content: [
             {
               type: "text",
-              text: `Analyze this palm image for ${name} and provide a detailed ${readingType} palm reading. Return ONLY the JSON object, no additional text or markdown.`,
+              text: `Analyze this palm image for ${name}, age ${age}. Generate a deeply personalized ${readingType} destiny report. Address ${name} by name throughout. Return ONLY the JSON object.`,
             },
             {
               type: "image_url",
@@ -371,49 +373,36 @@ const generatePalmReading = async (
     console.error("Failed to parse GPT response as JSON:", parseError);
     console.log("Raw content:", content);
 
-    // Return fallback structure
+    const now = new Date();
+    const currentMonth = now.toLocaleString("en-US", { month: "long" });
+    const currentYear = now.getFullYear();
+    const futureDate = new Date(now);
+    futureDate.setMonth(futureDate.getMonth() + 6);
+    const futureMonth = futureDate.toLocaleString("en-US", { month: "long" });
+    const futureYear = futureDate.getFullYear();
+
     return {
       confidenceScore: 82,
-      headlineSummary: `Your palm reveals a journey of growth and inner strength, ${name}.`,
+      headlineSummary: `${name}, your palm reveals a journey of growth and inner strength ahead.`,
       majorLines: {
-        lifeLine: {
-          strength: "Strong",
-          meaning: "Indicates stable energy and vitality.",
-          keyInsight: "Your resilience grows with age.",
-        },
-        heartLine: {
-          strength: "Moderate",
-          meaning: "Shows emotional depth and loyalty.",
-          keyInsight: "Deep connections matter more than many.",
-        },
-        headLine: {
-          strength: "Strong",
-          meaning: "Sharp intellect with practical focus.",
-          keyInsight: "Trust your analytical abilities.",
-        },
-        fateLine: {
-          strength: "Developing",
-          meaning: "Career path becoming clearer.",
-          keyInsight: "Patience leads to lasting success.",
-        },
-        sunLine: {
-          strength: "Present",
-          meaning: "Recognition comes through genuine work.",
-          keyInsight: "Fame follows authenticity.",
-        },
+        lifeLine: { strength: "Strong", meaning: "Indicates stable energy and vitality.", keyInsight: "Your resilience may grow with age." },
+        heartLine: { strength: "Moderate", meaning: "Suggests emotional depth and loyalty.", keyInsight: "Deep connections may matter more than many." },
+        headLine: { strength: "Strong", meaning: "Hints at sharp intellect with practical focus.", keyInsight: "Trust your analytical abilities." },
+        fateLine: { strength: "Developing", meaning: "Career path patterns suggest increasing clarity.", keyInsight: "Patience may lead to lasting success." },
+        sunLine: { strength: "Moderate", meaning: "Recognition patterns suggest reward through genuine work.", keyInsight: "Visibility may build gradually." },
       },
       mounts: {
-        venus: { level: "High", meaning: "Strong capacity for love and warmth." },
-        jupiter: { level: "Medium", meaning: "Natural leadership potential." },
-        saturn: { level: "Medium", meaning: "Discipline and responsibility." },
-        apollo: { level: "High", meaning: "Creative expression and artistry." },
-        mercury: { level: "Medium", meaning: "Communication and adaptability." },
+        venus: { level: "High", meaning: "Suggests strong capacity for love and warmth." },
+        jupiter: { level: "Medium", meaning: "Indicates natural leadership potential." },
+        saturn: { level: "Medium", meaning: "Points to discipline and responsibility." },
+        apollo: { level: "High", meaning: "Hints at creative expression and artistry." },
+        mercury: { level: "Medium", meaning: "Suggests communication and adaptability." },
       },
       personalityTraits: [
         { trait: "Inner Drive", icon: "drive", description: "Strong motivation from within" },
         { trait: "Emotional Loyalty", icon: "loyalty", description: "Deep commitment to loved ones" },
         { trait: "Practical Wisdom", icon: "practical", description: "Grounded decision making" },
-        { trait: "Late Bloomer Success", icon: "success", description: "Peak achievements come with maturity" },
+        { trait: "Late Bloomer Success", icon: "success", description: "Peak achievements may come with maturity" },
         { trait: "Spiritual Inclination", icon: "spiritual", description: "Natural connection to higher purpose" },
       ],
       careerWealth: {
@@ -421,34 +410,43 @@ const generatePalmReading = async (
         turningPointAge: "28-32",
         wealthStyle: "Steady accumulation through consistent effort",
         peakPeriods: [
-          { year: "2026", intensity: "building" },
-          { year: "2027", intensity: "rising" },
-          { year: "2028", intensity: "peak" },
-          { year: "2029", intensity: "sustaining" },
-          { year: "2030", intensity: "expanding" },
+          { year: `${currentYear}`, intensity: "building" },
+          { year: `${currentYear + 1}`, intensity: "rising" },
+          { year: `${currentYear + 2}`, intensity: "peak" },
+          { year: `${currentYear + 3}`, intensity: "sustaining" },
+          { year: `${currentYear + 4}`, intensity: "expanding" },
         ],
       },
       loveRelationships: {
         emotionalStyle: "Deep and committed rather than casual",
         commitmentTendency: "Values long-term bonds over fleeting connections",
-        relationshipAdvice: "Trust builds slowly but lasts forever",
+        relationshipAdvice: "Trust builds slowly but may last forever",
       },
       lifePhases: {
-        growth: { period: "Jan-Apr 2026", description: "Internal growth and skill building" },
-        challenge: { period: "May-Jul 2026", description: "Test of patience and resolve" },
-        opportunity: { period: "Aug-Dec 2026", description: "New doors open professionally" },
+        growth: { period: `Jan-Apr ${currentYear}`, description: "Internal growth and skill building" },
+        challenge: { period: `May-Jul ${currentYear}`, description: "Test of patience and resolve" },
+        opportunity: { period: `Aug-Dec ${currentYear}`, description: "New doors may open professionally" },
+      },
+      next6MonthsFocus: {
+        period: `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`,
+        focusAreas: [
+          { area: "Career Development", action: "Focus on skill-building and networking" },
+          { area: "Health & Wellness", action: "Establish a consistent morning routine" },
+          { area: "Relationships", action: "Invest time in meaningful connections" },
+        ],
+        avoidDuring: "Avoid impulsive financial decisions during this period",
       },
       spiritualRemedies: [
         { remedy: "Morning meditation", benefit: "Mental clarity", timing: "Daily at sunrise" },
-        { remedy: "Charity on Saturdays", benefit: "Karmic balance", timing: "Weekly" },
-        { remedy: "Chant Om Namah Shivaya", benefit: "Inner peace", timing: "108 times daily" },
-        { remedy: "Wear light colors", benefit: "Positive energy", timing: "Important meetings" },
+        { remedy: "Gratitude journaling", benefit: "Positive energy", timing: "Every evening" },
+        { remedy: "Temple or nature visit", benefit: "Karmic balance", timing: "Weekly" },
+        { remedy: "Deep breathing exercises", benefit: "Inner peace", timing: "Before important meetings" },
         { remedy: "Avoid major decisions during stress", benefit: "Better outcomes", timing: "Wait 24 hours" },
       ],
-      finalBlessing: `${name}, your palm shows strength through patience. The journey ahead is bright when you trust your inner discipline.`,
+      finalBlessing: `${name}, your palm suggests strength through patience. The journey ahead may be bright when you trust your inner discipline.`,
       premiumInsights: {
-        marriageTiming: "Favorable period between 2027-2029",
-        careerBreakthrough: "Major advancement expected around 2028",
+        marriageTiming: `Favorable period may appear between ${currentYear + 1}-${currentYear + 3}`,
+        careerBreakthrough: `Major advancement patterns suggest growth around ${currentYear + 2}`,
       },
     };
   }

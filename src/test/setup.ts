@@ -28,7 +28,7 @@ vi.mock("framer-motion", () => {
             delete cleaned[key];
           });
 
-          return React.createElement(prop as string, { ref, ...cleaned }, children);
+          return React.createElement(prop as string, { ref, ...cleaned }, children as React.ReactNode);
         }),
     }
   );
@@ -96,7 +96,7 @@ class MockFileReader {
 
   readAsDataURL(_file: File) {
     this.result = "data:image/png;base64,FAKE_IMAGE";
-    this.onload?.({ target: this } as ProgressEvent<FileReader>);
+    this.onload?.({ target: this } as unknown as ProgressEvent<FileReader>);
   }
 }
 
