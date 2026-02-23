@@ -31,6 +31,12 @@ export interface SpiritualRemedy {
   timing: string;
 }
 
+export interface Next6MonthsFocus {
+  period: string;
+  focusAreas: { area: string; action: string }[];
+  avoidDuring: string;
+}
+
 export interface PalmReading {
   confidenceScore: number;
   headlineSummary: string;
@@ -73,6 +79,8 @@ export interface PalmReading {
   };
   
   spiritualRemedies: SpiritualRemedy[];
+
+  next6MonthsFocus: Next6MonthsFocus;
   
   finalBlessing: string;
   

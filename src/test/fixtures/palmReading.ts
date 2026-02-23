@@ -61,6 +61,15 @@ export const sampleReading: PalmReading = {
     { remedy: "Morning meditation", benefit: "Clarity and calm", timing: "Daily" },
     { remedy: "Gratitude journal", benefit: "Positive focus", timing: "Weekly" },
   ],
+  next6MonthsFocus: {
+    period: "February 2026 - August 2026",
+    focusAreas: [
+      { area: "Career Development", action: "Focus on skill-building and networking" },
+      { area: "Health", action: "Establish a consistent morning routine" },
+      { area: "Relationships", action: "Invest time in meaningful connections" },
+    ],
+    avoidDuring: "Avoid impulsive financial decisions during this period",
+  },
   finalBlessing: "May your path be guided by wisdom and patience.",
   premiumInsights: {
     marriageTiming: "Favorable alignment in your early 30s.",

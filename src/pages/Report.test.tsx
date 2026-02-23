@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/dom";
 import { vi } from "vitest";
 import Report from "@/pages/Report";
 import { renderWithRouter } from "@/test/test-utils";

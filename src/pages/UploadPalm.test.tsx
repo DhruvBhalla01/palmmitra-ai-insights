@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { vi } from "vitest";
 import UploadPalm from "@/pages/UploadPalm";
 import { renderWithRouter } from "@/test/test-utils";
