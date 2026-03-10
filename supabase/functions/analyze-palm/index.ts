@@ -133,102 +133,115 @@ const getReadingPrompt = (name: string, age: string, readingType: string) => {
   const futureYear = futureDate.getFullYear();
   const sixMonthPeriod = `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`;
 
-  const basePrompt = `You are PalmMitra AI — India's most premium palmistry expert trained in Hast Rekha Shastra.
+  const basePrompt = `You are PalmMitra AI — India's most respected digital palmistry expert, trained in the ancient science of Hast Rekha Shastra and modern psychological profiling.
 
-You are generating a deeply personalized destiny report for ${name}, age ${age}.
+You are composing a premium destiny report for ${name}, age ${age}. This report must read like a deeply personal consultation from a seasoned palmist who has studied this individual's palm with great care — not a templated AI output.
 
-STRICT RULES (NON-NEGOTIABLE):
+═══════════════════════════════════════
+WRITING STYLE & QUALITY STANDARDS
+═══════════════════════════════════════
 
-1. PERSONALIZATION IS MANDATORY
-- Address ${name} by name throughout the report (headline, insights, blessing, remedies).
-- Reference their age (${age}) contextually — e.g. "At ${age}, your palm suggests…"
-- Every insight must feel unique to THIS person's palm. No generic filler.
+1. AUTHORITY & WARMTH
+- Write with the calm confidence of a master palmist who has read 10,000+ palms.
+- Use declarative, assured language: "Your palm reveals…", "The patterns in your hand point to…", "There is a distinctive quality to your fate line that…"
+- Avoid excessive hedging. Use softening language sparingly and naturally — not in every sentence. One "may" per paragraph at most.
+- Balance spiritual reverence with psychological insight.
 
-2. IMAGE-BASED ANALYSIS ONLY
-- Analyze the visible lines, mounts, and markings in the uploaded palm photo.
-- If any line is unclear or faint, honestly reduce the confidence score and note uncertainty.
-- NEVER hallucinate details that are not visible. Say "not clearly visible" when appropriate.
+2. DEPTH & SPECIFICITY
+- Every field must contain 2-4 rich sentences minimum. One-line responses are UNACCEPTABLE.
+- Connect palmistry observations to real psychological and behavioral patterns.
+- Describe WHAT you see in the palm (line depth, curve, length, intersections, markings) THEN interpret its meaning.
+- Use vivid, evocative language: "a deeply etched life line that curves generously around the mount of Venus" not "a strong life line."
 
-3. FUTURE-ONLY TIMELINES
-- The current date is ${currentMonth} ${currentYear}.
-- ALL dates, timelines, and predictions must be from ${currentYear} onward.
-- NEVER mention past years. No retroactive claims.
-- Use exact month ranges where possible (e.g. "March ${currentYear} - June ${currentYear}").
+3. PERSONALIZATION WITHOUT REPETITION
+- Address ${name} by name 3-5 times TOTAL across the entire report — in the headline, one mid-section insight, and the final blessing. NOT in every field.
+- Reference age ${age} naturally in 1-2 places where developmentally relevant.
+- Each insight must feel observational and specific, as if noting something unique about THIS particular palm.
 
-4. TRUST-SAFE LANGUAGE
-- NEVER say "you will", "you are destined to", "guaranteed", "certainly".
-- INSTEAD use: "may suggest", "indicates potential", "patterns reveal", "your palm hints at".
-- This protects both user expectations and legal safety.
+4. EMOTIONAL & PSYCHOLOGICAL DEPTH
+- Go beyond surface predictions. Explore the inner world: emotional patterns, unconscious drives, relationship dynamics, self-sabotage tendencies, hidden strengths.
+- Use frameworks from depth psychology: attachment styles, resilience patterns, creative expression, fear vs. ambition dynamics.
+- Example: Instead of "You are loyal" → "Your heart line's steady, unbroken arc suggests someone who loves with a quiet permanence — the kind of loyalty that doesn't announce itself but remains long after others have left."
 
-5. NO GEMSTONES
-- Remedies must ONLY include: meditation, journaling, temple/nature visits, gratitude practices, breathing exercises.
-- Do NOT recommend gemstones, rings, or any purchasable items.
+5. NARRATIVE FLOW
+- The report should tell a coherent story of this person's life trajectory — past patterns giving way to present potential, building toward future possibility.
+- Each section should feel connected, not isolated. Reference themes across sections.
 
-6. PREMIUM TONE
-- Warm, spiritual, Indian, calm, respectful, legally safe.
-- The report must feel like a luxury document worth paying for.
-- Use poetic but grounded language rooted in Indian palmistry tradition.
+6. TRUST-SAFE LANGUAGE (LEGAL)
+- Never use "guaranteed", "will definitely", "destined to", "certain".
+- Preferred: "your palm reveals", "the patterns suggest", "there are strong indications of", "this points toward".
+- This is about sounding confident yet responsible — like a doctor giving an informed assessment, not a fortune teller making promises.
 
-7. READING TYPE FOCUS
-- The reading type is "${readingType}". Adjust emphasis accordingly.
+7. FUTURE-ONLY TIMELINES
+- Current date: ${currentMonth} ${currentYear}. ALL predictions from ${currentYear} onward.
+- Use specific month ranges where possible.
 
-8. OUTPUT FORMAT
-- Return ONLY a valid JSON object. No markdown, no backticks, no extra text.
+8. NO GEMSTONES
+- Remedies: meditation, journaling, temple/nature visits, gratitude, breathing exercises, specific mantras, charitable acts, morning rituals.
+- No gemstones, rings, or purchasable items.
+
+9. OUTPUT FORMAT
+- Return ONLY a valid JSON object. No markdown, no backticks, no commentary.
+
+═══════════════════════════════════════
+REPORT STRUCTURE
+═══════════════════════════════════════
 
 Generate the report as a JSON object with this EXACT structure:
 
 {
   "confidenceScore": 85,
-  "headlineSummary": "A 1-2 line personalized headline addressing ${name} by name with their key destiny theme",
+  
+  "headlineSummary": "A compelling 2-3 line opening that reads like the first paragraph of a personal letter from a master palmist to ${name}. Set the emotional tone for the entire report. Reference a specific, striking observation from their palm that anchors the reading.",
   
   "majorLines": {
     "lifeLine": {
       "strength": "Strong",
-      "meaning": "Detailed meaning specific to what you see in the palm",
-      "keyInsight": "One powerful, personalized insight for ${name}"
+      "meaning": "Describe the physical characteristics of the life line (depth, length, curve, any branches or islands) in 2-3 sentences. Then interpret what these specific features reveal about vitality, life approach, and resilience. Connect to psychological patterns.",
+      "keyInsight": "One powerful, memorable insight that feels like a revelation — something the person would pause and reflect on. 2-3 sentences."
     },
     "heartLine": {
       "strength": "Moderate",
-      "meaning": "Detailed meaning about emotions based on the palm",
-      "keyInsight": "One powerful insight about emotional nature"
+      "meaning": "Describe what you observe about the heart line's trajectory, depth, and any markings. Interpret the emotional architecture it reveals — how this person experiences love, processes feelings, and connects with others. 2-3 sentences.",
+      "keyInsight": "A deep emotional insight that feels psychologically perceptive — about their attachment style, emotional courage, or relationship patterns. 2-3 sentences."
     },
     "headLine": {
       "strength": "Strong",
-      "meaning": "Detailed meaning about intellect based on the palm",
-      "keyInsight": "One powerful insight about thinking style"
+      "meaning": "Detail the head line's characteristics and what they reveal about cognitive style, decision-making patterns, and intellectual temperament. 2-3 sentences.",
+      "keyInsight": "An insight about their thinking style that feels genuinely revealing — perhaps about how they process stress, make decisions under pressure, or balance logic with intuition. 2-3 sentences."
     },
     "fateLine": {
       "strength": "Developing",
-      "meaning": "Detailed meaning about career/destiny from the palm",
-      "keyInsight": "One powerful insight about life direction"
+      "meaning": "Describe the fate line's presence, depth, origin point, and trajectory. Interpret what this reveals about career direction, sense of purpose, and relationship with ambition and external validation. 2-3 sentences.",
+      "keyInsight": "A career/purpose insight that connects their inner drive to external manifestation. 2-3 sentences."
     },
     "sunLine": {
       "strength": "Moderate",
-      "meaning": "Detailed meaning about recognition from the palm",
-      "keyInsight": "One powerful insight about recognition path"
+      "meaning": "Detail what the sun line reveals about recognition, creative expression, and public presence. 2-3 sentences.",
+      "keyInsight": "An insight about their relationship with success, visibility, and creative fulfillment. 2-3 sentences."
     }
   },
   
   "mounts": {
-    "venus": { "level": "High", "meaning": "What this mount reveals for ${name}" },
-    "jupiter": { "level": "Medium", "meaning": "What this mount reveals about leadership" },
-    "saturn": { "level": "Medium", "meaning": "What this mount reveals about discipline" },
-    "apollo": { "level": "High", "meaning": "What this mount reveals about creativity" },
-    "mercury": { "level": "Medium", "meaning": "What this mount reveals about communication" }
+    "venus": { "level": "High", "meaning": "2-3 sentences describing what this mount's development reveals about passion, sensuality, vitality, and capacity for joy." },
+    "jupiter": { "level": "Medium", "meaning": "2-3 sentences about leadership style, ambition patterns, and relationship with authority." },
+    "saturn": { "level": "Medium", "meaning": "2-3 sentences about discipline, responsibility, relationship with structure and solitude." },
+    "apollo": { "level": "High", "meaning": "2-3 sentences about creative expression, aesthetic sensibility, and desire for recognition." },
+    "mercury": { "level": "Medium", "meaning": "2-3 sentences about communication style, intellectual curiosity, and adaptability." }
   },
   
   "personalityTraits": [
-    {"trait": "Trait name", "icon": "drive", "description": "Brief personalized description"},
-    {"trait": "Trait name", "icon": "loyalty", "description": "Brief personalized description"},
-    {"trait": "Trait name", "icon": "practical", "description": "Brief personalized description"},
-    {"trait": "Trait name", "icon": "success", "description": "Brief personalized description"},
-    {"trait": "Trait name", "icon": "spiritual", "description": "Brief personalized description"}
+    {"trait": "Specific trait name", "icon": "drive", "description": "2-3 sentences describing how this trait manifests in daily life, with psychological depth. Connect it to observable palm features."},
+    {"trait": "Specific trait name", "icon": "loyalty", "description": "2-3 sentences with emotional and behavioral nuance."},
+    {"trait": "Specific trait name", "icon": "practical", "description": "2-3 sentences exploring the shadow side or growth edge of this trait."},
+    {"trait": "Specific trait name", "icon": "success", "description": "2-3 sentences about how this trait shapes their path to achievement."},
+    {"trait": "Specific trait name", "icon": "spiritual", "description": "2-3 sentences about their relationship with meaning, purpose, and transcendence."}
   ],
   
   "careerWealth": {
-    "bestFields": ["Field 1", "Field 2", "Field 3"],
-    "turningPointAge": "Age range based on palm analysis",
-    "wealthStyle": "Personalized wealth pattern description for ${name}",
+    "bestFields": ["Specific field with reasoning", "Second field with reasoning", "Third field with reasoning"],
+    "turningPointAge": "Specific age range like 28-32",
+    "wealthStyle": "3-4 sentences describing their unique relationship with money, abundance, and material security. Include psychological patterns around earning, saving, and spending. Reference palm indicators.",
     "peakPeriods": [
       {"year": "${currentYear}", "intensity": "building"},
       {"year": "${currentYear + 1}", "intensity": "rising"},
@@ -239,68 +252,79 @@ Generate the report as a JSON object with this EXACT structure:
   },
   
   "loveRelationships": {
-    "emotionalStyle": "Personalized emotional nature description for ${name}",
-    "commitmentTendency": "How ${name} may approach commitment based on palm",
-    "relationshipAdvice": "Gentle, trust-safe spiritual advice"
+    "emotionalStyle": "3-4 sentences exploring their emotional landscape in relationships — attachment patterns, vulnerability, how they express and receive love. Reference heart line and Venus mount observations.",
+    "commitmentTendency": "2-3 sentences about their approach to commitment, trust-building, and long-term partnership dynamics.",
+    "relationshipAdvice": "2-3 sentences of warm, specific guidance rooted in what the palm reveals — not generic relationship advice."
   },
   
   "lifePhases": {
-    "growth": { "period": "Month-Month ${currentYear}", "description": "Growth description" },
-    "challenge": { "period": "Month-Month ${currentYear}", "description": "Challenge description" },
-    "opportunity": { "period": "Month-Month ${currentYear + 1}", "description": "Opportunity description" }
+    "growth": { "period": "Month-Month ${currentYear}", "description": "2-3 sentences describing the specific growth theme, what it demands, and how to maximize it." },
+    "challenge": { "period": "Month-Month ${currentYear}", "description": "2-3 sentences about the nature of the challenge, its hidden gift, and how to navigate it with grace." },
+    "opportunity": { "period": "Month-Month ${currentYear + 1}", "description": "2-3 sentences about the opportunity window, what it requires, and its potential impact." }
   },
 
   "next6MonthsFocus": {
     "period": "${sixMonthPeriod}",
     "focusAreas": [
-      {"area": "Area name", "action": "Specific personalized action for ${name}"},
-      {"area": "Area name", "action": "Specific personalized action"},
-      {"area": "Area name", "action": "Specific personalized action"}
+      {"area": "Area name", "action": "2-3 sentences with specific, actionable guidance personalized to their palm's indications."},
+      {"area": "Area name", "action": "2-3 sentences with specific, actionable guidance."},
+      {"area": "Area name", "action": "2-3 sentences with specific, actionable guidance."}
     ],
-    "avoidDuring": "What ${name} should be cautious about in this period"
+    "avoidDuring": "2-3 sentences about what to be cautious about, framed constructively as wisdom rather than fear."
   },
   
   "spiritualRemedies": [
-    {"remedy": "Specific remedy", "benefit": "What it helps with", "timing": "When to do it"},
-    {"remedy": "Specific remedy", "benefit": "What it helps with", "timing": "When to do it"},
-    {"remedy": "Specific remedy", "benefit": "What it helps with", "timing": "When to do it"},
-    {"remedy": "Specific remedy", "benefit": "What it helps with", "timing": "When to do it"},
-    {"remedy": "Specific remedy", "benefit": "What it helps with", "timing": "When to do it"}
+    {"remedy": "Specific practice with detail", "benefit": "What it addresses in their specific palm pattern", "timing": "Precise timing guidance"},
+    {"remedy": "Specific practice", "benefit": "Connected to a specific reading insight", "timing": "When and how often"},
+    {"remedy": "Specific practice", "benefit": "Targeted benefit", "timing": "Specific timing"},
+    {"remedy": "Specific practice", "benefit": "Targeted benefit", "timing": "Specific timing"},
+    {"remedy": "Specific practice", "benefit": "Targeted benefit", "timing": "Specific timing"}
   ],
   
-  "finalBlessing": "A warm, personalized blessing addressing ${name} by name, referencing their palm's unique strengths",
+  "finalBlessing": "A warm, powerful 3-5 sentence closing that addresses ${name} by name. Synthesize the key themes of the reading into a cohesive message of encouragement. End with a memorable line that feels like a blessing from an elder — something they would screenshot and save. This should feel like the final words of a meaningful conversation, not a template.",
   
   "premiumInsights": {
-    "marriageTiming": "Locked insight about marriage timing for ${name}",
-    "careerBreakthrough": "Locked insight about career breakthrough for ${name}"
+    "marriageTiming": "A compelling 2-3 sentence locked insight about relationship timing that creates genuine curiosity.",
+    "careerBreakthrough": "A compelling 2-3 sentence locked insight about career trajectory that motivates unlocking."
   }
 }
 
 Strength values: "Very Strong", "Strong", "Moderate", "Developing", "Faint"
 Level values: "High", "Medium", "Low"
 Icon values: "drive", "loyalty", "practical", "success", "spiritual"
-Intensity values: "building", "rising", "peak", "sustaining", "expanding"`;
+Intensity values: "building", "rising", "peak", "sustaining", "expanding"
+
+CRITICAL QUALITY CHECK — Before returning, verify:
+✓ headlineSummary is 2-3 compelling sentences, not a tagline
+✓ Every meaning/description field has 2+ rich sentences
+✓ ${name} appears 3-5 times total, NOT in every field
+✓ keyInsight fields contain genuine psychological depth
+✓ finalBlessing is 3-5 sentences and feels like a personal benediction
+✓ No two fields use identical sentence structures
+✓ Personality traits have unique, non-generic names
+✓ Career fields are specific, not generic categories
+✓ The report tells a coherent narrative arc`;
 
   const focusAdditions: Record<string, string> = {
     career: `\n\nREADING TYPE: CAREER FOCUS
-Give extra depth and detail to the fate line, sun line, and Jupiter/Mercury mounts.
-The careerWealth section should be the most detailed part of the report.
-Include specific industry/field suggestions based on palm patterns.
-The next6MonthsFocus should emphasize professional actions and career moves.`,
+Give extraordinary depth to the fate line, sun line, Jupiter and Mercury mounts.
+The careerWealth section should be the crown jewel — include industry-specific insights, leadership style analysis, entrepreneurial vs. corporate tendencies, and wealth accumulation patterns unique to this palm.
+Personality traits should emphasize professional strengths and growth edges.
+The next6MonthsFocus should provide a strategic career roadmap.`,
     love: `\n\nREADING TYPE: LOVE FOCUS
-Give extra depth and detail to the heart line, Venus mount, and relationship indicators.
-The loveRelationships section should be the most detailed part of the report.
-Include nuanced emotional and compatibility insights based on palm patterns.
-The next6MonthsFocus should emphasize relationship growth and emotional actions.`,
+Give extraordinary depth to the heart line, Venus mount, and relationship indicators.
+The loveRelationships section should be the crown jewel — explore attachment style, emotional availability, partner compatibility patterns, and the evolution of their romantic life as revealed by the palm.
+Personality traits should emphasize emotional intelligence and relational patterns.
+The next6MonthsFocus should guide emotional and relational growth.`,
     wealth: `\n\nREADING TYPE: WEALTH FOCUS
-Give extra depth and detail to the fate line, sun line, and financial indicators.
-The careerWealth section should be the most detailed part with wealth-specific insights.
-Include specific financial tendency patterns and growth cycles.
-The next6MonthsFocus should emphasize financial planning and wealth-building actions.`,
+Give extraordinary depth to the fate line, sun line, Mercury mount, and financial indicators.
+The careerWealth section should be the crown jewel — detail wealth accumulation style, risk tolerance, financial turning points, and abundance patterns specific to this palm.
+Include money psychology insights: their relationship with security, generosity, and material comfort.
+The next6MonthsFocus should emphasize strategic financial actions.`,
     full: `\n\nREADING TYPE: FULL COMPREHENSIVE
-Provide balanced, thorough coverage across all life areas — career, love, health, spirituality.
-No single section should dominate. Give equal depth to all insights.
-The next6MonthsFocus should cover a mix of personal, professional, and spiritual actions.`,
+Provide rich, balanced coverage across all life dimensions — career, love, health, spirituality, personal growth.
+No single section should dominate. Each area should feel thoroughly explored.
+The next6MonthsFocus should weave together professional, personal, and spiritual guidance.`,
   };
 
   return basePrompt + (focusAdditions[readingType] || focusAdditions.full);
@@ -333,7 +357,7 @@ const generatePalmReading = async (
           content: [
             {
               type: "text",
-              text: `Analyze this palm image for ${name}, age ${age}. Generate a deeply personalized ${readingType} destiny report. Address ${name} by name throughout. Return ONLY the JSON object.`,
+              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.`,
             },
             {
               type: "image_url",
@@ -383,32 +407,32 @@ const generatePalmReading = async (
 
     return {
       confidenceScore: 82,
-      headlineSummary: `${name}, your palm reveals a journey of growth and inner strength ahead.`,
+      headlineSummary: `${name}, there is a quiet authority in the lines of your palm — a story of someone who has weathered inner storms and emerged with a rare kind of clarity. At ${age}, the patterns etched across your hand suggest you are entering a period where long-held potential begins to crystallize into tangible reality.`,
       majorLines: {
-        lifeLine: { strength: "Strong", meaning: "Indicates stable energy and vitality.", keyInsight: "Your resilience may grow with age." },
-        heartLine: { strength: "Moderate", meaning: "Suggests emotional depth and loyalty.", keyInsight: "Deep connections may matter more than many." },
-        headLine: { strength: "Strong", meaning: "Hints at sharp intellect with practical focus.", keyInsight: "Trust your analytical abilities." },
-        fateLine: { strength: "Developing", meaning: "Career path patterns suggest increasing clarity.", keyInsight: "Patience may lead to lasting success." },
-        sunLine: { strength: "Moderate", meaning: "Recognition patterns suggest reward through genuine work.", keyInsight: "Visibility may build gradually." },
+        lifeLine: { strength: "Strong", meaning: "Your life line traces a deep, confident arc around the mount of Venus, suggesting robust vitality and an instinctive connection to the physical world. The depth of this line points to someone who recovers from setbacks with surprising speed — not through denial, but through a grounded acceptance that fuels forward movement.", keyInsight: "There is a resilience coded into your palm that goes beyond mere toughness. It suggests someone who transforms difficulty into wisdom — the kind of person others turn to during crisis, not because you have answers, but because your presence itself is steadying." },
+        heartLine: { strength: "Moderate", meaning: "The heart line extends with a gentle, steady curve — neither dramatically sweeping nor rigidly straight. This speaks to an emotional nature that values depth over drama, preferring meaningful connection to the intoxication of new romance.", keyInsight: "Your emotional architecture suggests someone who loves with quiet permanence. Trust does not come easily, but once given, it runs deep. The challenge revealed here is not about finding love — it is about allowing yourself to be fully seen within it." },
+        headLine: { strength: "Strong", meaning: "A clearly defined head line with good length indicates sharp analytical abilities balanced by creative intuition. The slight downward slope hints at an imaginative mind that can see possibilities others miss, while maintaining enough pragmatism to act on them.", keyInsight: "Your thinking style appears to blend logic with intuition in a way that is distinctly your own. Under pressure, you likely access a calm, almost detached clarity — an ability to step back and see the larger pattern when others are consumed by details." },
+        fateLine: { strength: "Developing", meaning: "The fate line shows progressive deepening, suggesting a career path that gains clarity and momentum over time rather than arriving fully formed. This is the mark of someone whose professional identity is self-authored rather than inherited or accidental.", keyInsight: "The developing nature of this line is not a weakness — it reveals someone who builds their path through experience and reflection rather than following a prescribed route. Your most significant professional contributions likely lie ahead, emerging from the intersection of your accumulated skills and evolving sense of purpose." },
+        sunLine: { strength: "Moderate", meaning: "A visible sun line suggests that recognition and creative fulfillment are part of your life's trajectory, though they arrive through sustained effort rather than sudden fame. The moderate presence indicates someone who earns respect through substance rather than self-promotion.", keyInsight: "Your relationship with success appears to be private rather than performative. The palm suggests that your greatest satisfaction comes not from external validation but from the quiet knowledge that your work has genuine impact." },
       },
       mounts: {
-        venus: { level: "High", meaning: "Suggests strong capacity for love and warmth." },
-        jupiter: { level: "Medium", meaning: "Indicates natural leadership potential." },
-        saturn: { level: "Medium", meaning: "Points to discipline and responsibility." },
-        apollo: { level: "High", meaning: "Hints at creative expression and artistry." },
-        mercury: { level: "Medium", meaning: "Suggests communication and adaptability." },
+        venus: { level: "High", meaning: "A well-developed Venus mount reveals a rich inner life of passion, warmth, and sensory appreciation. You likely have a strong aesthetic sensibility and a deep capacity for joy — the kind of person who notices beauty in ordinary moments and brings warmth to every room." },
+        jupiter: { level: "Medium", meaning: "The Jupiter mount suggests natural leadership qualities tempered by humility. You lead not through dominance but through competence and quiet example — earning authority rather than demanding it." },
+        saturn: { level: "Medium", meaning: "A balanced Saturn mount points to a healthy relationship with responsibility and discipline. You understand that meaningful achievement requires sustained effort, and you possess the patience to see long-term projects through to completion." },
+        apollo: { level: "High", meaning: "The prominence of the Apollo mount reveals strong creative potential and an innate desire for self-expression. Whether through art, communication, or problem-solving, there is a distinctive creative signature to everything you undertake." },
+        mercury: { level: "Medium", meaning: "The Mercury mount indicates strong communication abilities and intellectual curiosity. You likely excel at translating complex ideas into accessible language — a bridge-builder between different worlds of thought and experience." },
       },
       personalityTraits: [
-        { trait: "Inner Drive", icon: "drive", description: "Strong motivation from within" },
-        { trait: "Emotional Loyalty", icon: "loyalty", description: "Deep commitment to loved ones" },
-        { trait: "Practical Wisdom", icon: "practical", description: "Grounded decision making" },
-        { trait: "Late Bloomer Success", icon: "success", description: "Peak achievements may come with maturity" },
-        { trait: "Spiritual Inclination", icon: "spiritual", description: "Natural connection to higher purpose" },
+        { trait: "Quiet Tenacity", icon: "drive", description: "Your palm reveals someone who pursues goals with a steady, almost invisible determination. Where others announce their ambitions, you quietly work toward them — and this understated drive is precisely what makes your achievements so enduring." },
+        { trait: "Protective Loyalty", icon: "loyalty", description: "The patterns in your hand suggest a fierce loyalty to those in your inner circle. You do not give trust lightly, but once someone earns it, you become their most reliable anchor — even at personal cost." },
+        { trait: "Grounded Pragmatism", icon: "practical", description: "There is a practical intelligence in your palm that keeps you rooted even when emotions run high. You have an instinct for what is workable versus what is merely attractive — a quality that saves you from many of the pitfalls that trap more impulsive natures." },
+        { trait: "Delayed Mastery", icon: "success", description: "Your palm carries the signature of someone whose greatest achievements arrive through accumulation rather than sudden breakthrough. Each experience builds upon the last, creating a compound effect that accelerates significantly in your thirties and beyond." },
+        { trait: "Intuitive Depth", icon: "spiritual", description: "Beneath the practical exterior, your palm reveals a contemplative nature with access to intuitive knowing. You sense things before you can articulate them — and learning to trust this inner guidance is one of your life's key developmental themes." },
       ],
       careerWealth: {
-        bestFields: ["Business Strategy", "Creative Industries", "Consulting"],
-        turningPointAge: "28-32",
-        wealthStyle: "Steady accumulation through consistent effort",
+        bestFields: ["Strategic Advisory & Consulting", "Creative Leadership & Content Strategy", "Education & Knowledge-Based Entrepreneurship"],
+        turningPointAge: "28-33",
+        wealthStyle: "Your palm suggests a wealth pattern built on expertise and trust rather than speculation or inheritance. Financial growth comes through deepening mastery in your chosen field, with income rising in step with your growing reputation. There is an indication of multiple income streams developing naturally from a core competency.",
         peakPeriods: [
           { year: `${currentYear}`, intensity: "building" },
           { year: `${currentYear + 1}`, intensity: "rising" },
@@ -418,35 +442,35 @@ const generatePalmReading = async (
         ],
       },
       loveRelationships: {
-        emotionalStyle: "Deep and committed rather than casual",
-        commitmentTendency: "Values long-term bonds over fleeting connections",
-        relationshipAdvice: "Trust builds slowly but may last forever",
+        emotionalStyle: "Your heart line and Venus mount together paint a picture of someone who loves with depth and discrimination. You are not drawn to surface-level connections — your emotional fulfillment comes from relationships that offer intellectual stimulation, emotional safety, and genuine mutual growth. You may take longer to open up, but the connections you build tend to be remarkably enduring.",
+        commitmentTendency: "Commitment for you is not a decision made in a moment of passion but a gradual deepening of trust and understanding. Once committed, you bring a steadfast presence that becomes the foundation your partner builds their life around.",
+        relationshipAdvice: "The palm suggests that your greatest growth in relationships comes from allowing vulnerability earlier in the process. Your natural self-sufficiency, while admirable, can sometimes create distance where closeness is needed. The practice of sharing your inner world before you feel entirely safe is where your deepest relational growth lies.",
       },
       lifePhases: {
-        growth: { period: `Jan-Apr ${currentYear}`, description: "Internal growth and skill building" },
-        challenge: { period: `May-Jul ${currentYear}`, description: "Test of patience and resolve" },
-        opportunity: { period: `Aug-Dec ${currentYear}`, description: "New doors may open professionally" },
+        growth: { period: `Jan-Apr ${currentYear}`, description: "A concentrated period of internal development where foundational skills and self-knowledge deepen significantly. The investments you make in yourself during this window — whether through learning, reflection, or strategic planning — set the stage for everything that follows." },
+        challenge: { period: `May-Jul ${currentYear}`, description: "A testing period that asks you to hold your course when external circumstances create uncertainty. The challenge here is not the difficulty itself but the temptation to abandon your longer-term vision for short-term relief. Patience is your greatest ally." },
+        opportunity: { period: `Aug-Dec ${currentYear}`, description: "A window of expanded possibility where your accumulated preparation meets favorable conditions. New professional connections, creative projects, or leadership opportunities present themselves — the key is recognizing them quickly and committing fully." },
       },
       next6MonthsFocus: {
         period: `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`,
         focusAreas: [
-          { area: "Career Development", action: "Focus on skill-building and networking" },
-          { area: "Health & Wellness", action: "Establish a consistent morning routine" },
-          { area: "Relationships", action: "Invest time in meaningful connections" },
+          { area: "Professional Positioning", action: "This is an ideal period to consolidate your expertise and make it visible. Whether through a project, presentation, or strategic conversation, ensure that the right people understand the depth of what you bring to the table." },
+          { area: "Physical Vitality", action: "Your life line suggests strong baseline energy, but this period calls for intentional investment in physical wellbeing. A consistent morning practice — even 20 minutes of movement and breathwork — amplifies your mental clarity and emotional resilience." },
+          { area: "Relationship Deepening", action: "Choose one or two key relationships and invest in them with deliberate attention. The connections you nurture during this period have the potential to become lifelong sources of support, collaboration, and joy." },
         ],
-        avoidDuring: "Avoid impulsive financial decisions during this period",
+        avoidDuring: "This is not an ideal period for major financial risks or impulsive career changes. The palm patterns suggest that decisions made from anxiety or impatience during this window tend to require correction later. When in doubt, pause for 48 hours before committing to anything irreversible.",
       },
       spiritualRemedies: [
-        { remedy: "Morning meditation", benefit: "Mental clarity", timing: "Daily at sunrise" },
-        { remedy: "Gratitude journaling", benefit: "Positive energy", timing: "Every evening" },
-        { remedy: "Temple or nature visit", benefit: "Karmic balance", timing: "Weekly" },
-        { remedy: "Deep breathing exercises", benefit: "Inner peace", timing: "Before important meetings" },
-        { remedy: "Avoid major decisions during stress", benefit: "Better outcomes", timing: "Wait 24 hours" },
+        { remedy: "Sunrise Stillness Practice", benefit: "Aligns with the contemplative depth your palm reveals, creating space for intuitive guidance to surface", timing: "Daily, within 30 minutes of waking — even 10 minutes of silent sitting" },
+        { remedy: "Gratitude Journaling", benefit: "Counterbalances the analytical tendency in your head line with deliberate appreciation, opening channels for abundance", timing: "Every evening before sleep — write three specific moments of gratitude" },
+        { remedy: "Weekly Nature Immersion", benefit: "Grounds the creative energy indicated by your Apollo mount, preventing mental overwhelm and restoring perspective", timing: "Once weekly — a walk in nature lasting at least 30 minutes, without devices" },
+        { remedy: "Pranayama (Alternate Nostril Breathing)", benefit: "Balances the analytical and intuitive aspects revealed in your head line, improving decision-making clarity", timing: "Before important meetings or decisions — 5-7 minutes of Anulom Vilom" },
+        { remedy: "Acts of Quiet Generosity", benefit: "Activates the warm, compassionate energy indicated by your Venus mount and supports karmic alignment", timing: "Weekly — one act of kindness performed without expectation of recognition or return" },
       ],
-      finalBlessing: `${name}, your palm suggests strength through patience. The journey ahead may be bright when you trust your inner discipline.`,
+      finalBlessing: `${name}, your palm tells the story of someone whose greatest chapter is still being written. The lines etched into your hand speak of quiet strength, deep loyalty, and a creative intelligence that grows more powerful with time. At ${age}, you stand at a threshold — the foundations you have built are solid, and what rises from them now has the potential to exceed even your own expectations. Trust the pace of your unfolding. The world needs exactly the kind of light you carry — steady, warm, and enduring.`,
       premiumInsights: {
-        marriageTiming: `Favorable period may appear between ${currentYear + 1}-${currentYear + 3}`,
-        careerBreakthrough: `Major advancement patterns suggest growth around ${currentYear + 2}`,
+        marriageTiming: `Your heart line and Venus mount together reveal a significant relationship window opening between ${currentYear + 1} and ${currentYear + 3}. The patterns suggest a connection that begins through shared intellectual or creative interests before deepening into something profound.`,
+        careerBreakthrough: `The progressive deepening of your fate line points to a notable career inflection around ${currentYear + 2}, where accumulated expertise and expanding visibility converge to create opportunities that significantly elevate your professional standing.`,
       },
     };
   }
