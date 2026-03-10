@@ -99,7 +99,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         
         {/* Mini mandala */}
         <motion.svg 
-          className="w-8 h-8 text-accent/30"
+          className="w-8 h-8 text-accent/50"
           viewBox="0 0 32 32"
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
