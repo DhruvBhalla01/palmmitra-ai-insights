@@ -48,7 +48,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         transition={{ duration: 0.8 }}
         className="h-16 flex items-center justify-center"
       >
-        <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
       </motion.div>
     );
   }
@@ -62,25 +62,25 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         transition={{ duration: 0.6 }}
         className="py-8 flex items-center justify-center gap-4"
       >
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/40" />
         <div className="flex items-center gap-2">
           <motion.span
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-accent/50 text-xs"
+            className="text-accent/70 text-xs"
           >
             ✦
           </motion.span>
-          <span className="text-accent/40 text-lg">◆</span>
+          <span className="text-accent/60 text-lg">◆</span>
           <motion.span
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-            className="text-accent/50 text-xs"
+            className="text-accent/70 text-xs"
           >
             ✦
           </motion.span>
         </div>
-        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/40" />
       </motion.div>
     );
   }
@@ -95,11 +95,11 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
       className="py-8 flex items-center justify-center"
     >
       <div className="flex items-center gap-4 w-full max-w-lg">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/40" />
         
         {/* Mini mandala */}
         <motion.svg 
-          className="w-8 h-8 text-accent/30"
+          className="w-8 h-8 text-accent/50"
           viewBox="0 0 32 32"
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
@@ -122,7 +122,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
           ))}
         </motion.svg>
         
-        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/40" />
       </div>
     </motion.div>
   );
