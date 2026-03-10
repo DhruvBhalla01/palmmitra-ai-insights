@@ -96,7 +96,7 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <motion.button
-          className="md:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
+          className="lg:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           whileTap={{ scale: 0.95 }}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
