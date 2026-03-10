@@ -122,7 +122,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
           ))}
         </motion.svg>
         
-        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/40" />
       </div>
     </motion.div>
   );

@@ -133,7 +133,7 @@ export function HeroSection() {
           }} transition={{
             delay: 0.8,
             duration: 0.5
-          }} className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground">
+          }} className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-foreground/70">
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 50,000+ Readings
