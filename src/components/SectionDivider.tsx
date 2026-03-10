@@ -62,7 +62,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         transition={{ duration: 0.6 }}
         className="py-8 flex items-center justify-center gap-4"
       >
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/40" />
         <div className="flex items-center gap-2">
           <motion.span
             animate={{ opacity: [0.5, 1, 0.5] }}
