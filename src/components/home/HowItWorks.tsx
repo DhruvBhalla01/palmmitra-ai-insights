@@ -43,7 +43,7 @@ export function HowItWorks() {
           </p>
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-3 gap-8 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative">
           {/* Connection line for desktop */}
           <div className="hidden md:block absolute top-24 left-[20%] right-[20%] h-px">
             <div className="w-full h-full bg-gradient-to-r from-accent/0 via-accent/30 to-accent/0" />
