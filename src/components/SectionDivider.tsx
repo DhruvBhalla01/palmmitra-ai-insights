@@ -71,7 +71,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
           >
             ✦
           </motion.span>
-          <span className="text-accent/40 text-lg">◆</span>
+          <span className="text-accent/60 text-lg">◆</span>
           <motion.span
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
