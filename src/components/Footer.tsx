@@ -106,9 +106,9 @@ export function Footer() {
 
         {/* Disclaimer */}
         <div className="border-t border-primary-foreground/10 pt-8">
-          <div className="glass-premium rounded-2xl p-6 max-w-4xl mx-auto">
-            <p className="text-primary-foreground/60 text-xs text-center leading-relaxed">
-              <strong className="text-primary-foreground/80">Disclaimer:</strong> PalmMitra provides spiritual guidance and AI-based insights for entertainment and self-reflection purposes. 
+          <div className="rounded-2xl p-6 max-w-4xl mx-auto bg-white/10 dark:bg-white/5 border border-white/10">
+            <p className="text-white/70 text-xs text-center leading-relaxed">
+              <strong className="text-white/90">Disclaimer:</strong> PalmMitra provides spiritual guidance and AI-based insights for entertainment and self-reflection purposes. 
               Results may vary and should not be considered as medical, legal, financial, or professional advice. 
               By using our services, you acknowledge that palmistry is a traditional practice and outcomes are not guaranteed.
             </p>
