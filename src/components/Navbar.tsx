@@ -137,7 +137,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
+            className="lg:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
             id="mobile-nav"
           >
             <div className="p-4 flex flex-col gap-2">
