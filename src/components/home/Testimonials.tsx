@@ -92,7 +92,7 @@ export function Testimonials() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 z-10 rounded-full glass-premium border-accent/20 hover:border-accent/50 hover:bg-accent/10 w-12 h-12"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 md:-translate-x-16 z-10 rounded-full glass-premium border-accent/20 hover:border-accent/50 hover:bg-accent/10 w-10 h-10 md:w-12 md:h-12"
             onClick={() => navigate(-1)}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -100,7 +100,7 @@ export function Testimonials() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 z-10 rounded-full glass-premium border-accent/20 hover:border-accent/50 hover:bg-accent/10 w-12 h-12"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 md:translate-x-16 z-10 rounded-full glass-premium border-accent/20 hover:border-accent/50 hover:bg-accent/10 w-10 h-10 md:w-12 md:h-12"
             onClick={() => navigate(1)}
           >
             <ChevronRight className="w-5 h-5" />

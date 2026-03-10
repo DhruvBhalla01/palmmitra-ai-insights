@@ -61,7 +61,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
           {navLinks.map((link) => (
             <SmartLink
               key={link.name}
@@ -75,7 +75,7 @@ export function Navbar() {
         </div>
 
         {/* CTA Button */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           <button
             type="button"
             onClick={toggleTheme}
@@ -96,7 +96,7 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <motion.button
-          className="md:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
+          className="lg:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           whileTap={{ scale: 0.95 }}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -137,7 +137,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
+            className="lg:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
             id="mobile-nav"
           >
             <div className="p-4 flex flex-col gap-2">
