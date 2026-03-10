@@ -95,7 +95,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
       className="py-8 flex items-center justify-center"
     >
       <div className="flex items-center gap-4 w-full max-w-lg">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/20" />
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/40" />
         
         {/* Mini mandala */}
         <motion.svg 
