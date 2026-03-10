@@ -357,7 +357,7 @@ const generatePalmReading = async (
           content: [
             {
               type: "text",
-              text: `Analyze this palm image for ${name}, age ${age}. Generate a deeply personalized ${readingType} destiny report. Address ${name} by name throughout. Return ONLY the JSON object.`,
+              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.`,
             },
             {
               type: "image_url",
