@@ -80,7 +80,7 @@ export function PricingSection() {
                 transition={{ duration: 0.3 }}
                 className={`relative rounded-3xl p-8 h-full transition-all duration-300 ${
                   plan.popular
-                    ? 'glass-premium border-2 border-accent/40 shadow-gold-lg scale-105'
+                    ? 'glass-premium border-2 border-accent/40 shadow-gold-lg lg:scale-105'
                     : 'card-premium'
                 }`}
               >
