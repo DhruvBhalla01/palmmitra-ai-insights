@@ -48,7 +48,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         transition={{ duration: 0.8 }}
         className="h-16 flex items-center justify-center"
       >
-        <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
       </motion.div>
     );
   }
