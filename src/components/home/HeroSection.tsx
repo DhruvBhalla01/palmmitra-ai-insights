@@ -135,7 +135,7 @@ export function HeroSection() {
             duration: 0.5
           }} className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-foreground/70">
               <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                 50,000+ Readings
               </span>
               <span className="hidden sm:inline text-accent/50">•</span>
