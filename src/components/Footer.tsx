@@ -23,7 +23,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="relative bg-gradient-mystic text-primary-foreground py-20 pb-32 md:pb-20 overflow-hidden">
+    <footer className="relative bg-gradient-mystic text-white py-20 pb-32 md:pb-20 overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
       <div className="absolute top-0 left-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
@@ -44,7 +44,7 @@ export function Footer() {
                 Palm<span className="text-accent">Mitra</span>
               </span>
             </Link>
-            <p className="text-primary-foreground/70 text-sm leading-relaxed mb-4">
+            <p className="text-white/70 text-sm leading-relaxed mb-4">
               AI Powered Palm Reading, Inspired by Ancient India. Discover your destiny through the wisdom of your palms.
             </p>
             <p className="sanskrit-accent text-xs">ॐ Bhavishya Darshan</p>
@@ -58,7 +58,7 @@ export function Footer() {
                 <li key={link.name}>
                   <SmartLink
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
+                    className="text-white/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
@@ -76,7 +76,7 @@ export function Footer() {
                 <li key={link.name}>
                   <SmartLink
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
+                    className="text-white/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
@@ -94,7 +94,7 @@ export function Footer() {
                 <li key={link.name}>
                   <SmartLink
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
+                    className="text-white/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
@@ -106,7 +106,7 @@ export function Footer() {
         </div>
 
         {/* Disclaimer */}
-        <div className="border-t border-primary-foreground/10 pt-8">
+        <div className="border-t border-white/10 pt-8">
           <div className="rounded-2xl p-6 max-w-4xl mx-auto bg-white/10 dark:bg-white/5 border border-white/10">
             <p className="text-white/70 text-xs text-center leading-relaxed">
               <strong className="text-white/90">Disclaimer:</strong> PalmMitra provides spiritual guidance and AI-based insights for entertainment and self-reflection purposes. 
@@ -118,7 +118,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="text-center mt-8">
-          <p className="text-primary-foreground/50 text-sm">
+          <p className="text-white/50 text-sm">
             © {new Date().getFullYear()} PalmMitra. All rights reserved. Made with ❤️ in India.
           </p>
         </div>
