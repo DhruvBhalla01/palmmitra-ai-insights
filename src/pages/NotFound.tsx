@@ -7,6 +7,7 @@ import { PremiumBackground } from "@/components/PremiumBackground";
 import { Button } from "@/components/ui/button";
 import { Home, Sparkles, ArrowLeft } from "lucide-react";
 import { useHashScroll } from "@/hooks/useHashScroll";
+import palmIconGold from '@/assets/palm-icon-gold.png';
 
 const NotFound = () => {
   const location = useLocation();
