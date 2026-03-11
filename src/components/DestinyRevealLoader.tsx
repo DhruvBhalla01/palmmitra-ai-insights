@@ -77,8 +77,10 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
             ))}
 
             {/* Center palm */}
-            <motion.div
-              className="relative z-10 text-8xl"
+            <motion.img
+              src={palmIconGold}
+              alt="Palm Reading"
+              className="relative z-10 w-20 h-20"
               animate={{ 
                 scale: [1, 1.1, 1],
                 filter: [
@@ -88,9 +90,7 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
                 ]
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              🖐️
-            </motion.div>
+            />
 
             {/* Loading text */}
             <motion.div

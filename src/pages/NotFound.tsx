@@ -41,7 +41,7 @@ const NotFound = () => {
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               className="mb-8"
             >
-              <span className="text-8xl md:text-9xl">🖐️</span>
+              <img src={palmIconGold} alt="Palm" className="w-28 h-28 md:w-36 md:h-36 object-contain" />
             </motion.div>
 
             <p className="sanskrit-accent mb-4">ॐ Marg Bhool</p>

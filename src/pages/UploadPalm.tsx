@@ -526,7 +526,7 @@ export default function UploadPalm() {
                 <div className="absolute inset-2 rounded-full border-2 border-accent/50" />
                 <div className="absolute inset-4 rounded-full border border-accent" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl">🖐️</span>
+                  <img src={palmIconGold} alt="Palm" className="w-12 h-12 object-contain" />
                 </div>
               </motion.div>
 
