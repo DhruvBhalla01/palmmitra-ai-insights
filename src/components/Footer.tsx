@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import logoImg from '@/assets/logo.png';
 import { SmartLink } from '@/components/SmartLink';
 
 const footerLinks = {
@@ -33,11 +34,11 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2.5 mb-6">
-              <motion.div 
-                className="w-11 h-11 rounded-2xl bg-gradient-gold flex items-center justify-center shadow-gold"
+            <motion.div 
+                className="w-11 h-11 rounded-2xl overflow-hidden shadow-gold"
                 whileHover={{ scale: 1.05 }}
               >
-                <span className="text-xl">🖐️</span>
+                <img src={logoImg} alt="PalmMitra logo" className="w-full h-full object-cover" />
               </motion.div>
               <span className="text-2xl font-serif font-bold">
                 Palm<span className="text-accent">Mitra</span>
