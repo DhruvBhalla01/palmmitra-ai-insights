@@ -23,7 +23,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="relative bg-gradient-mystic text-primary-foreground py-20 pb-32 md:pb-20 overflow-hidden">
+    <footer className="relative bg-gradient-mystic text-white py-20 pb-32 md:pb-20 overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
       <div className="absolute top-0 left-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
