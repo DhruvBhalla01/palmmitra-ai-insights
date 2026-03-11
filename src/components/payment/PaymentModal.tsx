@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Lock, Shield, CreditCard, Zap, Crown, Check, Sparkles } from "lucide-react";
+import { X, Lock, Shield, CreditCard, Zap, Crown, Check, Sparkles, Eye, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
@@ -49,7 +49,7 @@ export function PaymentModal({
             onClick={onClose}
           />
 
-          {/* Modal Wrapper - uses flexbox for centering */}
+          {/* Modal Wrapper */}
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -164,19 +164,23 @@ export function PaymentModal({
                 </motion.button>
               </div>
 
-              {/* Trust Signals */}
-              <div className="flex items-center justify-center gap-6 mb-6 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Shield className="w-4 h-4 text-green-500" />
-                  Secure Payment
+              {/* Trust Signals - Enhanced */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-background/50 border border-border/50">
+                  <Shield className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span className="text-xs text-muted-foreground">Secure payment via Razorpay</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <CreditCard className="w-4 h-4 text-blue-500" />
-                  UPI/Cards/Wallets
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-background/50 border border-border/50">
+                  <Eye className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                  <span className="text-xs text-muted-foreground">Image not stored after scan</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 text-amber-500" />
-                  Instant Unlock
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-background/50 border border-border/50">
+                  <Zap className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                  <span className="text-xs text-muted-foreground">Instant unlock after payment</span>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-background/50 border border-border/50">
+                  <ShieldCheck className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                  <span className="text-xs text-muted-foreground">100% private & confidential</span>
                 </div>
               </div>
 
@@ -199,16 +203,22 @@ export function PaymentModal({
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5" />
-                    Pay ₹{selectedPlan === "report99" ? "99" : "999"} with Razorpay
+                    Pay ₹{selectedPlan === "report99" ? "99" : "999"} — Unlock Now
                   </>
                 )}
               </Button>
 
-              {/* Legal Disclaimer */}
-              <p className="text-[10px] text-center text-muted-foreground mt-4 px-4">
-                By proceeding, you agree to our terms. PalmMitra provides AI-based spiritual guidance only. No
-                guaranteed medical, legal, or financial outcomes.
-              </p>
+              {/* Payment methods + legal */}
+              <div className="mt-4 text-center">
+                <p className="text-xs text-muted-foreground flex items-center justify-center gap-2 mb-2">
+                  <CreditCard className="w-3.5 h-3.5" />
+                  UPI • Cards • Wallets • Net Banking
+                </p>
+                <p className="text-[10px] text-muted-foreground px-4">
+                  By proceeding, you agree to our terms. PalmMitra provides AI-based spiritual guidance only. No
+                  guaranteed medical, legal, or financial outcomes.
+                </p>
+              </div>
             </div>
             </motion.div>
           </div>
