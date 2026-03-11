@@ -94,7 +94,7 @@ export function Footer() {
                 <li key={link.name}>
                   <SmartLink
                     to={link.path}
-                    className="text-primary-foreground/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
+                    className="text-white/70 hover:text-accent transition-colors text-sm inline-flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {link.name}
