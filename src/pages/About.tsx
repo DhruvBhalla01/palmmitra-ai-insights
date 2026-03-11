@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Brain, Shield, Heart, Users, Star } from 'lucide-react';
-import mysticalPalm from '@/assets/mystical-palm.png';
+import heroPalmImg from '@/assets/hero-palm-mystical.png';
 import { useHashScroll } from '@/hooks/useHashScroll';
 
 const values = [
