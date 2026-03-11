@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Eye } from "lucide-react";
+import { ArrowRight, Sparkles, Eye, Shield, Zap, Users } from "lucide-react";
 import heroVideo from "@/assets/hero-video.mp4";
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.png";
@@ -41,7 +41,6 @@ export function HeroSection() {
         >
           <source src={heroVideo} type="video/mp4" />
         </video>
-        {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px]" />
       </div>
 
@@ -52,125 +51,106 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <motion.div
-            initial={{
-              opacity: 0,
-              x: -50,
-            }}
-            animate={{
-              opacity: 1,
-              x: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.2,
-            }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="text-center lg:text-left"
           >
             {/* Badge */}
             <motion.div
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.5,
-              }}
-              className="inline-flex items-center gap-2 glass-premium rounded-full px-5 py-2.5 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 glass-premium rounded-full px-5 py-2.5 mb-6"
             >
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium text-foreground">AI Powered Palm Reading</span>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+              </span>
+              <span className="text-sm font-medium text-foreground">3,200+ readings this week</span>
             </motion.div>
 
             {/* Sanskrit accent */}
             <motion.p
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              transition={{
-                delay: 0.3,
-                duration: 0.5,
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
               className="sanskrit-accent mb-4"
             >
               ॐ Bhavishya Darshan
             </motion.p>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-foreground leading-tight mb-6">
-              Discover Your Future Through{" "}
-              <span className="text-gradient-gold text-shadow-luxury">AI Palm Insights</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-foreground leading-tight mb-4">
+              What Does Your Palm{" "}
+              <span className="text-gradient-gold text-shadow-luxury">Reveal About You?</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Upload your palm photo & get instant life guidance on career, love, and destiny.
+            <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              Uncover hidden truths about your personality, career, love life, and destiny — powered by advanced AI palmistry analysis.
             </p>
+
+            {/* Value prop bullets */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start mb-8 text-sm text-foreground/80">
+              <span className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-accent" />
+                Instant results
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-accent" />
+                100% private
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-accent" />
+                Free preview
+              </span>
+            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link to="/upload">
-                <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg">
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Analyze My Palm
-                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Button>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg w-full sm:w-auto">
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Scan My Palm — It's Free
+                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </motion.div>
               </Link>
-              <Button
-                variant="outline"
-                className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <Eye className="w-5 h-5 mr-2" />
-                See Sample Report
-              </Button>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <Button
+                  variant="outline"
+                  className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl w-full sm:w-auto"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <Eye className="w-5 h-5 mr-2" />
+                  See Sample Report
+                </Button>
+              </motion.div>
             </div>
 
             {/* Trust indicators */}
             <motion.div
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                delay: 0.8,
-                duration: 0.5,
-              }}
-              className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-foreground/70"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-foreground/70"
             >
               <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                <Users className="w-4 h-4 text-accent" />
                 50,000+ Readings
               </span>
               <span className="hidden sm:inline text-accent/50">•</span>
               <span>Rated 4.9★</span>
               <span className="hidden sm:inline text-accent/50">•</span>
-              <span>100% Secure</span>
+              <span>Trusted by users in 120+ cities</span>
             </motion.div>
           </motion.div>
 
           {/* Right Content - Mystical Palm Image */}
           <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.8,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            transition={{
-              duration: 1,
-              delay: 0.4,
-            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
             className="relative flex items-center justify-center"
           >
             {/* Multiple glow layers */}
@@ -181,14 +161,8 @@ export function HeroSection() {
             <div className="relative w-[260px] h-[260px] sm:w-[360px] sm:h-[360px] md:w-[520px] md:h-[520px] lg:w-[700px] lg:h-[700px]">
               {/* Outer rotating ring with dots */}
               <motion.div
-                animate={{
-                  rotate: 360,
-                }}
-                transition={{
-                  duration: 30,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0"
               >
                 <svg className="w-full h-full" viewBox="0 0 200 200">
@@ -236,44 +210,16 @@ export function HeroSection() {
 
               {/* Floating symbols with premium styling */}
               {[
-                {
-                  symbol: "✨",
-                  x: "8%",
-                  y: "15%",
-                  delay: 0,
-                },
-                {
-                  symbol: "🔮",
-                  x: "88%",
-                  y: "25%",
-                  delay: 0.5,
-                },
-                {
-                  symbol: "⭐",
-                  x: "5%",
-                  y: "75%",
-                  delay: 1,
-                },
-                {
-                  symbol: "🌙",
-                  x: "92%",
-                  y: "78%",
-                  delay: 1.5,
-                },
-                {
-                  symbol: "ॐ",
-                  x: "50%",
-                  y: "2%",
-                  delay: 0.8,
-                },
+                { symbol: "✨", x: "8%", y: "15%", delay: 0 },
+                { symbol: "🔮", x: "88%", y: "25%", delay: 0.5 },
+                { symbol: "⭐", x: "5%", y: "75%", delay: 1 },
+                { symbol: "🌙", x: "92%", y: "78%", delay: 1.5 },
+                { symbol: "ॐ", x: "50%", y: "2%", delay: 0.8 },
               ].map(({ symbol, x, y, delay }, i) => (
                 <motion.div
                   key={i}
                   className="absolute text-2xl md:text-3xl"
-                  style={{
-                    left: x,
-                    top: y,
-                  }}
+                  style={{ left: x, top: y }}
                   animate={{
                     y: [0, -20, 0],
                     opacity: [0.4, 1, 0.4],

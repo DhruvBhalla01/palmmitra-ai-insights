@@ -7,12 +7,30 @@ interface DestinyRevealLoaderProps {
   onComplete?: () => void;
 }
 
+const mysticalMessages = [
+  { text: 'Reading your palm lines...', sub: 'Tracing the map of your destiny' },
+  { text: 'Decoding your fate line...', sub: 'Uncovering career & purpose' },
+  { text: 'Analyzing heart connections...', sub: 'Love & relationship patterns' },
+  { text: 'Predicting future cycles...', sub: 'Life phases & turning points' },
+  { text: 'Channeling spiritual wisdom...', sub: 'Personalized guidance for you' },
+  { text: 'Preparing your destiny report...', sub: 'Almost ready...' },
+];
+
 export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoaderProps) {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([]);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  // Cycle through mystical messages
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % mysticalMessages.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   useEffect(() => {
     if (!isLoading) {
-      // Generate burst particles when loading completes
       const newParticles = Array.from({ length: 20 }, (_, i) => ({
         id: i,
         x: Math.random() * 360 - 180,
@@ -39,12 +57,13 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-lg"
         >
-          <div className="relative">
+          <div className="relative flex flex-col items-center">
             {/* Expanding mandala rings */}
             {[...Array(4)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute flex items-center justify-center"
+                style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ 
                   scale: [0.5, 1 + i * 0.3, 0.5], 
@@ -92,19 +111,39 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
 
-            {/* Loading text */}
-            <motion.div
-              className="absolute -bottom-20 left-1/2 -translate-x-1/2 text-center"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              <p className="text-xl font-serif font-bold text-foreground mb-1">
-                Reading Your Destiny...
-              </p>
-              <p className="text-sm text-muted-foreground">
-                ॐ Bhavishya Darshan
-              </p>
-            </motion.div>
+            {/* Loading text with cycling messages */}
+            <div className="mt-24 text-center min-h-[80px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={messageIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <p className="text-xl font-serif font-bold text-foreground mb-1">
+                    {mysticalMessages[messageIndex].text}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {mysticalMessages[messageIndex].sub}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Progress dots */}
+            <div className="flex gap-2 mt-6">
+              {mysticalMessages.map((_, i) => (
+                <motion.div
+                  key={i}
+                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    i <= messageIndex ? 'bg-accent' : 'bg-accent/20'
+                  }`}
+                  animate={i === messageIndex ? { scale: [1, 1.4, 1] } : {}}
+                  transition={{ duration: 0.6, repeat: Infinity }}
+                />
+              ))}
+            </div>
           </div>
         </motion.div>
       )}

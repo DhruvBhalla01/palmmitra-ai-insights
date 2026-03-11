@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Lock, Calendar, Briefcase, Sparkles, Crown } from 'lucide-react';
+import { Lock, Calendar, Briefcase, Sparkles, Crown, Shield, Zap, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PremiumPaywallProps {
@@ -37,7 +37,6 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
       className="mb-12"
     >
       <div className="relative glass-premium rounded-3xl overflow-hidden border-2 border-accent/30 shadow-gold">
-        {/* Lock overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 pointer-events-none" />
         
         <div className="p-6 md:p-8">
@@ -55,7 +54,7 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
           </div>
 
           {/* Locked content preview */}
-          <div className="space-y-3 mb-8">
+          <div className="space-y-3 mb-6">
             {lockedItems.map(({ icon: Icon, title, preview, color, bg }, index) => (
               <motion.div
                 key={index}
@@ -77,6 +76,26 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
                 <Lock className="w-4 h-4 text-muted-foreground" />
               </motion.div>
             ))}
+          </div>
+
+          {/* Trust signals near payment */}
+          <div className="grid grid-cols-2 gap-2 mb-6">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Shield className="w-3.5 h-3.5 text-green-500" />
+              Secure with Razorpay
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Eye className="w-3.5 h-3.5 text-blue-500" />
+              Image not stored
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              Instant unlock
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Lock className="w-3.5 h-3.5 text-purple-500" />
+              Private & safe
+            </div>
           </div>
 
           {/* CTA Buttons */}
@@ -109,8 +128,8 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
               </Button>
             </motion.div>
 
-            <p className="text-xs text-muted-foreground text-center mt-3">
-              One-time payment • Instant access • Secure with Razorpay
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              One-time payment • Instant access • UPI / Cards / Wallets
             </p>
           </div>
         </div>
