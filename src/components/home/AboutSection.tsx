@@ -4,6 +4,7 @@ import { Brain, Shield, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import mandalaOrnament from '@/assets/mandala-ornament.png';
+import palmIconGold from '@/assets/palm-icon-gold.png';
 
 const highlights = [
   {
