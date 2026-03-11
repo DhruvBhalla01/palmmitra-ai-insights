@@ -188,7 +188,7 @@ export function HeroSection() {
                 ease: "easeInOut"
               }} style={{
                 filter: "drop-shadow(0 0 60px hsl(var(--gold) / 0.6))"
-              }} src="/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.png" />
+              }} src={heroPalmImg} />
               </div>
 
               {/* Floating symbols with premium styling */}

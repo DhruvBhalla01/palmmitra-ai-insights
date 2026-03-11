@@ -152,15 +152,15 @@ export function FeaturesSection() {
                   </motion.div>
                   
                   <div className="text-center text-primary-foreground p-8 relative z-10">
-                    <motion.div 
-                      className="text-8xl mb-4"
+                    <motion.img 
+                      src={palmIconGold}
+                      alt="Palm Reading"
+                      className="w-20 h-20 object-contain"
                       animate={{ 
                         filter: ['drop-shadow(0 0 20px rgba(255,193,7,0.3))', 'drop-shadow(0 0 40px rgba(255,193,7,0.6))', 'drop-shadow(0 0 20px rgba(255,193,7,0.3))']
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      🖐️
-                    </motion.div>
+                    />
                     <div className="space-y-2">
                       {[...Array(3)].map((_, i) => (
                         <motion.div
