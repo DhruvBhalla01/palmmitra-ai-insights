@@ -4,6 +4,7 @@ import { Brain, Shield, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import mandalaOrnament from '@/assets/mandala-ornament.png';
+import palmIconGold from '@/assets/palm-icon-gold.png';
 
 const highlights = [
   {
@@ -110,16 +111,16 @@ export function AboutSection() {
                 </div>
 
                 <div className="text-center mb-8 relative z-10">
-                  <motion.div
+                  <motion.img
+                    src={palmIconGold}
+                    alt="Palm Reading"
+                    className="w-24 h-24 object-contain mb-4 inline-block"
                     animate={{ 
                       scale: [1, 1.05, 1],
                       filter: ['drop-shadow(0 0 20px rgba(255,193,7,0.3))', 'drop-shadow(0 0 40px rgba(255,193,7,0.5))', 'drop-shadow(0 0 20px rgba(255,193,7,0.3))']
                     }}
                     transition={{ duration: 3, repeat: Infinity }}
-                    className="text-8xl mb-4 inline-block"
-                  >
-                    🖐️
-                  </motion.div>
+                  />
                   <h3 className="text-xl font-serif font-bold text-foreground mb-2">
                     Trusted by Thousands
                   </h3>

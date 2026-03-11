@@ -7,6 +7,7 @@ import { PremiumBackground } from "@/components/PremiumBackground";
 import { Button } from "@/components/ui/button";
 import { Home, Sparkles, ArrowLeft } from "lucide-react";
 import { useHashScroll } from "@/hooks/useHashScroll";
+import palmIconGold from '@/assets/palm-icon-gold.png';
 
 const NotFound = () => {
   const location = useLocation();
@@ -40,7 +41,7 @@ const NotFound = () => {
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               className="mb-8"
             >
-              <span className="text-8xl md:text-9xl">🖐️</span>
+              <img src={palmIconGold} alt="Palm" className="w-28 h-28 md:w-36 md:h-36 object-contain" />
             </motion.div>
 
             <p className="sanskrit-accent mb-4">ॐ Marg Bhool</p>

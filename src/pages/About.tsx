@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Brain, Shield, Heart, Users, Star } from 'lucide-react';
-import mysticalPalm from '@/assets/mystical-palm.png';
+import heroPalmImg from '@/assets/hero-palm-mystical.png';
 import { useHashScroll } from '@/hooks/useHashScroll';
 
 const values = [
@@ -78,7 +78,7 @@ export default function About() {
                 </div>
                 <div className="flex justify-center">
                   <motion.img
-                    src={mysticalPalm}
+                    src={heroPalmImg}
                     alt="Mystical Palm"
                     className="w-48 h-48 md:w-64 md:h-64 object-contain rounded-full"
                     animate={{ 

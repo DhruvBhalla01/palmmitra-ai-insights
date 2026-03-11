@@ -3,7 +3,7 @@ import { Lock, Sparkles, Eye } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import mysticalPalm from '@/assets/mystical-palm.png';
+import palmIconGold from '@/assets/palm-icon-gold.png';
 
 const sampleInsights = [
   { title: 'Life Line Analysis', preview: 'Strong vitality indicated, with a notable branch around age 35...' },
@@ -63,7 +63,7 @@ export function SampleReportTeaser() {
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 <img 
-                  src={mysticalPalm} 
+                  src={palmIconGold} 
                   alt="Palm Reading" 
                   className="w-24 h-24 object-contain rounded-full"
                 />
