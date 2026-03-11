@@ -118,7 +118,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="text-center mt-8">
-          <p className="text-primary-foreground/50 text-sm">
+          <p className="text-white/50 text-sm">
             © {new Date().getFullYear()} PalmMitra. All rights reserved. Made with ❤️ in India.
           </p>
         </div>
