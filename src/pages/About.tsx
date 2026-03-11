@@ -78,7 +78,7 @@ export default function About() {
                 </div>
                 <div className="flex justify-center">
                   <motion.img
-                    src={mysticalPalm}
+                    src={heroPalmImg}
                     alt="Mystical Palm"
                     className="w-48 h-48 md:w-64 md:h-64 object-contain rounded-full"
                     animate={{ 
