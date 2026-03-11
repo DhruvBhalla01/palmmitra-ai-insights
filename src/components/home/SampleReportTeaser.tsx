@@ -63,7 +63,7 @@ export function SampleReportTeaser() {
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 <img 
-                  src={mysticalPalm} 
+                  src={palmIconGold} 
                   alt="Palm Reading" 
                   className="w-24 h-24 object-contain rounded-full"
                 />
