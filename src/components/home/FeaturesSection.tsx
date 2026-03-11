@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Heart, TrendingUp, Calendar, Sparkles } from 'lucide-react';
+import palmIconGold from '@/assets/palm-icon-gold.png';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
