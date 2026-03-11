@@ -106,7 +106,7 @@ export function Footer() {
         </div>
 
         {/* Disclaimer */}
-        <div className="border-t border-primary-foreground/10 pt-8">
+        <div className="border-t border-white/10 pt-8">
           <div className="rounded-2xl p-6 max-w-4xl mx-auto bg-white/10 dark:bg-white/5 border border-white/10">
             <p className="text-white/70 text-xs text-center leading-relaxed">
               <strong className="text-white/90">Disclaimer:</strong> PalmMitra provides spiritual guidance and AI-based insights for entertainment and self-reflection purposes. 
