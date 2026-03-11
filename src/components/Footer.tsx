@@ -44,7 +44,7 @@ export function Footer() {
                 Palm<span className="text-accent">Mitra</span>
               </span>
             </Link>
-            <p className="text-primary-foreground/70 text-sm leading-relaxed mb-4">
+            <p className="text-white/70 text-sm leading-relaxed mb-4">
               AI Powered Palm Reading, Inspired by Ancient India. Discover your destiny through the wisdom of your palms.
             </p>
             <p className="sanskrit-accent text-xs">ॐ Bhavishya Darshan</p>
