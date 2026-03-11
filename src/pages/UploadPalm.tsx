@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import palmIconGold from '@/assets/palm-icon-gold.png';
 import { useNavigate } from 'react-router-dom';
 import { Upload, X, Loader2, Mail, User, Calendar, AlertCircle, CheckCircle, Hand, Camera, Sun, Eye } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
