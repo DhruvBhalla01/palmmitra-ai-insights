@@ -550,6 +550,10 @@
     background: linear-gradient(180deg, hsl(245 58% 12%) 0%, hsl(260 45% 18%) 50%, hsl(280 35% 22%) 100%);
   }
 
+  :root:not(.dark) .bg-gradient-mystic {
+    background: linear-gradient(180deg, hsl(245 30% 22%) 0%, hsl(260 35% 28%) 50%, hsl(280 25% 32%) 100%);
+  }
+
   /* Premium radial background */
   .bg-premium-radial {
     background: 
