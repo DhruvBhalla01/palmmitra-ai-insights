@@ -5,6 +5,7 @@ import { Menu, X, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SmartLink } from '@/components/SmartLink';
 import { useTheme } from '@/hooks/useTheme';
+import logoImg from '@/assets/logo.png';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -49,11 +50,11 @@ export function Navbar() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group">
           <motion.div 
-            className="w-11 h-11 rounded-2xl bg-gradient-gold flex items-center justify-center shadow-gold"
+            className="w-11 h-11 rounded-2xl overflow-hidden shadow-gold"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ duration: 0.2 }}
           >
-            <span className="text-xl">🖐️</span>
+            <img src={logoImg} alt="PalmMitra logo" className="w-full h-full object-cover" />
           </motion.div>
           <span className="text-2xl font-serif font-bold text-foreground">
             Palm<span className="text-gradient-gold">Mitra</span>
