@@ -90,7 +90,7 @@ export function Navbar() {
           <Link to="/upload">
             <Button className="btn-gold text-foreground font-semibold px-6 py-5 rounded-xl shadow-gold">
               <Sparkles className="w-4 h-4 mr-2" />
-              Get Your Reading
+              Scan My Palm — Free
             </Button>
           </Link>
         </div>
@@ -142,12 +142,25 @@ export function Navbar() {
             id="mobile-nav"
           >
             <div className="p-4 flex flex-col gap-2">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="grid gap-2 mb-1"
+              >
+                <Link to="/upload">
+                  <Button className="btn-gold w-full text-foreground font-semibold py-5">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Scan My Palm — Free
+                  </Button>
+                </Link>
+              </motion.div>
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
                 >
                   <SmartLink
                     to={link.path}
@@ -161,25 +174,19 @@ export function Navbar() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mt-2 grid gap-2"
+                transition={{ delay: 0.35 }}
+                className="mt-1"
               >
                 <button
                   type="button"
                   onClick={toggleTheme}
                   aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
                   aria-pressed={isDark}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-foreground font-medium hover:bg-accent/10 transition-colors"
+                  className="flex items-center justify-between w-full rounded-xl px-4 py-3 text-foreground font-medium hover:bg-accent/10 transition-colors"
                 >
                   <span>{isDark ? "Light mode" : "Dark mode"}</span>
                   {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
-                <Link to="/upload">
-                  <Button className="btn-gold w-full text-foreground font-semibold py-5">
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Get Your Reading
-                  </Button>
-                </Link>
               </motion.div>
             </div>
           </motion.div>

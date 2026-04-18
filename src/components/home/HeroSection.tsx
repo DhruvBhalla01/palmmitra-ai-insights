@@ -1,117 +1,124 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Users } from "lucide-react";
-import heroVideo from "@/assets/hero-video.mp4";
+import { SampleReportModal } from "./SampleReportModal";
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.png";
-import { SampleReportModal } from "./SampleReportModal";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isVideoReady, setIsVideoReady] = useState(false);
-
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "video";
-    link.href = heroVideo;
-    link.type = "video/mp4";
-    document.head.appendChild(link);
-    return () => {
-      document.head.removeChild(link);
-    };
-  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          className={`w-full h-full object-cover transition-opacity duration-700 ${isVideoReady ? "opacity-100" : "opacity-0"}`}
-          onLoadedData={() => setIsVideoReady(true)}
-          onCanPlay={() => setIsVideoReady(true)}
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px]" />
-      </div>
+      {/* Premium dark gradient background */}
+      <div className="absolute inset-0 bg-gradient-mystic" />
 
-      {/* Hologram glow behind palm */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/10 blur-[100px] animate-glow-pulse pointer-events-none z-[1]" />
+      {/* Subtle dot-grid texture */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, hsl(42 87% 55%) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
+      {/* Ambient glow blobs */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-accent/8 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-primary/20 blur-[100px] pointer-events-none" />
+
+      <div className="container mx-auto px-4 relative z-10 py-12">
+        <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
+          {/* ── Left: Copy ─────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
             className="text-center lg:text-left"
           >
-            {/* Badge */}
+            {/* Live-count pill */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 glass-premium rounded-full px-5 py-2.5 mb-6"
+              className="inline-flex items-center gap-2.5 glass-premium rounded-full px-5 py-2.5 mb-7 border border-accent/20"
             >
-              <span className="relative flex h-2.5 w-2.5">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
               </span>
-              <span className="text-sm font-medium text-foreground">3,200+ readings this week</span>
+              <span className="text-sm font-medium text-white/80">
+                12,400+ readings done &nbsp;·&nbsp; 4.9★ avg
+              </span>
             </motion.div>
 
             {/* Sanskrit accent */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="sanskrit-accent mb-4"
+              transition={{ delay: 0.2 }}
+              className="sanskrit-accent mb-4 text-white/60"
             >
               ॐ Bhavishya Darshan
             </motion.p>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-foreground leading-tight mb-4">
-              What Does Your Palm{" "}
-              <span className="text-gradient-gold text-shadow-luxury">Reveal About You?</span>
-            </h1>
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.6 }}
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem] font-serif font-bold text-white leading-[1.1] mb-5"
+            >
+              Your Palm Holds the Answers{" "}
+              <span className="text-gradient-gold block mt-1">
+                You've Been Searching For
+              </span>
+            </motion.h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Uncover hidden truths about your personality, career, love life, and destiny — powered by advanced AI palmistry analysis.
-            </p>
+            {/* Subheadline */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.6 }}
+              className="text-base md:text-lg text-white/75 mb-7 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+            >
+              Ancient Indian palmistry meets modern AI. Upload your palm photo
+              and receive a detailed, personalised destiny report in under 2
+              minutes.
+            </motion.p>
 
-            {/* Value prop bullets */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start mb-8 text-sm text-foreground/80">
+            {/* Value prop pills */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45 }}
+              className="flex flex-wrap gap-x-5 gap-y-2 justify-center lg:justify-start mb-8 text-sm text-white/60"
+            >
               <span className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-accent" />
-                Instant results
+                <Zap className="w-4 h-4 text-accent" /> Instant results
               </span>
               <span className="flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-accent" />
-                100% private
+                <Shield className="w-4 h-4 text-accent" /> 100% private
               </span>
               <span className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-accent" />
-                Free preview
+                <Sparkles className="w-4 h-4 text-accent" /> Free preview
               </span>
-            </div>
+            </motion.div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            {/* CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6"
+            >
               <Link to="/upload">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg w-full sm:w-auto">
                     <Sparkles className="w-5 h-5 mr-2" />
-                    Scan My Palm — It's Free
+                    Scan My Palm — Free
                     <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </motion.div>
@@ -119,121 +126,102 @@ export function HeroSection() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Button
                   variant="outline"
-                  className="btn-secondary-premium font-semibold text-lg px-8 py-7 rounded-2xl w-full sm:w-auto"
+                  className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 font-semibold text-lg px-8 py-7 rounded-2xl w-full sm:w-auto backdrop-blur-sm"
                   onClick={() => setIsModalOpen(true)}
                 >
                   <Eye className="w-5 h-5 mr-2" />
                   See Sample Report
                 </Button>
               </motion.div>
-            </div>
-
-            {/* Trust indicators */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-foreground/70"
-            >
-              <span className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-accent" />
-                50,000+ Readings
-              </span>
-              <span className="hidden sm:inline text-accent/50">•</span>
-              <span>Rated 4.9★</span>
-              <span className="hidden sm:inline text-accent/50">•</span>
-              <span>Trusted by users in 120+ cities</span>
             </motion.div>
+
+            {/* Micro-trust strip */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.65 }}
+              className="text-xs text-white/40 text-center lg:text-left"
+            >
+              No sign-up needed &nbsp;·&nbsp; Razorpay secured &nbsp;·&nbsp;
+              Trusted in 120+ cities
+            </motion.p>
           </motion.div>
 
-          {/* Right Content - Mystical Palm Image */}
+          {/* ── Right: Palm image ────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
             className="relative flex items-center justify-center"
           >
-            {/* Multiple glow layers */}
-            <div className="absolute w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] rounded-full bg-accent/20 blur-3xl animate-glow-pulse" />
-            <div className="absolute w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[450px] md:h-[450px] lg:w-[580px] lg:h-[580px] rounded-full bg-accent/10 blur-2xl animate-glow-pulse-gold" />
+            {/* Glow layers */}
+            <div className="absolute w-[320px] h-[320px] md:w-[500px] md:h-[500px] lg:w-[640px] lg:h-[640px] rounded-full bg-accent/15 blur-3xl animate-glow-pulse" />
+            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] lg:w-[540px] lg:h-[540px] rounded-full bg-accent/8 blur-2xl animate-glow-pulse-gold" />
 
-            {/* Palm illustration container */}
-            <div className="relative w-[260px] h-[260px] sm:w-[360px] sm:h-[360px] md:w-[520px] md:h-[520px] lg:w-[700px] lg:h-[700px]">
-              {/* Outer rotating ring with dots */}
+            <div className="relative w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px]">
+              {/* Outer rotating ring */}
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0"
               >
                 <svg className="w-full h-full" viewBox="0 0 200 200">
                   <circle
-                    cx="100"
-                    cy="100"
-                    r="95"
+                    cx="100" cy="100" r="95"
                     fill="none"
-                    stroke="hsl(var(--accent) / 0.2)"
+                    stroke="hsl(var(--accent) / 0.15)"
                     strokeWidth="0.5"
-                    strokeDasharray="4 8"
+                    strokeDasharray="3 9"
                   />
                   {[...Array(12)].map((_, i) => (
                     <circle
                       key={i}
                       cx={100 + 95 * Math.cos((i * 30 * Math.PI) / 180)}
                       cy={100 + 95 * Math.sin((i * 30 * Math.PI) / 180)}
-                      r="2"
-                      fill="hsl(var(--accent) / 0.4)"
+                      r="1.5"
+                      fill="hsl(var(--accent) / 0.35)"
                     />
                   ))}
                 </svg>
               </motion.div>
 
-              {/* Mystical Palm Image */}
+              {/* Palm image */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.img
-                  alt="Mystical Palm Reading"
-                  className="object-contain w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px] opacity-95"
-                  animate={{
-                    y: [0, -18, 0],
-                    scale: [1, 1.03, 1],
-                  }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    filter: "drop-shadow(0 0 60px hsl(var(--gold) / 0.6))",
-                  }}
                   src={heroPalmImg}
+                  alt="Mystical Palm Reading"
+                  className="object-contain w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[500px] md:h-[500px] lg:w-[660px] lg:h-[660px] opacity-95"
+                  animate={{ y: [0, -16, 0], scale: [1, 1.02, 1] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                  style={{
+                    filter: "drop-shadow(0 0 60px hsl(42 87% 55% / 0.55))",
+                  }}
                 />
               </div>
 
-              {/* Floating symbols with premium styling */}
-              {[
-                { symbol: "✨", x: "8%", y: "15%", delay: 0 },
-                { symbol: "🔮", x: "88%", y: "25%", delay: 0.5 },
-                { symbol: "⭐", x: "5%", y: "75%", delay: 1 },
-                { symbol: "🌙", x: "92%", y: "78%", delay: 1.5 },
-                { symbol: "ॐ", x: "50%", y: "2%", delay: 0.8 },
-              ].map(({ symbol, x, y, delay }, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute text-2xl md:text-3xl"
-                  style={{ left: x, top: y }}
-                  animate={{
-                    y: [0, -20, 0],
-                    opacity: [0.4, 1, 0.4],
-                    scale: [0.9, 1.1, 0.9],
-                  }}
-                  transition={{
-                    duration: 4 + i * 0.5,
-                    repeat: Infinity,
-                    delay,
-                  }}
-                >
-                  {symbol}
-                </motion.div>
-              ))}
+              {/* Floating stat cards — replaces cheap emojis */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 }}
+                className="absolute top-[12%] left-[-4%] glass-premium rounded-2xl px-4 py-3 border border-accent/20 hidden sm:block"
+              >
+                <p className="text-xs text-white/60 mb-0.5">Readings done</p>
+                <p className="text-lg font-serif font-bold text-gradient-gold">12,400+</p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1 }}
+                className="absolute bottom-[18%] right-[-4%] glass-premium rounded-2xl px-4 py-3 border border-accent/20 hidden sm:block"
+              >
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-accent" />
+                  <p className="text-sm font-semibold text-white">4.9★ Rating</p>
+                </div>
+                <p className="text-xs text-white/50 mt-0.5">12,400+ users</p>
+              </motion.div>
             </div>
           </motion.div>
         </div>

@@ -95,7 +95,7 @@ export function EmailCaptureSection() {
               </h2>
               
               <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-                Join 50,000+ seekers. Receive weekly palmistry insights, lucky dates, and exclusive offers.
+                Join 12,400+ seekers. Receive weekly palmistry insights, lucky dates, and exclusive offers.
               </p>
 
               {!isSubmitted ? (
@@ -134,9 +134,9 @@ export function EmailCaptureSection() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex items-center justify-center gap-3 text-green-500"
+                  className="flex items-center justify-center gap-3 text-accent"
                 >
-                  <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
                     <Check className="w-5 h-5" />
                   </div>
                   <span className="font-medium">Check your inbox for your free insights!</span>

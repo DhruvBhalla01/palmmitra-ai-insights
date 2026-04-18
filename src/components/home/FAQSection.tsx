@@ -10,36 +10,44 @@ import {
 
 const faqs = [
   {
-    q: "How accurate is PalmMitra's AI palm reading?",
-    a: 'Our AI is trained on thousands of palm readings and traditional Indian palmistry principles. While we strive for accuracy, palmistry is a traditional practice and results should be taken as guidance for self-reflection rather than absolute predictions.',
+    q: 'Is this scientifically accurate or just entertainment?',
+    a: 'PalmMitra is rooted in Hasta Samudrika Shastra — a 3,000-year-old Indian science of palm analysis — combined with AI trained on thousands of verified palm readings. While palmistry is a traditional practice and not a medical or scientific discipline, the patterns AI identifies in your unique palm lines are specific to you, not generic horoscope predictions. Treat it as deep self-reflection backed by ancient wisdom.',
+  },
+  {
+    q: 'How is PalmMitra different from free astrology or horoscope apps?',
+    a: 'Astrology apps use your birth date and give the same prediction to millions of people born in the same month. PalmMitra analyses the actual physical lines on YOUR palm — unique to you like a fingerprint — using computer vision AI trained on traditional Hasta Samudrika Shastra texts. Your birth date never changes. But your palm carries the living story of your actual life path, shaped by your choices and nature.',
   },
   {
     q: 'Which hand should I photograph?',
-    a: 'We recommend photographing your dominant hand (right hand for right-handed people, left for left-handed). Your dominant hand shows your current path and potential, while the non-dominant hand shows inherited traits.',
+    a: 'We recommend photographing your dominant hand (right for right-handed people, left for left-handed). Your dominant hand shows your current path and potential, while the non-dominant hand shows inherited traits.',
   },
   {
     q: 'How long does it take to get my reading?',
-    a: 'Your palm reading is generated instantly! Once you upload your palm image, our AI analyzes it in under 30 seconds and presents your personalized report.',
+    a: 'Your palm reading is generated quickly! Once you upload your palm image, our AI analyses it in under 2 minutes and presents your personalised report.',
   },
   {
-    q: 'Is my palm image stored permanently?',
-    a: 'No. Your palm images are processed securely and are not stored permanently. We only retain the generated report data for your future access. Your privacy is our priority.',
+    q: 'What happens to my palm image after the reading?',
+    a: 'Your palm image is stored securely on our servers and is never shared with third parties. It is used solely to generate your reading. You can request deletion at any time by emailing privacy@palmmitra.com.',
+  },
+  {
+    q: 'Can I trust AI for something this personal?',
+    a: "We understand the hesitation. Our AI doesn't make broad generalisations — it identifies specific patterns in YOUR palm's line depth, length, curvature, and intersections, then maps them to traditional Indian palmistry knowledge compiled from classical texts. Think of it as an expert palmist who has studied thousands of palms and can recall every pattern instantly. The report is always yours, never a template.",
   },
   {
     q: 'What does the free preview include?',
-    a: 'The free preview includes a summary of your palm reading, Life Line analysis, and one personalized spiritual remedy. To unlock the full detailed report with all sections, you can purchase the premium report for just ₹99.',
+    a: 'The free preview includes your palm summary, Life Line deep analysis, your first personality trait reveal, and one personalised spiritual remedy. To unlock all 5 major lines, mounts analysis, career & wealth turning points, love & marriage insights, and the 5-year Lucky Periods Timeline — upgrade for ₹99.',
+  },
+  {
+    q: 'Can I access my report later?',
+    a: 'Yes. Your report is saved permanently at your unique report link. Bookmark it or save the URL — you can return anytime, on any device, for as long as you need.',
+  },
+  {
+    q: 'Can I get readings for family members?',
+    a: 'Absolutely! You can upload palm photos for any family member or friend. Our Monthly Plan at ₹299/month gives you unlimited readings for the whole family — the most popular choice for families.',
   },
   {
     q: 'What payment methods do you accept?',
     a: 'We accept all major payment methods through Razorpay, including UPI, credit/debit cards, net banking, and popular wallets like Paytm, PhonePe, and Google Pay.',
-  },
-  {
-    q: 'Can I get readings for family members?',
-    a: 'Absolutely! You can upload palm photos for family members and friends. Our Unlimited plan at ₹999 is perfect for those who want to explore readings for their entire family.',
-  },
-  {
-    q: 'Is this for entertainment or real guidance?',
-    a: 'PalmMitra is designed for spiritual guidance and self-reflection. While rooted in ancient Indian palmistry traditions, our readings are meant for entertainment and personal insight purposes. Major life decisions should always be made thoughtfully.',
   },
 ];
 
@@ -50,10 +58,11 @@ export function FAQSection() {
         <AnimatedSection className="text-center mb-16">
           <p className="sanskrit-accent mb-3">ॐ Prashna Samadhan</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            Frequently Asked <span className="text-gradient-gold">Questions</span>
+            Your Questions,{' '}
+            <span className="text-gradient-gold">Honestly Answered</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about PalmMitra and your palm reading journey
+            Real answers to the questions people ask before they commit
           </p>
         </AnimatedSection>
 
@@ -67,15 +76,15 @@ export function FAQSection() {
                 Common Questions
               </h3>
             </div>
-            
+
             <Accordion type="single" collapsible className="space-y-3">
               {faqs.map((faq, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: index * 0.04 }}
                 >
                   <AccordionItem
                     value={`faq-${index}`}

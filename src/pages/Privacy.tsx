@@ -41,7 +41,7 @@ const sections = [
     title: 'Data Retention & Deletion',
     content: [
       'You can request deletion of your data at any time',
-      'Palm images are automatically deleted after processing',
+      'Palm images are stored securely and used only to generate your reading',
       'Account data is retained only as long as necessary',
       'Contact us to exercise your data rights',
     ],

@@ -1,6 +1,6 @@
 import { forwardRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Crown, Shield, Palette, MessageCircle, ChevronDown } from 'lucide-react';
+import { Heart, Crown, Shield, Palette, MessageCircle, ChevronDown, Layers } from 'lucide-react';
 import type { Mount } from './types';
 
 interface MountsSectionProps {
@@ -41,12 +41,12 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
         className="mb-12"
       >
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-3xl">⭐</span>
+          <Layers className="w-8 h-8 text-accent" />
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-            Palm Mounts & Personality Forces
+            Palm Mounts & <span className="text-gradient-gold text-shadow-luxury">Personality Forces</span>
           </h2>
         </div>
-        <p className="sanskrit-accent mb-8 ml-12">ॐ Parvat Shakti</p>
+        <p className="sanskrit-accent mb-8 ml-11">ॐ Parvat Shakti</p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {mountConfig.map(({ key, name, subtitle, icon: Icon, color, bgColor, borderColor }, index) => {
@@ -63,10 +63,10 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
                 transition={{ delay: index * 0.08, duration: 0.3 }}
                 layout
                 onClick={() => setExpandedMount(isExpanded ? null : key)}
-                className={`glass-premium rounded-2xl border ${borderColor} hover:border-accent/30 transition-all duration-300 cursor-pointer overflow-hidden`}
+                className={`glass-premium gradient-border rounded-2xl border ${borderColor} hover:border-accent/30 transition-all duration-300 cursor-pointer overflow-hidden`}
               >
                 <div className="p-5 flex items-center gap-4">
-                  <motion.div 
+                  <motion.div
                     className={`w-12 h-12 rounded-2xl ${bgColor}/10 flex items-center justify-center`}
                     whileHover={{ scale: 1.1 }}
                   >

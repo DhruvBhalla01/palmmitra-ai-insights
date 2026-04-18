@@ -31,9 +31,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
+    // user_email is intentionally excluded — PII must not be returned to unauthenticated callers
     const { data: report, error } = await supabase
       .from('palm_reports')
-      .select('id, user_name, user_age, user_email, reading_type, report_json, created_at, image_url, validation_confidence, validation_quality')
+      .select('id, user_name, user_age, reading_type, report_json, created_at, validation_confidence, validation_quality')
       .eq('id', report_id)
       .maybeSingle();
 

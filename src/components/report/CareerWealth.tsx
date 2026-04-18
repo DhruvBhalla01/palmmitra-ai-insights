@@ -30,11 +30,11 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
         className="mb-12"
       >
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-3">
-          <span className="text-3xl">💼</span>
-          Career & Wealth Direction
+          <Briefcase className="w-8 h-8 text-accent" />
+          <span className="text-gradient-gold text-shadow-luxury">Career & Wealth</span> Direction
         </h2>
 
-        <div className="glass rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="glass gradient-border rounded-2xl p-6 md:p-8 space-y-6">
           {/* Best Fields */}
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -90,7 +90,7 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
                 {peakPeriods.map((period, index) => {
                   const colors = intensityColors[period.intensity] || intensityColors.building;
                   const isPeak = period.intensity === 'peak';
-                  
+
                   return (
                     <motion.div
                       key={index}
@@ -116,9 +116,9 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
             </div>
           </div>
 
-          {/* Trust-safe disclaimer */}
           <p className="text-xs text-muted-foreground italic mt-4">
-            ✨ These insights suggest potential patterns based on your palm. Your choices shape your destiny.
+            <TrendingUp className="w-3.5 h-3.5 text-accent inline mr-1.5 mb-0.5" />
+            These insights suggest potential patterns based on your palm. Your choices shape your destiny.
           </p>
         </div>
       </motion.section>

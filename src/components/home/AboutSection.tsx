@@ -131,10 +131,10 @@ export function AboutSection() {
 
                 <div className="grid grid-cols-2 gap-4 relative z-10">
                   {[
-                    { value: '50,000+', label: 'Readings' },
+                    { value: '12,400+', label: 'Readings' },
                     { value: '4.9★', label: 'Rating' },
                     { value: '98%', label: 'Satisfaction' },
-                    { value: '< 30s', label: 'Analysis Time' },
+                    { value: '~2 min', label: 'Analysis Time' },
                   ].map((stat, index) => (
                     <motion.div
                       key={stat.label}

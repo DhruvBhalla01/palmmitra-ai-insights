@@ -12,7 +12,7 @@ export function MobileCTABar() {
       setIsVisible(window.scrollY > 500);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -37,7 +37,7 @@ export function MobileCTABar() {
             
             <div className="flex items-center justify-center gap-4 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
-                <Shield className="w-3 h-3 text-green-500" />
+                <Shield className="w-3 h-3 text-accent" />
                 100% Private
               </span>
               <span>•</span>

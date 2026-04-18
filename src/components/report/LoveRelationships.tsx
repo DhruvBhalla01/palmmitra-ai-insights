@@ -26,11 +26,11 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
         className="mb-12"
       >
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-3">
-          <span className="text-3xl">❤️</span>
-          Love & Relationship Reading
+          <Heart className="w-8 h-8 text-accent" />
+          Love & <span className="text-gradient-gold text-shadow-luxury">Relationship Reading</span>
         </h2>
 
-        <div className="glass rounded-2xl p-6 md:p-8">
+        <div className="glass gradient-border rounded-2xl p-6 md:p-8">
           <div className="grid md:grid-cols-3 gap-6">
             {items.map(({ icon: Icon, label, value, color, bg }, index) => (
               <motion.div
@@ -58,7 +58,8 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
             className="mt-6 p-4 rounded-xl bg-pink-500/5 border border-pink-500/10 text-center"
           >
             <p className="text-sm text-muted-foreground italic">
-              ✨ "Love flows best when it grows naturally. Trust the timing of your heart."
+              <Heart className="w-4 h-4 text-pink-400 inline mr-1.5 mb-0.5" />
+              "Love flows best when it grows naturally. Trust the timing of your heart."
             </p>
           </motion.div>
         </div>

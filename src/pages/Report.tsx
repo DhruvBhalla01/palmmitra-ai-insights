@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Crown } from 'lucide-react';
+import { ArrowLeft, Crown, Activity, Brain, Zap } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,7 @@ import { FinalBlessing } from '@/components/report/FinalBlessing';
 import { ActionButtons } from '@/components/report/ActionButtons';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
+import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
 import type { PalmReading, StoredData } from '@/components/report/types';
 
 interface SessionData extends StoredData {
@@ -209,9 +210,9 @@ export default function Report() {
     setShowPaymentModal(true);
   };
 
-  const handleSelectPlan = (plan: 'report99' | 'unlimited999') => {
+  const handleSelectPlan = (plan: 'report99' | 'monthly299', couponCode?: string) => {
     console.log('Plan selected:', plan, 'for report:', resolvedReportId);
-    initiatePayment(plan);
+    initiatePayment(plan, couponCode);
   };
 
   // Loading State with Destiny Reveal
@@ -266,7 +267,13 @@ export default function Report() {
     <div className="min-h-screen bg-background relative">
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
-      
+
+      <StickyUnlockCTA
+        userName={userData?.name}
+        onUnlockClick={handleUnlockClick}
+        isUnlocked={isUnlocked}
+      />
+
       {/* Destiny Reveal Animation on first load */}
       <AnimatePresence>
         {showReveal && (
@@ -291,6 +298,7 @@ export default function Report() {
         isVisible={showSuccessOverlay}
         isSubscription={successIsSubscription}
         onDismiss={() => setShowSuccessOverlay(false)}
+        userName={userData?.name}
       />
       
       {/* Unlock Loading Overlay */}
@@ -356,9 +364,9 @@ export default function Report() {
                       className="mb-6"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-3xl">🔥</span>
+                        <Activity className="w-8 h-8 text-accent" />
                         <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-                          Major Palm Lines Breakdown
+                          Your Palm Lines <span className="text-gradient-gold">Speak</span>
                         </h2>
                       </div>
                       <p className="sanskrit-accent mb-6 ml-12">ॐ Rekha Vigyan</p>
@@ -375,7 +383,7 @@ export default function Report() {
                     >
                       <div className="flex items-center gap-3 mb-5">
                         <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center">
-                          <span className="text-2xl">🌿</span>
+                          <Activity className="w-7 h-7 text-green-500" />
                         </div>
                         <div>
                           <h3 className="font-serif font-bold text-foreground text-lg">Life Line</h3>
@@ -398,7 +406,7 @@ export default function Report() {
                       </p>
                       <div className="pt-4 border-t border-border/50">
                         <p className="text-sm font-medium text-accent flex items-start gap-2">
-                          <span>💡</span>
+                          <Zap className="w-4 h-4 flex-shrink-0 mt-0.5" />
                           <span>{reading.majorLines.lifeLine.keyInsight}</span>
                         </p>
                       </div>
@@ -408,6 +416,8 @@ export default function Report() {
                     <LockedSection
                       isUnlocked={false}
                       sectionName="Heart, Head, Fate & Sun Lines"
+                      sectionKey="lines"
+                      userName={userData?.name}
                       onUnlockClick={handleUnlockClick}
                       previewContent={
                         <div className="grid md:grid-cols-2 gap-4 p-4">
@@ -426,6 +436,8 @@ export default function Report() {
                 <LockedSection
                   isUnlocked={isUnlocked}
                   sectionName="Palm Mounts Analysis"
+                  sectionKey="mounts"
+                  userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
                     <div className="glass rounded-2xl p-6 h-64" />
@@ -448,8 +460,8 @@ export default function Report() {
                       className="mb-6"
                     >
                       <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-4 flex items-center gap-3">
-                        <span className="text-3xl">🧠</span>
-                        Personality Traits From Your Palm
+                        <Brain className="w-8 h-8 text-accent" />
+                        Personality Traits <span className="text-gradient-gold">From Your Palm</span>
                       </h2>
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> First trait included.
@@ -461,7 +473,7 @@ export default function Report() {
                       <div className="glass rounded-2xl p-6 mb-6">
                         <div className="flex items-start gap-4 p-4 rounded-xl bg-background/50">
                           <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                            <span className="text-xl">⚡</span>
+                            <Zap className="w-5 h-5 text-orange-500" />
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold text-foreground mb-1">
@@ -479,6 +491,8 @@ export default function Report() {
                     <LockedSection
                       isUnlocked={false}
                       sectionName="Complete Personality Analysis"
+                      sectionKey="personality"
+                      userName={userData?.name}
                       onUnlockClick={handleUnlockClick}
                       previewContent={
                         <div className="glass rounded-2xl p-6 space-y-3">
@@ -497,6 +511,8 @@ export default function Report() {
                 <LockedSection
                   isUnlocked={isUnlocked}
                   sectionName="Career & Wealth Insights"
+                  sectionKey="career"
+                  userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
                     <div className="glass rounded-2xl p-6 h-80" />
@@ -516,6 +532,8 @@ export default function Report() {
                 <LockedSection
                   isUnlocked={isUnlocked}
                   sectionName="Love & Relationship Destiny"
+                  sectionKey="love"
+                  userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
                     <div className="glass rounded-2xl p-6 h-64" />
@@ -534,6 +552,8 @@ export default function Report() {
                 <LockedSection
                   isUnlocked={isUnlocked}
                   sectionName="Life Phase Timeline"
+                  sectionKey="phases"
+                  userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
                     <div className="glass rounded-2xl p-6 h-96" />
@@ -556,8 +576,8 @@ export default function Report() {
                       className="mb-6"
                     >
                       <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-4 flex items-center gap-3">
-                        <span className="text-3xl">🕉</span>
-                        Spiritual Remedies & Guidance
+                        <Zap className="w-8 h-8 text-accent" />
+                        Spiritual <span className="text-gradient-gold">Remedies</span> & Guidance
                       </h2>
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> First remedy included.
@@ -590,6 +610,8 @@ export default function Report() {
                     <LockedSection
                       isUnlocked={false}
                       sectionName="Complete Spiritual Remedies"
+                      sectionKey="remedies"
+                      userName={userData?.name}
                       onUnlockClick={handleUnlockClick}
                       previewContent={
                         <div className="glass rounded-2xl p-6 space-y-3">
@@ -608,6 +630,8 @@ export default function Report() {
                 <LockedSection
                   isUnlocked={isUnlocked}
                   sectionName="Final Divine Blessing"
+                  sectionKey="blessing"
+                  userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
                     <div className="glass rounded-2xl p-6 h-48" />
@@ -621,8 +645,8 @@ export default function Report() {
               </div>
 
               {/* 10. Action Buttons - PDF locked */}
-              <ActionButtons 
-                isUnlocked={isUnlocked} 
+              <ActionButtons
+                isUnlocked={isUnlocked}
                 onUnlockClick={handleUnlockClick}
                 reading={reading}
                 userData={{
@@ -630,6 +654,7 @@ export default function Report() {
                   readingType: userData?.readingType || 'full',
                   generatedAt: generatedAt,
                 }}
+                userName={userData?.name}
               />
 
               {/* 11. Premium Paywall - Only show if not unlocked */}

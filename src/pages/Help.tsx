@@ -78,7 +78,7 @@ const faqCategories = [
     questions: [
       {
         q: 'Is my palm image stored permanently?',
-        a: 'No. Your palm images are processed securely and are not stored permanently. We only retain the generated report data for your future access. Your privacy is our priority.',
+        a: 'Yes. Your palm image is stored securely on our servers and is never shared with third parties. It is used solely to generate your reading. Contact us at privacy@palmmitra.com to request deletion.',
       },
       {
         q: 'Who can see my palm reading?',

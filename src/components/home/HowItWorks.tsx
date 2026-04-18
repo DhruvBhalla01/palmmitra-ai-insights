@@ -1,31 +1,36 @@
 import { motion } from 'framer-motion';
-import { Upload, Scan, FileText } from 'lucide-react';
+import { Upload, Scan, FileText, Sparkles, ArrowRight } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const steps = [
   {
     icon: Upload,
     title: 'Upload Palm Photo',
-    description: 'Take a clear photo of your palm and upload it securely to our platform.',
-    color: 'bg-blue-500/10',
-    iconColor: 'text-blue-500',
-    borderColor: 'border-blue-500/20',
-  },
-  {
-    icon: Scan,
-    title: 'AI Scans Major Lines',
-    description: 'Our advanced AI analyzes your Life, Heart, Fate, and other palm lines.',
-    color: 'bg-purple-500/10',
-    iconColor: 'text-purple-500',
-    borderColor: 'border-purple-500/20',
-  },
-  {
-    icon: FileText,
-    title: 'Get Personalized Report',
-    description: 'Receive detailed insights about your personality, future, and spiritual path.',
+    description: 'Snap a clear photo of your dominant hand — no filters, no editing needed. Works on any smartphone.',
     color: 'bg-accent/10',
     iconColor: 'text-accent',
     borderColor: 'border-accent/20',
+    badge: null,
+  },
+  {
+    icon: Scan,
+    title: 'AI Reads Your Lines',
+    description: 'AI identifies your Life, Heart, Fate, Marriage & Success lines with precision trained on ancient Shastra texts.',
+    color: 'bg-primary/10',
+    iconColor: 'text-primary',
+    borderColor: 'border-primary/20',
+    badge: null,
+  },
+  {
+    icon: FileText,
+    title: 'Get Your Full Report',
+    description: 'Receive a 2,000+ word personalised report covering career, love, wealth & your spiritual path.',
+    color: 'bg-accent/10',
+    iconColor: 'text-accent',
+    borderColor: 'border-accent/20',
+    badge: '~2 min',
   },
 ];
 
@@ -36,10 +41,11 @@ export function HowItWorks() {
         <AnimatedSection className="text-center mb-16">
           <p className="sanskrit-accent mb-3">ॐ Margadarshan</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            How It <span className="text-gradient-gold">Works</span>
+            From Palm Photo to Destiny{' '}
+            <span className="text-gradient-gold">in 3 Steps</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Get your personalized palm reading in three simple steps
+            Unlock your destiny in under 2 minutes. Works on any smartphone.
           </p>
         </AnimatedSection>
 
@@ -81,9 +87,16 @@ export function HowItWorks() {
                   <div className={`absolute inset-0 rounded-3xl ${step.color} blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-300`} />
                 </motion.div>
 
-                <h3 className="text-xl font-serif font-bold text-foreground mb-3">
-                  {step.title}
-                </h3>
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-xl font-serif font-bold text-foreground">
+                    {step.title}
+                  </h3>
+                  {step.badge && (
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/15 text-accent border border-accent/20">
+                      {step.badge}
+                    </span>
+                  )}
+                </div>
                 <p className="text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
@@ -91,6 +104,20 @@ export function HowItWorks() {
             </motion.div>
           ))}
         </div>
+
+        {/* Post-steps CTA */}
+        <AnimatedSection delay={0.4} className="text-center mt-14">
+          <Link to="/upload">
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block">
+              <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg">
+                <Sparkles className="w-5 h-5 mr-2" />
+                Scan My Palm — Free
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </motion.div>
+          </Link>
+          <p className="text-sm text-muted-foreground mt-3">No account needed · Free preview included</p>
+        </AnimatedSection>
       </div>
     </section>
   );

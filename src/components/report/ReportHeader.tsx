@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Calendar, Target, Shield } from 'lucide-react';
+import { Sparkles, Calendar, Shield, Crown, Briefcase, Heart, TrendingUp } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface ReportHeaderProps {
   name: string;
@@ -11,25 +12,78 @@ interface ReportHeaderProps {
 }
 
 const readingTypeLabels: Record<string, string> = {
-  full: 'Full Palm Reading',
-  career: 'Career Focus Reading',
-  love: 'Love & Relationships Reading',
-  wealth: 'Wealth & Prosperity Reading',
+  full: 'Complete Destiny Reading',
+  career: 'Career & Wealth Focus',
+  love: 'Love & Relationship Focus',
+  wealth: 'Prosperity Focus',
 };
 
-export function ReportHeader({ 
-  name, 
-  readingType, 
-  generatedAt, 
-  confidenceScore, 
+const readingTypeIcons: Record<string, LucideIcon> = {
+  full: Crown,
+  career: Briefcase,
+  love: Heart,
+  wealth: TrendingUp,
+};
+
+const readingTypeSummary: Record<string, string> = {
+  full: 'This comprehensive analysis reveals the unique patterns in your palm, offering insights into your personality, life path, and spiritual journey.',
+  career: 'This career-focused analysis highlights the professional strengths, turning points, and wealth patterns written into your palm lines.',
+  love: 'This love-focused analysis uncovers the emotional patterns, relationship compatibility, and romantic timing encoded in your palm.',
+  wealth: 'This wealth-focused analysis reveals the financial cycles, prosperity indicators, and abundance patterns mapped in your palm.',
+};
+
+// SVG circle arc for confidence score
+function ConfidenceRing({ score }: { score: number }) {
+  const r = 18;
+  const circumference = 2 * Math.PI * r; // ~113
+  const offset = circumference - (circumference * score) / 100;
+
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" className="flex-shrink-0">
+      <circle
+        cx="24" cy="24" r={r}
+        fill="none"
+        stroke="hsl(var(--accent) / 0.2)"
+        strokeWidth="3"
+      />
+      <circle
+        cx="24" cy="24" r={r}
+        fill="none"
+        stroke="hsl(var(--accent))"
+        strokeWidth="3"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        transform="rotate(-90 24 24)"
+      />
+      <text
+        x="24" y="28"
+        textAnchor="middle"
+        fontSize="10"
+        fontWeight="bold"
+        fill="hsl(var(--accent))"
+      >
+        {score}%
+      </text>
+    </svg>
+  );
+}
+
+export function ReportHeader({
+  name,
+  readingType,
+  generatedAt,
+  confidenceScore,
   headlineSummary,
-  palmImage 
+  palmImage,
 }: ReportHeaderProps) {
   const formattedDate = new Date(generatedAt).toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   });
+
+  const ReadingIcon = readingTypeIcons[readingType] || Crown;
 
   return (
     <motion.div
@@ -45,9 +99,8 @@ export function ReportHeader({
         transition={{ delay: 0.2, duration: 0.5 }}
         className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border border-accent/30 relative overflow-hidden"
       >
-        {/* Shimmer effect */}
         <div className="absolute inset-0 shimmer pointer-events-none" />
-        
+
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-accent" />
@@ -63,50 +116,48 @@ export function ReportHeader({
 
       {/* Premium Summary Card */}
       <div className="glass-premium rounded-3xl p-8 md:p-10 overflow-hidden relative">
-        {/* Background decorations */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
-        
+
         <div className="relative z-10">
           {/* Top row: Badges */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            <motion.div 
+            <motion.div
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl glass-premium border-accent/20"
               whileHover={{ scale: 1.02 }}
             >
-              <Sparkles className="w-4 h-4 text-accent" />
+              <ReadingIcon className="w-4 h-4 text-accent" />
               <span className="text-sm font-semibold text-foreground">
                 {readingTypeLabels[readingType] || 'Palm Reading'}
               </span>
             </motion.div>
-            
+
             <div className="flex items-center gap-3">
-              <motion.div 
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500/10 border border-green-500/20"
+              <motion.div
+                className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-accent/10 border border-accent/20"
                 whileHover={{ scale: 1.02 }}
               >
-                <Target className="w-4 h-4 text-green-500" />
-                <span className="text-sm font-bold text-green-600">
-                  {confidenceScore}% Confidence
-                </span>
+                <ConfidenceRing score={confidenceScore} />
+                <div>
+                  <p className="text-xs text-muted-foreground leading-none mb-0.5">Confidence</p>
+                  <p className="text-sm font-bold text-accent leading-none">Score</p>
+                </div>
               </motion.div>
-              
-              <motion.div 
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20"
+
+              <motion.div
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
                 whileHover={{ scale: 1.02 }}
               >
-                <Shield className="w-4 h-4 text-blue-500" />
-                <span className="text-sm font-medium text-blue-600">
-                  Verified
-                </span>
+                <Shield className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-primary">Verified</span>
               </motion.div>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-            {/* Palm Image with premium frame */}
+            {/* Palm Image */}
             {palmImage && (
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
@@ -114,13 +165,12 @@ export function ReportHeader({
               >
                 <div className="absolute -inset-1 bg-gradient-gold rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
                 <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-4 border-accent/40 shadow-gold-lg">
-                  <img 
-                    src={palmImage} 
-                    alt="Your palm" 
+                  <img
+                    src={palmImage}
+                    alt="Your palm"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {/* Scan line effect */}
                 <motion.div
                   className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
                   initial={{ opacity: 0 }}
@@ -137,6 +187,12 @@ export function ReportHeader({
 
             {/* Text Content */}
             <div className="flex-1 text-center md:text-left">
+              {/* "Reading is ready" pill */}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium mb-3">
+                <Sparkles className="w-3 h-3" />
+                Your reading is ready
+              </span>
+
               {/* User Info */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
                 <span className="font-semibold text-foreground text-xl">
@@ -149,19 +205,15 @@ export function ReportHeader({
                 </span>
               </div>
 
-              {/* Sanskrit accent */}
               <p className="sanskrit-accent mb-3">ॐ Bhavishya Darshan</p>
 
-              {/* Report summary */}
               <p className="text-muted-foreground leading-relaxed">
-                This comprehensive analysis reveals the unique patterns in your palm, 
-                offering insights into your personality, life path, and spiritual journey.
+                {readingTypeSummary[readingType] ?? readingTypeSummary.full}
               </p>
             </div>
           </div>
 
-          {/* Glowing Divider */}
-          <motion.div 
+          <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}

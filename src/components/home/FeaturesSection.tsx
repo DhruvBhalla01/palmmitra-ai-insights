@@ -8,36 +8,36 @@ import { Link } from 'react-router-dom';
 const features = [
   {
     icon: Briefcase,
-    title: 'Career Path Prediction',
-    description: 'Discover your ideal career path and professional strengths based on your palm lines.',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
+    title: 'Know your next career breakthrough year before it arrives',
+    description: 'Your Fate & Sun lines reveal professional turning points, the right industries for you, and years when promotions or pivots are written in your palm.',
+    color: 'text-accent',
+    bgColor: 'bg-accent/10',
   },
   {
     icon: Heart,
-    title: 'Love & Marriage Insights',
-    description: 'Understand your romantic compatibility and timing for significant relationships.',
-    color: 'text-pink-500',
-    bgColor: 'bg-pink-500/10',
+    title: 'Discover your love timeline and soulmate compatibility',
+    description: 'Your Heart & Marriage lines show when deep relationships form, compatibility patterns, and what you need in a partner to thrive.',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
   },
   {
     icon: TrendingUp,
-    title: 'Wealth & Growth Timeline',
-    description: 'Learn about your financial potential and periods of prosperity.',
-    color: 'text-green-500',
-    bgColor: 'bg-green-500/10',
+    title: 'Unlock your richest years and what triggers them',
+    description: 'Your Mount of Venus and Sun line pinpoint financial growth windows, prosperity triggers, and the actions that accelerate wealth in your unique life path.',
+    color: 'text-accent',
+    bgColor: 'bg-accent/15',
   },
   {
     icon: Calendar,
-    title: 'Lucky Years Forecast',
-    description: 'Identify the most auspicious years and months for major life decisions.',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-500/10',
+    title: 'See which 3 years will change your life — and prepare',
+    description: 'A 5-year Lucky Periods Timeline reveals your highest-potential windows for major decisions — career moves, relationships, investments, and spiritual shifts.',
+    color: 'text-primary',
+    bgColor: 'bg-primary/15',
   },
   {
     icon: Sparkles,
-    title: 'Spiritual Remedies',
-    description: 'Receive personalized remedies and practices to enhance positive energies.',
+    title: 'Personalised daily practices that align you with your destiny',
+    description: 'Five targeted spiritual remedies — chosen specifically for your palm patterns — to remove obstacles and amplify the positive energies already in your hands.',
     color: 'text-accent',
     bgColor: 'bg-accent/10',
   },
@@ -53,10 +53,11 @@ export function FeaturesSection() {
             <AnimatedSection>
               <p className="sanskrit-accent mb-3">ॐ Gyan Shakti</p>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-                Unlock Deep <span className="text-gradient-gold">Insights</span>
+                What Your Palm{' '}
+                <span className="text-gradient-gold text-shadow-luxury">Reveals</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-10">
-                Our AI-powered analysis reveals comprehensive insights about every aspect of your life.
+                Five life-changing insights decoded from the lines, mounts, and patterns unique to your palm — not your birth date.
               </p>
             </AnimatedSection>
 
@@ -69,7 +70,7 @@ export function FeaturesSection() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ x: 8, scale: 1.02 }}
-                  className="flex gap-4 group p-4 rounded-2xl glass-premium cursor-default"
+                  className="flex gap-4 group p-4 rounded-2xl glass-premium gradient-border cursor-default"
                 >
                   <motion.div 
                     className={`flex-shrink-0 w-14 h-14 rounded-2xl ${feature.bgColor} flex items-center justify-center transition-all duration-300`}
@@ -93,7 +94,7 @@ export function FeaturesSection() {
             <AnimatedSection delay={0.5} className="mt-10">
               <Link to="/upload">
                 <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl shadow-gold-lg">
-                  Unlock Full Report @ ₹99
+                  Get My Full Reading — ₹99
                 </Button>
               </Link>
             </AnimatedSection>

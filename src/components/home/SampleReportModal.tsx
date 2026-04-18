@@ -20,7 +20,7 @@ const sampleSections = [
     icon: Heart,
     title: 'Love & Relationships',
     preview: 'Deep emotional connections await. Your heart line indicates...',
-    unlocked: false,
+    unlocked: true,
   },
   {
     icon: Briefcase,

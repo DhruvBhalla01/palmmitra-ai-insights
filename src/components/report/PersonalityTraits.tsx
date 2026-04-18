@@ -35,11 +35,11 @@ export const PersonalityTraits = forwardRef<HTMLElement, PersonalityTraitsProps>
         className="mb-12"
       >
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-3">
-          <span className="text-3xl">🧠</span>
-          Personality Traits From Your Palm
+          <Sparkles className="w-8 h-8 text-accent" />
+          Personality Traits <span className="text-gradient-gold text-shadow-luxury">From Your Palm</span>
         </h2>
 
-        <div className="glass rounded-2xl p-6 md:p-8">
+        <div className="glass gradient-border rounded-2xl p-6 md:p-8">
           <div className="space-y-4">
             {traits.map((trait, index) => {
               const Icon = iconMap[trait.icon] || Sparkles;
@@ -58,12 +58,8 @@ export const PersonalityTraits = forwardRef<HTMLElement, PersonalityTraitsProps>
                     <Icon className={`w-5 h-5 ${colors.text}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1">
-                      {trait.trait}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {trait.description}
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-1">{trait.trait}</h3>
+                    <p className="text-sm text-muted-foreground">{trait.description}</p>
                   </div>
                 </motion.div>
               );

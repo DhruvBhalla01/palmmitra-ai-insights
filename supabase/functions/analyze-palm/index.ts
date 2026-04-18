@@ -504,6 +504,33 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    // Rate limiting: max 5 analyze-palm calls per IP per hour
+    const identifier =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
+    const windowStart = new Date();
+    windowStart.setMinutes(0, 0, 0, 0);
+
+    const { count: requestCount } = await supabase
+      .from("api_rate_limits")
+      .select("*", { count: "exact", head: true })
+      .eq("identifier", identifier)
+      .eq("endpoint", "analyze-palm")
+      .gte("created_at", windowStart.toISOString());
+
+    if ((requestCount ?? 0) >= 5) {
+      console.warn(`Rate limit exceeded for identifier: ${identifier}`);
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again in an hour." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    await supabase.from("api_rate_limits").insert({ identifier, endpoint: "analyze-palm" });
+
     const { imageUrl, name, age, email, readingType }: PalmAnalysisRequest = await req.json();
 
     if (!imageUrl || !name || !age) {
@@ -511,6 +538,16 @@ serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Validate imageUrl belongs to our Supabase storage to prevent SSRF abuse of OpenAI API
+    const allowedStoragePrefix = `${SUPABASE_URL}/storage/v1/object/public/palm-uploads/`;
+    if (!imageUrl.startsWith(allowedStoragePrefix)) {
+      console.warn(`Rejected invalid imageUrl from ${identifier}: ${imageUrl.substring(0, 60)}`);
+      return new Response(
+        JSON.stringify({ error: "Invalid image URL. Please upload through PalmMitra." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     console.log(`Processing palm reading for ${name}, age ${age}, type: ${readingType}`);

@@ -1,16 +1,16 @@
 project_id = "wattznplwrigmjrottdy"
 
 [functions.analyze-palm]
-verify_jwt = false
+verify_jwt = true
 
 [functions.create-razorpay-order]
-verify_jwt = false
+verify_jwt = true
 
 [functions.verify-razorpay-payment]
-verify_jwt = false
+verify_jwt = true
 
 [functions.get-report]
-verify_jwt = false
+verify_jwt = true
 
 [functions.get-unlock-status]
-verify_jwt = false
+verify_jwt = true

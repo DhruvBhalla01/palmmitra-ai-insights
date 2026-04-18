@@ -5,22 +5,29 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+type PlanType = 'report99' | 'monthly299' | 'unlimited999';
+
 interface CreateOrderRequest {
   user_email: string;
   report_id?: string;
-  plan: 'report99' | 'unlimited999';
+  plan: PlanType;
+  coupon_code?: string;
 }
 
+const PLAN_AMOUNTS: Record<PlanType, number> = {
+  report99:    9900,   // ₹99 in paise
+  monthly299: 29900,   // ₹299 in paise
+  unlimited999: 99900, // ₹999 in paise (legacy)
+};
+
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { user_email, report_id, plan }: CreateOrderRequest = await req.json();
+    const { user_email, report_id, plan, coupon_code }: CreateOrderRequest = await req.json();
 
-    // Validate input
     if (!user_email || !plan) {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields: user_email and plan' }),
@@ -28,14 +35,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (!['report99', 'unlimited999'].includes(plan)) {
+    const validPlans: PlanType[] = ['report99', 'monthly299', 'unlimited999'];
+    if (!validPlans.includes(plan)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid plan type' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // For report99, report_id is required
     if (plan === 'report99' && !report_id) {
       return new Response(
         JSON.stringify({ success: false, error: 'report_id is required for report99 plan' }),
@@ -43,59 +50,96 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Get Razorpay credentials
     const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
     const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
-
     if (!razorpayKeyId || !razorpayKeySecret) {
-      console.error('Missing Razorpay credentials');
       return new Response(
         JSON.stringify({ success: false, error: 'Payment gateway not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Set amount based on plan (in paise)
-    const amount = plan === 'report99' ? 9900 : 99900;
-    const currency = 'INR';
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
 
-    // Create Razorpay order
-    const razorpayOrderPayload = {
-      amount,
-      currency,
-      receipt: `palm_${Date.now()}`,
-      notes: {
-        user_email,
-        plan,
-        report_id: report_id || 'unlimited',
-      },
+    // Coupon validation
+    let discountAmount = 0;
+    let appliedCouponCode: string | null = null;
+
+    if (coupon_code) {
+      const code = coupon_code.trim().toUpperCase();
+
+      const { data: coupon, error: couponError } = await supabase
+        .from('referral_codes')
+        .select('*')
+        .eq('code', code)
+        .maybeSingle();
+
+      if (couponError || !coupon) {
+        return new Response(
+          JSON.stringify({ success: false, coupon_error: 'Invalid coupon code. Please check and try again.' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (coupon.valid_until && new Date(coupon.valid_until) < new Date()) {
+        return new Response(
+          JSON.stringify({ success: false, coupon_error: 'This coupon has expired.' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (coupon.max_uses !== null && coupon.uses_count >= coupon.max_uses) {
+        return new Response(
+          JSON.stringify({ success: false, coupon_error: 'This coupon has reached its usage limit.' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const baseAmount = PLAN_AMOUNTS[plan];
+      if (coupon.discount_type === 'flat') {
+        discountAmount = Math.min(coupon.discount_value, baseAmount - 100); // keep ≥ ₹1
+      } else if (coupon.discount_type === 'percent') {
+        discountAmount = Math.floor(baseAmount * coupon.discount_value / 100);
+        discountAmount = Math.min(discountAmount, baseAmount - 100);
+      }
+
+      appliedCouponCode = code;
+      console.log(`Coupon ${code} applied: discount ${discountAmount} paise`);
+    }
+
+    const baseAmount = PLAN_AMOUNTS[plan];
+    const finalAmount = baseAmount - discountAmount;
+
+    const planLabels: Record<PlanType, string> = {
+      report99: 'Detailed Palm Reading Report',
+      monthly299: 'PalmMitra Monthly Plan',
+      unlimited999: 'Unlimited Palm Readings - Lifetime',
     };
 
-    const razorpayResponse = await fetch('https://api.razorpay.com/v1/orders', {
+    const razorpayOrder = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${btoa(`${razorpayKeyId}:${razorpayKeySecret}`)}`,
       },
-      body: JSON.stringify(razorpayOrderPayload),
-    });
+      body: JSON.stringify({
+        amount: finalAmount,
+        currency: 'INR',
+        receipt: `palm_${Date.now()}`,
+        notes: { user_email, plan, report_id: report_id || 'subscription' },
+      }),
+    }).then(r => r.json());
 
-    if (!razorpayResponse.ok) {
-      const errorText = await razorpayResponse.text();
-      console.error('Razorpay order creation failed:', errorText);
+    if (!razorpayOrder.id) {
+      console.error('Razorpay order creation failed:', razorpayOrder);
       return new Response(
         JSON.stringify({ success: false, error: 'Failed to create payment order' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const razorpayOrder = await razorpayResponse.json();
-    console.log('Razorpay order created:', razorpayOrder.id);
-
-    // Save order to database
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { data: payment, error: dbError } = await supabase
       .from('payments')
@@ -104,8 +148,10 @@ Deno.serve(async (req) => {
         report_id: report_id || null,
         plan_type: plan,
         razorpay_order_id: razorpayOrder.id,
-        amount,
+        amount: finalAmount,
         status: 'pending',
+        coupon_code: appliedCouponCode,
+        discount_amount: discountAmount,
       })
       .select()
       .single();
@@ -118,16 +164,18 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('Payment record created:', payment.id);
-
     return new Response(
       JSON.stringify({
         success: true,
         order_id: razorpayOrder.id,
-        amount,
-        currency,
+        amount: finalAmount,
+        original_amount: baseAmount,
+        discount_amount: discountAmount,
+        coupon_applied: appliedCouponCode !== null,
+        currency: 'INR',
         payment_id: payment.id,
-        key_id: razorpayKeyId, // Public key for frontend
+        key_id: razorpayKeyId,
+        description: planLabels[plan],
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

@@ -19,11 +19,11 @@ export const SpiritualRemediesSection = forwardRef<HTMLElement, SpiritualRemedie
         className="mb-12"
       >
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-3">
-          <span className="text-3xl">🕉</span>
-          Spiritual Remedies & Guidance
+          <Gem className="w-8 h-8 text-accent" />
+          Spiritual <span className="text-gradient-gold text-shadow-luxury">Remedies</span> & Guidance
         </h2>
 
-        <div className="glass rounded-2xl p-6 md:p-8">
+        <div className="glass gradient-border rounded-2xl p-6 md:p-8">
           <div className="space-y-4">
             {remedies.map((remedy, index) => (
               <motion.div

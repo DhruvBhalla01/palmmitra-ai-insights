@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
-import { Flame, Heart, Brain, Star, Sun } from 'lucide-react';
+import { Activity, Heart, Brain, Compass, Sparkles } from 'lucide-react';
 import type { MajorLine } from './types';
 
 interface MajorLinesSectionProps {
@@ -14,11 +14,11 @@ interface MajorLinesSectionProps {
 }
 
 const lineConfig = [
-  { key: 'lifeLine', name: 'Life Line', subtitle: 'Energy & Vitality', icon: Flame, color: 'text-green-500', bgColor: 'bg-green-500', borderColor: 'border-green-500/20' },
+  { key: 'lifeLine', name: 'Life Line', subtitle: 'Energy & Vitality', icon: Activity, color: 'text-green-500', bgColor: 'bg-green-500', borderColor: 'border-green-500/20' },
   { key: 'heartLine', name: 'Heart Line', subtitle: 'Love & Emotions', icon: Heart, color: 'text-pink-500', bgColor: 'bg-pink-500', borderColor: 'border-pink-500/20' },
   { key: 'headLine', name: 'Head Line', subtitle: 'Intelligence & Focus', icon: Brain, color: 'text-blue-500', bgColor: 'bg-blue-500', borderColor: 'border-blue-500/20' },
-  { key: 'fateLine', name: 'Fate Line', subtitle: 'Career & Destiny', icon: Star, color: 'text-purple-500', bgColor: 'bg-purple-500', borderColor: 'border-purple-500/20' },
-  { key: 'sunLine', name: 'Sun Line', subtitle: 'Recognition & Success', icon: Sun, color: 'text-amber-500', bgColor: 'bg-amber-500', borderColor: 'border-amber-500/20' },
+  { key: 'fateLine', name: 'Fate Line', subtitle: 'Career & Destiny', icon: Compass, color: 'text-purple-500', bgColor: 'bg-purple-500', borderColor: 'border-purple-500/20' },
+  { key: 'sunLine', name: 'Sun Line', subtitle: 'Recognition & Success', icon: Sparkles, color: 'text-amber-500', bgColor: 'bg-amber-500', borderColor: 'border-amber-500/20' },
 ] as const;
 
 const strengthToPercent: Record<string, number> = {
@@ -41,13 +41,13 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
         className="mb-12"
       >
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-3xl">🔥</span>
+          <Activity className="w-8 h-8 text-accent" />
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-            Major Palm Lines Breakdown
+            Your Palm Lines <span className="text-gradient-gold text-shadow-luxury">Speak</span>
           </h2>
         </div>
-        <p className="sanskrit-accent mb-2 ml-12">ॐ Rekha Vigyan</p>
-        <p className="text-xs text-muted-foreground mb-8 ml-12">
+        <p className="sanskrit-accent mb-2 ml-11">ॐ Rekha Vigyan · Ancient Line Science</p>
+        <p className="text-xs text-muted-foreground mb-8 ml-11">
           These readings reflect traditional interpretations and may suggest potential patterns.
         </p>
 
@@ -64,11 +64,11 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.4 }}
                 whileHover={{ y: -6, scale: 1.02 }}
-                className={`glass-premium rounded-2xl p-6 border ${borderColor} hover:border-accent/40 transition-all duration-300 group cursor-default`}
+                className={`glass-premium gradient-border rounded-2xl p-6 border ${borderColor} hover:border-accent/40 transition-all duration-300 group cursor-default`}
               >
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-5">
-                  <motion.div 
+                  <motion.div
                     className={`w-14 h-14 rounded-2xl ${bgColor}/10 flex items-center justify-center relative`}
                     whileHover={{ rotate: [0, -10, 10, 0] }}
                     transition={{ duration: 0.5 }}
@@ -111,7 +111,7 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
                 {/* Key Insight */}
                 <div className="pt-4 border-t border-border/50">
                   <p className="text-sm font-medium text-accent flex items-start gap-2">
-                    <span className="text-accent/70 flex-shrink-0">💡</span>
+                    <Sparkles className="w-4 h-4 text-accent/70 flex-shrink-0 mt-0.5" />
                     <span>{line.keyInsight}</span>
                   </p>
                 </div>

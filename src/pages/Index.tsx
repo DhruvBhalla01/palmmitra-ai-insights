@@ -13,12 +13,13 @@ import { useHashScroll } from '@/hooks/useHashScroll';
 const FeaturesSection = lazy(() => import('@/components/home/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
 const SampleReportTeaser = lazy(() => import('@/components/home/SampleReportTeaser').then(m => ({ default: m.SampleReportTeaser })));
 const Testimonials = lazy(() => import('@/components/home/Testimonials').then(m => ({ default: m.Testimonials })));
-const FAQSection = lazy(() => import('@/components/home/FAQSection').then(m => ({ default: m.FAQSection })));
+const ComparisonSection = lazy(() => import('@/components/home/ComparisonSection').then(m => ({ default: m.ComparisonSection })));
 const AboutSection = lazy(() => import('@/components/home/AboutSection').then(m => ({ default: m.AboutSection })));
-const EmailCaptureSection = lazy(() => import('@/components/home/EmailCaptureSection').then(m => ({ default: m.EmailCaptureSection })));
 const PricingSection = lazy(() => import('@/components/home/PricingSection').then(m => ({ default: m.PricingSection })));
+const FAQSection = lazy(() => import('@/components/home/FAQSection').then(m => ({ default: m.FAQSection })));
+const EmailCaptureSection = lazy(() => import('@/components/home/EmailCaptureSection').then(m => ({ default: m.EmailCaptureSection })));
+const FinalCTABanner = lazy(() => import('@/components/home/FinalCTABanner').then(m => ({ default: m.FinalCTABanner })));
 
-// Loading fallback for lazy sections
 const SectionLoader = () => (
   <div className="py-24 flex items-center justify-center">
     <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
@@ -26,7 +27,6 @@ const SectionLoader = () => (
 );
 
 const Index = () => {
-  // Enable smooth hash-based scrolling with navbar offset
   useHashScroll();
 
   return (
@@ -36,35 +36,47 @@ const Index = () => {
       <main className="relative z-10">
         <HeroSection />
         <TrustStrip />
+
         <SectionDivider variant="gradient" />
         <HowItWorks />
-        <SectionDivider variant="mandala" />
+
         <Suspense fallback={<SectionLoader />}>
           <FeaturesSection />
         </Suspense>
+
         <SectionDivider variant="ornate" />
         <Suspense fallback={<SectionLoader />}>
           <SampleReportTeaser />
         </Suspense>
-        <SectionDivider variant="gradient" />
+
         <Suspense fallback={<SectionLoader />}>
           <Testimonials />
         </Suspense>
+
         <SectionDivider variant="mandala" />
         <Suspense fallback={<SectionLoader />}>
-          <FAQSection />
+          <ComparisonSection />
         </Suspense>
-        <SectionDivider variant="gradient" />
+
         <Suspense fallback={<SectionLoader />}>
           <AboutSection />
         </Suspense>
-        <SectionDivider variant="ornate" />
+
+        <SectionDivider variant="gradient" />
+        <Suspense fallback={<SectionLoader />}>
+          <PricingSection />
+        </Suspense>
+
+        <Suspense fallback={<SectionLoader />}>
+          <FAQSection />
+        </Suspense>
+
         <Suspense fallback={<SectionLoader />}>
           <EmailCaptureSection />
         </Suspense>
-        <SectionDivider variant="mandala" />
+
         <Suspense fallback={<SectionLoader />}>
-          <PricingSection />
+          <FinalCTABanner />
         </Suspense>
       </main>
       <Footer />
