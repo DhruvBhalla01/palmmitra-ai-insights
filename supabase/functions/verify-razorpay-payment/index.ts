@@ -117,8 +117,20 @@ Deno.serve(async (req) => {
       if (unlockError) console.error('Failed to create report unlock:', unlockError);
       else console.log('Report unlock created for:', payment.report_id);
 
+    } else if (payment.plan_type === 'palmmatch149') {
+      if (!payment.report_id) {
+        console.error('palmmatch149 payment missing report_id');
+      } else {
+        const { error: pmError } = await supabase
+          .from('palmmatch_reports')
+          .update({ is_unlocked: true, payment_id: payment.id })
+          .eq('report_id', payment.report_id);
+        if (pmError) console.error('Failed to unlock palmmatch report:', pmError);
+        else console.log('PalmMatch report unlocked:', payment.report_id);
+      }
+
     } else if (payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999') {
-      // Both subscription plans use the same user_subscriptions table
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
       const { error: subError } = await supabase
         .from('user_subscriptions')
         .upsert({
@@ -126,11 +138,12 @@ Deno.serve(async (req) => {
           plan: payment.plan_type,
           payment_id: payment.id,
           status: 'active',
+          expires_at: expiresAt,
         }, { onConflict: 'user_email' });
 
       if (subError) console.error('Failed to create subscription:', subError);
       else {
-        console.log(`Subscription (${payment.plan_type}) created for:`, payment.user_email);
+        console.log(`Subscription (${payment.plan_type}) active until ${expiresAt} for:`, payment.user_email);
         isSubscription = true;
       }
     }

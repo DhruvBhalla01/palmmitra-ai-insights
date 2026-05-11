@@ -35,12 +35,14 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Check for active subscription first
+    // Check for active, non-expired subscription first
+    const now = new Date().toISOString();
     const { data: subscription, error: subError } = await supabase
       .from('user_subscriptions')
-      .select('id, plan, status')
+      .select('id, plan, status, expires_at')
       .eq('user_email', user_email)
       .eq('status', 'active')
+      .or(`expires_at.is.null,expires_at.gt.${now}`)
       .maybeSingle();
 
     if (subError) {

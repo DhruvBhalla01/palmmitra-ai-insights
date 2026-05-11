@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Index from "./pages/Index";
 import UploadPalm from "./pages/UploadPalm";
 import Report from "./pages/Report";
+import PalmMatch from "./pages/PalmMatch";
+import PalmMatchReport from "./pages/PalmMatchReport";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -33,6 +35,8 @@ function AnimatedRoutes() {
           <Route path="/upload" element={<UploadPalm />} />
           <Route path="/report" element={<Report />} />
           <Route path="/report/:id" element={<Report />} />
+          <Route path="/palmmatch" element={<PalmMatch />} />
+          <Route path="/palmmatch-report/:id" element={<PalmMatchReport />} />
           <Route path="/about" element={<About />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />

@@ -10,6 +10,7 @@ import logoImg from '@/assets/logo.png';
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Features', path: '/#features' },
+  { name: 'PalmMatch', path: '/palmmatch', badge: 'New' },
   { name: 'How It Works', path: '/#how-it-works' },
   { name: 'Testimonials', path: '/#testimonials' },
   { name: 'FAQ', path: '/#faq' },
@@ -67,9 +68,14 @@ export function Navbar() {
             <SmartLink
               key={link.name}
               to={link.path}
-              className="relative text-muted-foreground hover:text-foreground transition-colors font-medium group"
+              className="relative text-muted-foreground hover:text-foreground transition-colors font-medium group flex items-center gap-1.5"
             >
               {link.name}
+              {'badge' in link && link.badge && (
+                <span className="text-[10px] font-bold text-foreground bg-accent px-1.5 py-0.5 rounded-full leading-none">
+                  {link.badge}
+                </span>
+              )}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent rounded-full group-hover:w-full transition-all duration-300" />
             </SmartLink>
           ))}
@@ -164,10 +170,15 @@ export function Navbar() {
                 >
                   <SmartLink
                     to={link.path}
-                    className="block text-foreground font-medium py-3 px-4 hover:bg-accent/10 rounded-xl transition-colors"
+                    className="flex items-center gap-2 text-foreground font-medium py-3 px-4 hover:bg-accent/10 rounded-xl transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.name}
+                    {'badge' in link && link.badge && (
+                      <span className="text-[10px] font-bold text-foreground bg-accent px-1.5 py-0.5 rounded-full leading-none">
+                        {link.badge}
+                      </span>
+                    )}
                   </SmartLink>
                 </motion.div>
               ))}

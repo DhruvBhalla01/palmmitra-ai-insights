@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-type PlanType = 'report99' | 'monthly299' | 'unlimited999';
+type PlanType = 'report99' | 'palmmatch149' | 'monthly299' | 'unlimited999';
 
 interface CreateOrderRequest {
   user_email: string;
@@ -15,8 +15,9 @@ interface CreateOrderRequest {
 }
 
 const PLAN_AMOUNTS: Record<PlanType, number> = {
-  report99:    9900,   // ₹99 in paise
-  monthly299: 29900,   // ₹299 in paise
+  report99:     9900,  // ₹99 in paise
+  palmmatch149: 14900, // ₹149 in paise
+  monthly299:  29900,  // ₹299 in paise
   unlimited999: 99900, // ₹999 in paise (legacy)
 };
 
@@ -35,7 +36,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const validPlans: PlanType[] = ['report99', 'monthly299', 'unlimited999'];
+    const validPlans: PlanType[] = ['report99', 'palmmatch149', 'monthly299', 'unlimited999'];
     if (!validPlans.includes(plan)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid plan type' }),
@@ -43,9 +44,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (plan === 'report99' && !report_id) {
+    if ((plan === 'report99' || plan === 'palmmatch149') && !report_id) {
       return new Response(
-        JSON.stringify({ success: false, error: 'report_id is required for report99 plan' }),
+        JSON.stringify({ success: false, error: 'report_id is required for this plan' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -114,8 +115,9 @@ Deno.serve(async (req) => {
     const finalAmount = baseAmount - discountAmount;
 
     const planLabels: Record<PlanType, string> = {
-      report99: 'Detailed Palm Reading Report',
-      monthly299: 'PalmMitra Monthly Plan',
+      report99:     'Detailed Palm Reading Report',
+      palmmatch149: 'PalmMatch Compatibility Report',
+      monthly299:   'PalmMitra Monthly Plan',
       unlimited999: 'Unlimited Palm Readings - Lifetime',
     };
 

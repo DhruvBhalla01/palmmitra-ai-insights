@@ -52,6 +52,13 @@ const cleanText = (text: string): string =>
   text.replace(/\.{2,}/g, '.').replace(/\s{2,}/g, ' ')
       .replace(/,{2,}/g, ',').replace(/\s+\./g, '.').replace(/\s+,/g, ',').trim();
 
+// Strips the AI-generated description suffix from bestFields entries
+// e.g. "Creative Arts - Your strong sun line..." → "Creative Arts"
+const extractFieldName = (field: string): string =>
+  field.includes(' - ') ? field.split(' - ')[0].trim()
+  : field.includes(': ')  ? field.split(': ')[0].trim()
+  : field.trim();
+
 const makeTrustSafe = (text: string): string =>
   text.replace(/you will definitely/gi, 'you may')
       .replace(/you will live long/gi, 'suggests strong vitality')
@@ -166,6 +173,20 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
 
   const userName = capitalizeName(userData.name);
 
+  // ─── Palm strength rank variables (used for lucky elements & key months) ──
+  const _strengthRank: Record<string, number> = {
+    'Very Strong': 4, 'Strong': 3, 'Moderate': 2, 'Developing': 1, 'Faint': 0,
+  };
+  const _lifeRank  = _strengthRank[reading.majorLines.lifeLine.strength]  ?? 2;
+  const _heartRank = _strengthRank[reading.majorLines.heartLine.strength] ?? 2;
+  const _headRank  = _strengthRank[reading.majorLines.headLine.strength]  ?? 2;
+  const _fateRank  = _strengthRank[reading.majorLines.fateLine.strength]  ?? 2;
+  const _venusHigh = reading.mounts.venus.level   === 'High';
+  const _jupHigh   = reading.mounts.jupiter.level === 'High';
+  const _satHigh   = reading.mounts.saturn.level  === 'High';
+  const _apoHigh   = reading.mounts.apollo.level  === 'High';
+  const _merHigh   = reading.mounts.mercury.level === 'High';
+
   // ─── Low-level helpers ────────────────────────────────────────────────────
 
   const rgb   = (c: typeof C.indigo) => doc.setTextColor(c.r, c.g, c.b);
@@ -188,10 +209,17 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
   const setupPage = () => {
     fill(C.cream);
     doc.rect(0, 0, W, H, 'F');
-    // Top gold accent stripe
+    // Top gold accent stripe — slightly thicker for presence
     fill(C.gold);
-    doc.rect(0, 0, W, 1.8, 'F');
-    y = M + 8;
+    doc.rect(0, 0, W, 2.5, 'F');
+    // PALMMITRA wordmark at top-right of every content page
+    sans(7, 'bold');
+    doc.setTextColor(C.gold.r, C.gold.g, C.gold.b);
+    doc.text('PALMMITRA', W - M, 9, { align: 'right' });
+    sans(6);
+    doc.setTextColor(C.mutedText.r, C.mutedText.g, C.mutedText.b);
+    doc.text('·', W - M - doc.getTextWidth('PALMMITRA') - 3, 9);
+    y = M + 10;
   };
 
   // ─── Footer ───────────────────────────────────────────────────────────────
@@ -253,17 +281,21 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     fill(C.gold);
     doc.rect(M, y - 4, 3.5, 14, 'F');
 
-    serif(15, 'bold');
+    serif(16, 'bold');
     rgb(C.indigo);
     doc.text(title.toUpperCase(), M + 8, y + 4);
 
     y += 10;
 
     if (subtitle) {
-      sans(8.5, 'italic');
-      rgb(C.mutedText);
-      doc.text(cleanText(subtitle), M + 8, y);
-      y += 6;
+      const subTxt = cleanText(subtitle);
+      const subW   = Math.min(doc.getTextWidth(subTxt) + 10, CW - 10);
+      fill(C.creamDark);
+      doc.roundedRect(M + 6, y - 4, subW, 7, 2, 2, 'F');
+      sans(8, 'italic');
+      rgb(C.accent);
+      doc.text(subTxt, M + 11, y);
+      y += 9;
     }
 
     // Gold underline
@@ -282,7 +314,7 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     const size   = opts?.size ?? 9.5;
     const color  = opts?.color ?? C.bodyText;
     const indent = opts?.indent ?? 0;
-    const lh     = size * 0.45;
+    const lh     = size * 0.52;
 
     if (opts?.times) {
       serif(size, opts.bold ? 'bold' : 'normal');
@@ -371,18 +403,21 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     sans(7);
     rgb(C.mutedText);
     const desc = getScoreMatchedInsight(score, label);
-    doc.text(desc.substring(0, 46), xPos, yPos + 4.5);
+    const descLine = doc.splitTextToSize(desc, meterW)[0];
+    doc.text(descLine, xPos, yPos + 4.5);
 
     // Track
     fill(C.creamDark);
     doc.roundedRect(xPos, yPos + 7, meterW, barH, 3, 3, 'F');
 
-    // Fill bar (simulate gradient with two overlapping rects)
+    // Fill bar
     fill(barColor);
     doc.roundedRect(xPos, yPos + 7, Math.max(fillW, 4), barH, 3, 3, 'F');
-    // Lighter highlight on top-third
-    fill(C.goldLight);
-    doc.roundedRect(xPos, yPos + 7, Math.max(fillW, 4), Math.floor(barH / 3), 3, 3, 'F');
+    // Narrow brightened trailing-edge accent (subtle shimmer, no flat artifact)
+    if (fillW > 6) {
+      fill({ r: Math.min(barColor.r + 40, 255), g: Math.min(barColor.g + 30, 255), b: Math.min(barColor.b + 20, 255) });
+      doc.roundedRect(xPos + Math.max(fillW, 4) - 2, yPos + 7, 2, barH, 1, 1, 'F');
+    }
 
     // Score number — large Times, right side
     serif(15, 'bold');
@@ -399,34 +434,47 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     keyInsight: string,
     personalInsight: string,
   ) => {
-    checkBreak(50);
+    checkBreak(56);
+
+    // Pre-compute text to estimate card height
+    const combined  = cleanText(`${personalInsight} ${meaning}`);
+    const paraLines = doc.splitTextToSize(makeTrustSafe(combined), CW - 16);
+    const glLines   = doc.splitTextToSize(makeTrustSafe(cleanText(keyInsight)), CW - 44);
+    const estH      = 8 + paraLines.length * (9.5 * 0.52) + 5 + glLines.length * 4.8 + 10;
+
+    // Card background
+    const cardStartY = y;
+    fill(C.creamDark);
+    doc.roundedRect(M, cardStartY - 2, CW, Math.max(estH, 36), 3, 3, 'F');
+    // Gold left accent strip
+    fill(C.gold);
+    doc.rect(M, cardStartY - 2, 2.5, Math.max(estH, 36), 'F');
 
     serif(11, 'bold');
     rgb(C.indigo);
-    doc.text(lineName, M + 5, y);
+    doc.text(lineName, M + 8, y);
 
     const nw  = doc.getTextWidth(lineName);
     sans(8);
     const sc  = strength.toLowerCase().includes('strong') ? C.success
                 : strength.toLowerCase().includes('moderate') ? C.gold : C.mutedText;
     rgb(sc);
-    doc.text(`[${strength}]`, M + 9 + nw, y);
+    doc.text(`[${strength}]`, M + 12 + nw, y);
     y += 6;
 
-    const combined = cleanText(`${personalInsight} ${meaning}`);
-    para(combined, { indent: 5, size: 9.5, color: C.darkText });
+    para(combined, { indent: 8, size: 9.5, color: C.darkText });
 
     sans(9, 'bold');
     rgb(C.gold);
-    doc.text('Guidance: ', M + 5, y);
+    doc.text('Guidance: ', M + 8, y);
     const gw = doc.getTextWidth('Guidance: ');
     sans(9);
     rgb(C.bodyText);
-    const gl = doc.splitTextToSize(makeTrustSafe(cleanText(keyInsight)), CW - 40);
-    doc.text(gl[0], M + 5 + gw, y);
-    y += 4.5;
-    if (gl.length > 1) { doc.text(gl.slice(1).join(' '), M + 9, y); y += 4.5; }
-    y += 6;
+    const gl = doc.splitTextToSize(makeTrustSafe(cleanText(keyInsight)), CW - 44);
+    doc.text(gl[0], M + 8 + gw, y);
+    y += 4.8;
+    if (gl.length > 1) { doc.text(gl.slice(1).join(' '), M + 12, y); y += 4.8; }
+    y += 8;
   };
 
   // ─── Career timeline ──────────────────────────────────────────────────────
@@ -484,11 +532,45 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     doc.text('Your Lucky Elements', M, y);
     y += 8;
 
+    // Best days — driven by dominant line rank
+    const _dayOptions = [
+      'Monday, Thursday, Sunday',    // life-dominant
+      'Tuesday, Friday, Sunday',     // heart-dominant
+      'Wednesday, Saturday, Sunday', // head-dominant
+      'Thursday, Friday, Sunday',    // fate/sun dominant
+      'Monday, Wednesday, Friday',   // balanced
+    ];
+    const _dayIdx = _fateRank >= 3 ? 3 : _heartRank >= 3 ? 1 : _headRank >= 3 ? 2 : _lifeRank >= 3 ? 0 : 4;
+    const luckyDays = _dayOptions[_dayIdx];
+
+    // Lucky colors — driven by dominant mount
+    const luckyColors = _venusHigh  ? 'Rose, Ivory, Coral'
+      : _jupHigh   ? 'Royal Blue, Gold, White'
+      : _satHigh   ? 'Dark Blue, Charcoal, Silver'
+      : _apoHigh   ? 'Amber, Orange, Gold'
+      : _merHigh   ? 'Green, Aqua, Silver'
+      : 'Indigo, Cream, Gold';
+
+    // Power numbers — deterministic from confidence score + line ranks
+    const _confDigitSum = String(reading.confidenceScore).split('').reduce((a, d) => a + parseInt(d), 0);
+    const _baseNum = (_confDigitSum % 9) + 1;
+    const _n2 = ((_baseNum + _fateRank + 2) % 31) || 3;
+    const _n3 = ((_baseNum + _fateRank + _heartRank + 3) % 31) || 7;
+    const _n4 = ((_baseNum + _fateRank + _heartRank + _headRank + 4) % 31) || 9;
+    const luckyNumbers = `${_baseNum}, ${_n2}, ${_n3}, ${_n4}`;
+
+    // Focus direction — based on mount balance
+    const luckyDirection = _jupHigh && !_satHigh ? 'North & Northeast'
+      : _satHigh && !_jupHigh ? 'West & Southwest'
+      : _venusHigh            ? 'South & Southeast'
+      : _apoHigh              ? 'East & Northeast'
+      : 'East & North';
+
     const els = [
-      { label: 'Best Days',        value: 'Wednesday, Friday, Sunday' },
-      { label: 'Lucky Colors',     value: 'Gold, Deep Blue, White' },
-      { label: 'Power Numbers',    value: '3, 7, 9, 21' },
-      { label: 'Focus Direction',  value: 'East & Northeast' },
+      { label: 'Best Days',       value: luckyDays      },
+      { label: 'Lucky Colors',    value: luckyColors    },
+      { label: 'Power Numbers',   value: luckyNumbers   },
+      { label: 'Focus Direction', value: luckyDirection },
     ];
 
     const cellW = CW / 2;
@@ -543,13 +625,16 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
   // Decorative concentric rings (gold outlines, no fill)
   stroke(C.gold);
   doc.setLineWidth(0.3);
-  doc.circle(W / 2, 110, 92, 'S');
+  doc.circle(W / 2, 95, 92, 'S');
   stroke(C.goldLight);
   doc.setLineWidth(0.2);
-  doc.circle(W / 2, 110, 78, 'S');
+  doc.circle(W / 2, 95, 78, 'S');
   stroke({ r: 212, g: 175, b: 55 });
   doc.setLineWidth(0.15);
-  doc.circle(W / 2, 110, 64, 'S');
+  doc.circle(W / 2, 95, 64, 'S');
+  stroke({ r: 170, g: 140, b: 40 });
+  doc.setLineWidth(0.1);
+  doc.circle(W / 2, 95, 50, 'S');
 
   // Sanskrit "Om" represented as text — uses the available font
   serif(48, 'bold');
@@ -677,6 +762,32 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     doc.text(`${score}%`, mx + coverMeterW / 2, coverMeterY + 16, { align: 'center' });
   });
 
+  // ── "What's Inside" teaser strip ──────────────────────────────────────────
+  const tocY = coverMeterY + 24;
+  fill({ r: 36, g: 30, b: 78 });
+  doc.roundedRect(M, tocY, CW, 38, 3, 3, 'F');
+  stroke(C.gold);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(M, tocY, CW, 38, 3, 3, 'S');
+
+  sans(7, 'bold');
+  rgb(C.gold);
+  doc.text("WHAT'S INSIDE YOUR REPORT", W / 2, tocY + 7, { align: 'center' });
+
+  const tocItems = [
+    'Palm Lines Analysis', 'Career & Wealth Path',
+    'Love & Relationships', 'Life Phases',
+    'Personality Traits',  'Spiritual Remedies',
+  ];
+  sans(7);
+  rgb(C.goldLight);
+  const tocColW = CW / 2;
+  tocItems.forEach((item, idx) => {
+    const col = idx % 2;
+    const row = Math.floor(idx / 2);
+    doc.text(`· ${item}`, M + 6 + col * tocColW, tocY + 16 + row * 7);
+  });
+
   // Cover bottom tagline
   sans(8, 'italic');
   rgb(C.goldLight);
@@ -718,7 +829,7 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
   const focusAreas = [
     {
       area: 'Primary Focus',
-      guidance: `Concentrate your energy on ${reading.careerWealth.bestFields[0] ?? 'your core strengths'}. Your palm suggests heightened receptivity to new opportunities in this domain during this period.`,
+      guidance: `Concentrate your energy on ${extractFieldName(reading.careerWealth.bestFields[0] ?? 'your core strengths')}. Your palm suggests heightened receptivity to new opportunities in this domain during this period.`,
     },
     {
       area: 'Relationship Priority',
@@ -753,12 +864,12 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     {
       step: '1',
       title: 'Immediate Action (Now)',
-      body: `${userName}, consider leveraging your ${reading.majorLines.headLine.strength.toLowerCase()} analytical abilities. Focusing on ${reading.careerWealth.bestFields.slice(0, 2).join(' and ') ?? 'your primary field'} may help your natural talents create the most impact.`,
+      body: `${userName}, consider leveraging your ${reading.majorLines.headLine.strength.toLowerCase()} analytical abilities. Focusing on ${reading.careerWealth.bestFields.slice(0, 2).map(extractFieldName).join(' and ')} may help your natural talents create the most impact.`,
     },
     {
       step: '2',
       title: `Growth Phase (${CURRENT_YEAR}–${CURRENT_YEAR + 1})`,
-      body: `Your destiny turning point appears around age ${reading.careerWealth.turningPointAge}. Preparing now through ${reading.spiritualRemedies[0]?.remedy?.toLowerCase() ?? 'daily spiritual practice'} and expanding your ${reading.careerWealth.bestFields[0] ?? 'professional'} network may serve you well.`,
+      body: `Your destiny turning point appears around age ${reading.careerWealth.turningPointAge}. Preparing now through ${reading.spiritualRemedies[0]?.remedy?.toLowerCase() ?? 'daily spiritual practice'} and expanding your ${extractFieldName(reading.careerWealth.bestFields[0] ?? 'professional')} network may serve you well.`,
     },
     {
       step: '3',
@@ -822,28 +933,47 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     { name: 'Mount of Mercury', data: reading.mounts.mercury, domain: 'Communication & Commerce'      },
   ];
 
+  const mountAccentColors: Record<string, typeof C.gold> = {
+    'Mount of Venus':   C.warning,
+    'Mount of Jupiter': C.indigo,
+    'Mount of Saturn':  C.accent,
+    'Mount of Apollo':  C.gold,
+    'Mount of Mercury': C.success,
+  };
+
   mountsData.forEach(mount => {
-    checkBreak(32);
+    checkBreak(40);
+
+    // Pre-compute for card height
+    const interp       = getMountInterpretation(mount.name, mount.data.level, userName);
+    const interpLines  = doc.splitTextToSize(makeTrustSafe(interp), CW - 16);
+    const mountCardH   = 6 + 5 + interpLines.length * (9.5 * 0.52) + 10;
+    const mAccent      = mountAccentColors[mount.name] ?? C.gold;
+
+    // Card background
+    fill(C.creamDark);
+    doc.roundedRect(M, y - 2, CW, Math.max(mountCardH, 30), 3, 3, 'F');
+    fill(mAccent);
+    doc.rect(M, y - 2, 2.5, Math.max(mountCardH, 30), 'F');
 
     serif(10, 'bold');
     rgb(C.indigo);
-    doc.text(mount.name, M + 5, y);
+    doc.text(mount.name, M + 8, y);
 
     const nw  = doc.getTextWidth(mount.name);
     sans(8);
     const lc  = mount.data.level === 'High' ? C.success
                 : mount.data.level === 'Medium' ? C.gold : C.mutedText;
     rgb(lc);
-    doc.text(`[${mount.data.level}]`, M + 9 + nw, y);
+    doc.text(`[${mount.data.level}]`, M + 12 + nw, y);
 
     sans(8, 'italic');
     rgb(C.mutedText);
-    doc.text(mount.domain, M + 5, y + 4.5);
-    y += 9;
+    doc.text(mount.domain, M + 8, y + 4.5);
+    y += 10;
 
-    const interpretation = getMountInterpretation(mount.name, mount.data.level, userName);
-    para(interpretation, { indent: 5, size: 9.5 });
-    y += 2;
+    para(interp, { indent: 8, size: 9.5 });
+    y += 4;
   });
 
   y += 2;
@@ -899,7 +1029,7 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
   y += 4;
   calloutBox(
     'Best Year Ahead',
-    `${userName}, ${nextPeak?.year ?? CURRENT_YEAR + 2} suggests strong potential for breakthrough success. Focusing on ${reading.careerWealth.bestFields[0] ?? 'your primary field'} and trusting your ${reading.majorLines.headLine.strength.toLowerCase()} mental clarity may guide major decisions effectively.`,
+    `${userName}, ${nextPeak?.year ?? CURRENT_YEAR + 2} suggests strong potential for breakthrough success. Focusing on ${extractFieldName(reading.careerWealth.bestFields[0] ?? 'your primary field')} and trusting your ${reading.majorLines.headLine.strength.toLowerCase()} mental clarity may guide major decisions effectively.`,
     'indigo',
   );
 
@@ -928,18 +1058,32 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
   y += 5;
   para(reading.loveRelationships.relationshipAdvice, { indent: 5, size: 9.5 });
 
-  y += 2;
-  // Quote box for relationship
-  fill({ r: 255, g: 248, b: 248 });
-  doc.roundedRect(M + 4, y, CW - 8, 16, 2, 2, 'F');
-  serif(9.5, 'italic');
+  y += 4;
+  // Premium quote box — gold border, warm inner fill, left gold accent, opening quote mark
+  const quoteText  = `"${userName}, authentic connection grows when you honour both your needs and your partner's."`;
+  const quoteLines = doc.splitTextToSize(quoteText, CW - 28);
+  const quoteH     = Math.max(24, quoteLines.length * 6.2 + 16);
+  checkBreak(quoteH + 8);
+
+  stroke(C.gold);
+  doc.setLineWidth(0.8);
+  doc.roundedRect(M + 4, y, CW - 8, quoteH, 3, 3, 'S');
+  fill({ r: 255, g: 248, b: 240 });
+  doc.roundedRect(M + 5, y + 1, CW - 10, quoteH - 2, 3, 3, 'F');
+  fill(C.gold);
+  doc.rect(M + 4, y, 3, quoteH, 'F');
+
+  // Opening quote decoration
+  serif(20, 'bold');
+  rgb(C.goldLight);
+  doc.text('\u201C', M + 12, y + 11);
+
+  serif(10, 'italic');
   rgb(C.indigo);
-  doc.text(
-    `"${userName}, authentic connection grows when you honour both your needs and your partner's."`,
-    W / 2, y + 9,
-    { align: 'center', maxWidth: CW - 16 },
-  );
-  y += 22;
+  let qy = y + 10;
+  quoteLines.forEach((line: string) => { doc.text(line, W / 2, qy, { align: 'center' }); qy += 6.2; });
+
+  y += quoteH + 8;
 
   divider();
 
@@ -953,16 +1097,29 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     { phase: 'Opportunity Period', data: reading.lifePhases.opportunity },
   ];
 
-  phases.forEach(({ phase, data }) => {
-    checkBreak(22);
+  const phaseAccentColors = [C.success, C.warning, C.gold]; // Growth=green, Challenge=amber, Opportunity=gold
+
+  phases.forEach(({ phase, data }, idx) => {
+    const phaseLines  = doc.splitTextToSize(makeTrustSafe(cleanText(data.description)), CW - 18);
+    const phaseCardH  = 8 + phaseLines.length * (9.5 * 0.52) + 12;
+    const pColor      = phaseAccentColors[idx];
+    checkBreak(phaseCardH + 6);
+
+    // Color-coded card
+    fill(C.creamDark);
+    doc.roundedRect(M, y - 2, CW, Math.max(phaseCardH, 24), 3, 3, 'F');
+    fill(pColor);
+    doc.rect(M, y - 2, 3.5, Math.max(phaseCardH, 24), 'F');
+
     serif(10, 'bold');
     rgb(C.indigo);
-    doc.text(phase, M + 5, y);
+    doc.text(phase, M + 9, y);
     sans(8);
-    rgb(C.gold);
-    doc.text(` (${data.period})`, M + 5 + doc.getTextWidth(phase), y);
+    rgb(pColor);
+    doc.text(` (${data.period})`, M + 9 + doc.getTextWidth(phase), y);
     y += 5.5;
-    para(data.description, { indent: 5, size: 9.5 });
+    para(data.description, { indent: 9, size: 9.5 });
+    y += 3;
   });
 
   divider();
@@ -971,15 +1128,25 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
 
   sectionHeader('Personality Traits', `Core qualities revealed in ${userName}'s palm`);
 
+  const traitDotColors: Record<string, typeof C.gold> = {
+    drive:     C.warning,
+    loyalty:   C.success,
+    practical: C.accent,
+    success:   C.gold,
+    spiritual: C.indigoLight,
+  };
+
   reading.personalityTraits.forEach(trait => {
-    checkBreak(16);
-    fill(C.gold);
+    checkBreak(20);
+    const dotColor = traitDotColors[trait.icon] ?? C.gold;
+    fill(dotColor);
     doc.circle(M + 5, y - 1, 2.5, 'F');
     serif(10, 'bold');
     rgb(C.indigo);
     doc.text(trait.trait, M + 12, y);
     y += 5.5;
     para(trait.description, { indent: 12, size: 9.5 });
+    y += 1;
   });
 
   divider();
@@ -1000,30 +1167,50 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
   }));
 
   categorized.forEach((remedy, i) => {
-    checkBreak(28);
+    const benefitLines  = doc.splitTextToSize(makeTrustSafe(cleanText(remedy.benefit)), CW - 16);
+    const remedyBodyH   = benefitLines.length * (9 * 0.52);
+    const remedyCardH   = 14 + remedyBodyH + 12;
+    checkBreak(remedyCardH + 8);
 
-    fill(C.gold);
-    doc.circle(M + 6, y - 1.5, 4.5, 'F');
-    sans(9, 'bold');
-    rgb(C.indigoDark);
-    doc.text(String(i + 1), M + 6, y, { align: 'center' });
+    const rCardY = y;
 
+    // Outer card with gold border
+    fill(C.creamDark);
+    doc.roundedRect(M, rCardY, CW, Math.max(remedyCardH, 34), 3, 3, 'F');
+    stroke(C.gold);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(M, rCardY, CW, Math.max(remedyCardH, 34), 3, 3, 'S');
+
+    // Indigo header band
+    fill(C.indigo);
+    doc.roundedRect(M, rCardY, CW, 13, 3, 3, 'F');
+    fill(C.indigo); // cover rounded corners on band bottom
+    doc.rect(M, rCardY + 9, CW, 4, 'F');
+
+    // Category badge (right side of header)
+    sans(7, 'bold');
+    rgb(C.gold);
+    doc.text(remedy.category.toUpperCase(), W - M - 6, rCardY + 9, { align: 'right' });
+
+    // Remedy name in header
     serif(10, 'bold');
-    rgb(C.indigo);
-    doc.text(remedy.remedy, M + 15, y);
+    rgb(C.white);
+    doc.text(remedy.remedy, M + 8, rCardY + 9);
 
-    sans(7.5);
-    const rw = doc.getTextWidth(remedy.remedy);
-    rgb(C.mutedText);
-    doc.text(`(${remedy.category})`, M + 19 + rw, y);
-    y += 5.5;
+    // Benefit text
+    y = rCardY + 18;
+    sans(9);
+    rgb(C.darkText);
+    benefitLines.forEach((line: string) => { doc.text(line, M + 8, y); y += 9 * 0.52; });
 
-    para(remedy.benefit, { indent: 15, size: 9 });
-
+    // Best time row pinned to card bottom
+    const bestTimeY = rCardY + Math.max(remedyCardH, 34) - 7;
     sans(8, 'italic');
     rgb(C.gold);
-    doc.text(`Best Time: ${remedy.timing}`, M + 15, y);
-    y += 7;
+    doc.text(`Best Time: ${remedy.timing}`, M + 8, bestTimeY);
+
+    y = rCardY + Math.max(remedyCardH, 34) + 6;
+    void i; // suppress unused warning
   });
 
   y += 2;
@@ -1050,7 +1237,7 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     doc.text('Career Breakthrough Roadmap', M + 5, y);
     y += 5.5;
     para(
-      `${reading.premiumInsights.careerBreakthrough}. Focusing on ${reading.careerWealth.bestFields[0] ?? 'your primary field'} during your opportunity window around ${nextPeak?.year ?? CURRENT_YEAR + 2} may enhance results.`,
+      `${reading.premiumInsights.careerBreakthrough}. Focusing on ${extractFieldName(reading.careerWealth.bestFields[0] ?? 'your primary field')} during your opportunity window around ${nextPeak?.year ?? CURRENT_YEAR + 2} may enhance results.`,
       { indent: 5, size: 9.5 },
     );
     y += 2;
@@ -1059,8 +1246,14 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
     rgb(C.gold);
     doc.text(`Key Months in ${nextPeak?.year ?? CURRENT_YEAR + 2}`, M + 5, y);
     y += 5.5;
+    const _peakMonthOffset = (_heartRank + _fateRank) % 6;
+    const _peakYear = parseInt(nextPeak?.year ?? String(CURRENT_YEAR + 2));
+    const _w1s = MONTH_NAMES[_peakMonthOffset];
+    const _w1e = MONTH_NAMES[(_peakMonthOffset + 1) % 12];
+    const _w2s = MONTH_NAMES[(_peakMonthOffset + 6) % 12];
+    const _w2e = MONTH_NAMES[(_peakMonthOffset + 7) % 12];
     para(
-      `March–April and September–October may show heightened opportunity alignment. Major decisions, launches, or commitments during these windows could carry enhanced success potential.`,
+      `${_w1s}–${_w1e} and ${_w2s}–${_w2e} of ${_peakYear} may show heightened opportunity alignment. Major decisions, launches, or commitments during these windows could carry enhanced success potential.`,
       { indent: 5, size: 9.5 },
     );
     y += 2;

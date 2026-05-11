@@ -53,9 +53,67 @@ export type Database = {
         }
         Relationships: []
       }
+      palmmatch_reports: {
+        Row: {
+          id: string
+          report_id: string
+          person1_name: string
+          person1_age: number
+          person2_name: string
+          person2_age: number
+          relationship_type: string
+          email: string
+          overall_score: number
+          reading: Json
+          is_unlocked: boolean
+          payment_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          report_id: string
+          person1_name: string
+          person1_age: number
+          person2_name: string
+          person2_age: number
+          relationship_type: string
+          email: string
+          overall_score: number
+          reading: Json
+          is_unlocked?: boolean
+          payment_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          report_id?: string
+          person1_name?: string
+          person1_age?: number
+          person2_name?: string
+          person2_age?: number
+          relationship_type?: string
+          email?: string
+          overall_score?: number
+          reading?: Json
+          is_unlocked?: boolean
+          payment_id?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "palmmatch_reports_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
+          coupon_code: string | null
+          discount_amount: number
           created_at: string
           id: string
           plan_type: string
@@ -67,6 +125,8 @@ export type Database = {
         }
         Insert: {
           amount: number
+          coupon_code?: string | null
+          discount_amount?: number
           created_at?: string
           id?: string
           plan_type: string
@@ -78,6 +138,8 @@ export type Database = {
         }
         Update: {
           amount?: number
+          coupon_code?: string | null
+          discount_amount?: number
           created_at?: string
           id?: string
           plan_type?: string
@@ -143,6 +205,7 @@ export type Database = {
           plan: string
           started_at: string
           status: string
+          expires_at: string | null
           user_email: string
         }
         Insert: {
@@ -151,6 +214,7 @@ export type Database = {
           plan?: string
           started_at?: string
           status?: string
+          expires_at?: string | null
           user_email: string
         }
         Update: {
@@ -159,6 +223,7 @@ export type Database = {
           plan?: string
           started_at?: string
           status?: string
+          expires_at?: string | null
           user_email?: string
         }
         Relationships: [

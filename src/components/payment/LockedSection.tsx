@@ -3,7 +3,7 @@ import { Lock, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReactNode } from 'react';
 
-type SectionKey = 'lines' | 'mounts' | 'personality' | 'career' | 'love' | 'phases' | 'remedies' | 'blessing';
+type SectionKey = 'lines' | 'mounts' | 'personality' | 'career' | 'love' | 'phases' | 'remedies' | 'blessing' | 'palmmatch-communication' | 'palmmatch-goals' | 'palmmatch-romance' | 'palmmatch-spiritual';
 
 interface LockedSectionProps {
   isUnlocked: boolean;
@@ -24,6 +24,10 @@ const sectionTeasers: Record<SectionKey, string> = {
   phases: "Your growth window may be active right now. Your challenge phase and how to navigate it — revealed.",
   remedies: "2 personalised spiritual practices calibrated to your specific palm energy — ready to use.",
   blessing: "A personalised divine blessing drawn from your palm's unique destiny signature — yours to keep.",
+  'palmmatch-communication': "Your communication styles decoded — where you naturally align and where friction hides.",
+  'palmmatch-goals': "Your life timelines compared — when your ambitions converge and when they diverge.",
+  'palmmatch-romance': "The romantic arc written in your palm lines — your peak connection window revealed.",
+  'palmmatch-spiritual': "Your spiritual energies mapped — and the single practice that amplifies your bond.",
 };
 
 export function LockedSection({

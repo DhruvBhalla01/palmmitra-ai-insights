@@ -19,6 +19,7 @@ const PricingSection = lazy(() => import('@/components/home/PricingSection').the
 const FAQSection = lazy(() => import('@/components/home/FAQSection').then(m => ({ default: m.FAQSection })));
 const EmailCaptureSection = lazy(() => import('@/components/home/EmailCaptureSection').then(m => ({ default: m.EmailCaptureSection })));
 const FinalCTABanner = lazy(() => import('@/components/home/FinalCTABanner').then(m => ({ default: m.FinalCTABanner })));
+const PalmMatchTeaser = lazy(() => import('@/components/home/PalmMatchTeaser').then(m => ({ default: m.PalmMatchTeaser })));
 
 const SectionLoader = () => (
   <div className="py-24 flex items-center justify-center">
@@ -42,6 +43,11 @@ const Index = () => {
 
         <Suspense fallback={<SectionLoader />}>
           <FeaturesSection />
+        </Suspense>
+
+        <SectionDivider variant="gradient" />
+        <Suspense fallback={<SectionLoader />}>
+          <PalmMatchTeaser />
         </Suspense>
 
         <SectionDivider variant="ornate" />
