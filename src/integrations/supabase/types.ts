@@ -58,6 +58,7 @@ export type Database = {
           amount: number
           created_at: string
           id: string
+          palmmatch_report_id: string | null
           plan_type: string
           razorpay_order_id: string
           razorpay_payment_id: string | null
@@ -69,6 +70,7 @@ export type Database = {
           amount: number
           created_at?: string
           id?: string
+          palmmatch_report_id?: string | null
           plan_type: string
           razorpay_order_id: string
           razorpay_payment_id?: string | null
@@ -80,6 +82,7 @@ export type Database = {
           amount?: number
           created_at?: string
           id?: string
+          palmmatch_report_id?: string | null
           plan_type?: string
           razorpay_order_id?: string
           razorpay_payment_id?: string | null
