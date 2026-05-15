@@ -324,7 +324,7 @@ export default function PalmMatch() {
           <div className="flex items-center justify-center gap-5 mb-10 h-20 select-none">
             <motion.span
               animate={isDone ? { x: 10, scale: 1.12 } : { x: [0, 5, 0, -5, 0] }}
-              transition={isDone ? { duration: 0.4 } : { repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+              transition={isDone ? { duration: 0.4 } : { repeat: Number.POSITIVE_INFINITY, duration: 2.2, ease: 'easeInOut' }}
               className="text-5xl"
             >
               🤚
