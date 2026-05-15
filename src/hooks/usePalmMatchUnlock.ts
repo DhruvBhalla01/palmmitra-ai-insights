@@ -89,7 +89,7 @@ export function usePalmMatchUnlock(
     try {
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
         'create-razorpay-order',
-        { body: { user_email: userEmail, report_id: reportId, plan } }
+        { body: { user_email: userEmail, palmmatch_report_id: reportId, plan } }
       );
 
       if (orderError || !orderData?.success) {
