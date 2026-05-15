@@ -1,0 +1,3 @@
+ALTER TABLE public.payments
+  ADD COLUMN IF NOT EXISTS coupon_code TEXT,
+  ADD COLUMN IF NOT EXISTS discount_amount INTEGER NOT NULL DEFAULT 0;
