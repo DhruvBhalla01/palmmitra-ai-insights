@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature || !payment_id) {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required payment verification fields' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     if (!razorpayKeySecret) {
       return new Response(
         JSON.stringify({ success: false, error: 'Payment gateway not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -77,14 +77,14 @@ Deno.serve(async (req) => {
     if (fetchError || !payment) {
       return new Response(
         JSON.stringify({ success: false, error: 'Payment record not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (payment.razorpay_order_id !== razorpay_order_id) {
       return new Response(
         JSON.stringify({ success: false, error: 'Order ID mismatch' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       await supabase.from('payments').update({ status: 'failed' }).eq('id', payment_id);
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid payment signature' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -118,15 +118,15 @@ Deno.serve(async (req) => {
       else console.log('Report unlock created for:', payment.report_id);
 
     } else if (payment.plan_type === 'palmmatch149') {
-      if (!payment.report_id) {
-        console.error('palmmatch149 payment missing report_id');
+      if (!payment.palmmatch_report_id) {
+        console.error('palmmatch149 payment missing palmmatch_report_id');
       } else {
         const { error: pmError } = await supabase
           .from('palmmatch_reports')
           .update({ is_unlocked: true, payment_id: payment.id })
-          .eq('report_id', payment.report_id);
+          .eq('report_id', payment.palmmatch_report_id);
         if (pmError) console.error('Failed to unlock palmmatch report:', pmError);
-        else console.log('PalmMatch report unlocked:', payment.report_id);
+        else console.log('PalmMatch report unlocked:', payment.palmmatch_report_id);
       }
 
     } else if (payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999') {

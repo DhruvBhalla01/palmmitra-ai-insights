@@ -324,21 +324,21 @@ export default function PalmMatch() {
           <div className="flex items-center justify-center gap-5 mb-10 h-20 select-none">
             <motion.span
               animate={isDone ? { x: 10, scale: 1.12 } : { x: [0, 5, 0, -5, 0] }}
-              transition={isDone ? { duration: 0.4 } : { repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+              transition={isDone ? { duration: 0.4 } : { repeat: Number.POSITIVE_INFINITY, duration: 2.2, ease: 'easeInOut' }}
               className="text-5xl"
             >
               🤚
             </motion.span>
             <motion.span
               animate={{ scale: [0.85, 1.25, 0.85], opacity: [0.5, 1, 0.5] }}
-              transition={{ repeat: Infinity, duration: 1.6 }}
+              transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.6 }}
               className="text-3xl"
             >
               {isDone ? '💕' : '✨'}
             </motion.span>
             <motion.span
               animate={isDone ? { x: -10, scale: 1.12 } : { x: [0, -5, 0, 5, 0] }}
-              transition={isDone ? { duration: 0.4 } : { repeat: Infinity, duration: 2.2, ease: 'easeInOut', delay: 0.5 }}
+              transition={isDone ? { duration: 0.4 } : { repeat: Number.POSITIVE_INFINITY, duration: 2.2, ease: 'easeInOut', delay: 0.5 }}
               className="text-5xl"
               style={{ transform: 'scaleX(-1)' }}
             >
