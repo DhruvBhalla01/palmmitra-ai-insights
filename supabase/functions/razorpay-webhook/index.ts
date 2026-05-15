@@ -111,13 +111,13 @@ Deno.serve(async (req) => {
       else console.log('Webhook: report unlocked via webhook:', payment.report_id);
 
     } else if (payment.plan_type === 'palmmatch149') {
-      if (payment.report_id) {
+      if (payment.palmmatch_report_id) {
         const { error } = await supabase
           .from('palmmatch_reports')
           .update({ is_unlocked: true, payment_id: payment.id })
-          .eq('report_id', payment.report_id);
+          .eq('report_id', payment.palmmatch_report_id);
         if (error) console.error('Webhook: failed to unlock palmmatch:', error);
-        else console.log('Webhook: palmmatch report unlocked:', payment.report_id);
+        else console.log('Webhook: palmmatch report unlocked:', payment.palmmatch_report_id);
       }
 
     } else if (payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999') {
