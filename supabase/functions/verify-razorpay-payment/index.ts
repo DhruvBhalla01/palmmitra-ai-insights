@@ -118,15 +118,15 @@ Deno.serve(async (req) => {
       else console.log('Report unlock created for:', payment.report_id);
 
     } else if (payment.plan_type === 'palmmatch149') {
-      if (!payment.report_id) {
-        console.error('palmmatch149 payment missing report_id');
+      if (!payment.palmmatch_report_id) {
+        console.error('palmmatch149 payment missing palmmatch_report_id');
       } else {
         const { error: pmError } = await supabase
           .from('palmmatch_reports')
           .update({ is_unlocked: true, payment_id: payment.id })
-          .eq('report_id', payment.report_id);
+          .eq('report_id', payment.palmmatch_report_id);
         if (pmError) console.error('Failed to unlock palmmatch report:', pmError);
-        else console.log('PalmMatch report unlocked:', payment.report_id);
+        else console.log('PalmMatch report unlocked:', payment.palmmatch_report_id);
       }
 
     } else if (payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999') {
