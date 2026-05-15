@@ -56,7 +56,9 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+          coupon_code: string | null
           created_at: string
+          discount_amount: number
           id: string
           palmmatch_report_id: string | null
           plan_type: string
@@ -68,7 +70,9 @@ export type Database = {
         }
         Insert: {
           amount: number
+          coupon_code?: string | null
           created_at?: string
+          discount_amount?: number
           id?: string
           palmmatch_report_id?: string | null
           plan_type: string
@@ -80,7 +84,9 @@ export type Database = {
         }
         Update: {
           amount?: number
+          coupon_code?: string | null
           created_at?: string
+          discount_amount?: number
           id?: string
           palmmatch_report_id?: string | null
           plan_type?: string
