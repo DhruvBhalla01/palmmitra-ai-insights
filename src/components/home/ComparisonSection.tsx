@@ -50,10 +50,10 @@ export function ComparisonSection() {
         <AnimatedSection className="text-center mb-14">
           <p className="sanskrit-accent mb-3">ॐ Viveka Darshan</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            Why Choose <span className="text-gradient-gold">PalmMitra?</span>
+            Not All Readings Are <span className="text-gradient-gold">Created Equal</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Not all palm readings are equal. See why 12,400+ people chose AI over guesswork.
+            See exactly why 12,400+ people chose PalmMitra AI over generic horoscopes and expensive offline palmists.
           </p>
         </AnimatedSection>
 

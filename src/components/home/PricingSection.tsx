@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Crown, Users, TrendingUp, Zap, Lock } from 'lucide-react';
+import { Check, Sparkles, Crown, Users, TrendingUp, Zap, Lock, Shield, Star } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -9,9 +9,9 @@ const plans = [
     name: 'Free Preview',
     price: '₹0',
     period: null,
-    description: 'See real insights before you spend a rupee',
+    description: 'See real AI insights before spending a rupee',
     features: [
-      'Palm summary + overview',
+      'Palm summary + confidence score',
       'Life line deep analysis',
       'First personality trait reveal',
       'One targeted spiritual remedy',
@@ -20,18 +20,20 @@ const plans = [
     popular: false,
     badge: null,
     highlight: false,
+    ctaNote: 'No credit card · No sign-up',
   },
   {
     name: 'Detailed Report',
     price: '₹99',
+    originalPrice: '₹299',
     period: 'one-time',
-    description: 'Your complete AI destiny report — once, forever',
+    description: 'Your complete AI destiny report — yours forever',
     features: [
       'All 5 major palm lines decoded',
       'Complete mounts analysis',
       'Career & wealth turning points',
-      'Love & marriage compatibility',
-      'Lucky periods timeline (5 years)',
+      'Love & marriage timeline',
+      'Lucky periods timeline — 5 years',
       'All 5 spiritual remedies',
       'Downloadable premium PDF',
     ],
@@ -39,51 +41,58 @@ const plans = [
     popular: true,
     badge: 'Most Popular',
     highlight: true,
+    ctaNote: 'Satisfaction guaranteed or full refund',
   },
   {
     name: 'Monthly Plan',
     price: '₹299',
     period: '/month',
-    description: 'Unlimited readings for you & your family',
+    description: 'Unlimited readings for you & your whole family',
     features: [
       'Everything in Detailed Report',
-      'Unlimited palm readings',
+      'Unlimited palm readings/month',
       'Read for spouse, kids & parents',
       'Priority AI — faster processing',
       'All future features included',
-      'Cancel any time',
+      'Cancel any time, no questions',
     ],
     cta: 'Start Monthly Plan',
     popular: false,
     badge: '10× Better Value',
     highlight: false,
+    ctaNote: 'Cancel anytime · Lock this price',
   },
 ];
 
 const socialProof = [
   { icon: Users, label: '12,400+ readings done' },
-  { icon: TrendingUp, label: '4.9★ average rating' },
+  { icon: TrendingUp, label: '4.9★ · 2,100+ verified reviews' },
   { icon: Zap, label: 'Results in under 2 minutes' },
+  { icon: Star, label: '98% satisfaction rate' },
 ];
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-24 md:py-32 relative scroll-mt-20">
+    <section id="pricing" className="py-24 md:py-32 relative scroll-mt-20" aria-labelledby="pricing-heading">
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-6">
           <p className="sanskrit-accent mb-3">ॐ Sampatti Yoga</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            Choose Your <span className="text-gradient-gold">Path</span>
+          <h2 id="pricing-heading" className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
+            Start Free. <span className="text-gradient-gold">Unlock Everything.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Over 12,000 people have already discovered what their palm holds.
-            Your reading takes less than 2 minutes.
+            Your free preview is waiting — no credit card, no sign-up.
+            Full report costs less than a chai and samosa.
           </p>
         </AnimatedSection>
 
         {/* Urgency strip */}
         <AnimatedSection delay={0.05}>
-          <div className="text-center mb-8 py-3 px-6 rounded-2xl bg-accent/8 border border-accent/20 max-w-lg mx-auto">
+          <div className="flex items-center justify-center gap-2 text-center mb-6 py-3 px-6 rounded-2xl bg-accent/8 border border-accent/20 max-w-lg mx-auto">
+            <span className="relative flex h-2 w-2 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+            </span>
             <p className="text-sm font-medium text-foreground">
               <span className="text-accent font-bold">120+ readings</span> completed this week ·
               Use code <span className="text-accent font-bold">PALMFRIEND</span> for ₹50 off
@@ -92,10 +101,10 @@ export function PricingSection() {
         </AnimatedSection>
 
         {/* Social proof strip */}
-        <AnimatedSection delay={0.1} className="flex flex-wrap justify-center gap-6 mb-14">
+        <AnimatedSection delay={0.1} className="flex flex-wrap justify-center gap-5 mb-14">
           {socialProof.map(({ icon: Icon, label }) => (
             <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Icon className="w-4 h-4 text-accent" />
+              <Icon className="w-4 h-4 text-accent" aria-hidden="true" />
               <span>{label}</span>
             </div>
           ))}
@@ -112,7 +121,7 @@ export function PricingSection() {
               className="relative"
             >
               <motion.div
-                whileHover={{ y: -8, scale: plan.highlight ? 1.02 : 1.03 }}
+                whileHover={{ y: -8, scale: plan.highlight ? 1.02 : 1.02 }}
                 transition={{ duration: 0.3 }}
                 className={`relative rounded-3xl p-8 h-full flex flex-col transition-all duration-300 ${
                   plan.highlight
@@ -131,7 +140,7 @@ export function PricingSection() {
                     <div className={`flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-bold shadow-gold ${
                       plan.highlight ? 'bg-gradient-gold text-foreground' : 'bg-secondary text-foreground border border-accent/30'
                     }`}>
-                      {plan.highlight ? <Crown className="w-4 h-4" /> : <Sparkles className="w-4 h-4 text-accent" />}
+                      {plan.highlight ? <Crown className="w-4 h-4" aria-hidden="true" /> : <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />}
                       {plan.badge}
                     </div>
                   </motion.div>
@@ -145,12 +154,17 @@ export function PricingSection() {
 
                   {/* Price */}
                   <div className="mb-8">
-                    <span className={`text-5xl font-serif font-bold ${plan.highlight ? 'text-gradient-gold' : 'text-foreground'}`}>
-                      {plan.price}
-                    </span>
-                    {plan.period && (
-                      <span className="text-muted-foreground text-sm ml-1">{plan.period}</span>
-                    )}
+                    <div className="flex items-baseline gap-2">
+                      <span className={`text-5xl font-serif font-bold ${plan.highlight ? 'text-gradient-gold' : 'text-foreground'}`}>
+                        {plan.price}
+                      </span>
+                      {plan.period && (
+                        <span className="text-muted-foreground text-sm">{plan.period}</span>
+                      )}
+                      {'originalPrice' in plan && plan.originalPrice && (
+                        <span className="text-muted-foreground/50 text-sm line-through">{plan.originalPrice}</span>
+                      )}
+                    </div>
                     {plan.period === '/month' && (
                       <p className="text-xs text-muted-foreground mt-1">
                         Less than one coffee a week.
@@ -164,7 +178,7 @@ export function PricingSection() {
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-4 mb-8">
+                  <ul className="space-y-3.5 mb-8" aria-label={`${plan.name} features`}>
                     {plan.features.map((feature, i) => (
                       <motion.li
                         key={feature}
@@ -174,12 +188,12 @@ export function PricingSection() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.3 + i * 0.05 }}
                       >
-                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                        <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
                           plan.highlight ? 'bg-accent/20' : 'bg-secondary'
                         }`}>
-                          <Check className={`w-3.5 h-3.5 ${plan.highlight ? 'text-accent' : 'text-muted-foreground'}`} />
+                          <Check className={`w-3 h-3 ${plan.highlight ? 'text-accent' : 'text-muted-foreground'}`} aria-hidden="true" />
                         </div>
-                        <span className="text-foreground text-sm">{feature}</span>
+                        <span className="text-foreground text-sm leading-snug">{feature}</span>
                       </motion.li>
                     ))}
                   </ul>
@@ -194,20 +208,17 @@ export function PricingSection() {
                   </Button>
                 </Link>
 
-                {!plan.period && (
-                  <p className="text-center text-xs text-muted-foreground mt-3">
-                    No credit card needed
-                  </p>
-                )}
-                {plan.period === 'one-time' && (
-                  <p className="text-center text-xs text-muted-foreground mt-3">
-                    Not satisfied? Email us — we'll sort it.
-                  </p>
-                )}
-                {plan.period === '/month' && (
-                  <div className="text-center mt-3 space-y-0.5">
-                    <p className="text-xs text-muted-foreground">No contracts. Cancel anytime.</p>
-                    <p className="text-xs text-accent font-medium">Lock in this price before it rises</p>
+                <p className="text-center text-xs text-muted-foreground mt-3">
+                  {plan.ctaNote}
+                </p>
+
+                {/* Guarantee badge for paid plan */}
+                {plan.highlight && (
+                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-accent/10">
+                    <Shield className="w-4 h-4 text-accent flex-shrink-0" aria-hidden="true" />
+                    <p className="text-xs text-muted-foreground">
+                      <span className="text-accent font-medium">Money-back guarantee</span> — not happy? Email us for a full refund.
+                    </p>
                   </div>
                 )}
               </motion.div>
@@ -216,12 +227,17 @@ export function PricingSection() {
         </div>
 
         {/* Bottom trust nudge */}
-        <AnimatedSection delay={0.4} className="text-center mt-12">
-          <p className="text-sm text-muted-foreground flex items-center justify-center gap-2 flex-wrap">
-            <Lock className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-            Secure payments via Razorpay · UPI, Cards, Wallets accepted ·{' '}
-            <span className="text-accent">Use code PALMFRIEND for ₹50 off</span>
-          </p>
+        <AnimatedSection delay={0.4} className="text-center mt-14">
+          <div className="flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-accent flex-shrink-0" aria-hidden="true" />
+              Secure payments via Razorpay
+            </span>
+            <span className="text-border">·</span>
+            <span>UPI, Cards, Wallets accepted</span>
+            <span className="text-border">·</span>
+            <span className="text-accent font-medium">Use code PALMFRIEND for ₹50 off</span>
+          </div>
         </AnimatedSection>
       </div>
     </section>

@@ -49,13 +49,13 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <motion.div 
-            className="w-10 h-10 rounded-full overflow-hidden"
+        <Link to="/" className="flex items-center gap-2.5 group" aria-label="PalmMitra — Home">
+          <motion.div
+            className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ duration: 0.2 }}
           >
-            <img src={logoImg} alt="PalmMitra logo" className="w-full h-full object-contain" />
+            <img src={logoImg} alt="" width={40} height={40} className="w-full h-full object-contain" aria-hidden="true" />
           </motion.div>
           <span className="text-2xl font-serif font-bold text-foreground">
             Palm<span className="text-gradient-gold">Mitra</span>

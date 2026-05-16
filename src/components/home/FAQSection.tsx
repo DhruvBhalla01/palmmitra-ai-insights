@@ -53,16 +53,16 @@ const faqs = [
 
 export function FAQSection() {
   return (
-    <section id="faq" className="py-24 md:py-32 relative scroll-mt-24">
+    <section id="faq" className="py-24 md:py-32 relative scroll-mt-24" aria-labelledby="faq-heading">
       <div className="container mx-auto px-4 max-w-4xl">
         <AnimatedSection className="text-center mb-16">
           <p className="sanskrit-accent mb-3">ॐ Prashna Samadhan</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
+          <h2 id="faq-heading" className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
             Your Questions,{' '}
             <span className="text-gradient-gold">Honestly Answered</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Real answers to the questions people ask before they commit
+            Real answers to the questions people ask before they start their reading
           </p>
         </AnimatedSection>
 

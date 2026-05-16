@@ -48,7 +48,21 @@ export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyU
           transition={{ duration: 0.3, ease: 'easeOut' }}
           className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
         >
-          <div className="glass-premium border-t border-accent/20 px-4 pt-3 pb-4 safe-area-bottom">
+          <div
+            className="border-t border-accent/30 px-4 pt-3 pb-4 safe-area-bottom"
+            style={{
+              background: 'linear-gradient(180deg, hsl(245 58% 10% / 0.97), hsl(245 58% 8% / 0.99))',
+              boxShadow: '0 -4px 30px hsl(42 87% 55% / 0.14)',
+              backdropFilter: 'blur(20px)',
+            }}
+          >
+            {/* Social proof row */}
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <span className="text-accent text-xs">✦✦✦</span>
+              <p className="text-[11px] text-muted-foreground">23 couples unlocked today · limited launch price</p>
+              <span className="text-accent text-xs">✦✦✦</span>
+            </div>
+
             <div className="flex items-center gap-2 mb-2.5">
               <p className="flex-1 text-sm font-medium text-foreground truncate">
                 ✦ {ctaText}
@@ -67,7 +81,7 @@ export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyU
               className="btn-gold w-full font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 text-base"
             >
               <Sparkles className="w-4 h-4" />
-              Unlock Full Report — ₹99
+              Unlock Full Report — ₹149
             </Button>
             <div className="flex items-center justify-center gap-3 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">

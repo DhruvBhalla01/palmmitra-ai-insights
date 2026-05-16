@@ -26,25 +26,25 @@ const highlights = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-24 md:py-32 relative scroll-mt-20">
+    <section id="about" className="py-24 md:py-32 relative scroll-mt-20" aria-labelledby="about-heading">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
           <div>
             <AnimatedSection>
               <p className="sanskrit-accent mb-3">ॐ Parichay</p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
+              <h2 id="about-heading" className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
                 About <span className="text-gradient-gold">PalmMitra</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                PalmMitra bridges the gap between ancient Indian palmistry wisdom and cutting-edge 
-                artificial intelligence. We've digitized the sacred art of <strong className="text-foreground">Hasta Samudrika Shastra</strong> 
-                {' '}to make personalized palm readings accessible to everyone.
+                PalmMitra bridges the gap between ancient Indian palmistry wisdom and cutting-edge
+                artificial intelligence. We've digitised the sacred art of <strong className="text-foreground">Hasta Samudrika Shastra</strong>
+                {' '}— a 3,000-year-old science of the palm — to make personalised destiny readings accessible to everyone.
               </p>
               <p className="text-muted-foreground mb-8 leading-relaxed">
-                Our AI has been trained on thousands of palm readings and traditional texts, allowing it 
-                to identify patterns in your palm lines, mounts, and features that reveal insights about 
-                your personality, potential, and path forward.
+                Our AI is trained on thousands of verified palm readings and classical Shastra texts, allowing it
+                to identify patterns unique to your palm — not generic birth-date predictions — and map them to
+                insights about your personality, turning points, and life path.
               </p>
             </AnimatedSection>
 
