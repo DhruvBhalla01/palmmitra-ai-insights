@@ -38,8 +38,8 @@ export function ActionButtons({
     const message = [
       `🔮 ${name} AI Palm Reading from PalmMitra is incredible!`,
       '',
-      `Get your own reading (₹99 only) → ${reportUrl}`,
-      `Use code PALMFRIEND for ₹50 off 🙏`,
+      `Get your own reading (₹299 only) → ${reportUrl}`,
+      `Use code PALMFRIEND for an extra discount 🙏`,
     ].join('\n');
     window.open(
       `https://wa.me/?text=${encodeURIComponent(message)}`,

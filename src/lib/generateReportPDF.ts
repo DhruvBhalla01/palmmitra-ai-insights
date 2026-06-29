@@ -1473,7 +1473,7 @@ export function generateReportPDF(reading: PalmReading, userData: UserData): voi
 
   // Badge
   fill(C.gold);
-  const badgeTxt = 'Monthly Plan — ₹299/mo';
+  const badgeTxt = 'PalmMitra Elite — ₹4,999 lifetime';
   sans(8, 'bold');
   const badgeW2 = doc.getTextWidth(badgeTxt) + 16;
   doc.roundedRect(W / 2 - badgeW2 / 2, upsellY - 5, badgeW2, 10, 5, 5, 'F');

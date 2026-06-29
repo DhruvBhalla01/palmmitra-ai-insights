@@ -254,8 +254,8 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           >
             <p className="text-xs text-muted-foreground mb-1.5">One-time unlock · Keep forever</p>
             <div className="flex items-baseline justify-center gap-2 mb-1.5">
-              <span className="text-4xl font-serif font-bold text-accent" style={{ textShadow: '0 0 20px hsl(42 87% 55% / 0.4)' }}>₹149</span>
-              <span className="text-sm text-muted-foreground line-through">₹499</span>
+              <span className="text-4xl font-serif font-bold text-accent" style={{ textShadow: '0 0 20px hsl(42 87% 55% / 0.4)' }}>₹999</span>
+              <span className="text-sm text-muted-foreground line-through">₹1,999</span>
               <motion.span
                 animate={{
                   scale: [1, 1.08, 1],
@@ -264,7 +264,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
                 className="text-xs bg-green-500/20 text-green-400 font-bold px-3 py-1.5 rounded-full border border-green-500/30"
               >
-                Save ₹350
+                Save ₹1,000
               </motion.span>
             </div>
             <p className="text-xs text-accent/70 font-medium">
@@ -304,7 +304,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                     Unlock Full Report
                     <ArrowRight className="w-4 h-4" />
                   </span>
-                  <span className="text-xs font-normal opacity-80">One-time · ₹149</span>
+                  <span className="text-xs font-normal opacity-80">One-time · ₹999</span>
                 </span>
               )}
             </Button>
@@ -316,8 +316,8 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
             disabled={isProcessing}
             className="border-accent/30 text-foreground hover:bg-accent/10 py-6 rounded-2xl text-sm flex flex-col gap-0.5 h-auto"
           >
-            <span className="font-semibold">Monthly Plan</span>
-            <span className="text-xs font-normal opacity-70">₹299/mo · unlimited readings</span>
+            <span className="font-semibold">PalmMitra Elite</span>
+            <span className="text-xs font-normal opacity-70">₹4,999 lifetime · unlimited readings</span>
           </Button>
         </div>
 

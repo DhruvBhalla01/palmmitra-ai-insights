@@ -190,7 +190,7 @@ export function SampleReportTeaser() {
 
           {/* Below-card trust */}
           <p className="text-center text-xs text-muted-foreground mt-5">
-            2 sections free · Full 2,000-word report unlocked at ₹99 · Downloadable PDF included
+            2 sections free · Full 2,000-word report unlocked at ₹299 · Downloadable PDF included
           </p>
         </motion.div>
       </div>
