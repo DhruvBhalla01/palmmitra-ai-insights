@@ -210,7 +210,7 @@ export default function Report() {
     setShowPaymentModal(true);
   };
 
-  const handleSelectPlan = (plan: 'report99' | 'monthly299', couponCode?: string) => {
+  const handleSelectPlan = (plan: 'report99' | 'monthly299' | 'unlimited999', couponCode?: string) => {
     console.log('Plan selected:', plan, 'for report:', resolvedReportId);
     initiatePayment(plan, couponCode);
   };
