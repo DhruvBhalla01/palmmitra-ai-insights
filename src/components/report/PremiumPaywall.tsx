@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Sparkles, Crown, Shield, Zap, Eye, Flame, Check, Calendar, Lock, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface PremiumPaywallProps {
   premiumInsights: {
