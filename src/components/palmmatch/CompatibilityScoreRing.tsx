@@ -164,7 +164,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
               strokeWidth="0.75"
               strokeDasharray="6 22"
               animate={{ rotate: 360 }}
-              // @ts-expect-error framer-motion SVG rotation
+              
               style={{ originX: `${cx}px`, originY: `${cy}px` }}
               transition={{ repeat: Infinity, duration: 50, ease: 'linear' }}
             />
@@ -235,7 +235,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
               strokeWidth="1"
               strokeDasharray="3 6"
               animate={{ rotate: -360 }}
-              // @ts-expect-error framer-motion SVG rotation
+              
               style={{ originX: `${cx}px`, originY: `${cy}px` }}
               transition={{ repeat: Infinity, duration: 60, ease: 'linear' }}
             />
@@ -258,7 +258,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
                   fill={config.strokeTo}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 0.65, scale: 1 }}
-                  // @ts-expect-error framer-motion SVG transform-origin
+                  
                   style={{ originX: `${cx}px`, originY: `${cy}px` }}
                   transition={{ duration: 0.45, delay: spike.delay, ease: [0.34, 1.56, 0.64, 1] }}
                 />
