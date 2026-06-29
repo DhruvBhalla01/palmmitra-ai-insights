@@ -648,7 +648,7 @@ export default function UploadPalm() {
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         <span className="text-accent font-semibold">Free preview</span> included with every scan.{' '}
                         Unlock all 7 sections for just{' '}
-                        <span className="text-accent font-bold">₹99</span>
+                        <span className="text-accent font-bold">₹299</span>
                       </p>
                     </div>
 

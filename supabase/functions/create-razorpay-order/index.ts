@@ -15,11 +15,13 @@ interface CreateOrderRequest {
   coupon_code?: string;
 }
 
+// Amounts in paise (INR). Keep in sync with src/config/pricing.ts
+// PalmMitra Insight ₹299 · PalmMatch ₹999 · PalmMitra Elite ₹4,999
 const PLAN_AMOUNTS: Record<PlanType, number> = {
-  report99:     9900,
-  palmmatch149: 14900,
-  monthly299:  29900,
-  unlimited999: 99900,
+  report99:     29900,   // PalmMitra Insight — ₹299
+  palmmatch149: 99900,   // PalmMatch         — ₹999
+  monthly299:   29900,   // Legacy monthly    — ₹299 (kept for backward compat)
+  unlimited999: 499900,  // PalmMitra Elite   — ₹4,999
 };
 
 const ok = (body: object) =>
@@ -97,10 +99,10 @@ Deno.serve(async (req) => {
     const finalAmount = baseAmount - discountAmount;
 
     const planLabels: Record<PlanType, string> = {
-      report99:     'Detailed Palm Reading Report',
-      palmmatch149: 'PalmMatch Compatibility Report',
+      report99:     'PalmMitra Insight — Full Palm Reading',
+      palmmatch149: 'PalmMatch — Compatibility Report',
       monthly299:   'PalmMitra Monthly Plan',
-      unlimited999: 'Unlimited Palm Readings - Lifetime',
+      unlimited999: 'PalmMitra Elite — Lifetime Access',
     };
 
     const razorpayRes = await fetch('https://api.razorpay.com/v1/orders', {

@@ -138,7 +138,7 @@ export function FinalCTABanner() {
             <span className="text-accent/60 text-2xl font-bold pb-5">:</span>
             <CountdownUnit value={seconds} label="sec" />
           </div>
-          <p className="text-xs text-white/35 mt-3">Use code <span className="text-accent font-semibold">PALMFRIEND</span> at checkout for ₹50 off</p>
+          <p className="text-xs text-white/35 mt-3">Use code <span className="text-accent font-semibold">PALMFRIEND</span> at checkout for an extra discount</p>
         </motion.div>
 
         {/* CTA */}

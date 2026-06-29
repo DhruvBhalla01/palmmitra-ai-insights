@@ -18,8 +18,8 @@ function buildWhatsAppUrl(userName: string | undefined, reportUrl: string): stri
     '',
     `The ancient science of Hast Rekha meets AI — and the results are surprisingly accurate.`,
     '',
-    `Get your own reading (₹99 only) → ${reportUrl}`,
-    `Use code PALMFRIEND for ₹50 off 🙏`,
+    `Get your own reading (₹299 only) → ${reportUrl}`,
+    `Use code PALMFRIEND for an extra discount 🙏`,
   ].join('\n');
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }

@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Sparkles, Crown, Shield, Zap, Eye, Flame, Check, Calendar, Lock, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface PremiumPaywallProps {
   premiumInsights: {
@@ -47,6 +49,9 @@ const valueItems = [
 ];
 
 export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywallProps) {
+  const { currency } = useCurrency();
+  const insightPrice = PRODUCTS.insight.prices[currency].display;
+  const elitePrice = PRODUCTS.elite.prices[currency].display;
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -126,7 +131,7 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
 
           {/* Value stack */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5 p-5 rounded-2xl bg-background/40 border border-border/30">
-            <p className="col-span-full text-xs font-bold text-foreground mb-2 uppercase tracking-wide">Everything included at ₹99:</p>
+            <p className="col-span-full text-xs font-bold text-foreground mb-2 uppercase tracking-wide">Everything included with PalmMitra Insight:</p>
             {valueItems.map((item, i) => (
               <div key={i} className="flex items-start gap-2">
                 <Check className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
@@ -138,7 +143,7 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
           {/* Urgency nudge */}
           <div className="text-center mb-5">
             <span className="text-xs text-muted-foreground">
-              <span className="text-accent font-semibold">Launch pricing</span> — full price ₹299. Pay ₹99 today.
+              <span className="text-accent font-semibold">Launch pricing</span> — instant unlock, yours forever.
             </span>
           </div>
 
@@ -148,10 +153,10 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
               <Button
                 onClick={onUnlockClick}
                 className="w-full btn-gold rounded-2xl px-10 py-7 text-lg font-bold gap-2 shadow-gold-lg"
-                aria-label="Unlock full report for ₹99"
+                aria-label={`Unlock full report — PalmMitra Insight ${insightPrice}`}
               >
                 <Sparkles className="w-5 h-5" aria-hidden="true" />
-                Unlock Full Report — ₹99
+                Unlock Full Report — {insightPrice}
                 <ArrowRight className="w-5 h-5" aria-hidden="true" />
               </Button>
             </motion.div>
@@ -160,12 +165,12 @@ export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywal
               <Button
                 onClick={onUnlockClick}
                 variant="outline"
-                className="w-full rounded-2xl px-10 py-5 font-semibold gap-2 border-accent/30 hover:bg-accent/10 hover:border-accent"
-                aria-label="Start unlimited monthly plan"
+                className="w-full rounded-2xl px-10 py-5 font-semibold gap-2 border-accent/40 hover:bg-accent/10 hover:border-accent"
+                aria-label="Upgrade to PalmMitra Elite"
               >
                 <Crown className="w-5 h-5 text-accent" aria-hidden="true" />
-                Unlimited Monthly Plan — ₹299/mo
-                <span className="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-accent font-bold">Best Value</span>
+                PalmMitra Elite — {elitePrice} <span className="text-xs opacity-70 font-normal">lifetime</span>
+                <span className="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-accent font-bold">Most Premium</span>
               </Button>
             </motion.div>
 

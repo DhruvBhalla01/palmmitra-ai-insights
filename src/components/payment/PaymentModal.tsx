@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Lock, Shield, CreditCard, Zap, Crown, Check, Sparkles, Eye, ShieldCheck, Tag, ChevronDown } from "lucide-react";
+import { X, Lock, Shield, CreditCard, Zap, Crown, Check, Sparkles, Eye, ShieldCheck, Tag, ChevronDown, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
+import { PRODUCTS } from "@/config/pricing";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -41,7 +43,10 @@ export function PaymentModal({
     onSelectPlan(selectedPlan, couponCode.trim() || undefined);
   };
 
-  const priceLabel = selectedPlan === "report99" ? "₹99" : "₹299/mo";
+  const { currency } = useCurrency();
+  const insightPrice = PRODUCTS.insight.prices[currency].display;
+  const elitePrice = PRODUCTS.elite.prices[currency].display;
+  const priceLabel = selectedPlan === "report99" ? insightPrice : elitePrice;
 
   return (
     <AnimatePresence>
@@ -90,7 +95,7 @@ export function PaymentModal({
 
                 {/* Plan Selection */}
                 <div className="space-y-4 mb-6">
-                  {/* ₹99 Single Report */}
+                  {/* Insight — single report */}
                   <motion.button
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedPlan("report99")}
@@ -108,10 +113,10 @@ export function PaymentModal({
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-foreground">This Report Only</span>
-                          <span className="text-2xl font-bold text-gradient-gold">₹99</span>
+                          <span className="font-semibold text-foreground">PalmMitra Insight</span>
+                          <span className="text-2xl font-bold text-gradient-gold">{insightPrice}</span>
                         </div>
-                        <p className="text-sm text-muted-foreground">One-time unlock, yours forever</p>
+                        <p className="text-sm text-muted-foreground">One-time unlock — your report, yours forever</p>
                         <div className="flex flex-wrap gap-2 mt-3">
                           <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">Full Analysis</span>
                           <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">PDF Download</span>
@@ -121,38 +126,43 @@ export function PaymentModal({
                     </div>
                   </motion.button>
 
-                  {/* ₹299/month Subscription */}
+                  {/* Elite — flagship lifetime */}
                   <motion.button
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedPlan("monthly299")}
+                    onClick={() => setSelectedPlan("unlimited999")}
                     className={`w-full text-left p-5 rounded-2xl border-2 transition-all relative overflow-hidden ${
-                      selectedPlan === "monthly299"
-                        ? "border-accent bg-accent/5 shadow-gold"
+                      selectedPlan === "unlimited999"
+                        ? "border-accent bg-accent/5 shadow-gold-lg"
                         : "border-border bg-background/50 hover:border-accent/50"
                     }`}
+                    style={{
+                      background: selectedPlan === "unlimited999"
+                        ? 'linear-gradient(135deg, hsl(42 87% 55% / 0.10), hsl(260 50% 30% / 0.08))'
+                        : undefined,
+                    }}
                   >
                     <div className="absolute -top-1 -right-1">
                       <div className="bg-gradient-gold px-3 py-1 rounded-bl-xl rounded-tr-xl text-xs font-bold text-foreground flex items-center gap-1">
-                        <Crown className="w-3 h-3" />
-                        BEST VALUE
+                        <Gem className="w-3 h-3" />
+                        MOST PREMIUM
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4">
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
-                        selectedPlan === "monthly299" ? "border-accent bg-accent" : "border-muted-foreground"
+                        selectedPlan === "unlimited999" ? "border-accent bg-accent" : "border-muted-foreground"
                       }`}>
-                        {selectedPlan === "monthly299" && <Check className="w-4 h-4 text-foreground" />}
+                        {selectedPlan === "unlimited999" && <Check className="w-4 h-4 text-foreground" />}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-foreground">Monthly Plan</span>
+                          <span className="font-semibold text-foreground">PalmMitra Elite</span>
                           <div className="text-right">
-                            <span className="text-2xl font-bold text-gradient-gold">₹299</span>
-                            <span className="text-xs text-muted-foreground block">/month · cancel anytime</span>
+                            <span className="text-2xl font-bold text-gradient-gold">{elitePrice}</span>
+                            <span className="text-xs text-muted-foreground block">lifetime · one payment</span>
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">Unlimited readings for you & family</p>
+                        <p className="text-sm text-muted-foreground">Unlimited readings forever · You & family</p>
                         <div className="flex flex-wrap gap-2 mt-3">
                           <span className="text-xs px-2 py-1 rounded-full bg-accent/20 text-accent">♾️ Unlimited</span>
                           <span className="text-xs px-2 py-1 rounded-full bg-accent/20 text-accent">Family Readings</span>
