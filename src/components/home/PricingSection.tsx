@@ -1,77 +1,110 @@
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Crown, Users, TrendingUp, Zap, Lock, Shield, Star } from 'lucide-react';
+import { Check, Sparkles, Crown, Users, TrendingUp, Zap, Lock, Shield, Star, Heart, Gem } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
-const plans = [
-  {
-    name: 'Free Preview',
-    price: '₹0',
-    period: null,
-    description: 'See real AI insights before spending a rupee',
-    features: [
-      'Palm summary + confidence score',
-      'Life line deep analysis',
-      'First personality trait reveal',
-      'One targeted spiritual remedy',
-    ],
-    cta: 'Try Free Now',
-    popular: false,
-    badge: null,
-    highlight: false,
-    ctaNote: 'No credit card · No sign-up',
-  },
-  {
-    name: 'Detailed Report',
-    price: '₹99',
-    originalPrice: '₹299',
-    period: 'one-time',
-    description: 'Your complete AI destiny report — yours forever',
-    features: [
-      'All 5 major palm lines decoded',
-      'Complete mounts analysis',
-      'Career & wealth turning points',
-      'Love & marriage timeline',
-      'Lucky periods timeline — 5 years',
-      'All 5 spiritual remedies',
-      'Downloadable premium PDF',
-    ],
-    cta: 'Get My Full Report',
-    popular: true,
-    badge: 'Most Popular',
-    highlight: true,
-    ctaNote: 'Satisfaction guaranteed or full refund',
-  },
-  {
-    name: 'Monthly Plan',
-    price: '₹299',
-    period: '/month',
-    description: 'Unlimited readings for you & your whole family',
-    features: [
-      'Everything in Detailed Report',
-      'Unlimited palm readings/month',
-      'Read for spouse, kids & parents',
-      'Priority AI — faster processing',
-      'All future features included',
-      'Cancel any time, no questions',
-    ],
-    cta: 'Start Monthly Plan',
-    popular: false,
-    badge: '10× Better Value',
-    highlight: false,
-    ctaNote: 'Cancel anytime · Lock this price',
-  },
-];
-
-const socialProof = [
-  { icon: Users, label: '12,400+ readings done' },
-  { icon: TrendingUp, label: '4.9★ · 2,100+ verified reviews' },
-  { icon: Zap, label: 'Results in under 2 minutes' },
-  { icon: Star, label: '98% satisfaction rate' },
-];
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export function PricingSection() {
+  const { currency, isIndia } = useCurrency();
+
+  const plans = [
+    {
+      name: 'Free Preview',
+      price: isIndia ? '₹0' : '$0',
+      period: null,
+      description: 'See real AI insights before spending anything',
+      features: [
+        'Palm summary + confidence score',
+        'Life line deep analysis',
+        'First personality trait reveal',
+        'One targeted spiritual remedy',
+      ],
+      cta: 'Try Free Now',
+      ctaLink: '/upload',
+      icon: Sparkles,
+      badge: null,
+      highlight: false,
+      flagship: false,
+      ctaNote: 'No credit card · No sign-up',
+    },
+    {
+      name: PRODUCTS.insight.name,
+      price: PRODUCTS.insight.prices[currency].display,
+      period: 'one-time',
+      description: 'Your complete AI destiny report — yours forever',
+      features: [
+        'All 5 major palm lines decoded',
+        'Complete mounts analysis',
+        'Career & wealth turning points',
+        'Love & marriage timeline',
+        'Lucky periods timeline — 5 years',
+        'All 5 spiritual remedies',
+        'Downloadable premium PDF',
+      ],
+      cta: 'Get My Insight Report',
+      ctaLink: '/upload',
+      icon: Sparkles,
+      badge: 'Most Popular',
+      highlight: true,
+      flagship: false,
+      ctaNote: 'Satisfaction guaranteed or full refund',
+    },
+    {
+      name: PRODUCTS.palmmatch.name,
+      price: PRODUCTS.palmmatch.prices[currency].display,
+      period: 'one-time',
+      description: 'Compatibility reading for you & your partner — discover your destiny together',
+      features: [
+        'Side-by-side compatibility score',
+        'Love line synergy analysis',
+        'Communication & emotional fit',
+        'Long-term harmony forecast',
+        'Personalised relationship remedies',
+        'Beautiful shareable PDF',
+      ],
+      cta: 'Reveal Our Compatibility',
+      ctaLink: '/palmmatch',
+      icon: Heart,
+      badge: 'Hero Product',
+      highlight: false,
+      flagship: false,
+      hero: true,
+      ctaNote: 'Made for couples · Instant unlock',
+    },
+    {
+      name: PRODUCTS.elite.name,
+      price: PRODUCTS.elite.prices[currency].display,
+      period: 'lifetime',
+      description: 'The flagship — lifetime access, unlimited readings, priority AI for the whole family',
+      features: [
+        'Everything in Insight + PalmMatch',
+        'Unlimited palm readings — forever',
+        'Read for spouse, kids & parents',
+        'Priority AI — faster processing',
+        'All future features included',
+        'Dedicated email support',
+        'Lifetime PDF re-downloads',
+      ],
+      cta: 'Become Elite',
+      ctaLink: '/upload',
+      icon: Gem,
+      badge: 'Most Premium',
+      highlight: false,
+      flagship: true,
+      ctaNote: 'One payment · Lifetime access',
+    },
+  ];
+
+  const socialProof = [
+    { icon: Users, label: '12,400+ readings done' },
+    { icon: TrendingUp, label: '4.9★ · 2,100+ verified reviews' },
+    { icon: Zap, label: 'Results in under 2 minutes' },
+    { icon: Star, label: '98% satisfaction rate' },
+  ];
+
+
   return (
     <section id="pricing" className="py-24 md:py-32 relative scroll-mt-20" aria-labelledby="pricing-heading">
       <div className="container mx-auto px-4">
