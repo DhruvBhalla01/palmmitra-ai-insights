@@ -128,7 +128,7 @@ export function PricingSection() {
             </span>
             <p className="text-sm font-medium text-foreground">
               <span className="text-accent font-bold">120+ readings</span> completed this week ·
-              Use code <span className="text-accent font-bold">PALMFRIEND</span> for ₹50 off
+              Use code <span className="text-accent font-bold">PALMFRIEND</span> for an extra discount
             </p>
           </div>
         </AnimatedSection>
@@ -143,99 +143,131 @@ export function PricingSection() {
           ))}
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {plans.map((plan, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          {plans.map((plan, index) => {
+            const PlanIcon = plan.icon;
+            const isFlagship = plan.flagship;
+            const isHero = (plan as { hero?: boolean }).hero;
+            return (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
               className="relative"
             >
               <motion.div
-                whileHover={{ y: -8, scale: plan.highlight ? 1.02 : 1.02 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className={`relative rounded-3xl p-8 h-full flex flex-col transition-all duration-300 ${
-                  plan.highlight
-                    ? 'glass-premium border-2 border-accent/40 shadow-gold-lg lg:scale-105'
+                className={`relative rounded-3xl p-7 h-full flex flex-col transition-all duration-300 ${
+                  isFlagship
+                    ? 'glass-premium border-2 border-accent/60 shadow-gold-lg lg:scale-[1.03] ring-1 ring-accent/30'
+                    : isHero
+                    ? 'glass-premium border-2 border-pink-400/40 shadow-lg'
+                    : plan.highlight
+                    ? 'glass-premium border-2 border-accent/40 shadow-gold-lg'
                     : 'card-premium'
                 }`}
+                style={isFlagship ? {
+                  background: 'linear-gradient(135deg, hsl(42 87% 55% / 0.10), hsl(260 50% 30% / 0.08))',
+                } : isHero ? {
+                  background: 'linear-gradient(135deg, hsl(330 70% 55% / 0.08), hsl(260 50% 30% / 0.06))',
+                } : undefined}
               >
                 {/* Badge */}
                 {plan.badge && (
                   <motion.div
-                    className="absolute -top-5 left-1/2 -translate-x-1/2"
+                    className="absolute -top-4 left-1/2 -translate-x-1/2 z-10"
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5 }}
                   >
-                    <div className={`flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-bold shadow-gold ${
-                      plan.highlight ? 'bg-gradient-gold text-foreground' : 'bg-secondary text-foreground border border-accent/30'
+                    <div className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold shadow-gold whitespace-nowrap ${
+                      isFlagship
+                        ? 'bg-gradient-gold text-foreground'
+                        : isHero
+                        ? 'bg-gradient-to-r from-pink-500 to-rose-400 text-white'
+                        : plan.highlight
+                        ? 'bg-gradient-gold text-foreground'
+                        : 'bg-secondary text-foreground border border-accent/30'
                     }`}>
-                      {plan.highlight ? <Crown className="w-4 h-4" aria-hidden="true" /> : <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />}
+                      {isFlagship ? <Gem className="w-3.5 h-3.5" aria-hidden="true" /> :
+                       isHero ? <Heart className="w-3.5 h-3.5" aria-hidden="true" /> :
+                       plan.highlight ? <Crown className="w-3.5 h-3.5" aria-hidden="true" /> :
+                       <Sparkles className="w-3.5 h-3.5 text-accent" aria-hidden="true" />}
                       {plan.badge}
                     </div>
                   </motion.div>
                 )}
 
-                {plan.highlight && <div className="absolute inset-0 rounded-3xl shimmer pointer-events-none" />}
+                {(plan.highlight || isFlagship) && <div className="absolute inset-0 rounded-3xl shimmer pointer-events-none" />}
 
                 <div className="flex-1">
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-3 ${
+                    isFlagship ? 'bg-accent/20' : isHero ? 'bg-pink-500/15' : 'bg-accent/10'
+                  }`}>
+                    <PlanIcon className={`w-5 h-5 ${isHero ? 'text-pink-400' : 'text-accent'}`} aria-hidden="true" />
+                  </div>
                   <h3 className="text-xl font-serif font-bold text-foreground mb-1">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm mb-6">{plan.description}</p>
+                  <p className="text-muted-foreground text-sm mb-5 min-h-[40px]">{plan.description}</p>
 
                   {/* Price */}
-                  <div className="mb-8">
-                    <div className="flex items-baseline gap-2">
-                      <span className={`text-5xl font-serif font-bold ${plan.highlight ? 'text-gradient-gold' : 'text-foreground'}`}>
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className={`text-4xl font-serif font-bold ${
+                        isFlagship || plan.highlight ? 'text-gradient-gold' : isHero ? 'text-pink-300' : 'text-foreground'
+                      }`}>
                         {plan.price}
                       </span>
                       {plan.period && (
-                        <span className="text-muted-foreground text-sm">{plan.period}</span>
-                      )}
-                      {'originalPrice' in plan && plan.originalPrice && (
-                        <span className="text-muted-foreground/50 text-sm line-through">{plan.originalPrice}</span>
+                        <span className="text-muted-foreground text-xs">{plan.period}</span>
                       )}
                     </div>
-                    {plan.period === '/month' && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Less than one coffee a week.
+                    {plan.period === 'lifetime' && (
+                      <p className="text-xs text-accent/80 mt-1 font-medium">
+                        One payment · Yours forever.
                       </p>
                     )}
                     {plan.period === 'one-time' && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        Pay once. Your report lives forever.
+                        Pay once. Yours forever.
                       </p>
                     )}
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-3.5 mb-8" aria-label={`${plan.name} features`}>
+                  <ul className="space-y-3 mb-7" aria-label={`${plan.name} features`}>
                     {plan.features.map((feature, i) => (
                       <motion.li
                         key={feature}
-                        className="flex items-start gap-3"
+                        className="flex items-start gap-2.5"
                         initial={{ opacity: 0, x: -10 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.3 + i * 0.05 }}
+                        transition={{ delay: 0.3 + i * 0.04 }}
                       >
-                        <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
-                          plan.highlight ? 'bg-accent/20' : 'bg-secondary'
+                        <div className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 ${
+                          isFlagship || plan.highlight ? 'bg-accent/20' : 'bg-secondary'
                         }`}>
-                          <Check className={`w-3 h-3 ${plan.highlight ? 'text-accent' : 'text-muted-foreground'}`} aria-hidden="true" />
+                          <Check className={`w-2.5 h-2.5 ${
+                            isFlagship || plan.highlight ? 'text-accent' : 'text-muted-foreground'
+                          }`} aria-hidden="true" />
                         </div>
-                        <span className="text-foreground text-sm leading-snug">{feature}</span>
+                        <span className="text-foreground text-xs leading-snug">{feature}</span>
                       </motion.li>
                     ))}
                   </ul>
                 </div>
 
                 {/* CTA */}
-                <Link to="/upload">
-                  <Button className={`w-full font-semibold py-6 rounded-2xl transition-all duration-300 ${
-                    plan.highlight ? 'btn-gold text-foreground' : 'btn-secondary-premium'
+                <Link to={plan.ctaLink}>
+                  <Button className={`w-full font-semibold py-5 rounded-2xl transition-all duration-300 ${
+                    isFlagship || plan.highlight
+                      ? 'btn-gold text-foreground'
+                      : isHero
+                      ? 'bg-gradient-to-r from-pink-500 to-rose-400 text-white hover:opacity-90'
+                      : 'btn-secondary-premium'
                   }`}>
                     {plan.cta}
                   </Button>
@@ -245,18 +277,18 @@ export function PricingSection() {
                   {plan.ctaNote}
                 </p>
 
-                {/* Guarantee badge for paid plan */}
-                {plan.highlight && (
+                {/* Guarantee badge for paid plans */}
+                {(plan.highlight || isFlagship || isHero) && (
                   <div className="flex items-center gap-2 mt-4 pt-4 border-t border-accent/10">
-                    <Shield className="w-4 h-4 text-accent flex-shrink-0" aria-hidden="true" />
-                    <p className="text-xs text-muted-foreground">
-                      <span className="text-accent font-medium">Money-back guarantee</span> — not happy? Email us for a full refund.
+                    <Shield className="w-3.5 h-3.5 text-accent flex-shrink-0" aria-hidden="true" />
+                    <p className="text-[11px] text-muted-foreground">
+                      <span className="text-accent font-medium">Money-back guarantee</span> — full refund if unhappy.
                     </p>
                   </div>
                 )}
               </motion.div>
             </motion.div>
-          ))}
+          );})}
         </div>
 
         {/* Bottom trust nudge */}
@@ -269,7 +301,7 @@ export function PricingSection() {
             <span className="text-border">·</span>
             <span>UPI, Cards, Wallets accepted</span>
             <span className="text-border">·</span>
-            <span className="text-accent font-medium">Use code PALMFRIEND for ₹50 off</span>
+            <span className="text-accent font-medium">Use code PALMFRIEND for extra savings</span>
           </div>
         </AnimatedSection>
       </div>
