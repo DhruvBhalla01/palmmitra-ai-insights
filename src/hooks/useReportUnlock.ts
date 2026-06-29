@@ -32,7 +32,7 @@ interface RazorpayResponse {
   razorpay_signature: string;
 }
 
-export type PlanType = 'report99' | 'monthly299';
+export type PlanType = 'report99' | 'monthly299' | 'unlimited999';
 
 interface UseReportUnlockResult {
   isUnlocked: boolean;
@@ -148,8 +148,9 @@ export function useReportUnlock(
       }
 
       const planDescriptions: Record<PlanType, string> = {
-        report99: 'Detailed Palm Reading Report',
-        monthly299: 'PalmMitra Monthly Plan',
+        report99:     'PalmMitra Insight — Full Palm Reading',
+        monthly299:   'PalmMitra Monthly Plan',
+        unlimited999: 'PalmMitra Elite — Lifetime Access',
       };
 
       const options: RazorpayOptions = {
@@ -178,16 +179,19 @@ export function useReportUnlock(
             }
 
             setIsUnlocked(true);
-            setIsProcessing(false); // ← bug fix: reset after successful payment
+            setIsProcessing(false);
             if (verifyData.subscription) {
               setHasSubscription(true);
             }
 
+            const successMessage =
+              plan === 'report99'      ? 'Your Insight report is now fully unlocked!' :
+              plan === 'unlimited999'  ? 'PalmMitra Elite activated — unlimited readings, forever!' :
+                                         'Monthly plan activated — unlimited readings await!';
+
             toast({
               title: '🎉 Payment Successful!',
-              description: plan === 'report99'
-                ? 'Your report is now fully unlocked!'
-                : 'Monthly plan activated — unlimited readings await!',
+              description: successMessage,
             });
 
             window.dispatchEvent(new CustomEvent('paymentSuccess', {
