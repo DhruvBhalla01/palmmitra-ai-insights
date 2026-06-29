@@ -49,6 +49,9 @@ const valueItems = [
 ];
 
 export function PremiumPaywall({ premiumInsights, onUnlockClick }: PremiumPaywallProps) {
+  const { currency } = useCurrency();
+  const insightPrice = PRODUCTS.insight.prices[currency].display;
+  const elitePrice = PRODUCTS.elite.prices[currency].display;
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
