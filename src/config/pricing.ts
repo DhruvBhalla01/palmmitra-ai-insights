@@ -50,7 +50,7 @@ export const PRODUCTS = {
     tagline: 'Your complete AI destiny report',
     tier: 'standard',
     prices: {
-      INR: { minor: 29900, major: 299,  display: '₹299'   },
+      INR: { minor: 14900, major: 149,  display: '₹149'   },
       USD: { minor:   999, major: 9.99, display: '$9.99'  },
     },
   },
