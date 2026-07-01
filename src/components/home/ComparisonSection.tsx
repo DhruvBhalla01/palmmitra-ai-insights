@@ -28,7 +28,7 @@ const cols = [
     highlight: true,
     checks: [true, true, true, true, true, true],
     price: 'From ₹0',
-    priceNote: 'Free preview, full report ₹299 / $9.99',
+    priceNote: 'Free preview, full report ₹149 / $9.99',
   },
   {
     name: 'Manual Palmist',

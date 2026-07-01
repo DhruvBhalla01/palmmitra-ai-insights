@@ -142,7 +142,7 @@ export function LockedSection({
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Button>
 
-          <p className="text-xs text-muted-foreground/60 mt-3">One-time ₹299 · Unlocks entire report · PDF included</p>
+          <p className="text-xs text-muted-foreground/60 mt-3">One-time ₹149 · Unlocks entire report · PDF included</p>
         </motion.div>
       </div>
     </div>

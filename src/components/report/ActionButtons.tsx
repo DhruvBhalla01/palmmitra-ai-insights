@@ -38,7 +38,7 @@ export function ActionButtons({
     const message = [
       `🔮 ${name} AI Palm Reading from PalmMitra is incredible!`,
       '',
-      `Get your own reading (₹299 only) → ${reportUrl}`,
+      `Get your own reading (₹149 only) → ${reportUrl}`,
       `Use code PALMFRIEND for an extra discount 🙏`,
     ].join('\n');
     window.open(
