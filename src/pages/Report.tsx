@@ -329,7 +329,7 @@ export default function Report() {
 
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Progress Indicator - Desktop */}
-            <div className="hidden lg:block w-40 flex-shrink-0">
+            <div className="hidden lg:block w-20 flex-shrink-0">
               <ReportProgressIndicator 
                 sections={reportSections} 
                 activeSection={activeSection} 

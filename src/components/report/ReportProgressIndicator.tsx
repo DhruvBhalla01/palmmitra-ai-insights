@@ -14,73 +14,73 @@ export function ReportProgressIndicator({ sections, activeSection }: ReportProgr
   const activeIndex = sections.findIndex(s => s.id === activeSection);
 
   return (
-    <nav className="sticky top-32" aria-label="Report sections">
-      <ol className="relative flex flex-col gap-1">
+    <div className="sticky top-32">
+      <div className="flex flex-col items-center">
         {sections.map((section, index) => {
           const isActive = section.id === activeSection;
           const isCompleted = index < activeIndex;
-
+          
           return (
-            <li key={section.id} className="flex items-center gap-3 relative">
-              {/* Vertical connector */}
+            <div key={section.id} className="flex flex-col items-center">
+              {/* Connector line */}
               {index > 0 && (
-                <span
-                  aria-hidden
-                  className={`absolute left-[5px] -top-2 w-0.5 h-3 ${
-                    isCompleted || isActive ? 'bg-accent/70' : 'bg-muted'
-                  }`}
+                <motion.div 
+                  className="w-0.5 h-6"
+                  initial={{ backgroundColor: 'hsl(var(--muted))' }}
+                  animate={{ 
+                    backgroundColor: isCompleted || isActive 
+                      ? 'hsl(var(--gold))' 
+                      : 'hsl(var(--muted))'
+                  }}
+                  transition={{ duration: 0.3 }}
                 />
               )}
-
-              {/* Dot */}
+              
+              {/* Chakra dot */}
               <motion.button
-                type="button"
                 onClick={() => {
-                  const el = document.getElementById(`section-${section.id}`);
-                  el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  const element = document.getElementById(`section-${section.id}`);
+                  element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
-                whileHover={{ scale: 1.15 }}
+                className={`relative group ${isActive ? 'chakra-dot active' : isCompleted ? 'chakra-dot completed' : 'chakra-dot'}`}
+                whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
-                className={`relative w-3 h-3 rounded-full flex-shrink-0 transition-all duration-300 ${
-                  isActive
-                    ? 'bg-accent shadow-[0_0_10px_hsl(var(--gold)/0.6)] scale-125'
-                    : isCompleted
-                    ? 'bg-accent/70'
-                    : 'bg-muted hover:bg-accent/40'
-                }`}
                 title={section.label}
               >
+                {/* Pulse ring for active */}
                 {isActive && (
-                  <motion.span
-                    aria-hidden
+                  <motion.div
                     className="absolute inset-0 rounded-full bg-accent/30"
-                    animate={{ scale: [1, 1.9, 1], opacity: [0.5, 0, 0.5] }}
+                    animate={{ scale: [1, 1.8, 1], opacity: [0.5, 0, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
                 )}
               </motion.button>
-
-              {/* Label */}
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById(`section-${section.id}`);
-                  el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-                className={`text-xs whitespace-nowrap transition-colors text-left ${
-                  isActive
-                    ? 'text-accent font-semibold'
-                    : isCompleted
-                    ? 'text-foreground/70 hover:text-accent'
-                    : 'text-muted-foreground hover:text-accent'
-                }`}
+              
+              {/* Tooltip on hover */}
+              <motion.div
+                className="absolute left-8 bg-card rounded-lg px-3 py-1.5 text-xs font-medium text-foreground shadow-lg border border-border opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap"
+                initial={{ opacity: 0, x: -5 }}
+                whileHover={{ opacity: 1, x: 0 }}
               >
                 {section.label}
-              </button>
-            </li>
+              </motion.div>
+            </div>
           );
         })}
-      </ol>
-    </nav>
+      </div>
+
+      {/* Section label */}
+      <motion.div
+        key={activeSection}
+        initial={{ opacity: 0, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-4 text-center"
+      >
+        <p className="text-xs text-muted-foreground font-medium">
+          {sections.find(s => s.id === activeSection)?.label}
+        </p>
+      </motion.div>
+    </div>
   );
 }
