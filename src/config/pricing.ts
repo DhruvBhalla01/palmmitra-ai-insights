@@ -19,7 +19,7 @@ export interface PriceAmount {
   minor: number;
   /** Human readable amount in major units */
   major: number;
-  /** Pre-formatted display string e.g. "₹299" or "$9.99" */
+  /** Pre-formatted display string e.g. "₹149" or "$9.99" */
   display: string;
 }
 

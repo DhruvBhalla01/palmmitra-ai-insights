@@ -60,7 +60,7 @@ const faqCategories = [
       },
       {
         q: 'How much does the full report cost?',
-        a: 'PalmMitra Insight (single full reading) is ₹299 in India / $9.99 internationally. PalmMatch (couple compatibility reading) is ₹999 / $24.99. PalmMitra Elite (lifetime unlimited readings for the whole family with priority AI) is ₹4,999 / $149 — a one-time payment.',
+        a: 'PalmMitra Insight (single full reading) is ₹149 in India / $9.99 internationally. PalmMatch (couple compatibility reading) is ₹999 / $24.99. PalmMitra Elite (lifetime unlimited readings for the whole family with priority AI) is ₹4,999 / $149 — a one-time payment.',
       },
       {
         q: 'What payment methods do you accept?',

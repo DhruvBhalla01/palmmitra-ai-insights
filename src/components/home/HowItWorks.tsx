@@ -148,7 +148,7 @@ export function HowItWorks() {
               </Button>
             </motion.div>
           </Link>
-          <p className="text-sm text-muted-foreground mt-3">No account needed · Free preview included · Full report ₹299 / $9.99</p>
+          <p className="text-sm text-muted-foreground mt-3">No account needed · Free preview included · Full report ₹149 / $9.99</p>
         </AnimatedSection>
       </div>
     </section>

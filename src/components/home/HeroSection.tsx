@@ -156,7 +156,7 @@ export function HeroSection() {
               className="text-xs text-white/35 text-center lg:text-left"
             >
               No sign-up needed &nbsp;·&nbsp; Razorpay secured &nbsp;·&nbsp;
-              Trusted in 120+ cities &nbsp;·&nbsp; Full report ₹299 / $9.99
+              Trusted in 120+ cities &nbsp;·&nbsp; Full report ₹149 / $9.99
             </motion.p>
           </motion.div>
 

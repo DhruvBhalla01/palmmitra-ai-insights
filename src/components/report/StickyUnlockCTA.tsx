@@ -81,7 +81,7 @@ export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyU
               className="btn-gold w-full font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 text-base"
             >
               <Sparkles className="w-4 h-4" />
-              Unlock Full Report — ₹299
+              Unlock Full Report — ₹149
             </Button>
             <div className="flex items-center justify-center gap-3 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">

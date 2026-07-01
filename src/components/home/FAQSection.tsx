@@ -35,7 +35,7 @@ const faqs = [
   },
   {
     q: 'What does the free preview include?',
-    a: 'The free preview includes your palm summary, Life Line deep analysis, your first personality trait reveal, and one personalised spiritual remedy. To unlock all 5 major lines, mounts analysis, career & wealth turning points, love & marriage insights, and the 5-year Lucky Periods Timeline — upgrade to PalmMitra Insight for ₹299 / $9.99.',
+    a: 'The free preview includes your palm summary, Life Line deep analysis, your first personality trait reveal, and one personalised spiritual remedy. To unlock all 5 major lines, mounts analysis, career & wealth turning points, love & marriage insights, and the 5-year Lucky Periods Timeline — upgrade to PalmMitra Insight for ₹149 / $9.99.',
   },
   {
     q: 'Can I access my report later?',
