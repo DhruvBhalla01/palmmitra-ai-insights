@@ -661,8 +661,10 @@ export default function Report() {
               {!isUnlocked && (
                 <PremiumPaywall 
                   premiumInsights={reading.premiumInsights} 
+                  userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                 />
+
               )}
 
               {/* 12. Legal Disclaimer */}
