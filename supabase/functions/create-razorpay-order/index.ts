@@ -16,11 +16,11 @@ interface CreateOrderRequest {
 }
 
 // Amounts in paise (INR). Keep in sync with src/config/pricing.ts
-// PalmMitra Insight ₹299 · PalmMatch ₹999 · PalmMitra Elite ₹4,999
+// PalmMitra Insight ₹149 (launch) · PalmMatch ₹999 · PalmMitra Elite ₹4,999
 const PLAN_AMOUNTS: Record<PlanType, number> = {
-  report99:     29900,   // PalmMitra Insight — ₹299
+  report99:     14900,   // PalmMitra Insight — ₹149 launch price
   palmmatch149: 99900,   // PalmMatch         — ₹999
-  monthly299:   29900,   // Legacy monthly    — ₹299 (kept for backward compat)
+  monthly299:   14900,   // Legacy monthly    — kept in sync with Insight
   unlimited999: 499900,  // PalmMitra Elite   — ₹4,999
 };
 
