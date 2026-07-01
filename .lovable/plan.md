@@ -1,121 +1,104 @@
 
+# Premium Paywall Redesign — Report Unlock
 
-# Implement Core PalmMitra AI Reading Logic
+## 1. Pricing update (₹149 launch price)
 
-## Overview
+Update the single source of truth so every surface (paywall, sticky bar, modal, PDF, edge functions, schema.org) reflects ₹149 automatically.
 
-The analyze-palm edge function already has the two-step pipeline (validate then generate), but the prompt has issues: duplicate rules, weak personalization, and missing "Next 6 Months Focus" section. This plan fixes the prompt end-to-end and resolves pre-existing build errors in test files.
+- `src/config/pricing.ts` → `PRODUCTS.insight.prices.INR` = `{ minor: 14900, major: 149, display: '₹149' }`. USD stays $9.99 (or adjust if you want — flag if so).
+- `supabase/functions/create-razorpay-order/index.ts` → `PLAN_AMOUNTS.report99` = `14900`.
+- Sweep and replace any remaining hardcoded `₹299` strings (StickyUnlockCTA, PaymentModal copy, meta tags in `index.html`, FAQ, Help).
+- Keep the internal `planId: 'report99'` unchanged (DB CHECK constraints depend on it — no migration needed).
 
----
+## 2. New `PremiumPaywall.tsx` — structure
 
-## Part 1: Fix Build Errors (Test Files)
+Complete rewrite of the card. Layout (top → bottom):
 
-The test files have TypeScript import errors for `screen`, `fireEvent`, `waitFor` from `@testing-library/react`. These need to be imported from `@testing-library/dom` or the test setup needs adjustment.
-
-**Files to fix:**
-- `src/App.test.tsx` -- add missing `render` wrapper or fix import
-- `src/components/report/ActionButtons.test.tsx` -- fix imports
-- `src/hooks/useReportUnlock.test.tsx` -- fix imports
-- `src/pages/Report.test.tsx` -- fix imports
-- `src/pages/UploadPalm.test.tsx` -- fix imports
-- `src/test/setup.ts` -- fix type cast on MockFileReader (line 99) and MotionProxy children type (line 31)
-
-**Approach:** Add `@testing-library/dom` as a dev dependency and import `fireEvent`, `screen`, `waitFor` from there, keeping `render` from `@testing-library/react`. Alternatively, re-export them through `test-utils.tsx`.
-
----
-
-## Part 2: Overhaul AI Prompt in Edge Function
-
-**File:** `supabase/functions/analyze-palm/index.ts`
-
-### Current Issues
-1. Rules 6 and 7 are duplicated (rule 6 appears twice, rule 7 is out of order)
-2. No explicit instruction to use the user's name and age throughout
-3. Missing "Next 6 Months Focus" in the JSON output structure
-4. Reading type focus additions are too brief
-5. Fallback data doesn't include the new section
-
-### Changes
-
-**A. Clean up and restructure the prompt rules (8 numbered rules):**
-
-1. PERSONALIZATION IS MANDATORY -- Address user by name, reference their age contextually
-2. IMAGE-BASED ANALYSIS ONLY -- Analyze visible lines; reduce confidence if unclear; never hallucinate
-3. FUTURE-ONLY TIMELINES -- Current year is 2026; no past years; exact month ranges
-4. TRUST-SAFE LANGUAGE -- "may suggest", "indicates potential", "patterns reveal"; no guarantees
-5. NO GEMSTONES -- Remedies must be meditation, journaling, temple/nature grounding only
-6. PREMIUM TONE -- Warm, spiritual, Indian, calm, respectful, legally safe
-7. READING TYPE FOCUS -- Emphasize relevant lines/mounts per the reading type
-8. OUTPUT FORMAT -- Valid JSON only, no markdown
-
-**B. Add `next6MonthsFocus` to the JSON structure in the prompt:**
-
-```json
-"next6MonthsFocus": {
-  "period": "February 2026 - August 2026",
-  "focusAreas": [
-    {"area": "Area name", "action": "Specific action to take"},
-    {"area": "Area name", "action": "Specific action to take"},
-    {"area": "Area name", "action": "Specific action to take"}
-  ],
-  "avoidDuring": "What to be cautious about in this period"
-}
+```text
+┌───────────────────────────────────────────────────────┐
+│  ✦ Live pulse: "247 readings unlocked in last 24h"   │
+│                                                       │
+│         Your Personalized Palm Analysis               │
+│                  is Ready ✦                           │
+│      A 12-page destiny report crafted for {name}      │
+│                                                       │
+│  ┌─────────────────┐   ┌───────────────────────────┐ │
+│  │ BLURRED REPORT  │   │  What's inside (5 items)  │ │
+│  │ PREVIEW STACK   │   │  ✓ Complete Life Analysis │ │
+│  │ (3 teaser cards │   │  ✓ Career & Wealth        │ │
+│  │  behind blur +  │   │  ✓ Love & Relationships   │ │
+│  │  gold lock)     │   │  ✓ Health & Personality   │ │
+│  │                 │   │  ✓ Lucky Years & Events   │ │
+│  └─────────────────┘   └───────────────────────────┘ │
+│                                                       │
+│  ╔═══════════════════════════════════════════════╗   │
+│  ║  ✦ UNLOCK FULL REPORT — ₹149  →              ║   │  ← dominant gold CTA
+│  ║  ~~₹299~~ · Launch price · One-time payment  ║   │
+│  ╚═══════════════════════════════════════════════╝   │
+│                                                       │
+│  🛡 Razorpay · ⚡ Instant · 🔒 Private · ↺ Refund   │
+│  UPI · Cards · Wallets · Net Banking                  │
+└───────────────────────────────────────────────────────┘
 ```
 
-**C. Enhance reading type focus additions** with specific line/mount emphasis instructions (3-4 sentences each instead of 1).
+### Visual language
+- Glass card: `bg-gradient-to-b from-background/60 to-background/40`, `backdrop-blur-2xl`, `border-2 border-accent/40`, layered gold outer glow + inner shimmer sweep.
+- Animated aurora gradient blob behind the CTA (Motion `animate` loop, respects `prefers-reduced-motion`).
+- Typography: existing serif for headline (`font-serif`, `text-3xl md:text-4xl`), gradient-gold on "Ready". Tight tracking, generous line-height.
+- Two-column layout on `md+`, stacked on mobile with the CTA pinned as the last element.
 
-**D. Update the fallback data** to include `next6MonthsFocus` with dynamic month calculation.
+### Teaser preview stack (left column)
+Three miniature "report cards" rendered from the user's actual report data but heavily blurred (`blur-md select-none`) with a gold `Lock` badge and a small unblurred header per card:
+1. **Marriage Timing Window** — shows real headline, blurs the age range + paragraph.
+2. **Career Breakthrough Year** — real category label, blurred prediction.
+3. **Lucky Years 2026–2030** — teaser label, blurred timeline.
 
-**E. Strengthen the user message** sent to the AI:
-```
-Analyze this palm image for {name}, age {age}. 
-Generate a deeply personalized {readingType} destiny report.
-Address {name} by name throughout.
-Return ONLY the JSON object.
-```
+Each card has a subtle hover tilt (`whileHover={{ rotateY: 2 }}`) so they feel tactile.
 
----
+### Benefits column (right)
+5 rows with gold line-icon → bold label → one-line hook. Each row uses `motion.div` stagger-in on scroll.
 
-## Part 3: Update TypeScript Types
+### Primary CTA
+- Full-width gold gradient button, `py-7`, `text-xl font-bold`, gold-glow shadow that pulses every 3s.
+- Micro-interaction: `whileHover={{ scale: 1.02, boxShadow: 'gold-lg' }}`, `whileTap={{ scale: 0.98 }}`, arrow icon translates right on hover.
+- Price row underneath: `₹299` struck-through in muted, `₹149` in gold, "Launch price" pill, "One-time payment · yours forever" microcopy.
+- Secondary ghost link below: "See what Elite includes → ₹4,999" (keeps upsell path, de-emphasized).
 
-**File:** `src/components/report/types.ts`
+### Trust + urgency
+- Trust row: 4 icon+label pills (Razorpay secured, Instant unlock, 100% private, Refund if unhappy).
+- Payment method row: monochrome UPI/Visa/Mastercard/Rupay marks.
+- FOMO (subtle, not spammy): the live "247 readings unlocked in last 24h" pulse at top + a small "Launch price ends soon" line beside the price — no fake countdown timer.
+- AI credibility line at the bottom: "Analyzed by PalmMitra AI · trained on 10,000+ traditional readings".
 
-Add the new interface and field:
+## 3. New `StickyUnlockCTA.tsx` — mobile bar refresh
 
-```typescript
-export interface Next6MonthsFocus {
-  period: string;
-  focusAreas: { area: string; action: string }[];
-  avoidDuring: string;
-}
-```
+Match the paywall's language so mobile feels equally premium.
 
-Add `next6MonthsFocus: Next6MonthsFocus` to the `PalmReading` interface.
+- Height +12px, dual-line layout: gold price block on the left (`₹149` big, `₹299` strikethrough small), CTA button on the right (`Unlock →`).
+- Thin gold gradient top border + soft glow.
+- Micro social-proof line above: "✦ 23 unlocked in the last hour".
+- Trust chips row (Razorpay · Instant · Private) in a single 11px line.
+- Dismiss `X` moves to a smaller top-right corner so it doesn't compete with the CTA.
+- Uses the same `useCurrency` + `PRODUCTS.insight` price so it stays in sync.
 
----
+## 4. Files touched
 
-## Part 4: Update Test Fixtures
+- `src/config/pricing.ts` — price values.
+- `src/components/report/PremiumPaywall.tsx` — full rewrite.
+- `src/components/report/StickyUnlockCTA.tsx` — restructure + price wiring via `PRODUCTS.insight` + `useCurrency`.
+- `supabase/functions/create-razorpay-order/index.ts` — `PLAN_AMOUNTS.report99` → 14900.
+- `index.html` — update schema.org / OG price metadata.
+- Sweep: `src/pages/Help.tsx`, `src/components/home/FAQSection.tsx`, `src/components/home/PricingSection.tsx`, `src/components/payment/PaymentModal.tsx`, `src/lib/generateReportPDF.ts`, `src/components/MobileCTABar.tsx` — replace any remaining hardcoded ₹299 for the Insight tier.
 
-**File:** `src/test/fixtures/palmReading.ts`
+## 5. Guardrails
 
-Add `next6MonthsFocus` sample data to match the updated type.
+- Business logic untouched: `useReportUnlock`, Razorpay order flow, verify webhook, DB CHECK constraints, `planId` strings all unchanged.
+- No new dependencies — reuse Motion, lucide, existing gold tokens (`btn-gold`, `shadow-gold`, `text-gradient-gold`, `glass-premium`).
+- Fully responsive: two-column ≥`md`, single-column stack on mobile with teaser stack first, benefits collapsed into a compact checklist, CTA sticks to bottom of card.
+- Respects `prefers-reduced-motion` for aurora/pulse loops.
+- Accessibility: single `h2` headline, aria-labels on CTA + dismiss, blurred content marked `aria-hidden`, focus ring preserved on gold button.
 
----
+## 6. Verification
 
-## Implementation Order
-
-1. Fix test setup types (`setup.ts` -- 2 type casts)
-2. Fix test file imports (5 files -- switch to proper imports)
-3. Update `types.ts` with `Next6MonthsFocus`
-4. Update `palmReading.ts` fixture
-5. Overhaul `analyze-palm/index.ts` prompt + fallback + structure
-6. Deploy the edge function
-
----
-
-## Technical Notes
-
-- The project already uses `OPENAI_API_KEY` with `gpt-4o-mini` for both validation and reading generation. This will be preserved since existing LLM implementations should not be changed unless explicitly requested.
-- The validation step (Step 1) remains unchanged -- it correctly rejects non-palm images with 70% confidence threshold.
-- The `next6MonthsFocus` section will dynamically calculate the 6-month window from the current date in the prompt text.
-
+- `tsgo` typecheck after edits.
+- Playwright screenshot of `/report/:id` at 1280 and 390 widths to confirm layout, gold CTA dominance, and blur teaser render correctly in dark mode.
