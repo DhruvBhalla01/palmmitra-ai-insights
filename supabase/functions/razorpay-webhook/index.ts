@@ -167,20 +167,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Increment coupon usage if applicable
-    if (payment.coupon_code) {
-      const { data: coupon } = await supabase
-        .from('referral_codes')
-        .select('uses_count')
-        .eq('code', payment.coupon_code)
-        .single();
-      if (coupon) {
-        await supabase
-          .from('referral_codes')
-          .update({ uses_count: coupon.uses_count + 1 })
-          .eq('code', payment.coupon_code);
-      }
-    }
 
   } else if (eventType === 'payment.failed') {
     if (payment.status !== 'success') {

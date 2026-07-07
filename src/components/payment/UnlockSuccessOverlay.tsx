@@ -19,7 +19,6 @@ function buildWhatsAppUrl(userName: string | undefined, reportUrl: string): stri
     `The ancient science of Hast Rekha meets AI — and the results are surprisingly accurate.`,
     '',
     `Get your own reading (₹149 only) → ${reportUrl}`,
-    `Use code PALMFRIEND for an extra discount 🙏`,
   ].join('\n');
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
@@ -146,7 +145,7 @@ export function UnlockSuccessOverlay({
               transition={{ delay: 0.65 }}
               className="text-sm text-accent mb-8"
             >
-              Share your reading on WhatsApp — give friends ₹50 off with code PALMFRIEND ✨
+              Share your reading on WhatsApp with friends ✨
             </motion.p>
 
             {/* Action Buttons */}
