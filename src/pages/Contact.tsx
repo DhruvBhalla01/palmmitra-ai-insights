@@ -25,7 +25,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Us',
-    content: 'support@palmmitra.com',
+    content: 'thepalmmitra@gmail.com',
     subtext: 'We reply within 24 hours',
   },
   {

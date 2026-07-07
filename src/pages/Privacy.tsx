@@ -179,7 +179,7 @@ export default function Privacy() {
               </div>
               <p className="text-muted-foreground leading-relaxed">
                 If you have any questions about this Privacy Policy or wish to exercise your data rights, 
-                please contact us at <a href="mailto:privacy@palmmitra.com" className="text-accent hover:underline">privacy@palmmitra.com</a>.
+                please contact us at <a href="mailto:thepalmmitra@gmail.com" className="text-accent hover:underline">thepalmmitra@gmail.com</a>.
               </p>
             </div>
           </AnimatedSection>
