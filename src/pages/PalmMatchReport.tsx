@@ -602,6 +602,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.05}
                 teaser={DIMENSION_TEASERS.communication}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Expressiveness"
               />
               <DimensionCard
                 dimension={lifeGoals}
@@ -611,6 +614,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.1}
                 teaser={DIMENSION_TEASERS.lifeGoals}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Ambition"
               />
               <DimensionCard
                 dimension={romance}
@@ -620,6 +626,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.15}
                 teaser={DIMENSION_TEASERS.romance}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Passion"
               />
               <DimensionCard
                 dimension={spiritualAlignment}
@@ -629,6 +638,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.2}
                 teaser={DIMENSION_TEASERS.spiritualAlignment}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Inner Harmony"
               />
             </div>
           </AnimatedSection>
