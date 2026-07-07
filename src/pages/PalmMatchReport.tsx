@@ -881,7 +881,28 @@ export default function PalmMatchReport() {
             </motion.section>
           </AnimatedSection>
 
-          {/* ── Share + Try Another ── */}
+          {/* ── Emotional Closing ── */}
+          <AnimatedSection delay={0.25} className="mb-8">
+            <div className="text-center py-8 px-4">
+              <p className="text-[10px] tracking-[0.28em] text-accent uppercase font-semibold mb-3">
+                A closing note
+              </p>
+              <p className="text-lg md:text-xl font-serif italic text-foreground/90 leading-relaxed max-w-xl mx-auto">
+                Your journey together is unique. May your bond continue to grow with
+                <span className="text-gradient-gold"> understanding, patience, and trust</span>.
+              </p>
+            </div>
+          </AnimatedSection>
+
+          {/* ── Ask PalmMatch AI (natural next step) ── */}
+          <AskPalmMatchAI
+            person1Name={person1Name}
+            person2Name={person2Name}
+            isUnlocked={isUnlocked}
+            onUnlockClick={handleUnlockClick}
+          />
+
+          {/* ── Share + Actions ── */}
           <AnimatedSection delay={0.3}>
             <div className="glass-premium rounded-3xl p-7 md:p-8 border border-accent/20 text-center">
               <h3 className="text-lg font-serif font-bold text-foreground mb-2">
@@ -891,25 +912,34 @@ export default function PalmMatchReport() {
               <p className="text-sm text-muted-foreground mb-6">
                 Let them see what the palms say about your connection
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
                 <Button
                   onClick={handleShare}
-                  className="btn-gold rounded-2xl px-8 py-5 gap-2 text-foreground font-semibold"
+                  className="btn-gold rounded-2xl px-6 py-5 gap-2 text-foreground font-semibold"
                 >
                   <Share2 className="w-4 h-4" />
-                  Share This Reading
+                  Share Compatibility
+                </Button>
+                <Button
+                  onClick={() => window.print()}
+                  variant="outline"
+                  className="border-accent/30 text-foreground hover:bg-accent/10 rounded-2xl px-6 py-5 gap-2"
+                >
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Download PDF
                 </Button>
                 <Button
                   onClick={() => navigate('/palmmatch')}
                   variant="outline"
-                  className="border-accent/30 text-foreground hover:bg-accent/10 rounded-2xl px-8 py-5 gap-2"
+                  className="border-accent/30 text-foreground hover:bg-accent/10 rounded-2xl px-6 py-5 gap-2"
                 >
                   <Heart className="w-4 h-4 text-accent" />
-                  Try Another PalmMatch
+                  Start Another PalmMatch
                 </Button>
               </div>
             </div>
           </AnimatedSection>
+
         </div>
         </div>{/* end relative ambient particles wrapper */}
       </main>
