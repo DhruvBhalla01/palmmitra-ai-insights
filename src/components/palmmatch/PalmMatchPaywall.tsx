@@ -212,23 +212,30 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           ))}
         </div>
 
-        {/* Value stack */}
-        <ul className="space-y-2.5 mb-7 max-w-sm mx-auto">
-          {valueItems.map((item, i) => (
-            <motion.li
-              key={item}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 + i * 0.06 }}
-              className="flex items-start gap-3 text-sm text-foreground"
-            >
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center mt-0.5">
-                <Check className="w-3 h-3 text-accent" />
-              </div>
-              {item}
-            </motion.li>
-          ))}
-        </ul>
+        {/* "You'll unlock" checklist — payment psychology */}
+        <div className="mb-7 max-w-md mx-auto rounded-2xl border border-accent/20 bg-accent/[0.04] p-5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-accent font-bold mb-3 text-center">
+            You'll Unlock 4 Remaining Dimensions
+          </p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+            {unlockItems.map((item, i) => (
+              <motion.li
+                key={item}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.05 + i * 0.04 }}
+                className="flex items-start gap-2 text-[13px] text-foreground/90"
+              >
+                <div className="flex-shrink-0 w-4 h-4 rounded-full bg-accent/25 flex items-center justify-center mt-0.5">
+                  <Check className="w-2.5 h-2.5 text-accent" strokeWidth={3} />
+                </div>
+                <span className="leading-snug">{item}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+
 
         {/* Launch progress bar — scarcity signal */}
         <div className="mb-6 max-w-sm mx-auto">
