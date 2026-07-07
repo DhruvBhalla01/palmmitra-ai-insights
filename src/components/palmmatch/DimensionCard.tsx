@@ -39,6 +39,19 @@ interface DimensionCardProps {
   onUnlockClick: () => void;
   delay?: number;
   teaser: string;
+  person1Name?: string;
+  person2Name?: string;
+  compareTrait?: string;
+}
+
+// Split a paragraph into up to 3 concise "key insights"
+function toKeyInsights(text: string): string[] {
+  if (!text) return [];
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 12)
+    .slice(0, 3);
 }
 
 function ScoreBar({ score, gradientFrom, gradientTo }: {
