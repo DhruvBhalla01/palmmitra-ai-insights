@@ -523,6 +523,7 @@ export default function UploadPalm() {
                             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                             className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
                           />
+                          <p className="text-xs text-muted-foreground">Used to personalise your life timeline and AI insights.</p>
                         </div>
                       </div>
 
@@ -536,26 +537,7 @@ export default function UploadPalm() {
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
                         />
-                        <p className="text-xs text-muted-foreground">Your report link is sent here · used only for this</p>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label className="text-sm font-medium text-foreground">Reading Focus</Label>
-                        <Select
-                          value={formData.readingType}
-                          onValueChange={(value: ReadingType) => setFormData({ ...formData, readingType: value })}
-                        >
-                          <SelectTrigger className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent">
-                            <SelectValue placeholder="Select focus" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="full">Full Life Reading (Recommended)</SelectItem>
-                            <SelectItem value="career">Career & Wealth Focus</SelectItem>
-                            <SelectItem value="love">Love & Relationships Focus</SelectItem>
-                            <SelectItem value="wealth">Money & Prosperity Focus</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground">Deepens AI focus on your chosen area</p>
+                        <p className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
                       </div>
                     </div>
                   </AnimatedSection>
