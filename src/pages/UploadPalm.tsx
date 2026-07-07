@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { AnimatedSection } from '@/components/AnimatedSection';
+import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -683,94 +684,14 @@ export default function UploadPalm() {
         </div>
       </main>
 
-      {/* ── Loading Overlay ────────────────────────── */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/97 backdrop-blur-lg z-50 flex items-center justify-center"
-          >
-            <div className="text-center max-w-sm mx-auto px-4 w-full">
-
-              {/* Animated rings + palm */}
-              <div className="relative w-28 h-28 mx-auto mb-8">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                  className="absolute inset-0 rounded-full border-2 border-accent/15"
-                />
-                <motion.div
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
-                  className="absolute inset-3 rounded-full border border-accent/35"
-                />
-                <motion.div
-                  animate={{ scale: [1, 1.07, 1] }}
-                  transition={{ duration: 1.8, repeat: Infinity }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <img src={palmIconGold} alt="Reading" className="w-14 h-14 object-contain" />
-                </motion.div>
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.h2
-                  key={getLoadingLabel()}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25 }}
-                  className="text-xl font-serif font-bold text-foreground mb-3"
-                >
-                  {getLoadingLabel()}
-                </motion.h2>
-              </AnimatePresence>
-
-              {/* Progress bar */}
-              <div className="w-full bg-border/30 rounded-full h-1.5 mb-6 overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent/60 to-accent"
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.7, ease: 'easeOut' }}
-                />
-              </div>
-
-              {/* Step checklist */}
-              <div className="space-y-3 text-left bg-card/60 rounded-2xl p-5 border border-border/40">
-                {loadingSteps.map(({ step, label }) => {
-                  const curr = stepOrder.indexOf(processingStep);
-                  const idx = stepOrder.indexOf(step);
-                  const done = idx < curr;
-                  const active = step === processingStep;
-                  return (
-                    <div
-                      key={step}
-                      className={`flex items-center gap-3 transition-all duration-300 ${
-                        done ? 'text-accent' : active ? 'text-foreground' : 'text-muted-foreground/35'
-                      }`}
-                    >
-                      {done ? (
-                        <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                      ) : active ? (
-                        <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
-                      ) : (
-                        <div className="w-4 h-4 rounded-full border border-current flex-shrink-0 opacity-40" />
-                      )}
-                      <span className={`text-sm ${active ? 'font-medium' : ''}`}>{label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <p className="text-xs text-muted-foreground mt-4">
-                Usually 15–30 seconds · Please don't close this window
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Premium Analysis Overlay ────────────────────────── */}
+      <AnalysisOverlay
+        open={isLoading || processingStep === 'complete'}
+        imageUrl={image}
+        isComplete={processingStep === 'complete'}
+        hasError={processingStep === 'error'}
+        userName={formData.name}
+      />
 
       <Footer />
     </div>
