@@ -239,6 +239,8 @@ export default function UploadPalm() {
         validation: response.validation,
         generatedAt: response.generatedAt,
       }));
+      // Persist email for cross-session report re-access (used by get-report gating).
+      try { localStorage.setItem('palmMitraEmail', cleanEmail); } catch { /* ignore */ }
 
       setProcessingStep('complete');
       clearInterval(msgInterval);
