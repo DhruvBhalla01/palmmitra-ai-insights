@@ -91,8 +91,17 @@ export function DimensionCard({
   onUnlockClick,
   delay = 0,
   teaser,
+  person1Name,
+  person2Name,
+  compareTrait,
 }: DimensionCardProps) {
   const colors = DIMENSION_COLORS[dimensionKey];
+  const insights = toKeyInsights(dimension.text);
+  const detail = dimension.text
+    .split(/(?<=[.!?])\s+/)
+    .slice(3)
+    .join(' ')
+    .trim();
 
   return (
     <motion.div
@@ -102,12 +111,9 @@ export function DimensionCard({
       className="relative h-full"
     >
       {isUnlocked || isPreview ? (
-        /* ── Unlocked State — 3D hover + dimension colors ── */
-        <motion.div
-          whileHover={{ rotateX: 3, rotateY: -4, scale: 1.02 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          style={{ transformStyle: 'preserve-3d', perspective: 800 }}
-          className="glass-premium rounded-2xl p-6 h-full flex flex-col relative overflow-hidden"
+        /* ── Unlocked State — score + 3 insights + detail + guidance + compare ── */
+        <div
+          className="glass-premium rounded-2xl p-5 md:p-6 h-full flex flex-col relative overflow-hidden"
         >
           {/* Left accent bar in dimension color */}
           <div
@@ -116,7 +122,6 @@ export function DimensionCard({
           />
 
           <div className="flex items-start gap-3 mb-3 pl-2">
-            {/* Icon with dimension gradient + glow */}
             <div
               className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
               style={{
@@ -131,25 +136,55 @@ export function DimensionCard({
               <h3 className="font-serif font-bold text-foreground text-sm leading-tight">
                 {dimension.title}
               </h3>
-            </div>
-          </div>
-
-          <div className="pl-2">
-            <ScoreBar score={dimension.score} gradientFrom={colors.from} gradientTo={colors.to} />
-            <p className="text-sm text-foreground/80 leading-relaxed mb-3 flex-1">{dimension.text}</p>
-            <div
-              className="p-3 rounded-xl border"
-              style={{
-                background: colors.bg,
-                borderColor: colors.border,
-              }}
-            >
-              <p className="text-xs font-medium italic leading-relaxed" style={{ color: colors.from }}>
-                ✦ {dimension.guidance}
+              <p className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: colors.from + 'CC' }}>
+                {colors.label}
               </p>
             </div>
           </div>
-        </motion.div>
+
+          <div className="pl-2 flex flex-col gap-3.5">
+            <ScoreBar score={dimension.score} gradientFrom={colors.from} gradientTo={colors.to} />
+
+            {/* 3 Key Insights */}
+            {insights.length > 0 && (
+              <ul className="space-y-1.5">
+                {insights.map((line, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: colors.from }} />
+                    <p className="text-[13px] text-foreground/85 leading-snug">{line}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Compare bar */}
+            {person1Name && person2Name && compareTrait && (
+              <CompareBar
+                person1Name={person1Name}
+                person2Name={person2Name}
+                score={dimension.score}
+                trait={compareTrait}
+                color={colors.from}
+              />
+            )}
+
+            {detail && (
+              <p className="text-[13px] text-foreground/70 leading-relaxed">{detail}</p>
+            )}
+
+            <div
+              className="p-3 rounded-xl border"
+              style={{ background: colors.bg, borderColor: colors.border }}
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-widest mb-1" style={{ color: colors.from }}>
+                Practical Guidance
+              </p>
+              <p className="text-xs font-medium italic leading-relaxed text-foreground/85">
+                {dimension.guidance}
+              </p>
+            </div>
+          </div>
+        </div>
       ) : (
         /* ── Locked State — dimension color + gradient CTA ── */
         <motion.div
