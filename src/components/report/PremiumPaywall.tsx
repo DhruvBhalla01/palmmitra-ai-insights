@@ -240,7 +240,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    One-time payment · yours forever · downloadable PDF
+                    One-time payment · No subscription · Instant access
                   </p>
                 </div>
               </div>
