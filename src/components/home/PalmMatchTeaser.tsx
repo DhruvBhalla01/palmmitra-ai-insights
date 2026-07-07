@@ -4,7 +4,7 @@ import { Heart, MessageCircle, Target, Sparkles, Infinity, ArrowRight, Users } f
 import { Button } from '@/components/ui/button';
 import { AnimatedSection } from '@/components/AnimatedSection';
 
-const heroPalmImg = '/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.png';
+const heroPalmImg = '/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp';
 
 const dimensions = [
   { icon: Heart, label: 'Emotional Bond', score: 88, color: 'bg-pink-500' },

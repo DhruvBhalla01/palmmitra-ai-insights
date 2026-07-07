@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import logoImg from '@/assets/logo.png';
+import logoImg from '@/assets/logo.webp';
 import { SmartLink } from '@/components/SmartLink';
 
 const footerLinks = {

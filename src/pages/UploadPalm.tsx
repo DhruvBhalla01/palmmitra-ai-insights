@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import palmIconGold from '@/assets/palm-icon-gold.png';
+import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { useNavigate } from 'react-router-dom';
 import {
   Upload, X, Loader2, User, AlertCircle, CheckCircle, Hand,
