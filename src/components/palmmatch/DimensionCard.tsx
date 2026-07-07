@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { LucideIcon, Lock, ArrowRight, Star } from 'lucide-react';
+import { LucideIcon, Lock, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { CompatibilityDimension } from './types';
+import { CompareBar } from './CompareBar';
 
 type DimensionKey = 'communication' | 'lifeGoals' | 'romance' | 'spiritualAlignment';
 
