@@ -257,11 +257,11 @@ export default function UploadPalm() {
               <span className="text-sm font-medium text-accent">Free scan · No payment needed to start</span>
             </motion.div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-              One Photo.{' '}
-              <span className="text-gradient-gold text-shadow-luxury">Your Entire Destiny.</span>
+              Upload Your{' '}
+              <span className="text-gradient-gold text-shadow-luxury">Dominant Hand</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Upload your dominant hand. AI reads your life line, fate line, heart line and 12 more markers — in under 2 minutes.
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+              Our AI analyses 150+ palm markers and prepares your personalised life report in under 2 minutes.
             </p>
           </AnimatedSection>
 
