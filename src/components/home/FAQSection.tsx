@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: 'What happens to my palm image after the reading?',
-    a: 'Your palm image is stored securely on our servers and is never shared with third parties. It is used solely to generate your reading. You can request deletion at any time by emailing privacy@palmmitra.com.',
+    a: 'Your palm image is stored securely on our servers and is never shared with third parties. It is used solely to generate your reading. You can request deletion at any time by emailing thepalmmitra@gmail.com.',
   },
   {
     q: 'Can I trust AI for something this personal?',

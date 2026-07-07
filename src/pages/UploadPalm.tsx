@@ -16,6 +16,8 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
+import { z } from 'zod';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -80,6 +82,12 @@ export default function UploadPalm() {
     email: '',
     readingType: 'full',
   });
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
+
+  const uploadFormSchema = useMemo(
+    () => z.object({ name: nameSchema, age: ageSchema, email: emailSchema }),
+    [],
+  );
 
   const formStep = useMemo(() => {
     if (!image) return 1;
@@ -106,21 +114,23 @@ export default function UploadPalm() {
     setIsDragging(false);
     setValidationError(null);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      processImage(file);
-    } else {
-      toast({ title: 'Invalid file', description: 'Please upload a JPG or PNG image.', variant: 'destructive' });
+    const check = validateImageFile(file);
+    if (!check.ok) {
+      toast({ title: check.reason ?? 'Invalid file', description: check.suggestion, variant: 'destructive' });
+      return;
     }
+    processImage(file);
   }, [toast]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setValidationError(null);
     if (file) {
-      if (file.type.startsWith('image/')) {
-        processImage(file);
+      const check = validateImageFile(file);
+      if (!check.ok) {
+        toast({ title: check.reason ?? 'Invalid file', description: check.suggestion, variant: 'destructive' });
       } else {
-        toast({ title: 'Invalid file', description: 'Please upload a JPG or PNG image.', variant: 'destructive' });
+        processImage(file);
       }
     }
     // Reset input so same file can be reselected after removal
@@ -159,7 +169,29 @@ export default function UploadPalm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile || !formData.name || !formData.email || !formData.age) return;
+    if (isLoading) return;                        // prevent double-submit
+    if (!imageFile) {
+      toast({ title: 'Photo required', description: 'Please upload your palm photo first.', variant: 'destructive' });
+      return;
+    }
+
+    // Validate form input
+    const parsed = uploadFormSchema.safeParse({
+      name: formData.name,
+      age: formData.age,
+      email: formData.email,
+    });
+    if (!parsed.success) {
+      setFieldErrors(zodFieldErrors(parsed.error));
+      const first = parsed.error.errors[0]?.message ?? 'Please fix the highlighted fields.';
+      toast({ title: 'Please check your details', description: first, variant: 'destructive' });
+      return;
+    }
+    setFieldErrors({});
+
+    const cleanName = parsed.data.name;
+    const cleanEmail = parsed.data.email;
+    const cleanAge = String(parsed.data.age);
 
     setValidationError(null);
     setLoadingMessageIdx(0);
@@ -170,14 +202,13 @@ export default function UploadPalm() {
 
     try {
       setProcessingStep('uploading');
-      // Await the background upload started when image was chosen (may already be done)
       const imageUrl = await (uploadPromiseRef.current ?? uploadToStorage(imageFile));
 
       setProcessingStep('validating');
       setProcessingStep('analyzing');
 
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
-        body: { imageUrl, name: formData.name, age: formData.age, email: formData.email, readingType: formData.readingType },
+        body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
       });
 
       if (fnError) throw new Error(fnError.message || 'Failed to analyze palm');
@@ -200,7 +231,9 @@ export default function UploadPalm() {
 
       setProcessingStep('saving');
       sessionStorage.setItem('palmMitraData', JSON.stringify({
-        ...formData, imageUrl,
+        name: cleanName, age: cleanAge, email: cleanEmail,
+        readingType: formData.readingType,
+        imageUrl,
         reportId: response.reportId,
         reading: response.reading,
         validation: response.validation,
@@ -214,11 +247,14 @@ export default function UploadPalm() {
     } catch (err) {
       setProcessingStep('error');
       clearInterval(msgInterval);
-      toast({
-        title: 'Something went wrong',
-        description: err instanceof Error ? err.message : 'Please try again.',
-        variant: 'destructive',
-      });
+      const msg = err instanceof Error ? err.message : '';
+      const friendly =
+        /network|fetch|Failed to fetch/i.test(msg)
+          ? "We couldn't reach the PalmMitra servers. Please check your connection and try again."
+          : /upload/i.test(msg)
+          ? "Your photo couldn't be uploaded. Please try a different image or check your connection."
+          : "We couldn't complete your reading right now. Please try again in a moment.";
+      toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
     }
   };
 
@@ -506,24 +542,47 @@ export default function UploadPalm() {
                           <Input
                             id="name"
                             placeholder="e.g. Priya Sharma"
+                            autoComplete="name"
+                            maxLength={60}
+                            aria-invalid={!!fieldErrors.name}
+                            aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                             value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
+                            onChange={(e) => {
+                              setFormData({ ...formData, name: e.target.value });
+                              if (fieldErrors.name) setFieldErrors((p) => ({ ...p, name: undefined }));
+                            }}
+                            className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.name ? 'border-destructive' : 'border-border/60'}`}
                           />
+                          {fieldErrors.name && (
+                            <p id="name-error" className="text-xs text-destructive">{fieldErrors.name}</p>
+                          )}
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="age" className="text-sm font-medium text-foreground">Your Age</Label>
                           <Input
                             id="age"
                             type="number"
-                            min="1"
-                            max="120"
+                            inputMode="numeric"
+                            min={13}
+                            max={100}
+                            step={1}
                             placeholder="e.g. 28"
+                            aria-invalid={!!fieldErrors.age}
+                            aria-describedby={fieldErrors.age ? 'age-error' : 'age-help'}
                             value={formData.age}
-                            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                            className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
+                            onChange={(e) => {
+                              // strip non-digits for iOS safari edge cases
+                              const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+                              setFormData({ ...formData, age: v });
+                              if (fieldErrors.age) setFieldErrors((p) => ({ ...p, age: undefined }));
+                            }}
+                            className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.age ? 'border-destructive' : 'border-border/60'}`}
                           />
-                          <p className="text-xs text-muted-foreground">Used to personalise your life timeline and AI insights.</p>
+                          {fieldErrors.age ? (
+                            <p id="age-error" className="text-xs text-destructive">{fieldErrors.age}</p>
+                          ) : (
+                            <p id="age-help" className="text-xs text-muted-foreground">Used to personalise your life timeline (13–100).</p>
+                          )}
                         </div>
                       </div>
 
@@ -532,12 +591,24 @@ export default function UploadPalm() {
                         <Input
                           id="email"
                           type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          maxLength={254}
                           placeholder="your@email.com"
+                          aria-invalid={!!fieldErrors.email}
+                          aria-describedby={fieldErrors.email ? 'email-error' : 'email-help'}
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
+                          onChange={(e) => {
+                            setFormData({ ...formData, email: e.target.value });
+                            if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                          }}
+                          className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.email ? 'border-destructive' : 'border-border/60'}`}
                         />
-                        <p className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
+                        {fieldErrors.email ? (
+                          <p id="email-error" className="text-xs text-destructive">{fieldErrors.email}</p>
+                        ) : (
+                          <p id="email-help" className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
+                        )}
                       </div>
                     </div>
                   </AnimatedSection>
@@ -642,7 +713,7 @@ export default function UploadPalm() {
                       {[
                         'Photo used only for your reading',
                         'Never shared with third parties',
-                        'Delete request: privacy@palmmitra.com',
+                        'Delete request: thepalmmitra@gmail.com',
                       ].map((line) => (
                         <p key={line} className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Shield className="w-3 h-3 text-accent flex-shrink-0" />

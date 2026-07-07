@@ -152,8 +152,8 @@ export default function Terms() {
               </h2>
               <p className="text-muted-foreground leading-relaxed">
                 For questions about these Terms of Service, please contact us at{' '}
-                <a href="mailto:legal@palmmitra.com" className="text-accent hover:underline">
-                  legal@palmmitra.com
+                <a href="mailto:thepalmmitra@gmail.com" className="text-accent hover:underline">
+                  thepalmmitra@gmail.com
                 </a>.
               </p>
             </div>

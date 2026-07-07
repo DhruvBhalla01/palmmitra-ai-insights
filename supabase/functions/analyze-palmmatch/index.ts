@@ -181,17 +181,48 @@ serve(async (req) => {
     }
 
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
-    const body: PalmMatchRequest = await req.json();
-    const { image1Url, image2Url, person1, person2, relationshipType, email } = body;
 
-    if (!image1Url || !image2Url || !person1?.name || !person2?.name || !email) {
+    let body: PalmMatchRequest;
+    try {
+      body = await req.json();
+    } catch {
       return new Response(
-        JSON.stringify({ success: false, error: "Missing required fields" }),
+        JSON.stringify({ success: false, error: "Invalid JSON payload" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    const { image1Url, image2Url, person1, person2, relationshipType, email } = body ?? {} as PalmMatchRequest;
+
+    // ── Server-side validation ──
+    const allowedPrefix = `${supabaseUrl}/storage/v1/object/public/palm-uploads/`;
+    const isValidImageUrl = (u: unknown) => typeof u === "string" && u.length <= 512 && u.startsWith(allowedPrefix);
+    const isValidName = (n: unknown): n is string =>
+      typeof n === "string" &&
+      (() => { const t = n.replace(/\s+/g, " ").trim(); return t.length >= 2 && t.length <= 60 && !/[<>{}$]/.test(t) && /[A-Za-z\u00C0-\u024F\u0900-\u097F]/.test(t); })();
+    const parseAge = (a: unknown) => {
+      const n = parseInt(String(a ?? "").trim(), 10);
+      return Number.isInteger(n) && n >= 13 && n <= 100 ? n : null;
+    };
+    const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const validEmail = cleanEmail.length > 0 && cleanEmail.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail);
+    const allowedRelationships = ["Partner", "Spouse", "Friend", "Sibling", "Parent-Child", "Business Partner"];
+
+    if (
+      !isValidImageUrl(image1Url) || !isValidImageUrl(image2Url) ||
+      !isValidName(person1?.name) || !isValidName(person2?.name) ||
+      parseAge(person1?.age) === null || parseAge(person2?.age) === null ||
+      !validEmail || !allowedRelationships.includes(relationshipType)
+    ) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Please review your details and try again — some fields are missing or invalid." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`PalmMatch: Validating palms for ${person1.name} & ${person2.name}`);
+    const cleanP1 = { name: person1.name.replace(/\s+/g, " ").trim(), age: String(parseAge(person1.age)) };
+    const cleanP2 = { name: person2.name.replace(/\s+/g, " ").trim(), age: String(parseAge(person2.age)) };
+
+    console.log(`PalmMatch: Validating palms`);
 
     // Validate both palms in parallel
     const [validation1, validation2] = await Promise.all([
@@ -205,7 +236,7 @@ serve(async (req) => {
           success: false,
           error: "invalid_palm",
           person: "person1",
-          message: `${person1.name}'s image doesn't appear to be a clear palm photo. Please re-upload.`,
+          message: `${cleanP1.name}'s image doesn't appear to be a clear palm photo. Please re-upload.`,
         }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -217,7 +248,7 @@ serve(async (req) => {
           success: false,
           error: "invalid_palm",
           person: "person2",
-          message: `${person2.name}'s image doesn't appear to be a clear palm photo. Please re-upload.`,
+          message: `${cleanP2.name}'s image doesn't appear to be a clear palm photo. Please re-upload.`,
         }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -226,19 +257,19 @@ serve(async (req) => {
     console.log("Both palms validated. Generating compatibility reading...");
 
     const reading = await generateCompatibilityReading(
-      image1Url, image2Url, person1, person2, relationshipType, openaiApiKey
+      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey
     );
 
     const reportId = `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const { error: dbError } = await supabaseClient.from("palmmatch_reports").insert({
       report_id: reportId,
-      person1_name: person1.name,
-      person2_name: person2.name,
-      person1_age: parseInt(person1.age) || null,
-      person2_age: parseInt(person2.age) || null,
+      person1_name: cleanP1.name,
+      person2_name: cleanP2.name,
+      person1_age: parseInt(cleanP1.age) || null,
+      person2_age: parseInt(cleanP2.age) || null,
       relationship_type: relationshipType,
-      email,
+      email: cleanEmail,
       overall_score: (reading as { overallScore?: number }).overallScore || 75,
       reading,
       is_unlocked: false,
@@ -255,7 +286,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("PalmMatch edge function error:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ success: false, error: "We couldn't generate your compatibility report right now. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
