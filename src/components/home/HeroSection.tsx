@@ -2,278 +2,172 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Eye, Shield, Zap, Users, Star } from "lucide-react";
+import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
 import { SampleReportModal } from "./SampleReportModal";
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.png";
-
-const floatingInsights = [
-  { label: "Career Turning Point", value: "Age 28–31", color: "text-accent" },
-  { label: "Love Timeline", value: "Detailed", color: "text-purple-400" },
-  { label: "Wealth Window", value: "2025–2027", color: "text-green-400" },
-];
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Premium dark gradient background */}
-      <div className="absolute inset-0 bg-gradient-mystic" />
-
-      {/* Subtle dot-grid texture */}
+    <section
+      className="relative flex items-center pt-24 pb-10 md:pt-28 md:pb-16 lg:min-h-[92vh] overflow-hidden"
+      aria-labelledby="hero-heading"
+    >
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-mystic" aria-hidden="true" />
       <div
         className="absolute inset-0 opacity-[0.04]"
+        aria-hidden="true"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, hsl(42 87% 55%) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, hsl(42 87% 55%) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[140px] pointer-events-none" aria-hidden="true" />
+      <div className="absolute bottom-1/4 right-1/4 w-[420px] h-[420px] rounded-full bg-primary/25 blur-[120px] pointer-events-none" aria-hidden="true" />
 
-      {/* Ambient glow blobs */}
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-accent/10 blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/25 blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-purple-900/10 blur-[100px] pointer-events-none" />
-
-      <div className="container mx-auto px-4 relative z-10 py-12">
-        <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
-          {/* ── Left: Copy ─────────────────────────────── */}
+      <div className="container mx-auto px-5 relative z-10">
+        <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 xl:gap-16 items-center">
+          {/* ── Copy ───────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="text-center lg:text-left"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center lg:text-left order-2 lg:order-1"
           >
-            {/* Live-count pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2.5 glass-premium rounded-full px-5 py-2.5 mb-7 border border-accent/20"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+            {/* Live trust pill */}
+            <div className="inline-flex items-center gap-2 glass-premium rounded-full px-3.5 py-1.5 mb-5 border border-accent/25">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
               </span>
-              <span className="text-sm font-medium text-white/80">
-                12,400+ readings done &nbsp;·&nbsp; 4.9
-                <span className="text-accent">★</span> avg
+              <span className="text-[11px] sm:text-xs font-medium text-white/75">
+                12,400+ readings · 4.9<span className="text-accent">★</span> from 2,100 reviews
               </span>
-            </motion.div>
+            </div>
 
-            {/* Sanskrit accent */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="sanskrit-accent mb-4 text-white/50 tracking-widest"
+            {/* H1 — SEO optimized, mobile-tight */}
+            <h1
+              id="hero-heading"
+              className="font-serif font-bold text-white leading-[1.05] mb-4 tracking-tight text-[2.15rem] sm:text-5xl lg:text-6xl xl:text-[4.25rem]"
             >
-              ॐ Bhavishya Darshan — The Science of Your Palm
-            </motion.p>
+              AI Palm Reading{" "}
+              <span className="text-gradient-gold">Rooted in Ancient</span>{" "}
+              <span className="text-white/95">Indian Wisdom</span>
+            </h1>
 
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.7 }}
-              className="text-4xl md:text-5xl lg:text-6xl xl:text-[4.5rem] font-serif font-bold text-white leading-[1.08] mb-6"
-            >
-              Your Palm Holds{" "}
-              <span className="text-gradient-gold">
-                a 2,000-Word Story
-              </span>{" "}
-              <span className="text-white/90">About Your Life</span>
-            </motion.h1>
+            {/* Supporting paragraph — short, mobile-scannable */}
+            <p className="text-[15px] sm:text-lg text-white/70 mb-6 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+              Upload one photo. Get a personalised 2,000-word destiny report on your career, love,
+              wealth, and life path — in under 2 minutes.
+            </p>
 
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.6 }}
-              className="text-base md:text-lg text-white/70 mb-7 max-w-xl mx-auto lg:mx-0 leading-relaxed"
-            >
-              India's most advanced AI palmistry platform. Upload one photo —
-              get a personalised report decoding your career turning points,
-              love timeline, wealth windows, and spiritual path in under 2
-              minutes.
-            </motion.p>
-
-            {/* Value prop pills */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.45 }}
-              className="flex flex-wrap gap-x-5 gap-y-2 justify-center lg:justify-start mb-8 text-sm text-white/60"
-            >
-              <span className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-accent" /> Results in 2 min
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-accent" /> 100% private
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-accent" /> Free preview
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Star className="w-4 h-4 text-accent fill-accent" /> 4.9 rating
-              </span>
-            </motion.div>
-
-            {/* CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6"
-            >
-              <Link to="/upload">
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg w-full sm:w-auto">
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Scan My Palm — Free
-                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </motion.div>
-              </Link>
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            {/* CTAs — thumb-friendly, mobile-first */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-5">
+              <Link to="/upload" className="w-full sm:w-auto">
                 <Button
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 font-semibold text-lg px-8 py-7 rounded-2xl w-full sm:w-auto backdrop-blur-sm"
-                  onClick={() => setIsModalOpen(true)}
+                  className="btn-gold text-foreground font-semibold text-base sm:text-lg px-8 py-6 sm:py-7 rounded-2xl group shadow-gold-lg w-full min-h-[56px]"
+                  aria-label="Analyze my palm — start free"
                 >
-                  <Eye className="w-5 h-5 mr-2" />
-                  See Sample Report
+                  <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
+                  Analyze My Palm
+                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Button>
-              </motion.div>
-            </motion.div>
+              </Link>
+              <Button
+                variant="outline"
+                onClick={() => setIsModalOpen(true)}
+                className="border-white/25 bg-white/5 text-white hover:bg-white/12 hover:border-white/50 font-semibold text-base sm:text-lg px-6 py-6 sm:py-7 rounded-2xl w-full sm:w-auto backdrop-blur-sm min-h-[56px]"
+                aria-label="View a sample palm reading report"
+              >
+                <Eye className="w-5 h-5 mr-2" aria-hidden="true" />
+                View Sample Report
+              </Button>
+            </div>
 
-            {/* Micro-trust strip */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.65 }}
-              className="text-xs text-white/35 text-center lg:text-left"
-            >
-              No sign-up needed &nbsp;·&nbsp; Razorpay secured &nbsp;·&nbsp;
-              Trusted in 120+ cities &nbsp;·&nbsp; Full report ₹149 / $9.99
-            </motion.p>
+            {/* Value pills — compact */}
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 justify-center lg:justify-start text-[12px] sm:text-sm text-white/55">
+              <span className="flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-accent" aria-hidden="true" /> Results in 2 min
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-accent" aria-hidden="true" /> 100% private
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Star className="w-3.5 h-3.5 text-accent fill-accent" aria-hidden="true" /> Free preview
+              </span>
+            </div>
+
+            <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
+              No sign-up needed · Full report ₹149 / $9.99
+            </p>
           </motion.div>
 
-          {/* ── Right: Palm image ────────────────────────── */}
+          {/* ── Palm visual — smaller/compact on mobile ────── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
-            className="relative flex items-center justify-center"
+            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+            className="relative flex items-center justify-center order-1 lg:order-2"
           >
-            {/* Glow layers */}
-            <div className="absolute w-[320px] h-[320px] md:w-[500px] md:h-[500px] lg:w-[640px] lg:h-[640px] rounded-full bg-accent/15 blur-3xl animate-glow-pulse" />
-            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] lg:w-[540px] lg:h-[540px] rounded-full bg-accent/8 blur-2xl animate-glow-pulse-gold" />
+            <div className="absolute w-[240px] h-[240px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl animate-glow-pulse" aria-hidden="true" />
 
-            <div className="relative w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] md:w-[520px] md:h-[520px] lg:w-[680px] lg:h-[680px]">
-              {/* Outer rotating ring */}
+            <div className="relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
+              {/* Rotating gold ring */}
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0"
+                aria-hidden="true"
               >
                 <svg className="w-full h-full" viewBox="0 0 200 200">
-                  <circle
-                    cx="100" cy="100" r="95"
-                    fill="none"
-                    stroke="hsl(var(--accent) / 0.15)"
-                    strokeWidth="0.5"
-                    strokeDasharray="3 9"
-                  />
+                  <circle cx="100" cy="100" r="95" fill="none" stroke="hsl(var(--accent) / 0.18)" strokeWidth="0.5" strokeDasharray="3 9" />
                   {[...Array(12)].map((_, i) => (
                     <circle
                       key={i}
                       cx={100 + 95 * Math.cos((i * 30 * Math.PI) / 180)}
                       cy={100 + 95 * Math.sin((i * 30 * Math.PI) / 180)}
                       r="1.5"
-                      fill="hsl(var(--accent) / 0.35)"
+                      fill="hsl(var(--accent) / 0.4)"
                     />
                   ))}
                 </svg>
               </motion.div>
 
-              {/* Inner counter-rotating ring */}
+              {/* AI scan line */}
               <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-6"
+                aria-hidden="true"
+                className="absolute inset-8 rounded-full overflow-hidden pointer-events-none"
               >
-                <svg className="w-full h-full" viewBox="0 0 200 200">
-                  <circle
-                    cx="100" cy="100" r="90"
-                    fill="none"
-                    stroke="hsl(var(--accent) / 0.08)"
-                    strokeWidth="0.5"
-                    strokeDasharray="1 6"
-                  />
-                </svg>
+                <motion.div
+                  className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-accent to-transparent"
+                  style={{ boxShadow: "0 0 24px hsl(var(--accent) / 0.7)" }}
+                  animate={{ top: ["10%", "90%", "10%"] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                />
               </motion.div>
 
-              {/* Palm image */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.img
                   src={heroPalmImg}
-                  alt="AI Palm Reading — PalmMitra decodes your life path, career, love and destiny"
-                  className="object-contain w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[500px] md:h-[500px] lg:w-[660px] lg:h-[660px] opacity-95"
-                  animate={{ y: [0, -16, 0], scale: [1, 1.02, 1] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                  style={{
-                    filter: "drop-shadow(0 0 60px hsl(42 87% 55% / 0.55))",
-                  }}
+                  alt="AI palm reading illustration — PalmMitra decodes your life path, career, love and destiny from your palm lines"
+                  className="object-contain w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] opacity-95"
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  style={{ filter: "drop-shadow(0 0 50px hsl(42 87% 55% / 0.5))" }}
+                  loading="eager"
+                  fetchPriority="high"
+                  width={560}
+                  height={560}
                 />
               </div>
-
-              {/* Floating insight cards */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 }}
-                className="absolute top-[10%] left-[-5%] glass-premium rounded-2xl px-4 py-3 border border-accent/20 hidden sm:block"
-              >
-                <p className="text-xs text-white/50 mb-0.5">Readings done</p>
-                <p className="text-lg font-serif font-bold text-gradient-gold">12,400+</p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1 }}
-                className="absolute bottom-[20%] right-[-5%] glass-premium rounded-2xl px-4 py-3 border border-accent/20 hidden sm:block"
-              >
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-accent" />
-                  <p className="text-sm font-semibold text-white">4.9★ Rating</p>
-                </div>
-                <p className="text-xs text-white/50 mt-0.5">2,100+ reviews</p>
-              </motion.div>
-
-              {/* Floating insight preview */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 }}
-                className="absolute bottom-[5%] left-[5%] glass-premium rounded-2xl px-4 py-3 border border-purple-500/20 hidden md:block max-w-[180px]"
-              >
-                <p className="text-xs text-white/40 mb-1.5 uppercase tracking-wide">Sample Insight</p>
-                {floatingInsights.slice(0, 2).map((insight) => (
-                  <div key={insight.label} className="flex items-center justify-between gap-3 py-0.5">
-                    <span className="text-xs text-white/60">{insight.label}</span>
-                    <span className={`text-xs font-bold ${insight.color}`}>{insight.value}</span>
-                  </div>
-                ))}
-              </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Sample Report Modal */}
       <SampleReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
