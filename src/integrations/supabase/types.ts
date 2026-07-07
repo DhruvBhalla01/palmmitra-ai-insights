@@ -263,6 +263,7 @@ export type Database = {
           report_id: string | null
           status: string
           user_email: string
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -277,6 +278,7 @@ export type Database = {
           report_id?: string | null
           status?: string
           user_email: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -291,6 +293,7 @@ export type Database = {
           report_id?: string | null
           status?: string
           user_email?: string
+          user_id?: string | null
         }
         Relationships: [
           {
