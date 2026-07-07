@@ -12,14 +12,11 @@ import { useHashScroll } from '@/hooks/useHashScroll';
 // Lazy load below-fold sections for performance
 const FeaturesSection = lazy(() => import('@/components/home/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
 const SampleReportTeaser = lazy(() => import('@/components/home/SampleReportTeaser').then(m => ({ default: m.SampleReportTeaser })));
-const Testimonials = lazy(() => import('@/components/home/Testimonials').then(m => ({ default: m.Testimonials })));
 const ComparisonSection = lazy(() => import('@/components/home/ComparisonSection').then(m => ({ default: m.ComparisonSection })));
 const AboutSection = lazy(() => import('@/components/home/AboutSection').then(m => ({ default: m.AboutSection })));
-const PricingSection = lazy(() => import('@/components/home/PricingSection').then(m => ({ default: m.PricingSection })));
+const Testimonials = lazy(() => import('@/components/home/Testimonials').then(m => ({ default: m.Testimonials })));
 const FAQSection = lazy(() => import('@/components/home/FAQSection').then(m => ({ default: m.FAQSection })));
-const EmailCaptureSection = lazy(() => import('@/components/home/EmailCaptureSection').then(m => ({ default: m.EmailCaptureSection })));
 const FinalCTABanner = lazy(() => import('@/components/home/FinalCTABanner').then(m => ({ default: m.FinalCTABanner })));
-const PalmMatchTeaser = lazy(() => import('@/components/home/PalmMatchTeaser').then(m => ({ default: m.PalmMatchTeaser })));
 
 const SectionLoader = () => (
   <div className="py-24 flex items-center justify-center">
@@ -35,57 +32,57 @@ const Index = () => {
       <PremiumBackground showMandala intensity="medium" />
       <Navbar />
       <main className="relative z-10">
+        {/* 1. Hero */}
         <HeroSection />
+
+        {/* 2. Social Proof */}
         <TrustStrip />
 
+        {/* 3. How It Works */}
         <SectionDivider variant="gradient" />
         <HowItWorks />
 
+        {/* 4. Features */}
         <Suspense fallback={<SectionLoader />}>
           <FeaturesSection />
         </Suspense>
 
-        <SectionDivider variant="gradient" />
-        <Suspense fallback={<SectionLoader />}>
-          <PalmMatchTeaser />
-        </Suspense>
-
+        {/* 5. Sample Report Preview */}
         <SectionDivider variant="ornate" />
         <Suspense fallback={<SectionLoader />}>
           <SampleReportTeaser />
         </Suspense>
 
-        <Suspense fallback={<SectionLoader />}>
-          <Testimonials />
-        </Suspense>
-
+        {/* 6. Why PalmMitra (comparison + about) */}
         <SectionDivider variant="mandala" />
         <Suspense fallback={<SectionLoader />}>
           <ComparisonSection />
         </Suspense>
-
         <Suspense fallback={<SectionLoader />}>
           <AboutSection />
         </Suspense>
 
-        <SectionDivider variant="gradient" />
+        {/* 7. Testimonials */}
         <Suspense fallback={<SectionLoader />}>
-          <PricingSection />
+          <Testimonials />
         </Suspense>
 
+        {/* 8. FAQ */}
         <Suspense fallback={<SectionLoader />}>
           <FAQSection />
         </Suspense>
 
-        <Suspense fallback={<SectionLoader />}>
-          <EmailCaptureSection />
-        </Suspense>
-
+        {/* 9. Final CTA */}
+        <SectionDivider variant="gradient" />
         <Suspense fallback={<SectionLoader />}>
           <FinalCTABanner />
         </Suspense>
       </main>
+
+      {/* 10. Footer */}
       <Footer />
+
+      {/* Sticky mobile CTA — always visible on scroll */}
       <MobileCTABar />
     </div>
   );
