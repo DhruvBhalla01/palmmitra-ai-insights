@@ -247,11 +247,14 @@ export default function UploadPalm() {
     } catch (err) {
       setProcessingStep('error');
       clearInterval(msgInterval);
-      toast({
-        title: 'Something went wrong',
-        description: err instanceof Error ? err.message : 'Please try again.',
-        variant: 'destructive',
-      });
+      const msg = err instanceof Error ? err.message : '';
+      const friendly =
+        /network|fetch|Failed to fetch/i.test(msg)
+          ? "We couldn't reach the PalmMitra servers. Please check your connection and try again."
+          : /upload/i.test(msg)
+          ? "Your photo couldn't be uploaded. Please try a different image or check your connection."
+          : "We couldn't complete your reading right now. Please try again in a moment.";
+      toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
     }
   };
 
