@@ -122,9 +122,13 @@ export default function Report() {
 
       if (urlReportId) {
         try {
-          // Use secure edge function to fetch report
+          // Send persisted email so the edge function can gate `report_json`
+          // behind ownership / subscription / unlock.
+          const persistedEmail = (() => {
+            try { return localStorage.getItem('palmMitraEmail') || ''; } catch { return ''; }
+          })();
           const { data, error: fetchError } = await supabase.functions.invoke('get-report', {
-            body: { report_id: urlReportId },
+            body: { report_id: urlReportId, user_email: persistedEmail || undefined },
           });
 
           if (fetchError) throw fetchError;
@@ -134,15 +138,20 @@ export default function Report() {
             setUserData({
               name: report.user_name,
               age: report.user_age || '',
-              email: report.user_email || '',
+              email: persistedEmail,
               readingType: (report.reading_type as StoredData['readingType']) || 'full',
               palmImage: report.image_url,
               imageUrl: report.image_url,
-              reportId: urlReportId, // Store reportId in userData for unlock flow
+              reportId: urlReportId,
             });
-            setReading(report.report_json as unknown as PalmReading);
+            if (report.report_json) {
+              setReading(report.report_json as unknown as PalmReading);
+            }
             setGeneratedAt(report.created_at || new Date().toISOString());
             setLoading(false);
+            if (!report.report_json) {
+              setError('This report is locked. Unlock it to view your reading.');
+            }
             return;
           }
         } catch (err) {
