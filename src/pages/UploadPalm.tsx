@@ -16,6 +16,8 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
+import { z } from 'zod';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -80,6 +82,12 @@ export default function UploadPalm() {
     email: '',
     readingType: 'full',
   });
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
+
+  const uploadFormSchema = useMemo(
+    () => z.object({ name: nameSchema, age: ageSchema, email: emailSchema }),
+    [],
+  );
 
   const formStep = useMemo(() => {
     if (!image) return 1;
@@ -106,21 +114,23 @@ export default function UploadPalm() {
     setIsDragging(false);
     setValidationError(null);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      processImage(file);
-    } else {
-      toast({ title: 'Invalid file', description: 'Please upload a JPG or PNG image.', variant: 'destructive' });
+    const check = validateImageFile(file);
+    if (!check.ok) {
+      toast({ title: check.reason ?? 'Invalid file', description: check.suggestion, variant: 'destructive' });
+      return;
     }
+    processImage(file);
   }, [toast]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setValidationError(null);
     if (file) {
-      if (file.type.startsWith('image/')) {
-        processImage(file);
+      const check = validateImageFile(file);
+      if (!check.ok) {
+        toast({ title: check.reason ?? 'Invalid file', description: check.suggestion, variant: 'destructive' });
       } else {
-        toast({ title: 'Invalid file', description: 'Please upload a JPG or PNG image.', variant: 'destructive' });
+        processImage(file);
       }
     }
     // Reset input so same file can be reselected after removal
@@ -159,7 +169,29 @@ export default function UploadPalm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile || !formData.name || !formData.email || !formData.age) return;
+    if (isLoading) return;                        // prevent double-submit
+    if (!imageFile) {
+      toast({ title: 'Photo required', description: 'Please upload your palm photo first.', variant: 'destructive' });
+      return;
+    }
+
+    // Validate form input
+    const parsed = uploadFormSchema.safeParse({
+      name: formData.name,
+      age: formData.age,
+      email: formData.email,
+    });
+    if (!parsed.success) {
+      setFieldErrors(zodFieldErrors(parsed.error));
+      const first = parsed.error.errors[0]?.message ?? 'Please fix the highlighted fields.';
+      toast({ title: 'Please check your details', description: first, variant: 'destructive' });
+      return;
+    }
+    setFieldErrors({});
+
+    const cleanName = parsed.data.name;
+    const cleanEmail = parsed.data.email;
+    const cleanAge = String(parsed.data.age);
 
     setValidationError(null);
     setLoadingMessageIdx(0);
@@ -170,14 +202,13 @@ export default function UploadPalm() {
 
     try {
       setProcessingStep('uploading');
-      // Await the background upload started when image was chosen (may already be done)
       const imageUrl = await (uploadPromiseRef.current ?? uploadToStorage(imageFile));
 
       setProcessingStep('validating');
       setProcessingStep('analyzing');
 
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
-        body: { imageUrl, name: formData.name, age: formData.age, email: formData.email, readingType: formData.readingType },
+        body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
       });
 
       if (fnError) throw new Error(fnError.message || 'Failed to analyze palm');
@@ -200,7 +231,9 @@ export default function UploadPalm() {
 
       setProcessingStep('saving');
       sessionStorage.setItem('palmMitraData', JSON.stringify({
-        ...formData, imageUrl,
+        name: cleanName, age: cleanAge, email: cleanEmail,
+        readingType: formData.readingType,
+        imageUrl,
         reportId: response.reportId,
         reading: response.reading,
         validation: response.validation,
