@@ -13,12 +13,12 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id } = await req.json();
+    const { report_id } = await req.json().catch(() => ({}));
 
-    if (!report_id) {
-      console.error('Missing report_id parameter');
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!report_id || typeof report_id !== 'string' || !uuidRegex.test(report_id)) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Report ID is required' }),
+        JSON.stringify({ success: false, error: 'Invalid report ID' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
