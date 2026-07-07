@@ -313,7 +313,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 <span className="flex flex-col items-center gap-0.5 w-full">
                   <span className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    Unlock Full Report
+                    Unlock Full Compatibility Report
                     <ArrowRight className="w-4 h-4" />
                   </span>
                   <span className="text-xs font-normal opacity-80">One-time · ₹999</span>
