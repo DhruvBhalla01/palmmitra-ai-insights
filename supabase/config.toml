@@ -14,3 +14,16 @@ verify_jwt = true
 
 [functions.get-unlock-status]
 verify_jwt = true
+
+[functions.ai-chat]
+verify_jwt = true
+
+[functions.ai-conversation]
+verify_jwt = true
+
+[functions.ai-entitlement]
+verify_jwt = true
+
+[functions.ai-purchase-create-order]
+verify_jwt = true
+

@@ -165,6 +165,41 @@ Deno.serve(async (req) => {
         console.log(`Subscription (${payment.plan_type}) active until ${expiresAt} for:`, payment.user_email);
         isSubscription = true;
       }
+    } else if (payment.plan_type === 'ai_elite_monthly' || payment.plan_type === 'ai_elite_annual') {
+      const days = payment.plan_type === 'ai_elite_annual' ? 365 : 30;
+      const notes = (payment.user_email ?? '').toLowerCase();
+      const { data: userLookup } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
+      const authUser = userLookup?.users?.find(u => (u.email ?? '').toLowerCase() === notes);
+      if (!authUser) console.error('AI subscription: auth user not found for', payment.user_email);
+      else {
+        const now = Date.now();
+        const { data: existing } = await supabase
+          .from('ai_entitlements').select('subscription_expires_at').eq('user_id', authUser.id).maybeSingle();
+        const currentExp = existing?.subscription_expires_at ? new Date(existing.subscription_expires_at).getTime() : 0;
+        const base = Math.max(currentExp, now);
+        const expiresAt = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
+        await supabase.from('ai_entitlements').upsert({
+          user_id: authUser.id,
+          subscription_plan: payment.plan_type,
+          subscription_expires_at: expiresAt,
+          subscription_month_usage: 0,
+          subscription_month_reset_at: new Date(now + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        }, { onConflict: 'user_id' });
+        isSubscription = true;
+      }
+    } else if (payment.plan_type?.startsWith('ai_pack_')) {
+      const packQty: Record<string, number> = { ai_pack_10: 10, ai_pack_30: 30, ai_pack_100: 100 };
+      const qty = packQty[payment.plan_type] ?? 0;
+      const notes = (payment.user_email ?? '').toLowerCase();
+      const { data: userLookup } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
+      const authUser = userLookup?.users?.find(u => (u.email ?? '').toLowerCase() === notes);
+      if (authUser && qty > 0) {
+        await supabase.from('ai_entitlements').upsert({ user_id: authUser.id }, { onConflict: 'user_id' });
+        const { data: cur } = await supabase.from('ai_entitlements').select('pack_questions_remaining').eq('user_id', authUser.id).single();
+        await supabase.from('ai_entitlements').update({
+          pack_questions_remaining: (cur?.pack_questions_remaining ?? 0) + qty,
+        }).eq('user_id', authUser.id);
+      }
     }
 
     // Increment coupon usage after confirmed successful payment

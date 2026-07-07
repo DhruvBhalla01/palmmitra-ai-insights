@@ -14,6 +14,181 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          message_count: number
+          report_id: string
+          title: string
+          total_input_tokens: number
+          total_output_tokens: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          message_count?: number
+          report_id: string
+          title?: string
+          total_input_tokens?: number
+          total_output_tokens?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          message_count?: number
+          report_id?: string
+          title?: string
+          total_input_tokens?: number
+          total_output_tokens?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversations_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "palm_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_entitlements: {
+        Row: {
+          free_questions_remaining: number
+          granted_report_ids: string[]
+          pack_questions_remaining: number
+          subscription_expires_at: string | null
+          subscription_month_reset_at: string | null
+          subscription_month_usage: number
+          subscription_plan: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          free_questions_remaining?: number
+          granted_report_ids?: string[]
+          pack_questions_remaining?: number
+          subscription_expires_at?: string | null
+          subscription_month_reset_at?: string | null
+          subscription_month_usage?: number
+          subscription_plan?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          free_questions_remaining?: number
+          granted_report_ids?: string[]
+          pack_questions_remaining?: number
+          subscription_expires_at?: string | null
+          subscription_month_reset_at?: string | null
+          subscription_month_usage?: number
+          subscription_plan?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          input_tokens: number
+          model: string | null
+          output_tokens: number
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          model?: string | null
+          output_tokens?: number
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          model?: string | null
+          output_tokens?: number
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_pricing_config: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      ai_usage_events: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: string
+          input_tokens: number
+          message_id: string | null
+          output_tokens: number
+          source: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          message_id?: string | null
+          output_tokens?: number
+          source: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          message_id?: string | null
+          output_tokens?: number
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       api_rate_limits: {
         Row: {
           created_at: string
@@ -206,7 +381,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      debit_ai_question: {
+        Args: { _user_id: string }
+        Returns: {
+          ok: boolean
+          source: string
+        }[]
+      }
+      grant_report_free_questions: {
+        Args: { _n: number; _report_id: string; _user_id: string }
+        Returns: undefined
+      }
+      refund_ai_question: {
+        Args: { _source: string; _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
