@@ -269,8 +269,8 @@ export function DimensionCard({
               }}
             >
               <span className="flex items-center gap-1.5">
-                <Star className="w-3 h-3" />
-                Reveal Score
+                <Sparkles className="w-3 h-3" />
+                Unlock Score
                 <ArrowRight className="w-3 h-3" />
               </span>
             </button>
