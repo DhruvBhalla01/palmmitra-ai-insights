@@ -1,10 +1,10 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Upload, X, Camera, Sun, Eye, CheckCircle, Hand,
-  ArrowRight, ArrowLeft, Sparkles, Shield, Zap, Users,
-  Heart, MessageCircle, Target, Infinity as InfinityIcon,
+  Upload, X, Camera, CheckCircle, ArrowRight, ArrowLeft,
+  Sparkles, Shield, Zap, Heart, MessageCircle, Target,
+  Infinity as InfinityIcon, Star, Lock, Loader2,
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -19,275 +19,247 @@ import { useToast } from '@/hooks/use-toast';
 
 type Step = 1 | 2;
 type ProcessingState = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
+type UploadStatus = 'idle' | 'uploading' | 'ready' | 'error';
 
 const RELATIONSHIP_TYPES = [
   'Partner', 'Spouse', 'Friend', 'Sibling', 'Parent-Child', 'Business Partner',
 ];
 
-const photoTips = [
-  { icon: Hand, text: 'Open palm facing camera' },
-  { icon: Sun, text: 'Good natural lighting' },
-  { icon: Eye, text: 'Lines clearly visible' },
-  { icon: CheckCircle, text: 'One hand only' },
-];
-
 const processingMessages = [
-  'Uploading palm images securely...',
-  'AI validating both palms...',
-  'Comparing destiny patterns...',
-  'Calculating compatibility matrix...',
-  'Generating your PalmMatch report...',
+  'Encrypting palm images…',
+  'Detecting heart line & mounts…',
+  'Comparing emotional patterns…',
+  'Aligning communication signals…',
+  'Composing your compatibility report…',
 ];
 
-const dimensionIcons = [
-  { icon: Heart, label: 'Emotional Bond' },
-  { icon: MessageCircle, label: 'Communication' },
-  { icon: Target, label: 'Life Goals' },
-  { icon: InfinityIcon, label: 'Spiritual Alignment' },
+const sampleDimensions = [
+  { icon: Heart,          label: 'Emotional Bond',     score: 91, color: 'hsl(340 82% 65%)' },
+  { icon: MessageCircle,  label: 'Communication',      score: 84, color: 'hsl(200 82% 65%)' },
+  { icon: Target,         label: 'Shared Goals',       score: 89, color: 'hsl(42 87% 60%)'  },
+  { icon: InfinityIcon,   label: 'Spiritual Alignment', score: 78, color: 'hsl(260 60% 70%)' },
 ];
 
-const heroParticles = [
-  { left: '5%',  top: '18%', size: 6,   delay: 0,   dur: 4.2, diamond: false },
-  { left: '91%', top: '24%', size: 4,   delay: 0.8, dur: 3.8, diamond: false },
-  { left: '12%', top: '65%', size: 5,   delay: 1.5, dur: 5.0, diamond: false },
-  { left: '86%', top: '70%', size: 4,   delay: 2.2, dur: 4.5, diamond: false },
-  { left: '50%', top: '9%',  size: 3,   delay: 1.0, dur: 3.5, diamond: true  },
-  { left: '33%', top: '82%', size: 3,   delay: 2.8, dur: 4.8, diamond: true  },
-  { left: '22%', top: '38%', size: 2.5, delay: 0.4, dur: 6.0, diamond: true  },
-  { left: '76%', top: '45%', size: 2.5, delay: 1.8, dur: 5.5, diamond: false },
-  { left: '63%', top: '88%', size: 2,   delay: 3.2, dur: 4.0, diamond: true  },
-  { left: '8%',  top: '50%', size: 2,   delay: 2.0, dur: 5.2, diamond: false },
-];
-
-// ─── Step Indicator ────────────────────────────────────────────────────────
+// ─── Step Indicator ─────────────────────────────────────────────────────────
 function StepIndicator({ current }: { current: Step }) {
-  const steps: { n: Step; label: string; sublabel: string }[] = [
-    { n: 1, label: 'Your Hand', sublabel: 'Pahla Hath' },
-    { n: 2, label: 'Their Hand', sublabel: 'Doosra Hath' },
-  ];
   return (
-    <div className="mb-10">
-      <p className="text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-bold mb-4">
-        Step {current} of 2
-      </p>
-      <div className="flex items-center justify-center gap-0">
-        {steps.map((s, i) => (
-          <div key={s.n} className="flex items-center">
-            <div className="flex flex-col items-center">
-              <motion.div
-                animate={
-                  current === s.n
-                    ? { boxShadow: '0 0 32px hsla(42,87%,55%,0.7)', scale: 1.15 }
-                    : { boxShadow: 'none', scale: 1 }
-                }
-                transition={{ duration: 0.4 }}
-                className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 ${
-                  current > s.n
-                    ? 'bg-accent text-foreground'
-                    : current === s.n
-                    ? 'bg-accent text-foreground ring-4 ring-accent/25'
-                    : 'bg-secondary text-muted-foreground'
-                }`}
-              >
-                {current > s.n ? <CheckCircle className="w-5 h-5" /> : s.n}
-              </motion.div>
-              <span className={`text-xs mt-2 font-semibold text-center leading-tight transition-colors ${
-                current >= s.n ? 'text-accent' : 'text-muted-foreground/40'
-              }`}>
-                {s.label}
-              </span>
-              <span className={`text-[9px] mt-0.5 italic tracking-wider transition-colors ${
-                current >= s.n ? 'text-accent/50' : 'text-muted-foreground/25'
-              }`}>
-                {s.sublabel}
-              </span>
+    <div className="mb-6">
+      <div className="flex items-center justify-center gap-2 mb-2">
+        {[1, 2].map((n) => (
+          <div key={n} className="flex items-center gap-2">
+            <div
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                current > n
+                  ? 'bg-accent text-foreground'
+                  : current === n
+                  ? 'bg-accent text-foreground ring-4 ring-accent/20'
+                  : 'bg-secondary text-muted-foreground'
+              }`}
+            >
+              {current > n ? <CheckCircle className="w-4 h-4" /> : n}
             </div>
-            {i < steps.length - 1 && (
-              <div className="w-24 h-px mb-8 mx-4 overflow-hidden rounded-full"
-                style={{ background: current > s.n
-                  ? 'linear-gradient(90deg, hsl(42 87% 55%), hsl(42 90% 72%))'
-                  : 'hsl(var(--secondary))' }}>
-                {current > s.n && (
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                    className="h-full bg-accent"
-                  />
-                )}
-              </div>
+            {n === 1 && (
+              <div className={`w-10 h-px ${current > 1 ? 'bg-accent' : 'bg-border'}`} />
             )}
           </div>
         ))}
+      </div>
+      <p className="text-center text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-semibold">
+        Step {current} of 2 · {current === 1 ? 'Your palm' : 'Their palm'}
+      </p>
+    </div>
+  );
+}
+
+// ─── Report Preview Card ────────────────────────────────────────────────────
+function ReportPreviewCard() {
+  return (
+    <div
+      className="glass-premium rounded-2xl border border-accent/25 p-5 text-left mx-auto max-w-sm"
+      style={{ boxShadow: '0 8px 40px hsl(42 87% 55% / 0.12)' }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <p className="text-[10px] text-white/50 uppercase tracking-[0.22em] font-bold mb-0.5">
+            Sample report preview
+          </p>
+          <p className="text-sm font-semibold text-white/90">Priya & Arjun</p>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-serif font-bold text-gradient-gold leading-none">87%</div>
+          <p className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5">Compatibility</p>
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        {sampleDimensions.map(({ icon: Icon, label, score, color }) => (
+          <div key={label} className="flex items-center gap-3">
+            <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color }} />
+            <span className="text-xs text-white/75 flex-1 truncate">{label}</span>
+            <div className="w-16 h-1 bg-white/8 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${score}%`, background: color }}
+              />
+            </div>
+            <span className="text-xs font-semibold text-white/80 tabular-nums w-8 text-right">
+              {score}%
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+        <div className="flex items-center gap-1.5">
+          <Heart className="w-3.5 h-3.5 text-accent" fill="currentColor" />
+          <span className="text-[11px] text-white/70">Long-term potential</span>
+        </div>
+        <span className="text-[11px] font-semibold text-accent">Strong</span>
       </div>
     </div>
   );
 }
 
-// ─── Image Upload Zone ─────────────────────────────────────────────────────
+// ─── Image Upload Zone (with background upload) ────────────────────────────
 function ImageUploadZone({
-  image, onImage, onClear, label, sanskritLabel,
+  image, status, onFile, onClear, label, hint,
 }: {
   image: string | null;
-  onImage: (file: File, preview: string) => void;
+  status: UploadStatus;
+  onFile: (file: File, preview: string) => void;
   onClear: () => void;
   label: string;
-  sanskritLabel: string;
+  hint: string;
 }) {
-  const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const processFile = useCallback(
-    (file: File) => {
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) onImage(file, e.target.result as string);
-      };
-      reader.readAsDataURL(file);
-    },
-    [onImage]
-  );
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-      const file = e.dataTransfer.files[0];
-      if (file) processFile(file);
-    },
-    [processFile]
-  );
+  const processFile = useCallback((file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) onFile(file, e.target.result as string);
+    };
+    reader.readAsDataURL(file);
+  }, [onFile]);
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex items-baseline gap-3 mb-5">
-        <h3 className="text-xl font-serif font-bold text-foreground">{label}</h3>
-        <span className="text-[11px] text-accent/55 italic tracking-[0.18em]">{sanskritLabel}</span>
+      <div className="flex items-baseline justify-between mb-3">
+        <h3 className="text-base font-semibold text-foreground">{label}</h3>
+        <span className="text-[11px] text-muted-foreground">{hint}</span>
       </div>
 
       {image ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.93 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.35, ease: 'backOut' }}
-          className="relative rounded-2xl overflow-hidden border border-accent/50"
-          style={{ boxShadow: '0 0 40px hsl(42 87% 55% / 0.22), 0 0 0 1px hsl(42 87% 55% / 0.15)' }}
+        <div
+          className="relative rounded-2xl overflow-hidden border border-accent/40 animate-fade-in"
+          style={{ boxShadow: '0 0 32px hsl(42 87% 55% / 0.18)' }}
         >
-          <img src={image} alt="Palm preview" className="w-full h-52 object-cover" />
+          <img src={image} alt="Palm preview" className="w-full h-48 object-cover" />
+
+          {/* AI scan line overlay while uploading */}
+          {status === 'uploading' && (
+            <>
+              <div className="absolute inset-0 bg-background/30" />
+              <div
+                className="absolute left-0 right-0 h-16 pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(180deg, transparent, hsl(42 87% 55% / 0.35), transparent)',
+                  animation: 'scanY 1.6s ease-in-out infinite',
+                }}
+              />
+            </>
+          )}
+
           <button
             onClick={onClear}
-            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/90 border border-accent/25 flex items-center justify-center hover:bg-background hover:border-accent/50 transition-all"
+            aria-label="Remove image"
+            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-background/90 border border-border flex items-center justify-center hover:bg-background transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 to-transparent p-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0"
-                style={{ boxShadow: '0 0 12px rgba(74,222,128,0.5)' }}>
-                <CheckCircle className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-sm font-medium text-foreground/90 font-serif italic">
-                Palm received — destiny awaits ✦
-              </span>
+
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/95 to-transparent p-3">
+            <div className="flex items-center gap-2">
+              {status === 'ready' ? (
+                <>
+                  <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground/90">
+                    Palm analyzed · Ready
+                  </span>
+                </>
+              ) : status === 'uploading' ? (
+                <>
+                  <Loader2 className="w-4 h-4 text-accent animate-spin" />
+                  <span className="text-xs text-foreground/80">
+                    AI preprocessing your palm…
+                  </span>
+                </>
+              ) : status === 'error' ? (
+                <span className="text-xs text-destructive">Upload failed — tap × to retry</span>
+              ) : null}
             </div>
           </div>
-        </motion.div>
+        </div>
       ) : (
-        <div
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
-          onDrop={handleDrop}
+        <button
+          type="button"
           onClick={() => inputRef.current?.click()}
-          className="relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500"
+          className="relative w-full rounded-2xl overflow-hidden transition-transform duration-200 active:scale-[0.99]"
           style={{
-            border: `1px solid hsl(42 87% 55% / ${isDragging ? 0.55 : 0.22})`,
-            background: isDragging
-              ? 'linear-gradient(135deg, hsl(42 87% 55% / 0.1), hsl(260 50% 55% / 0.06))'
-              : 'linear-gradient(135deg, hsl(42 87% 55% / 0.03), hsl(260 50% 55% / 0.02))',
-            boxShadow: isDragging
-              ? '0 0 50px hsl(42 87% 55% / 0.18), inset 0 0 30px hsl(42 87% 55% / 0.04)'
-              : '0 0 0px transparent',
-            transform: isDragging ? 'scale(1.015)' : 'scale(1)',
+            border: '1px dashed hsl(42 87% 55% / 0.35)',
+            background:
+              'linear-gradient(135deg, hsl(42 87% 55% / 0.04), hsl(260 50% 55% / 0.03))',
           }}
         >
-          {/* Corner bracket ornaments */}
-          <div className="absolute top-3 left-3 w-5 h-5 border-t-[1.5px] border-l-[1.5px] border-accent/45 rounded-tl pointer-events-none" />
-          <div className="absolute top-3 right-3 w-5 h-5 border-t-[1.5px] border-r-[1.5px] border-accent/45 rounded-tr pointer-events-none" />
-          <div className="absolute bottom-3 left-3 w-5 h-5 border-b-[1.5px] border-l-[1.5px] border-accent/45 rounded-bl pointer-events-none" />
-          <div className="absolute bottom-3 right-3 w-5 h-5 border-b-[1.5px] border-r-[1.5px] border-accent/45 rounded-br pointer-events-none" />
+          {/* Premium animated corners */}
+          <div className="absolute top-2.5 left-2.5 w-4 h-4 border-t border-l border-accent/60 rounded-tl pointer-events-none" />
+          <div className="absolute top-2.5 right-2.5 w-4 h-4 border-t border-r border-accent/60 rounded-tr pointer-events-none" />
+          <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b border-l border-accent/60 rounded-bl pointer-events-none" />
+          <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b border-r border-accent/60 rounded-br pointer-events-none" />
 
-          <div className="p-10 text-center">
-            <motion.div
-              animate={{
-                y: [0, -12, 0],
-                filter: [
-                  'drop-shadow(0 4px 12px hsl(42 87% 55% / 0.35))',
-                  'drop-shadow(0 8px 28px hsl(42 87% 55% / 0.75))',
-                  'drop-shadow(0 4px 12px hsl(42 87% 55% / 0.35))',
-                ],
-              }}
-              transition={{ repeat: Infinity, duration: 3.4, ease: 'easeInOut' }}
-              className="text-6xl mb-5 select-none leading-none"
-            >
-              🤚
-            </motion.div>
-            <p className="text-base font-serif font-semibold text-foreground mb-1.5">
-              Place your palm before the universe
+          {/* Soft pulse */}
+          <div
+            className="absolute inset-8 rounded-full bg-accent/10 blur-3xl pointer-events-none"
+            style={{ animation: 'pulseGlow 3s ease-in-out infinite' }}
+          />
+
+          <div className="relative p-8 text-center">
+            <div className="w-14 h-14 rounded-full bg-accent/15 border border-accent/25 flex items-center justify-center mx-auto mb-4">
+              <Camera className="w-6 h-6 text-accent" />
+            </div>
+            <p className="text-sm font-semibold text-foreground mb-1">
+              Tap to upload palm photo
             </p>
-            <p className="text-sm text-muted-foreground mb-6">
-              Tap to upload · JPG, PNG, WEBP
+            <p className="text-xs text-muted-foreground mb-4">
+              JPG, PNG or WEBP · Open palm, good lighting
             </p>
-            <div className="flex items-center justify-center gap-3">
-              <Button type="button" className="btn-secondary-premium text-sm px-5 py-2.5 rounded-xl gap-2">
-                <Upload className="w-3.5 h-3.5" /> Gallery
-              </Button>
-              <Button
-                type="button"
-                className="btn-secondary-premium text-sm px-5 py-2.5 rounded-xl gap-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (inputRef.current) {
-                    inputRef.current.capture = 'environment';
-                    inputRef.current.click();
-                  }
-                }}
-              >
-                <Camera className="w-3.5 h-3.5" /> Camera
-              </Button>
+            <div className="inline-flex items-center gap-1.5 text-[11px] text-accent/80">
+              <Upload className="w-3 h-3" /> Gallery
+              <span className="text-muted-foreground/50 mx-1.5">·</span>
+              <Camera className="w-3 h-3" /> Camera
             </div>
           </div>
+
           <input
             ref={inputRef}
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) processFile(f); }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) processFile(f);
+            }}
           />
-        </div>
+        </button>
       )}
-
-      {/* Photo tips — premium */}
-      <div className="grid grid-cols-2 gap-2 mt-4">
-        {photoTips.map(({ icon: Icon, text }) => (
-          <div
-            key={text}
-            className="flex items-center gap-2.5 text-xs text-foreground/60 rounded-xl px-3 py-2.5"
-            style={{ background: 'hsl(42 87% 55% / 0.04)', border: '1px solid hsl(42 87% 55% / 0.1)' }}
-          >
-            <span className="w-5 h-5 rounded-full bg-accent/15 border border-accent/20 flex items-center justify-center flex-shrink-0">
-              <Icon className="w-2.5 h-2.5 text-accent" />
-            </span>
-            {text}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────
+// ─── Main Component ─────────────────────────────────────────────────────────
 export default function PalmMatch() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -296,9 +268,12 @@ export default function PalmMatch() {
   const [processingMsgIdx, setProcessingMsgIdx] = useState(0);
 
   const [image1, setImage1] = useState<string | null>(null);
-  const [file1, setFile1] = useState<File | null>(null);
   const [image2, setImage2] = useState<string | null>(null);
-  const [file2, setFile2] = useState<File | null>(null);
+  const [url1, setUrl1] = useState<string | null>(null);
+  const [url2, setUrl2] = useState<string | null>(null);
+  const [status1, setStatus1] = useState<UploadStatus>('idle');
+  const [status2, setStatus2] = useState<UploadStatus>('idle');
+
   const [person1Name, setPerson1Name] = useState('');
   const [person1Age, setPerson1Age] = useState('');
   const [person2Name, setPerson2Name] = useState('');
@@ -306,56 +281,108 @@ export default function PalmMatch() {
   const [relationshipType, setRelationshipType] = useState('');
   const [email, setEmail] = useState('');
 
-  const cycleMessage = useCallback(() => {
-    setProcessingMsgIdx((i) => (i + 1) % processingMessages.length);
-  }, []);
+  // Background upload
+  const uploadInBackground = useCallback(
+    async (
+      file: File,
+      slot: 'person1' | 'person2',
+      setUrl: (u: string) => void,
+      setStatus: (s: UploadStatus) => void,
+    ) => {
+      setStatus('uploading');
+      try {
+        const ext = file.name.split('.').pop() || 'jpg';
+        const path = `palmmatch/${Date.now()}_${slot}.${ext}`;
+        const { error } = await supabase.storage
+          .from('palm-uploads')
+          .upload(path, file, { upsert: true });
+        if (error) throw error;
+        const { data } = supabase.storage.from('palm-uploads').getPublicUrl(path);
+        setUrl(data.publicUrl);
+        setStatus('ready');
+      } catch (e) {
+        console.error('bg upload failed', e);
+        setStatus('error');
+      }
+    },
+    [],
+  );
+
+  const handleImage1 = (file: File, preview: string) => {
+    setImage1(preview);
+    setUrl1(null);
+    uploadInBackground(file, 'person1', setUrl1, setStatus1);
+  };
+  const handleImage2 = (file: File, preview: string) => {
+    setImage2(preview);
+    setUrl2(null);
+    uploadInBackground(file, 'person2', setUrl2, setStatus2);
+  };
+  const clearImage1 = () => { setImage1(null); setUrl1(null); setStatus1('idle'); };
+  const clearImage2 = () => { setImage2(null); setUrl2(null); setStatus2('idle'); };
+
+  // Rotate messages during processing
+  useEffect(() => {
+    if (processing === 'idle' || processing === 'error' || processing === 'complete') return;
+    const iv = setInterval(
+      () => setProcessingMsgIdx((i) => (i + 1) % processingMessages.length),
+      2200,
+    );
+    return () => clearInterval(iv);
+  }, [processing]);
 
   const handleSubmit = async () => {
-    if (!file1 || !file2 || !person1Name || !person1Age || !person2Name || !person2Age || !relationshipType || !email) {
+    if (
+      !image1 || !image2 || !person1Name || !person1Age || !person2Name ||
+      !person2Age || !relationshipType || !email
+    ) {
       toast({
-        title: 'Missing information',
-        description: 'Please fill in all fields and upload both palms.',
+        title: 'Almost there',
+        description: 'Please complete all fields to reveal your compatibility.',
         variant: 'destructive',
       });
       return;
     }
 
     setProcessing('uploading');
-    const interval = setInterval(cycleMessage, 2200);
 
     try {
-      const uploadFile = async (file: File, slot: string) => {
-        const ext = file.name.split('.').pop() || 'jpg';
-        const path = `palmmatch/${Date.now()}_${slot}.${ext}`;
-        const { error } = await supabase.storage.from('palm-uploads').upload(path, file, { upsert: true });
-        if (error) throw new Error(`Upload failed: ${error.message}`);
-        const { data: urlData } = supabase.storage.from('palm-uploads').getPublicUrl(path);
-        return urlData.publicUrl;
+      // Wait for background uploads to finish
+      const waitFor = async (
+        getUrl: () => string | null,
+        getStatus: () => UploadStatus,
+      ) => {
+        let tries = 0;
+        while (!getUrl() && getStatus() !== 'error' && tries < 100) {
+          await new Promise((r) => setTimeout(r, 200));
+          tries++;
+        }
       };
-
-      const [url1, url2] = await Promise.all([
-        uploadFile(file1, 'person1'),
-        uploadFile(file2, 'person2'),
+      await Promise.all([
+        waitFor(() => url1, () => status1),
+        waitFor(() => url2, () => status2),
       ]);
+
+      if (!url1 || !url2) throw new Error('Upload failed. Please re-select your palm images.');
 
       setProcessing('analyzing');
 
       const { data, error } = await supabase.functions.invoke('analyze-palmmatch', {
         body: {
-          image1Url: url1, image2Url: url2,
+          image1Url: url1,
+          image2Url: url2,
           person1: { name: person1Name, age: person1Age },
           person2: { name: person2Name, age: person2Age },
-          relationshipType, email,
+          relationshipType,
+          email,
         },
       });
-
-      clearInterval(interval);
 
       if (error || !data?.success) {
         if (data?.error === 'invalid_palm') {
           toast({
-            title: 'Invalid palm image',
-            description: data.message || 'One of the images is not a clear palm photo.',
+            title: 'We couldn\'t read that palm',
+            description: data.message || 'Please re-upload a clearer palm photo.',
             variant: 'destructive',
           });
           setProcessing('idle');
@@ -365,22 +392,24 @@ export default function PalmMatch() {
         throw new Error(data?.error || 'Analysis failed');
       }
 
-      sessionStorage.setItem('palmMatchData', JSON.stringify({
-        reading: data.reading,
-        reportId: data.reportId,
-        person1Name, person1Age, person2Name, person2Age,
-        relationshipType, email,
-        image1Url: url1, image2Url: url2,
-      }));
+      sessionStorage.setItem(
+        'palmMatchData',
+        JSON.stringify({
+          reading: data.reading,
+          reportId: data.reportId,
+          person1Name, person1Age, person2Name, person2Age,
+          relationshipType, email,
+          image1Url: url1, image2Url: url2,
+        }),
+      );
 
       setProcessing('complete');
-      setTimeout(() => navigate(`/palmmatch-report/${data.reportId}`), 1200);
+      setTimeout(() => navigate(`/palmmatch-report/${data.reportId}`), 900);
     } catch (err) {
-      clearInterval(interval);
       console.error('PalmMatch error:', err);
       toast({
         title: 'Analysis failed',
-        description: err instanceof Error ? err.message : 'Something went wrong. Please try again.',
+        description: err instanceof Error ? err.message : 'Please try again.',
         variant: 'destructive',
       });
       setProcessing('error');
@@ -390,593 +419,388 @@ export default function PalmMatch() {
   const canAdvanceStep1 = image1 && person1Name && person1Age;
   const canAdvanceStep2 = image2 && person2Name && person2Age && relationshipType && email;
 
-  // ─── Cinematic Processing Screen ──────────────────────────────────────────
+  // ─── Processing Screen ─────────────────────────────────────────────────
   if (processing !== 'idle' && processing !== 'error') {
     const isDone = processing === 'complete';
     const isAnalyzing = processing === 'analyzing' || isDone;
     const stages = [
-      { text: 'Uploading palm images securely', done: true },
-      { text: 'AI validating both palm lines', done: isAnalyzing },
-      { text: 'Decoding destiny patterns', done: isDone },
-      { text: 'Generating compatibility report', done: isDone },
+      { text: 'Palm images encrypted', done: true },
+      { text: 'AI reading both palm lines', done: isAnalyzing },
+      { text: 'Comparing compatibility patterns', done: isDone },
+      { text: 'Composing your report', done: isDone },
     ];
-    const progressPct = isDone ? 100 : isAnalyzing ? 72 : 30;
+    const progressPct = isDone ? 100 : isAnalyzing ? 74 : 32;
 
     return (
-      <div className="min-h-screen bg-gradient-mystic flex items-center justify-center px-4 relative overflow-hidden">
-        {/* Dot grid */}
-        <div
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, hsl(42 87% 55%) 1px, transparent 1px)',
-            backgroundSize: '28px 28px',
-          }}
-        />
-        {/* Floating particles */}
-        {Array.from({ length: 10 }, (_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-accent pointer-events-none"
-            style={{
-              width: 2 + (i % 3),
-              height: 2 + (i % 3),
-              left: `${5 + i * 9}%`,
-              top: `${10 + ((i * 17) % 72)}%`,
-            }}
-            animate={{ y: [0, -28, 0], opacity: [0.2, 0.8, 0.2] }}
-            transition={{ repeat: Infinity, duration: 3.5 + i * 0.4, delay: i * 0.3 }}
-          />
-        ))}
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-sm w-full relative z-10"
-        >
-          {/* Animated palm pair */}
-          <div className="flex items-center justify-center gap-3 mb-10 h-28 select-none">
-            <motion.div
-              animate={
-                isDone
-                  ? { x: 16, scale: 1.22, rotate: -8 }
-                  : { x: [0, 7, 0, 4, 0], rotate: [0, -4, 0, 4, 0] }
-              }
-              transition={
-                isDone
-                  ? { duration: 0.55, ease: 'backOut' }
-                  : { repeat: Infinity, duration: 3.2, ease: 'easeInOut' }
-              }
-              className="text-7xl leading-none"
-              style={{ filter: 'drop-shadow(0 0 28px hsl(42 87% 55% / 0.8))' }}
-            >
-              🤚
-            </motion.div>
-
-            {/* Energy orb */}
-            <div className="relative w-14 h-14 flex items-center justify-center flex-shrink-0">
-              <motion.div
-                animate={{ scale: [0.7, 1.6, 0.7], opacity: [0.3, 0.85, 0.3] }}
-                transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                className="absolute inset-0 rounded-full bg-accent/25 blur-lg"
-              />
-              <motion.div
-                animate={{ scale: [0.9, 1.2, 0.9], opacity: [0.4, 1, 0.4] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-                className="absolute inset-2 rounded-full bg-accent/15"
-              />
-              <motion.span
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 7, ease: 'linear' }}
-                className="text-2xl relative z-10"
-              >
-                {isDone ? '💕' : '✦'}
-              </motion.span>
-            </div>
-
-            <div style={{ transform: 'scaleX(-1)' }}>
-              <motion.div
-                animate={
-                  isDone
-                    ? { x: -16, scale: 1.22, rotate: 8 }
-                    : { x: [0, -7, 0, -4, 0], rotate: [0, 4, 0, -4, 0] }
-                }
-                transition={
-                  isDone
-                    ? { duration: 0.55, ease: 'backOut' }
-                    : { repeat: Infinity, duration: 3.2, ease: 'easeInOut', delay: 0.4 }
-                }
-                className="text-7xl leading-none"
-                style={{ filter: 'drop-shadow(0 0 28px hsl(42 87% 55% / 0.8))' }}
-              >
-                🤚
-              </motion.div>
+      <div className="min-h-screen bg-gradient-mystic flex items-center justify-center px-4">
+        <div className="text-center max-w-sm w-full">
+          {/* Minimal AI ring */}
+          <div className="relative w-24 h-24 mx-auto mb-8">
+            <div
+              className="absolute inset-0 rounded-full border-2 border-accent/20"
+              style={{ animation: isDone ? 'none' : 'spin 3s linear infinite' }}
+            />
+            <div
+              className="absolute inset-2 rounded-full border-2 border-transparent border-t-accent"
+              style={{ animation: isDone ? 'none' : 'spin 1.4s linear infinite reverse' }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              {isDone ? (
+                <CheckCircle className="w-10 h-10 text-accent" />
+              ) : (
+                <Sparkles className="w-8 h-8 text-accent" />
+              )}
             </div>
           </div>
 
-          <motion.h2
-            key={isDone ? 'done' : 'loading'}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-4xl font-serif font-bold text-white mb-2"
-          >
-            {isDone ? '✨ Your Match is Ready!' : 'Reading Your Destiny...'}
-          </motion.h2>
-          {!isDone && (
-            <motion.p
-              key="sub"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-white/45 text-sm italic font-serif mb-8"
-            >
-              The stars are aligning for you two
-            </motion.p>
-          )}
-          {isDone && <div className="mb-8" />}
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2">
+            {isDone ? 'Your report is ready' : 'Analyzing compatibility'}
+          </h2>
+          <p className="text-white/50 text-sm mb-8">
+            {isDone
+              ? 'Opening your PalmMatch report…'
+              : 'Our AI is comparing both palms in real time.'}
+          </p>
 
-          {/* Stage checklist */}
-          <div className="space-y-4 mb-8 text-left">
-            {stages.map((stage, i) => (
-              <motion.div
+          <div className="space-y-3 mb-6 text-left">
+            {stages.map((stage) => (
+              <div
                 key={stage.text}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.14 }}
-                className={`flex items-center gap-3 text-sm transition-all duration-500 ${
+                className={`flex items-center gap-3 text-sm transition-colors ${
                   stage.done ? 'text-white/90' : 'text-white/30'
                 }`}
               >
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
+                  className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
                     stage.done ? 'bg-accent' : 'bg-white/10'
                   }`}
-                  style={stage.done ? { boxShadow: '0 0 12px hsl(42 87% 55% / 0.5)' } : undefined}
                 >
                   {stage.done ? (
-                    <CheckCircle className="w-3.5 h-3.5 text-foreground" />
+                    <CheckCircle className="w-3 h-3 text-foreground" />
                   ) : (
-                    <motion.div
-                      animate={{ opacity: [0.3, 1, 0.3] }}
-                      transition={{ repeat: Infinity, duration: 1.2 }}
-                      className="w-2 h-2 rounded-full bg-white/40"
-                    />
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
                   )}
                 </div>
                 {stage.text}
-              </motion.div>
+              </div>
             ))}
           </div>
 
-          {/* Progress bar */}
-          <div className="h-2 bg-white/10 rounded-full overflow-hidden max-w-xs mx-auto mb-3">
-            <motion.div
-              className="h-full rounded-full"
-              style={{ background: 'linear-gradient(90deg, hsl(42 87% 55%), hsl(42 90% 72%))' }}
-              animate={{ width: `${progressPct}%` }}
-              transition={{ duration: 2, ease: 'easeOut' }}
+          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden max-w-xs mx-auto mb-2">
+            <div
+              className="h-full rounded-full transition-[width] duration-1000 ease-out"
+              style={{
+                width: `${progressPct}%`,
+                background: 'linear-gradient(90deg, hsl(42 87% 55%), hsl(42 90% 72%))',
+              }}
             />
           </div>
-          <p className="text-white/30 text-xs tabular-nums">{progressPct}% complete</p>
+          <p className="text-white/40 text-xs tabular-nums">{progressPct}% complete</p>
 
           {!isDone && (
             <AnimatePresence mode="wait">
               <motion.p
                 key={processingMsgIdx}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-white/40 text-xs mt-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-white/45 text-xs mt-4"
               >
                 {processingMessages[processingMsgIdx]}
               </motion.p>
             </AnimatePresence>
           )}
-        </motion.div>
+        </div>
       </div>
     );
   }
 
-  // ─── Main Upload UI ────────────────────────────────────────────────────────
+  // ─── Main Upload UI ───────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="pt-24 pb-16">
 
-        {/* ── Cinematic Hero ── */}
-        <div className="bg-gradient-mystic py-20 px-4 text-center relative overflow-hidden mb-14">
-          {/* Dot grid */}
-          <div
-            className="absolute inset-0 opacity-[0.05] pointer-events-none"
+      <style>{`
+        @keyframes scanY {
+          0%   { top: -20%; }
+          100% { top: 100%; }
+        }
+        @keyframes pulseGlow {
+          0%, 100% { opacity: 0.4; transform: scale(0.95); }
+          50%      { opacity: 0.8; transform: scale(1.05); }
+        }
+      `}</style>
+
+      <main className="pt-20 pb-16">
+        {/* ── Compact Hero (mobile-first, above-fold value) ── */}
+        <section className="bg-gradient-mystic px-4 pt-8 pb-10 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
             style={{
               backgroundImage: 'radial-gradient(circle, hsl(42 87% 55%) 1px, transparent 1px)',
-              backgroundSize: '36px 36px',
+              backgroundSize: '32px 32px',
             }}
           />
-          {/* Ambient glow blobs */}
-          <div className="absolute top-1/4 left-[10%] w-[460px] h-[300px] rounded-full bg-accent/8 blur-[130px] pointer-events-none" />
-          <div className="absolute bottom-1/4 right-[10%] w-[380px] h-[260px] rounded-full bg-purple-800/14 blur-[110px] pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[220px] rounded-full bg-indigo-900/8 blur-[90px] pointer-events-none" />
-          {/* ॐ watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-            <span className="text-[18rem] text-accent/[0.035] font-serif leading-none"
-              style={{ filter: 'blur(1px)' }}>ॐ</span>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[380px] h-[240px] rounded-full bg-accent/10 blur-[100px] pointer-events-none" />
+
+          <div className="relative z-10 max-w-2xl mx-auto text-center">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 glass-premium rounded-full px-3 py-1 mb-4 border border-accent/25">
+              <Sparkles className="w-3 h-3 text-accent" />
+              <span className="text-[11px] font-semibold text-white/80 tracking-wide">
+                AI Compatibility · Powered by Ancient Palmistry
+              </span>
+            </div>
+
+            {/* Product-clear headline */}
+            <h1 className="text-[2.1rem] leading-[1.1] md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4">
+              AI Compatibility Report
+              <span className="block text-gradient-gold mt-1">for Couples</span>
+            </h1>
+
+            <p className="text-white/70 text-[15px] md:text-base max-w-md mx-auto mb-5 leading-relaxed">
+              Upload both palms. Our AI analyzes your emotional bond, communication,
+              shared goals, and long-term potential — in under 3 minutes.
+            </p>
+
+            {/* Trust row — visible above fold */}
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mb-6 text-[12px] text-white/75">
+              <span className="inline-flex items-center gap-1.5">
+                <Heart className="w-3.5 h-3.5 text-accent" fill="currentColor" />
+                4,200+ reports
+              </span>
+              <span className="text-white/25">·</span>
+              <span className="inline-flex items-center gap-1">
+                <div className="flex">
+                  {[0,1,2,3,4].map((i) => (
+                    <Star key={i} className="w-3 h-3 text-accent" fill="currentColor" />
+                  ))}
+                </div>
+                <span className="ml-1">4.9/5</span>
+              </span>
+              <span className="text-white/25">·</span>
+              <span className="inline-flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-accent" /> Private
+              </span>
+              <span className="text-white/25">·</span>
+              <span className="inline-flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-accent" /> Under 3 min
+              </span>
+            </div>
+
+            {/* Report preview card */}
+            <ReportPreviewCard />
+
+            <a
+              href="#start"
+              className="inline-flex items-center gap-1.5 mt-5 text-xs text-accent hover:text-accent/80 transition-colors"
+            >
+              Start your reading below <ArrowRight className="w-3 h-3" />
+            </a>
           </div>
-          {/* Star-field particles — circles + rotated diamonds */}
-          {heroParticles.map((p, i) => (
-            <motion.div
-              key={i}
-              className="absolute bg-accent pointer-events-none"
+        </section>
+
+        {/* ── Wizard ── */}
+        <div id="start" className="container mx-auto px-4 max-w-xl -mt-6">
+          <div
+            className="glass-premium rounded-3xl border border-accent/20 overflow-hidden"
+            style={{ boxShadow: '0 20px 60px hsl(245 58% 25% / 0.15)' }}
+          >
+            <div
+              className="h-[3px] w-full"
               style={{
-                left: p.left, top: p.top,
-                width: p.size, height: p.size,
-                borderRadius: p.diamond ? '1px' : '50%',
-                transform: p.diamond ? 'rotate(45deg)' : undefined,
+                background:
+                  'linear-gradient(90deg, transparent, hsl(42 87% 55%), hsl(260 50% 65%), hsl(42 87% 55%), transparent)',
               }}
-              animate={{ y: [0, -24, 0], opacity: [0.25, 0.85, 0.25] }}
-              transition={{ repeat: Infinity, duration: p.dur, delay: p.delay }}
             />
-          ))}
+            <div className="p-6 md:p-8">
+              <StepIndicator current={step} />
 
-          <div className="relative z-10 max-w-3xl mx-auto">
-            {/* Live activity pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2.5 glass-premium rounded-full px-4 py-2 mb-6 border border-accent/20"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
-              </span>
-              <span className="text-xs font-medium text-white/70">
-                3 couples discovering their destiny right now
-              </span>
-            </motion.div>
-
-            {/* Sanskrit eyebrow with ornamental dividers */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="flex items-center justify-center gap-4 mb-5"
-            >
-              <div className="h-px w-14 bg-gradient-to-r from-transparent to-accent/40" />
-              <p className="text-sm tracking-[0.28em] text-accent/90 italic font-medium whitespace-nowrap">
-                ॐ Yugal Rekha · Compatibility Reading
-              </p>
-              <div className="h-px w-14 bg-gradient-to-l from-transparent to-accent/40" />
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.75 }}
-              className="text-5xl md:text-6xl lg:text-[5.25rem] font-serif font-bold text-white mb-6 leading-[1.05]"
-            >
-              Do Your Palms Tell
-              <span className="text-gradient-gold block mt-2"
-                style={{ textShadow: '0 0 60px hsl(42 87% 55% / 0.25)' }}>
-                the Same Story?
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.6 }}
-              className="text-white/70 text-lg md:text-xl max-w-lg mx-auto mb-9 leading-relaxed"
-            >
-              Two palms placed before the cosmos — ancient Indian palmistry
-              decodes your emotional bond, life alignment, and sacred destiny.
-            </motion.p>
-
-            {/* Trust badges — premium pill style */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
-              className="flex flex-wrap justify-center gap-3 mb-7"
-            >
-              {[
-                { icon: Shield, text: '100% private' },
-                { icon: Zap, text: 'Results in 3 min' },
-                { icon: Users, text: '4,200+ couples' },
-              ].map(({ icon: Icon, text }) => (
-                <span
-                  key={text}
-                  className="flex items-center gap-2 text-sm text-white/75 glass-premium border border-white/12 rounded-full pl-1.5 pr-4 py-1.5"
-                >
-                  <span className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-3 h-3 text-accent" />
-                  </span>
-                  {text}
-                </span>
-              ))}
-            </motion.div>
-
-            {/* Ornamental divider */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.42 }}
-              className="flex items-center justify-center gap-3 mb-5"
-            >
-              <div className="h-px w-20 bg-gradient-to-r from-transparent to-accent/25" />
-              <span className="text-accent/40 text-[11px] font-serif">✦</span>
-              <div className="h-px w-20 bg-gradient-to-l from-transparent to-accent/25" />
-            </motion.div>
-
-            {/* Discover pills */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.48 }}
-            >
-              <p className="text-white/30 text-[10px] uppercase tracking-[0.28em] mb-3 font-bold">
-                What you'll discover
-              </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {[...dimensionIcons, { icon: Sparkles, label: 'Spiritual Remedies' }].map(({ icon: Icon, label }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-1.5 glass-premium px-3.5 py-2 rounded-full text-xs text-white/80 border border-accent/18"
-                    style={{ boxShadow: '0 2px 12px hsl(42 87% 55% / 0.06)' }}
+              <AnimatePresence mode="wait">
+                {step === 1 && (
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
                   >
-                    <Icon className="w-3.5 h-3.5 text-accent" />
-                    {label}
+                    <ImageUploadZone
+                      image={image1}
+                      status={status1}
+                      onFile={handleImage1}
+                      onClear={clearImage1}
+                      label="Upload your palm"
+                      hint="Right hand · dominant"
+                    />
+
+                    <div className="grid grid-cols-2 gap-3 mt-6">
+                      <div>
+                        <Label htmlFor="p1name" className="text-xs font-semibold mb-1.5 block">
+                          Your name
+                        </Label>
+                        <Input
+                          id="p1name"
+                          placeholder="e.g. Priya"
+                          value={person1Name}
+                          onChange={(e) => setPerson1Name(e.target.value)}
+                          className="rounded-xl h-11"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="p1age" className="text-xs font-semibold mb-1.5 block">
+                          Your age
+                        </Label>
+                        <Input
+                          id="p1age"
+                          type="number"
+                          inputMode="numeric"
+                          placeholder="e.g. 28"
+                          min="10"
+                          max="100"
+                          value={person1Age}
+                          onChange={(e) => setPerson1Age(e.target.value)}
+                          className="rounded-xl h-11"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-1.5">
+                      Age helps AI personalize compatibility timelines and life-stage analysis.
+                    </p>
+
+                    <Button
+                      onClick={() => setStep(2)}
+                      disabled={!canAdvanceStep1}
+                      className="btn-gold w-full mt-6 h-12 rounded-2xl text-foreground font-semibold text-[15px] gap-2"
+                    >
+                      Continue — add their palm
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                )}
+
+                {step === 2 && (
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <ImageUploadZone
+                      image={image2}
+                      status={status2}
+                      onFile={handleImage2}
+                      onClear={clearImage2}
+                      label="Upload their palm"
+                      hint="Their dominant hand"
+                    />
+
+                    <div className="grid grid-cols-2 gap-3 mt-6">
+                      <div>
+                        <Label htmlFor="p2name" className="text-xs font-semibold mb-1.5 block">
+                          Their name
+                        </Label>
+                        <Input
+                          id="p2name"
+                          placeholder="e.g. Arjun"
+                          value={person2Name}
+                          onChange={(e) => setPerson2Name(e.target.value)}
+                          className="rounded-xl h-11"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="p2age" className="text-xs font-semibold mb-1.5 block">
+                          Their age
+                        </Label>
+                        <Input
+                          id="p2age"
+                          type="number"
+                          inputMode="numeric"
+                          placeholder="e.g. 30"
+                          min="10"
+                          max="100"
+                          value={person2Age}
+                          onChange={(e) => setPerson2Age(e.target.value)}
+                          className="rounded-xl h-11"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <Label className="text-xs font-semibold mb-1.5 block">
+                        Relationship
+                      </Label>
+                      <Select value={relationshipType} onValueChange={setRelationshipType}>
+                        <SelectTrigger className="rounded-xl h-11">
+                          <SelectValue placeholder="Select relationship" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {RELATIONSHIP_TYPES.map((r) => (
+                            <SelectItem key={r} value={r}>{r}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="mt-4">
+                      <Label htmlFor="email" className="text-xs font-semibold mb-1.5 block">
+                        Email for your report
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        inputMode="email"
+                        placeholder="you@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="rounded-xl h-11"
+                      />
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        We'll send your report here. No spam, ever.
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2 mt-6">
+                      <Button
+                        variant="outline"
+                        onClick={() => setStep(1)}
+                        className="rounded-2xl h-12 px-4 gap-1.5 border-accent/25 text-foreground/80"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back
+                      </Button>
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={!canAdvanceStep2}
+                        className="btn-gold flex-1 h-12 rounded-2xl text-foreground font-semibold text-[15px] gap-2"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        Reveal our compatibility
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Trust row under card */}
+              <div className="grid grid-cols-2 gap-2 mt-6 pt-5 border-t border-border/40">
+                {[
+                  { icon: Lock, text: 'Images encrypted' },
+                  { icon: Shield, text: 'Deleted after analysis' },
+                  { icon: Sparkles, text: 'AI compares both palms' },
+                  { icon: Zap, text: 'Ready in under 3 min' },
+                ].map(({ icon: Icon, text }) => (
+                  <div
+                    key={text}
+                    className="flex items-center gap-2 text-[11px] text-muted-foreground"
+                  >
+                    <Icon className="w-3 h-3 text-accent flex-shrink-0" />
+                    {text}
                   </div>
                 ))}
               </div>
-            </motion.div>
-
-            {/* Sample result preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="mt-8 inline-flex items-center gap-4 glass-premium rounded-2xl px-5 py-3.5 border border-accent/25 mx-auto"
-              style={{ boxShadow: '0 0 32px hsl(42 87% 55% / 0.1)' }}
-            >
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-serif font-bold text-accent leading-none">87%</span>
-                <span className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5">match</span>
-              </div>
-              <div className="w-px h-9 bg-accent/15" />
-              <div className="text-left">
-                <p className="text-xs font-semibold text-white/80 mb-0.5">Sample: Priya & Arjun</p>
-                <p className="text-[10px] text-white/40">Soulmate Connection · ✦ Deeply Written</p>
-              </div>
-              <div className="text-accent/60 text-xs font-serif italic">Preview</div>
-            </motion.div>
+            </div>
           </div>
-        </div>
-
-        {/* ── Wizard ── */}
-        <div className="container mx-auto px-4 max-w-2xl">
-          <StepIndicator current={step} />
-
-          <AnimatePresence mode="wait">
-            {/* ── Step 1 ── */}
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                className="glass-premium rounded-3xl border border-accent/20 overflow-hidden"
-                style={{ boxShadow: '0 0 50px hsl(42 87% 55% / 0.07), 0 24px 60px hsl(245 58% 25% / 0.1)' }}
-              >
-                <div
-                  className="h-[3px] w-full"
-                  style={{ background: 'linear-gradient(90deg, transparent, hsl(42 87% 55%), hsl(260 50% 65%), hsl(42 87% 55%), transparent)' }}
-                />
-                <div className="p-7 md:p-9">
-                  <p className="text-sm text-accent/70 mb-7 text-center font-serif italic">
-                    ✦ The universe needs to see your hand first
-                  </p>
-
-                  <ImageUploadZone
-                    image={image1}
-                    onImage={(f, p) => { setFile1(f); setImage1(p); }}
-                    onClear={() => { setFile1(null); setImage1(null); }}
-                    label="Upload Your Palm"
-                    sanskritLabel="Pahla Hath"
-                  />
-
-                  {/* Form section divider */}
-                  <div className="flex items-center gap-3 mt-8 mb-6">
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsl(42 87% 55% / 0.2))' }} />
-                    <span className="text-[9px] text-accent/50 uppercase tracking-[0.28em] font-bold">Your Details</span>
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(270deg, transparent, hsl(42 87% 55% / 0.2))' }} />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="p1name" className="text-sm font-semibold mb-0.5 block text-foreground/85">
-                        Your Name
-                      </Label>
-                      <p className="text-[10px] text-accent/50 italic mb-2">Aapka Naam</p>
-                      <Input
-                        id="p1name"
-                        placeholder="e.g. Priya"
-                        value={person1Name}
-                        onChange={(e) => setPerson1Name(e.target.value)}
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="p1age" className="text-sm font-semibold mb-0.5 block text-foreground/85">
-                        Your Age
-                      </Label>
-                      <p className="text-[10px] text-accent/50 italic mb-2">Aapki Umar</p>
-                      <Input
-                        id="p1age"
-                        type="number"
-                        placeholder="e.g. 28"
-                        min="10"
-                        max="100"
-                        value={person1Age}
-                        onChange={(e) => setPerson1Age(e.target.value)}
-                        className="rounded-xl"
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={() => setStep(2)}
-                    disabled={!canAdvanceStep1}
-                    className="btn-gold w-full mt-7 py-6 rounded-2xl text-foreground font-bold text-base gap-2"
-                  >
-                    Continue — Add Their Palm
-                    <ArrowRight className="w-5 h-5" />
-                  </Button>
-                  <div className="flex items-center justify-center gap-1.5 mt-3">
-                    <Shield className="w-3 h-3 text-accent/60" />
-                    <p className="text-xs text-muted-foreground">
-                      Palm image encrypted · Never stored beyond analysis
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ── Step 2 ── */}
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                className="glass-premium rounded-3xl border border-accent/20 overflow-hidden"
-                style={{ boxShadow: '0 0 50px hsl(260 50% 55% / 0.07), 0 24px 60px hsl(245 58% 25% / 0.1)' }}
-              >
-                <div
-                  className="h-[3px] w-full"
-                  style={{ background: 'linear-gradient(90deg, transparent, hsl(260 50% 65%), hsl(42 87% 55%), hsl(260 50% 65%), transparent)' }}
-                />
-                <div className="p-7 md:p-9">
-                  <p className="text-sm text-accent/70 mb-7 text-center font-serif italic">
-                    ✦ Almost there — now add their palm to reveal your destiny
-                  </p>
-
-                  <ImageUploadZone
-                    image={image2}
-                    onImage={(f, p) => { setFile2(f); setImage2(p); }}
-                    onClear={() => { setFile2(null); setImage2(null); }}
-                    label="Upload Their Palm"
-                    sanskritLabel="Doosra Hath"
-                  />
-
-                  {/* Form section divider */}
-                  <div className="flex items-center gap-3 mt-8 mb-6">
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsl(260 50% 55% / 0.25))' }} />
-                    <span className="text-[9px] text-accent/50 uppercase tracking-[0.28em] font-bold">Their Details</span>
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(270deg, transparent, hsl(260 50% 55% / 0.25))' }} />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="p2name" className="text-sm font-semibold mb-0.5 block text-foreground/85">
-                        Their Name
-                      </Label>
-                      <p className="text-[10px] text-accent/50 italic mb-2">Unka Naam</p>
-                      <Input
-                        id="p2name"
-                        placeholder="e.g. Arjun"
-                        value={person2Name}
-                        onChange={(e) => setPerson2Name(e.target.value)}
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="p2age" className="text-sm font-semibold mb-0.5 block text-foreground/85">
-                        Their Age
-                      </Label>
-                      <p className="text-[10px] text-accent/50 italic mb-2">Unki Umar</p>
-                      <Input
-                        id="p2age"
-                        type="number"
-                        placeholder="e.g. 30"
-                        min="10"
-                        max="100"
-                        value={person2Age}
-                        onChange={(e) => setPerson2Age(e.target.value)}
-                        className="rounded-xl"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-5">
-                    <Label className="text-sm font-semibold mb-0.5 block text-foreground/85">
-                      Your Relationship
-                    </Label>
-                    <p className="text-[10px] text-accent/50 italic mb-2">Sambandh</p>
-                    <Select value={relationshipType} onValueChange={setRelationshipType}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Select relationship..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {RELATIONSHIP_TYPES.map((r) => (
-                          <SelectItem key={r} value={r}>{r}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="mt-5">
-                    <Label htmlFor="email" className="text-sm font-semibold mb-0.5 block text-foreground/85">
-                      Your Email
-                    </Label>
-                    <p className="text-[10px] text-accent/50 italic mb-2">Report delivered here · Aapka Email</p>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="rounded-xl"
-                    />
-                  </div>
-
-                  {/* Ornamental divider before CTA */}
-                  <div className="flex items-center gap-3 mt-8 mb-6">
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsl(42 87% 55% / 0.2))' }} />
-                    <span className="text-accent/35 text-[10px] font-serif">✦ ✦ ✦</span>
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(270deg, transparent, hsl(42 87% 55% / 0.2))' }} />
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setStep(1)}
-                      className="border-accent/20 rounded-2xl py-6 px-5 gap-2 text-foreground/70 hover:border-accent/40"
-                    >
-                      <ArrowLeft className="w-4 h-4" />
-                      Back
-                    </Button>
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={!canAdvanceStep2}
-                      className="btn-gold flex-1 py-6 rounded-2xl text-foreground font-bold text-base gap-2"
-                    >
-                      <Sparkles className="w-5 h-5" />
-                      Reveal Our Compatibility
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-accent/60" /> Free preview</span>
-                    <span className="text-muted-foreground/30">·</span>
-                    <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-accent/60" /> No sign-up</span>
-                    <span className="text-muted-foreground/30">·</span>
-                    <span>Results in 3 min</span>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </main>
       <Footer />
