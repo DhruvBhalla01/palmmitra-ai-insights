@@ -17,6 +17,10 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Help = lazy(() => import("./pages/Help"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const AiStart = lazy(() => import("./pages/AiStart"));
+const AiConversation = lazy(() => import("./pages/AiConversation"));
+const AiUpgrade = lazy(() => import("./pages/AiUpgrade"));
 
 const queryClient = new QueryClient();
 
@@ -43,6 +47,10 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/help" element={<Help />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/ai/start/:reportId" element={<AiStart />} />
+            <Route path="/ai/upgrade" element={<AiUpgrade />} />
+            <Route path="/ai/:reportId" element={<AiConversation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

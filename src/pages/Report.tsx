@@ -666,6 +666,26 @@ export default function Report() {
                 userName={userData?.name}
               />
 
+              {/* Continue with PalmMitra AI */}
+              {isUnlocked && resolvedReportId && (
+                <div className="mt-8 rounded-2xl border border-amber-500/30 bg-gradient-to-b from-amber-500/[0.06] to-transparent p-6 sm:p-8 text-center">
+                  <div className="text-[10px] uppercase tracking-[0.24em] text-amber-300/80">Included with your report</div>
+                  <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-amber-100">
+                    Continue with PalmMitra AI
+                  </h3>
+                  <p className="mt-2 text-amber-100/60 max-w-lg mx-auto text-sm">
+                    Ask your personal AI guide anything about your career, marriage, wealth or future. 3 complimentary questions included.
+                  </p>
+                  <button
+                    onClick={() => navigate(`/ai/start/${resolvedReportId}`)}
+                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 text-black font-medium px-6 py-3 hover:from-amber-200 hover:to-amber-400 transition-all shadow-[0_10px_40px_-10px_rgba(251,191,36,0.5)]"
+                  >
+                    Start My AI Guidance →
+                  </button>
+                </div>
+              )}
+
+
               {/* 11. Premium Paywall - Only show if not unlocked */}
               {!isUnlocked && (
                 <PremiumPaywall 
