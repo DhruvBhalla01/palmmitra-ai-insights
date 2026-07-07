@@ -420,101 +420,21 @@ export default function PalmMatch() {
   const canAdvanceStep1 = image1 && person1Name && person1Age;
   const canAdvanceStep2 = image2 && person2Name && person2Age && relationshipType && email;
 
-  // ─── Processing Screen ─────────────────────────────────────────────────
+  // ─── Processing Screen (Premium AI Overlay) ────────────────────────────
   if (processing !== 'idle' && processing !== 'error') {
-    const isDone = processing === 'complete';
-    const isAnalyzing = processing === 'analyzing' || isDone;
-    const stages = [
-      { text: 'Palm images encrypted', done: true },
-      { text: 'AI reading both palm lines', done: isAnalyzing },
-      { text: 'Comparing compatibility patterns', done: isDone },
-      { text: 'Composing your report', done: isDone },
-    ];
-    const progressPct = isDone ? 100 : isAnalyzing ? 74 : 32;
-
     return (
-      <div className="min-h-screen bg-gradient-mystic flex items-center justify-center px-4">
-        <div className="text-center max-w-sm w-full">
-          {/* Minimal AI ring */}
-          <div className="relative w-24 h-24 mx-auto mb-8">
-            <div
-              className="absolute inset-0 rounded-full border-2 border-accent/20"
-              style={{ animation: isDone ? 'none' : 'spin 3s linear infinite' }}
-            />
-            <div
-              className="absolute inset-2 rounded-full border-2 border-transparent border-t-accent"
-              style={{ animation: isDone ? 'none' : 'spin 1.4s linear infinite reverse' }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              {isDone ? (
-                <CheckCircle className="w-10 h-10 text-accent" />
-              ) : (
-                <Sparkles className="w-8 h-8 text-accent" />
-              )}
-            </div>
-          </div>
-
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2">
-            {isDone ? 'Your report is ready' : 'Analyzing compatibility'}
-          </h2>
-          <p className="text-white/50 text-sm mb-8">
-            {isDone
-              ? 'Opening your PalmMatch report…'
-              : 'Our AI is comparing both palms in real time.'}
-          </p>
-
-          <div className="space-y-3 mb-6 text-left">
-            {stages.map((stage) => (
-              <div
-                key={stage.text}
-                className={`flex items-center gap-3 text-sm transition-colors ${
-                  stage.done ? 'text-white/90' : 'text-white/30'
-                }`}
-              >
-                <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    stage.done ? 'bg-accent' : 'bg-white/10'
-                  }`}
-                >
-                  {stage.done ? (
-                    <CheckCircle className="w-3 h-3 text-foreground" />
-                  ) : (
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                  )}
-                </div>
-                {stage.text}
-              </div>
-            ))}
-          </div>
-
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden max-w-xs mx-auto mb-2">
-            <div
-              className="h-full rounded-full transition-[width] duration-1000 ease-out"
-              style={{
-                width: `${progressPct}%`,
-                background: 'linear-gradient(90deg, hsl(42 87% 55%), hsl(42 90% 72%))',
-              }}
-            />
-          </div>
-          <p className="text-white/40 text-xs tabular-nums">{progressPct}% complete</p>
-
-          {!isDone && (
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={processingMsgIdx}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-white/45 text-xs mt-4"
-              >
-                {processingMessages[processingMsgIdx]}
-              </motion.p>
-            </AnimatePresence>
-          )}
-        </div>
-      </div>
+      <PalmMatchAnalysisOverlay
+        open
+        isComplete={processing === 'complete'}
+        hasError={false}
+        person1Name={person1Name}
+        person2Name={person2Name}
+        image1Url={image1}
+        image2Url={image2}
+      />
     );
   }
+
 
   // ─── Main Upload UI ───────────────────────────────────────────────────
   return (
