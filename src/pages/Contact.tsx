@@ -12,14 +12,15 @@ import { Mail, MessageCircle, Clock, Send, MapPin, Sparkles } from 'lucide-react
 import { z } from 'zod';
 import { Link } from 'react-router-dom';
 import { useHashScroll } from '@/hooks/useHashScroll';
+import { nameSchema, emailSchema, messageSchema, zodFieldErrors } from '@/lib/validation';
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-  email: z.string().trim().email('Please enter a valid email address').max(255, 'Email must be less than 255 characters'),
-  message: z.string().trim().min(10, 'Message must be at least 10 characters').max(1000, 'Message must be less than 1000 characters'),
+  name: nameSchema,
+  email: emailSchema,
+  message: messageSchema,
 });
 
-type ContactFormData = z.infer<typeof contactSchema>;
+type ContactFormData = z.input<typeof contactSchema>;
 
 const contactInfo = [
   {
@@ -66,18 +67,12 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;                     // prevent double-submit
     setErrors({});
 
-    // Validate form
     const result = contactSchema.safeParse(formData);
     if (!result.success) {
-      const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
-      result.error.errors.forEach(err => {
-        if (err.path[0]) {
-          fieldErrors[err.path[0] as keyof ContactFormData] = err.message;
-        }
-      });
-      setErrors(fieldErrors);
+      setErrors(zodFieldErrors(result.error) as Partial<Record<keyof ContactFormData, string>>);
       return;
     }
 
