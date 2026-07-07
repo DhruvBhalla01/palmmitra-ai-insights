@@ -580,12 +580,11 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Processing palm reading for ${name}, age ${age}, type: ${readingType}`);
+    console.log(`Processing palm reading, age ${ageNum}, type: ${safeReadingType}`);
 
     // STEP 1: Validate the palm image
     const validation = await validatePalmImage(imageUrl, OPENAI_API_KEY);
 
-    // Check if validation passed
     if (!validation.is_palm || validation.confidence < 70) {
       console.log("Palm validation failed:", validation);
       return new Response(
@@ -601,19 +600,17 @@ serve(async (req) => {
       );
     }
 
-    console.log("Palm validation passed, generating reading...");
-
     // STEP 2: Generate the palm reading
-    const palmReading = await generatePalmReading(imageUrl, name, age, readingType, OPENAI_API_KEY);
+    const palmReading = await generatePalmReading(imageUrl, cleanName, String(ageNum), safeReadingType, OPENAI_API_KEY);
 
     // STEP 3: Save to database
     const { data: reportData, error: dbError } = await supabase
       .from("palm_reports")
       .insert({
-        user_name: name,
-        user_age: age,
-        user_email: email || null,
-        reading_type: readingType,
+        user_name: cleanName,
+        user_age: String(ageNum),
+        user_email: cleanEmail || null,
+        reading_type: safeReadingType,
         image_url: imageUrl,
         validation_confidence: validation.confidence,
         validation_quality: validation.quality,
@@ -624,9 +621,6 @@ serve(async (req) => {
 
     if (dbError) {
       console.error("Database error:", dbError);
-      // Continue even if DB save fails - still return the reading
-    } else {
-      console.log("Report saved to database:", reportData?.id);
     }
 
     return new Response(
@@ -636,9 +630,9 @@ serve(async (req) => {
         validation,
         reading: palmReading,
         reportId: reportData?.id || null,
-        name,
-        age,
-        readingType,
+        name: cleanName,
+        age: ageNum,
+        readingType: safeReadingType,
         generatedAt: new Date().toISOString(),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -646,9 +640,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error in analyze-palm function:", error);
     return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : "An unexpected error occurred",
-      }),
+      JSON.stringify({ error: "We couldn't process your reading right now. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
