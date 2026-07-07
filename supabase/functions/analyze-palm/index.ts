@@ -531,19 +531,49 @@ serve(async (req) => {
 
     await supabase.from("api_rate_limits").insert({ identifier, endpoint: "analyze-palm" });
 
-    const { imageUrl, name, age, email, readingType }: PalmAnalysisRequest = await req.json();
-
-    if (!imageUrl || !name || !age) {
-      return new Response(JSON.stringify({ error: "Missing required fields: imageUrl, name, or age" }), {
+    let body: PalmAnalysisRequest;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON payload" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const { imageUrl, name, age, email, readingType } = body ?? {} as PalmAnalysisRequest;
+
+    // ── Server-side input validation (never trust the client) ──
+    if (typeof imageUrl !== "string" || typeof name !== "string" || typeof age !== "string") {
+      return new Response(JSON.stringify({ error: "Missing or invalid fields: imageUrl, name, age" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const cleanName = name.replace(/\s+/g, " ").trim();
+    if (cleanName.length < 2 || cleanName.length > 60 || /[<>{}$]/.test(cleanName) || !/[A-Za-z\u00C0-\u024F\u0900-\u097F]/.test(cleanName)) {
+      return new Response(JSON.stringify({ error: "Please enter a valid name." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const ageNum = parseInt(String(age).trim(), 10);
+    if (!Number.isInteger(ageNum) || ageNum < 13 || ageNum > 100) {
+      return new Response(JSON.stringify({ error: "Age must be a whole number between 13 and 100." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    if (cleanEmail && (cleanEmail.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail))) {
+      return new Response(JSON.stringify({ error: "Please enter a valid email address." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const validReadingTypes = ["full", "career", "love", "wealth"];
+    const safeReadingType = validReadingTypes.includes(readingType) ? readingType : "full";
 
     // Validate imageUrl belongs to our Supabase storage to prevent SSRF abuse of OpenAI API
     const allowedStoragePrefix = `${SUPABASE_URL}/storage/v1/object/public/palm-uploads/`;
-    if (!imageUrl.startsWith(allowedStoragePrefix)) {
-      console.warn(`Rejected invalid imageUrl from ${identifier}: ${imageUrl.substring(0, 60)}`);
+    if (!imageUrl.startsWith(allowedStoragePrefix) || imageUrl.length > 512) {
+      console.warn(`Rejected invalid imageUrl from ${identifier}`);
       return new Response(
         JSON.stringify({ error: "Invalid image URL. Please upload through PalmMitra." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
