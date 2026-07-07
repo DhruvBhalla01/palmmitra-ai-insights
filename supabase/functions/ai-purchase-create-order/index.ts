@@ -51,6 +51,7 @@ Deno.serve(async (req) => {
 
   const { data: payment, error: dbErr } = await admin.from("payments").insert({
     user_email: user.email,
+    user_id: user.id,
     plan_type: plan,
     razorpay_order_id: rz.id,
     amount,
