@@ -132,13 +132,12 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                 id="paywall-heading"
                 className="font-serif text-3xl md:text-5xl font-bold text-foreground leading-tight tracking-tight"
               >
-                Your Personalized Palm Analysis
+                Unlock Your Complete
                 <br />
-                <span className="text-gradient-gold">is Ready ✦</span>
+                <span className="text-gradient-gold">2,000+ Word AI Report ✦</span>
               </h2>
               <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
-                A 12-page destiny report{userName ? ` crafted for ${userName}` : ''} —
-                every line, mount, and life window decoded by PalmMitra AI.
+                {userName ? `${userName}'s ` : 'A '}personalised destiny report — every line, mount and life window decoded by PalmMitra AI.
               </p>
             </div>
 
