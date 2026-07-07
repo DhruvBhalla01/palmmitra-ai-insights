@@ -21,11 +21,12 @@ interface PremiumPaywallProps {
 /* ------------------------------------------------------------------ */
 
 const benefits = [
-  { icon: Activity,  label: 'Complete Life Analysis',      hook: 'All 5 major palm lines fully decoded' },
-  { icon: Briefcase, label: 'Career & Wealth Predictions', hook: 'Breakthrough year + wealth accumulation style' },
-  { icon: Heart,     label: 'Love & Relationship Insights',hook: 'Marriage timing window + compatibility pattern' },
-  { icon: Brain,     label: 'Health & Personality',         hook: 'Mounts, temperament & wellbeing signals' },
-  { icon: Calendar,  label: 'Lucky Years & Life Events',    hook: '5-year timeline of your peak windows' },
+  { icon: Briefcase, label: 'Career',           hook: 'Breakthrough year + peak earning window' },
+  { icon: Heart,     label: 'Marriage',         hook: 'Timing window + compatibility pattern'   },
+  { icon: TrendingUp,label: 'Wealth',           hook: 'Money style + prosperity signals'        },
+  { icon: Activity,  label: 'Health',           hook: 'Vitality markers + wellbeing cycles'     },
+  { icon: Brain,     label: 'Personality',      hook: 'Mounts, temperament & hidden strengths'  },
+  { icon: Calendar,  label: 'Future Guidance',  hook: '5-year timeline of your peak windows'    },
 ] as const;
 
 const trustPills = [
