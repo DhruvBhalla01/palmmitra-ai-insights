@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Lock, Shield, CreditCard, Zap, Crown, Check, Sparkles, Eye, ShieldCheck, Tag, ChevronDown, Gem } from "lucide-react";
+import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
 import { PRODUCTS } from "@/config/pricing";
@@ -10,7 +9,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectPlan: (plan: PlanType, couponCode?: string) => void;
+  onSelectPlan: (plan: PlanType) => void;
   isProcessing: boolean;
   reportName?: string;
 }
@@ -23,30 +22,21 @@ export function PaymentModal({
   reportName = "Your Palm Reading",
 }: PaymentModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<PlanType>("report99");
-  const [couponCode, setCouponCode] = useState("");
-  const [showCoupon, setShowCoupon] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  // Reset state when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setCouponCode("");
-      setShowCoupon(false);
-    }
-  }, [isOpen]);
-
   const handleProceed = () => {
-    onSelectPlan(selectedPlan, couponCode.trim() || undefined);
+    onSelectPlan(selectedPlan);
   };
 
   const { currency } = useCurrency();
   const insightPrice = PRODUCTS.insight.prices[currency].display;
   const elitePrice = PRODUCTS.elite.prices[currency].display;
   const priceLabel = selectedPlan === "report99" ? insightPrice : elitePrice;
+
 
   return (
     <AnimatePresence>
@@ -173,43 +163,6 @@ export function PaymentModal({
                   </motion.button>
                 </div>
 
-                {/* Coupon Code */}
-                <div className="mb-6">
-                  <button
-                    type="button"
-                    onClick={() => setShowCoupon(v => !v)}
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
-                  >
-                    <Tag className="w-4 h-4" />
-                    Have a coupon code?
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showCoupon ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  <AnimatePresence>
-                    {showCoupon && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-3 flex gap-2">
-                          <Input
-                            value={couponCode}
-                            onChange={e => setCouponCode(e.target.value.toUpperCase())}
-                            placeholder="e.g. PALMFRIEND"
-                            className="rounded-xl uppercase tracking-widest font-mono text-sm"
-                            maxLength={20}
-                          />
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1.5">
-                          Coupon will be applied when you proceed to pay.
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
 
                 {/* Trust Signals */}
                 <div className="grid grid-cols-2 gap-3 mb-6">

@@ -106,10 +106,3 @@ export function stripeAmount(planId: PlanId): number {
   return product?.prices.USD.minor ?? 0;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Coupons                                                           */
-/* ------------------------------------------------------------------ */
-
-export const COUPONS = {
-  PALMFRIEND: { discountDisplay: { INR: '₹50', USD: '$1' } },
-} as const;

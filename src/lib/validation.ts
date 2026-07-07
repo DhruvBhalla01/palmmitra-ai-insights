@@ -50,15 +50,6 @@ export const emailSchema = z
       .max(254, 'Email is too long'),
   );
 
-// ─── Coupon ──────────────────────────────────────────────────────────────────
-export const couponSchema = z
-  .string()
-  .transform((v) => v.trim().toUpperCase())
-  .pipe(
-    z
-      .string()
-      .regex(/^[A-Z0-9_-]{3,32}$/, 'Coupon code has an invalid format'),
-  );
 
 // ─── Message (contact form) ──────────────────────────────────────────────────
 export const messageSchema = z

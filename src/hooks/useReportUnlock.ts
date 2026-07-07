@@ -40,7 +40,7 @@ interface UseReportUnlockResult {
   isLoading: boolean;
   isProcessing: boolean;
   checkUnlockStatus: () => Promise<void>;
-  initiatePayment: (plan: PlanType, couponCode?: string) => Promise<void>;
+  initiatePayment: (plan: PlanType) => Promise<void>;
 }
 
 export function useReportUnlock(
@@ -86,7 +86,7 @@ export function useReportUnlock(
     checkUnlockStatus();
   }, [checkUnlockStatus]);
 
-  const initiatePayment = useCallback(async (plan: PlanType, couponCode?: string) => {
+  const initiatePayment = useCallback(async (plan: PlanType) => {
     if (!userEmail) {
       toast({
         title: 'Email Required',
@@ -115,33 +115,15 @@ export function useReportUnlock(
             user_email: userEmail,
             report_id: plan === 'report99' ? reportId : undefined,
             plan,
-            coupon_code: couponCode || undefined,
           },
         }
       );
 
       if (orderError || !orderData?.success) {
-        // Surface coupon errors distinctly so the modal can display them
-        if (orderData?.coupon_error) {
-          toast({
-            title: 'Invalid Coupon',
-            description: orderData.coupon_error,
-            variant: 'destructive',
-          });
-          setIsProcessing(false);
-          return;
-        }
         throw new Error(orderData?.error || 'Failed to create order');
       }
 
-      const { order_id, amount, currency, payment_id, key_id, description, coupon_applied, discount_amount } = orderData;
-
-      if (coupon_applied && discount_amount > 0) {
-        toast({
-          title: '🎟️ Coupon Applied!',
-          description: `₹${discount_amount / 100} discount applied to your order.`,
-        });
-      }
+      const { order_id, amount, currency, payment_id, key_id, description } = orderData;
 
       if (!window.Razorpay) {
         await loadRazorpayScript();

@@ -12,7 +12,6 @@ interface CreateOrderRequest {
   report_id?: string;
   palmmatch_report_id?: string;
   plan: PlanType;
-  coupon_code?: string;
 }
 
 // Amounts in paise (INR). Keep in sync with src/config/pricing.ts
@@ -35,7 +34,7 @@ Deno.serve(async (req) => {
 
   try {
     const body: CreateOrderRequest = await req.json();
-    const { user_email, report_id, palmmatch_report_id, plan, coupon_code } = body;
+    const { user_email, report_id, palmmatch_report_id, plan } = body;
 
     if (!user_email || !plan) {
       return ok({ success: false, error: 'Missing required fields: user_email and plan' });
@@ -65,38 +64,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    let discountAmount = 0;
-    let appliedCouponCode: string | null = null;
-
-    if (coupon_code) {
-      const code = coupon_code.trim().toUpperCase();
-      const { data: coupon, error: couponError } = await supabase
-        .from('referral_codes')
-        .select('*')
-        .eq('code', code)
-        .maybeSingle();
-
-      if (couponError || !coupon) {
-        return ok({ success: false, coupon_error: 'Invalid coupon code. Please check and try again.' });
-      }
-      if (coupon.valid_until && new Date(coupon.valid_until) < new Date()) {
-        return ok({ success: false, coupon_error: 'This coupon has expired.' });
-      }
-      if (coupon.max_uses !== null && coupon.uses_count >= coupon.max_uses) {
-        return ok({ success: false, coupon_error: 'This coupon has reached its usage limit.' });
-      }
-
-      const base = PLAN_AMOUNTS[plan];
-      if (coupon.discount_type === 'flat') {
-        discountAmount = Math.min(coupon.discount_value, base - 100);
-      } else if (coupon.discount_type === 'percent') {
-        discountAmount = Math.min(Math.floor(base * coupon.discount_value / 100), base - 100);
-      }
-      appliedCouponCode = code;
-    }
-
-    const baseAmount = PLAN_AMOUNTS[plan];
-    const finalAmount = baseAmount - discountAmount;
+    const finalAmount = PLAN_AMOUNTS[plan];
 
     const planLabels: Record<PlanType, string> = {
       report99:     'PalmMitra Insight — Full Palm Reading',
@@ -134,8 +102,6 @@ Deno.serve(async (req) => {
         razorpay_order_id: razorpayRes.id,
         amount: finalAmount,
         status: 'pending',
-        coupon_code: appliedCouponCode,
-        discount_amount: discountAmount,
       })
       .select()
       .single();
@@ -149,9 +115,6 @@ Deno.serve(async (req) => {
       success: true,
       order_id: razorpayRes.id,
       amount: finalAmount,
-      original_amount: baseAmount,
-      discount_amount: discountAmount,
-      coupon_applied: appliedCouponCode !== null,
       currency: 'INR',
       payment_id: payment.id,
       key_id: razorpayKeyId,
