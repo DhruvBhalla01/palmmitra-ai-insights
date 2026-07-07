@@ -9,16 +9,24 @@ interface StickyUnlockCTAProps {
   userName?: string;
   onUnlockClick: () => void;
   isUnlocked: boolean;
+  ctaLabel?: string;
+  subLabel?: string;
+  priceOverride?: string;
+  listPriceOverride?: string;
+  socialProof?: string;
 }
 
 const DISMISSED_KEY = 'sticky_cta_dismissed';
 
-export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyUnlockCTAProps) {
+export function StickyUnlockCTA({
+  userName, onUnlockClick, isUnlocked,
+  ctaLabel, subLabel, priceOverride, listPriceOverride, socialProof,
+}: StickyUnlockCTAProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const { currency } = useCurrency();
-  const price     = PRODUCTS.insight.prices[currency].display;
-  const listPrice = currency === 'INR' ? '₹299' : '$19.99';
+  const price     = priceOverride ?? PRODUCTS.insight.prices[currency].display;
+  const listPrice = listPriceOverride ?? (currency === 'INR' ? '₹299' : '$19.99');
 
   useEffect(() => {
     setIsDismissed(sessionStorage.getItem(DISMISSED_KEY) === 'true');
