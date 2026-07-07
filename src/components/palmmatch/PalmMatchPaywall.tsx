@@ -11,12 +11,17 @@ interface PalmMatchPaywallProps {
   isProcessing: boolean;
 }
 
-const valueItems = [
-  'All 5 compatibility dimensions fully decoded',
-  'Strengths & growth areas specific to your pair',
-  'Best timing window for major decisions together',
-  '2 personalised spiritual remedies for your bond',
-  'Permanent report link + shareable result',
+const unlockItems = [
+  'Communication compatibility & rhythm',
+  'Romance & emotional chemistry',
+  'Shared life goals & timing alignment',
+  'Spiritual compatibility',
+  'Personalized relationship guidance',
+  'Future compatibility timeline',
+  'Best window for major decisions together',
+  '2 spiritual remedies personalised for your bond',
+  'Ask PalmMatch AI · unlimited questions',
+  'Downloadable PDF · shareable result link',
 ];
 
 const teaserDimensions = [
