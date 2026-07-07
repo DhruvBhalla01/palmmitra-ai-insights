@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { AnimatedSection } from '@/components/AnimatedSection';
+import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
