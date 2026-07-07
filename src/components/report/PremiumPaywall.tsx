@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   Sparkles, Crown, Shield, Zap, Lock, ArrowRight, Check, Flame,
-  Star, Heart, Briefcase, Activity, Calendar, Brain, ChevronRight,
+  Star, Heart, Briefcase, Activity, Calendar, Brain, ChevronRight, TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PRODUCTS } from '@/config/pricing';
