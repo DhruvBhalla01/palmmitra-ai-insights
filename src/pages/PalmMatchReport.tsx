@@ -124,6 +124,11 @@ export default function PalmMatchReport() {
           userName={`${person1Name} & ${person2Name}`}
           onUnlockClick={handleUnlockClick}
           isUnlocked={isUnlocked}
+          ctaLabel="Unlock Full Compatibility Report"
+          subLabel={`For ${person1Name} & ${person2Name} · One-time`}
+          priceOverride="₹999"
+          listPriceOverride="₹1,999"
+          socialProof="92 couples unlocked this week · launch price"
         />
       )}
 
