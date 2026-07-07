@@ -80,7 +80,7 @@ export function StickyUnlockCTA({
             <div className="flex items-center justify-center gap-1.5 mb-2">
               <span className="text-accent text-[10px]">✦</span>
               <p className="text-[11px] text-muted-foreground">
-                23 unlocked in the last hour · launch price
+                {socialProof ?? '23 unlocked in the last hour · launch price'}
               </p>
               <span className="text-accent text-[10px]">✦</span>
             </div>
@@ -92,7 +92,7 @@ export function StickyUnlockCTA({
                   <span className="font-serif text-2xl font-bold text-gradient-gold leading-none">{price}</span>
                   <span className="text-xs text-muted-foreground line-through">{listPrice}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">One-time · forever</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{subLabel ?? 'One-time · forever'}</p>
               </div>
 
               <motion.div whileTap={{ scale: 0.97 }} className="flex-1">
@@ -102,7 +102,7 @@ export function StickyUnlockCTA({
                   aria-label={`Unlock full report for ${price}`}
                 >
                   <Sparkles className="w-4 h-4" />
-                  Unlock {userName ? `${userName.split(' ')[0]}'s` : 'Full'} Report
+                  {ctaLabel ?? `Unlock ${userName ? `${userName.split(' ')[0]}'s` : 'Full'} Report`}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </motion.div>
