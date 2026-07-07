@@ -539,24 +539,47 @@ export default function UploadPalm() {
                           <Input
                             id="name"
                             placeholder="e.g. Priya Sharma"
+                            autoComplete="name"
+                            maxLength={60}
+                            aria-invalid={!!fieldErrors.name}
+                            aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                             value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
+                            onChange={(e) => {
+                              setFormData({ ...formData, name: e.target.value });
+                              if (fieldErrors.name) setFieldErrors((p) => ({ ...p, name: undefined }));
+                            }}
+                            className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.name ? 'border-destructive' : 'border-border/60'}`}
                           />
+                          {fieldErrors.name && (
+                            <p id="name-error" className="text-xs text-destructive">{fieldErrors.name}</p>
+                          )}
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="age" className="text-sm font-medium text-foreground">Your Age</Label>
                           <Input
                             id="age"
                             type="number"
-                            min="1"
-                            max="120"
+                            inputMode="numeric"
+                            min={13}
+                            max={100}
+                            step={1}
                             placeholder="e.g. 28"
+                            aria-invalid={!!fieldErrors.age}
+                            aria-describedby={fieldErrors.age ? 'age-error' : 'age-help'}
                             value={formData.age}
-                            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                            className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
+                            onChange={(e) => {
+                              // strip non-digits for iOS safari edge cases
+                              const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+                              setFormData({ ...formData, age: v });
+                              if (fieldErrors.age) setFieldErrors((p) => ({ ...p, age: undefined }));
+                            }}
+                            className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.age ? 'border-destructive' : 'border-border/60'}`}
                           />
-                          <p className="text-xs text-muted-foreground">Used to personalise your life timeline and AI insights.</p>
+                          {fieldErrors.age ? (
+                            <p id="age-error" className="text-xs text-destructive">{fieldErrors.age}</p>
+                          ) : (
+                            <p id="age-help" className="text-xs text-muted-foreground">Used to personalise your life timeline (13–100).</p>
+                          )}
                         </div>
                       </div>
 
@@ -565,12 +588,24 @@ export default function UploadPalm() {
                         <Input
                           id="email"
                           type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          maxLength={254}
                           placeholder="your@email.com"
+                          aria-invalid={!!fieldErrors.email}
+                          aria-describedby={fieldErrors.email ? 'email-error' : 'email-help'}
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
+                          onChange={(e) => {
+                            setFormData({ ...formData, email: e.target.value });
+                            if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                          }}
+                          className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.email ? 'border-destructive' : 'border-border/60'}`}
                         />
-                        <p className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
+                        {fieldErrors.email ? (
+                          <p id="email-error" className="text-xs text-destructive">{fieldErrors.email}</p>
+                        ) : (
+                          <p id="email-help" className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
+                        )}
                       </div>
                     </div>
                   </AnimatedSection>
