@@ -182,6 +182,30 @@ serve(async (req) => {
 
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
+    // ── Rate limiting: max 5 palmmatch analyses per IP per hour ──
+    // Prevents AI-cost abuse and mass generation of free readings.
+    const identifier =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+    const windowStart = new Date();
+    windowStart.setMinutes(0, 0, 0, 0);
+    const { count: rlCount } = await supabaseClient
+      .from("api_rate_limits")
+      .select("*", { count: "exact", head: true })
+      .eq("identifier", identifier)
+      .eq("endpoint", "analyze-palmmatch")
+      .gte("created_at", windowStart.toISOString());
+    if ((rlCount ?? 0) >= 5) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Rate limit exceeded. Please try again in an hour." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    await supabaseClient.from("api_rate_limits").insert({ identifier, endpoint: "analyze-palmmatch" });
+
+
     let body: PalmMatchRequest;
     try {
       body = await req.json();

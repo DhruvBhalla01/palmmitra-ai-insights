@@ -93,10 +93,29 @@ Deno.serve(async (req) => {
     );
 
     if (!isValid) {
-      await supabase.from('payments').update({ status: 'failed' }).eq('id', payment_id);
+      // Only mark failed if we haven't already succeeded — never regress a good payment.
+      if (payment.status !== 'success') {
+        await supabase.from('payments').update({ status: 'failed' }).eq('id', payment_id);
+      }
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid payment signature' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Idempotency: if this payment is already fulfilled (webhook or prior verify call
+    // already ran), do not re-insert unlocks, re-extend subscriptions, or re-increment
+    // coupon usage. Just report success.
+    if (payment.status === 'success') {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          unlocked: true,
+          subscription: payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999',
+          plan: payment.plan_type,
+          alreadyProcessed: true,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
