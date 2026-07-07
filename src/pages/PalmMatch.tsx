@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 
 type Step = 1 | 2;
 type ProcessingState = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
