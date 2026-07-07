@@ -257,19 +257,19 @@ serve(async (req) => {
     console.log("Both palms validated. Generating compatibility reading...");
 
     const reading = await generateCompatibilityReading(
-      image1Url, image2Url, person1, person2, relationshipType, openaiApiKey
+      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey
     );
 
     const reportId = `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const { error: dbError } = await supabaseClient.from("palmmatch_reports").insert({
       report_id: reportId,
-      person1_name: person1.name,
-      person2_name: person2.name,
-      person1_age: parseInt(person1.age) || null,
-      person2_age: parseInt(person2.age) || null,
+      person1_name: cleanP1.name,
+      person2_name: cleanP2.name,
+      person1_age: parseInt(cleanP1.age) || null,
+      person2_age: parseInt(cleanP2.age) || null,
       relationship_type: relationshipType,
-      email,
+      email: cleanEmail,
       overall_score: (reading as { overallScore?: number }).overallScore || 75,
       reading,
       is_unlocked: false,
@@ -286,7 +286,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("PalmMatch edge function error:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ success: false, error: "We couldn't generate your compatibility report right now. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
