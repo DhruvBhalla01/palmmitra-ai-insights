@@ -1,30 +1,23 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { useNavigate } from 'react-router-dom';
 import {
-  Upload, X, Loader2, User, AlertCircle, CheckCircle, Hand,
-  Camera, Sun, Eye, Shield, Lock, Sparkles, FileText, Heart,
-  Briefcase, TrendingUp, Star, ArrowRight, Zap, ShieldCheck,
+  Upload, X, Loader2, User, AlertCircle, CheckCircle,
+  Camera, Eye, Shield, Lock, Sparkles, FileText, Heart,
+  Briefcase, TrendingUp, Star, ArrowRight, Zap, ShieldCheck, Bot, Clock,
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type ReadingType = 'full' | 'career' | 'love' | 'wealth';
+type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
 
 interface FormData {
@@ -57,11 +50,11 @@ const reportSections = [
   { icon: Sparkles,    label: 'Spiritual Remedies',    free: false },
 ];
 
-const photoTips = [
-  { icon: Hand,         text: 'Open palm facing camera'  },
-  { icon: Sun,          text: 'Good natural lighting'    },
-  { icon: Eye,          text: 'Lines clearly visible'    },
-  { icon: CheckCircle,  text: 'One hand only'            },
+const trustChips = [
+  { icon: Lock,        text: 'Photo used only for analysis' },
+  { icon: Clock,       text: 'Report ready in under 2 min'  },
+  { icon: Bot,         text: 'AI-powered palm analysis'     },
+  { icon: Star,        text: 'Rated 4.9 by 12,400+ users'   },
 ];
 
 const progressSteps = [
@@ -69,15 +62,6 @@ const progressSteps = [
   { n: 2, label: 'Your Details' },
   { n: 3, label: 'Get Reading'  },
 ];
-
-const loadingSteps = [
-  { step: 'uploading',  label: 'Securing your palm image'    },
-  { step: 'validating', label: 'AI verifying palm clarity'   },
-  { step: 'analyzing',  label: 'Decoding your destiny lines' },
-  { step: 'saving',     label: 'Generating your report'      },
-];
-
-const stepOrder = ['uploading', 'validating', 'analyzing', 'saving'];
 
 export default function UploadPalm() {
   const navigate = useNavigate();
@@ -88,6 +72,8 @@ export default function UploadPalm() {
   const [processingStep, setProcessingStep] = useState<ProcessingStep>('idle');
   const [validationError, setValidationError] = useState<ValidationError | null>(null);
   const [loadingMessageIdx, setLoadingMessageIdx] = useState(0);
+  // Background upload — kicks off as soon as image is chosen, awaited at submit
+  const uploadPromiseRef = useRef<Promise<string> | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     age: '',
@@ -146,12 +132,18 @@ export default function UploadPalm() {
     const reader = new FileReader();
     reader.onload = (e) => setImage(e.target?.result as string);
     reader.readAsDataURL(file);
+    // Kick off storage upload in background so it's ready by the time user submits
+    uploadPromiseRef.current = uploadToStorage(file).catch((err) => {
+      uploadPromiseRef.current = null;
+      throw err;
+    });
   };
 
   const removeImage = () => {
     setImage(null);
     setImageFile(null);
     setValidationError(null);
+    uploadPromiseRef.current = null;
   };
 
   const uploadToStorage = async (file: File): Promise<string> => {
@@ -178,7 +170,8 @@ export default function UploadPalm() {
 
     try {
       setProcessingStep('uploading');
-      const imageUrl = await uploadToStorage(imageFile);
+      // Await the background upload started when image was chosen (may already be done)
+      const imageUrl = await (uploadPromiseRef.current ?? uploadToStorage(imageFile));
 
       setProcessingStep('validating');
       setProcessingStep('analyzing');
@@ -264,11 +257,11 @@ export default function UploadPalm() {
               <span className="text-sm font-medium text-accent">Free scan · No payment needed to start</span>
             </motion.div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-              One Photo.{' '}
-              <span className="text-gradient-gold text-shadow-luxury">Your Entire Destiny.</span>
+              Upload Your{' '}
+              <span className="text-gradient-gold text-shadow-luxury">Dominant Hand</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Upload your dominant hand. AI reads your life line, fate line, heart line and 12 more markers — in under 2 minutes.
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+              Our AI analyses 150+ palm markers and prepares your personalised life report in under 2 minutes.
             </p>
           </AnimatedSection>
 
@@ -447,10 +440,10 @@ export default function UploadPalm() {
                     </div>
                   </AnimatedSection>
 
-                  {/* Photo Tips */}
+                  {/* Trust Chips */}
                   <AnimatedSection delay={0.2}>
                     <div className="grid grid-cols-2 gap-2">
-                      {photoTips.map(({ icon: Icon, text }) => (
+                      {trustChips.map(({ icon: Icon, text }) => (
                         <div key={text} className="flex items-center gap-2 p-3 rounded-xl bg-muted/25 border border-border/40 text-xs text-muted-foreground">
                           <Icon className="w-3.5 h-3.5 text-accent flex-shrink-0" />
                           {text}
@@ -530,6 +523,7 @@ export default function UploadPalm() {
                             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                             className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
                           />
+                          <p className="text-xs text-muted-foreground">Used to personalise your life timeline and AI insights.</p>
                         </div>
                       </div>
 
@@ -543,26 +537,7 @@ export default function UploadPalm() {
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent"
                         />
-                        <p className="text-xs text-muted-foreground">Your report link is sent here · used only for this</p>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label className="text-sm font-medium text-foreground">Reading Focus</Label>
-                        <Select
-                          value={formData.readingType}
-                          onValueChange={(value: ReadingType) => setFormData({ ...formData, readingType: value })}
-                        >
-                          <SelectTrigger className="rounded-xl py-5 bg-background/50 border-border/60 focus:border-accent">
-                            <SelectValue placeholder="Select focus" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="full">Full Life Reading (Recommended)</SelectItem>
-                            <SelectItem value="career">Career & Wealth Focus</SelectItem>
-                            <SelectItem value="love">Love & Relationships Focus</SelectItem>
-                            <SelectItem value="wealth">Money & Prosperity Focus</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground">Deepens AI focus on your chosen area</p>
+                        <p className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
                       </div>
                     </div>
                   </AnimatedSection>
