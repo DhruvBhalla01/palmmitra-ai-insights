@@ -346,8 +346,14 @@ export default function PalmMatchReport() {
 
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
 
+          {/* ── EXECUTIVE SUMMARY (above-the-fold value density) ── */}
+          <ExecutiveSummary reading={reading} isUnlocked={isUnlocked} />
+
+          {/* ── AI CREDIBILITY SIGNALS ── */}
+          <AiSignalsRow />
+
           {/* Overall narrative — editorial quote treatment */}
-          <AnimatedSection className="-mt-6 mb-10">
+          <AnimatedSection className="mb-10">
             <div
               className="glass-premium rounded-3xl p-6 md:p-9 border border-accent/15 relative overflow-hidden"
               style={{ boxShadow: '0 20px 60px hsl(245 58% 18% / 0.15), 0 0 0 1px hsl(42 87% 55% / 0.06)' }}
