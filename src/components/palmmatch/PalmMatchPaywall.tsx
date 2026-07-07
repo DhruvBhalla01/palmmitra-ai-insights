@@ -11,12 +11,17 @@ interface PalmMatchPaywallProps {
   isProcessing: boolean;
 }
 
-const valueItems = [
-  'All 5 compatibility dimensions fully decoded',
-  'Strengths & growth areas specific to your pair',
-  'Best timing window for major decisions together',
-  '2 personalised spiritual remedies for your bond',
-  'Permanent report link + shareable result',
+const unlockItems = [
+  'Communication compatibility & rhythm',
+  'Romance & emotional chemistry',
+  'Shared life goals & timing alignment',
+  'Spiritual compatibility',
+  'Personalized relationship guidance',
+  'Future compatibility timeline',
+  'Best window for major decisions together',
+  '2 spiritual remedies personalised for your bond',
+  'Ask PalmMatch AI · unlimited questions',
+  'Downloadable PDF · shareable result link',
 ];
 
 const teaserDimensions = [
@@ -207,23 +212,30 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           ))}
         </div>
 
-        {/* Value stack */}
-        <ul className="space-y-2.5 mb-7 max-w-sm mx-auto">
-          {valueItems.map((item, i) => (
-            <motion.li
-              key={item}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 + i * 0.06 }}
-              className="flex items-start gap-3 text-sm text-foreground"
-            >
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center mt-0.5">
-                <Check className="w-3 h-3 text-accent" />
-              </div>
-              {item}
-            </motion.li>
-          ))}
-        </ul>
+        {/* "You'll unlock" checklist — payment psychology */}
+        <div className="mb-7 max-w-md mx-auto rounded-2xl border border-accent/20 bg-accent/[0.04] p-5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-accent font-bold mb-3 text-center">
+            You'll Unlock 4 Remaining Dimensions
+          </p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+            {unlockItems.map((item, i) => (
+              <motion.li
+                key={item}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.05 + i * 0.04 }}
+                className="flex items-start gap-2 text-[13px] text-foreground/90"
+              >
+                <div className="flex-shrink-0 w-4 h-4 rounded-full bg-accent/25 flex items-center justify-center mt-0.5">
+                  <Check className="w-2.5 h-2.5 text-accent" strokeWidth={3} />
+                </div>
+                <span className="leading-snug">{item}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+
 
         {/* Launch progress bar — scarcity signal */}
         <div className="mb-6 max-w-sm mx-auto">
@@ -301,7 +313,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 <span className="flex flex-col items-center gap-0.5 w-full">
                   <span className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    Unlock Full Report
+                    Unlock Full Compatibility Report
                     <ArrowRight className="w-4 h-4" />
                   </span>
                   <span className="text-xs font-normal opacity-80">One-time · ₹999</span>

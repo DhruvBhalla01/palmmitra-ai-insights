@@ -12,6 +12,10 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { CompatibilityScoreRing } from '@/components/palmmatch/CompatibilityScoreRing';
 import { DimensionCard } from '@/components/palmmatch/DimensionCard';
 import { PalmMatchPaywall } from '@/components/palmmatch/PalmMatchPaywall';
+import { ExecutiveSummary } from '@/components/palmmatch/ExecutiveSummary';
+import { AiSignalsRow } from '@/components/palmmatch/AiSignalsRow';
+import { AskPalmMatchAI } from '@/components/palmmatch/AskPalmMatchAI';
+import { CompareBar } from '@/components/palmmatch/CompareBar';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
 import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
 import { PalmMatchReading } from '@/components/palmmatch/types';
@@ -120,6 +124,11 @@ export default function PalmMatchReport() {
           userName={`${person1Name} & ${person2Name}`}
           onUnlockClick={handleUnlockClick}
           isUnlocked={isUnlocked}
+          ctaLabel="Unlock Full Compatibility Report"
+          subLabel={`For ${person1Name} & ${person2Name} · One-time`}
+          priceOverride="₹999"
+          listPriceOverride="₹1,999"
+          socialProof="92 couples unlocked this week · launch price"
         />
       )}
 
@@ -337,8 +346,14 @@ export default function PalmMatchReport() {
 
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
 
+          {/* ── EXECUTIVE SUMMARY (above-the-fold value density) ── */}
+          <ExecutiveSummary reading={reading} isUnlocked={isUnlocked} />
+
+          {/* ── AI CREDIBILITY SIGNALS ── */}
+          <AiSignalsRow />
+
           {/* Overall narrative — editorial quote treatment */}
-          <AnimatedSection className="-mt-6 mb-10">
+          <AnimatedSection className="mb-10">
             <div
               className="glass-premium rounded-3xl p-6 md:p-9 border border-accent/15 relative overflow-hidden"
               style={{ boxShadow: '0 20px 60px hsl(245 58% 18% / 0.15), 0 0 0 1px hsl(42 87% 55% / 0.06)' }}
@@ -512,17 +527,53 @@ export default function PalmMatchReport() {
                   <div className="flex-1 h-px" style={{ background: 'linear-gradient(270deg, transparent, hsl(42 87% 55% / 0.3))' }} />
                 </div>
 
-                <p className="text-sm md:text-base text-foreground/85 leading-relaxed mb-5">
-                  {emotionalBond.text}
-                </p>
+                {/* Key insights — 3 bullets extracted from AI text */}
+                {(() => {
+                  const sentences = emotionalBond.text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 12);
+                  const insights = sentences.slice(0, 3);
+                  const rest = sentences.slice(3).join(' ');
+                  return (
+                    <>
+                      {insights.length > 0 && (
+                        <ul className="space-y-2 mb-5">
+                          {insights.map((line, i) => (
+                            <li key={i} className="flex items-start gap-2.5">
+                              <CheckCircle className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: 'hsl(350 80% 60%)' }} />
+                              <p className="text-sm md:text-base text-foreground/90 leading-relaxed">{line}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {rest && (
+                        <p className="text-sm md:text-base text-foreground/75 leading-relaxed mb-5">{rest}</p>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {/* Comparison bars */}
+                <div className="mb-5">
+                  <CompareBar
+                    person1Name={person1Name}
+                    person2Name={person2Name}
+                    score={emotionalBond.score}
+                    trait="Empathy"
+                    color="hsl(350 80% 60%)"
+                  />
+                </div>
+
                 <div
                   className="p-5 rounded-2xl border border-accent/25"
                   style={{ background: 'hsl(42 87% 55% / 0.06)' }}
                 >
-                  <p className="text-sm text-accent font-medium italic leading-relaxed">
-                    ✦ {emotionalBond.guidance}
+                  <p className="text-[11px] uppercase tracking-widest text-accent font-bold mb-1.5">
+                    Practical Guidance
+                  </p>
+                  <p className="text-sm text-foreground/90 italic leading-relaxed">
+                    {emotionalBond.guidance}
                   </p>
                 </div>
+
 
                 {/* Bottom decorative hearts watermark */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 pointer-events-none select-none">
@@ -551,6 +602,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.05}
                 teaser={DIMENSION_TEASERS.communication}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Expressiveness"
               />
               <DimensionCard
                 dimension={lifeGoals}
@@ -560,6 +614,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.1}
                 teaser={DIMENSION_TEASERS.lifeGoals}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Ambition"
               />
               <DimensionCard
                 dimension={romance}
@@ -569,6 +626,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.15}
                 teaser={DIMENSION_TEASERS.romance}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Passion"
               />
               <DimensionCard
                 dimension={spiritualAlignment}
@@ -578,6 +638,9 @@ export default function PalmMatchReport() {
                 onUnlockClick={handleUnlockClick}
                 delay={0.2}
                 teaser={DIMENSION_TEASERS.spiritualAlignment}
+                person1Name={person1Name}
+                person2Name={person2Name}
+                compareTrait="Inner Harmony"
               />
             </div>
           </AnimatedSection>
@@ -818,7 +881,28 @@ export default function PalmMatchReport() {
             </motion.section>
           </AnimatedSection>
 
-          {/* ── Share + Try Another ── */}
+          {/* ── Emotional Closing ── */}
+          <AnimatedSection delay={0.25} className="mb-8">
+            <div className="text-center py-8 px-4">
+              <p className="text-[10px] tracking-[0.28em] text-accent uppercase font-semibold mb-3">
+                A closing note
+              </p>
+              <p className="text-lg md:text-xl font-serif italic text-foreground/90 leading-relaxed max-w-xl mx-auto">
+                Your journey together is unique. May your bond continue to grow with
+                <span className="text-gradient-gold"> understanding, patience, and trust</span>.
+              </p>
+            </div>
+          </AnimatedSection>
+
+          {/* ── Ask PalmMatch AI (natural next step) ── */}
+          <AskPalmMatchAI
+            person1Name={person1Name}
+            person2Name={person2Name}
+            isUnlocked={isUnlocked}
+            onUnlockClick={handleUnlockClick}
+          />
+
+          {/* ── Share + Actions ── */}
           <AnimatedSection delay={0.3}>
             <div className="glass-premium rounded-3xl p-7 md:p-8 border border-accent/20 text-center">
               <h3 className="text-lg font-serif font-bold text-foreground mb-2">
@@ -828,25 +912,34 @@ export default function PalmMatchReport() {
               <p className="text-sm text-muted-foreground mb-6">
                 Let them see what the palms say about your connection
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
                 <Button
                   onClick={handleShare}
-                  className="btn-gold rounded-2xl px-8 py-5 gap-2 text-foreground font-semibold"
+                  className="btn-gold rounded-2xl px-6 py-5 gap-2 text-foreground font-semibold"
                 >
                   <Share2 className="w-4 h-4" />
-                  Share This Reading
+                  Share Compatibility
+                </Button>
+                <Button
+                  onClick={() => window.print()}
+                  variant="outline"
+                  className="border-accent/30 text-foreground hover:bg-accent/10 rounded-2xl px-6 py-5 gap-2"
+                >
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Download PDF
                 </Button>
                 <Button
                   onClick={() => navigate('/palmmatch')}
                   variant="outline"
-                  className="border-accent/30 text-foreground hover:bg-accent/10 rounded-2xl px-8 py-5 gap-2"
+                  className="border-accent/30 text-foreground hover:bg-accent/10 rounded-2xl px-6 py-5 gap-2"
                 >
                   <Heart className="w-4 h-4 text-accent" />
-                  Try Another PalmMatch
+                  Start Another PalmMatch
                 </Button>
               </div>
             </div>
           </AnimatedSection>
+
         </div>
         </div>{/* end relative ambient particles wrapper */}
       </main>

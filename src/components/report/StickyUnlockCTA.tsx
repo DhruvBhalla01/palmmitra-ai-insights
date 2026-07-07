@@ -9,16 +9,24 @@ interface StickyUnlockCTAProps {
   userName?: string;
   onUnlockClick: () => void;
   isUnlocked: boolean;
+  ctaLabel?: string;
+  subLabel?: string;
+  priceOverride?: string;
+  listPriceOverride?: string;
+  socialProof?: string;
 }
 
 const DISMISSED_KEY = 'sticky_cta_dismissed';
 
-export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyUnlockCTAProps) {
+export function StickyUnlockCTA({
+  userName, onUnlockClick, isUnlocked,
+  ctaLabel, subLabel, priceOverride, listPriceOverride, socialProof,
+}: StickyUnlockCTAProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const { currency } = useCurrency();
-  const price     = PRODUCTS.insight.prices[currency].display;
-  const listPrice = currency === 'INR' ? '₹299' : '$19.99';
+  const price     = priceOverride ?? PRODUCTS.insight.prices[currency].display;
+  const listPrice = listPriceOverride ?? (currency === 'INR' ? '₹299' : '$19.99');
 
   useEffect(() => {
     setIsDismissed(sessionStorage.getItem(DISMISSED_KEY) === 'true');
@@ -72,7 +80,7 @@ export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyU
             <div className="flex items-center justify-center gap-1.5 mb-2">
               <span className="text-accent text-[10px]">✦</span>
               <p className="text-[11px] text-muted-foreground">
-                23 unlocked in the last hour · launch price
+                {socialProof ?? '23 unlocked in the last hour · launch price'}
               </p>
               <span className="text-accent text-[10px]">✦</span>
             </div>
@@ -84,7 +92,7 @@ export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyU
                   <span className="font-serif text-2xl font-bold text-gradient-gold leading-none">{price}</span>
                   <span className="text-xs text-muted-foreground line-through">{listPrice}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">One-time · forever</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{subLabel ?? 'One-time · forever'}</p>
               </div>
 
               <motion.div whileTap={{ scale: 0.97 }} className="flex-1">
@@ -94,7 +102,7 @@ export function StickyUnlockCTA({ userName, onUnlockClick, isUnlocked }: StickyU
                   aria-label={`Unlock full report for ${price}`}
                 >
                   <Sparkles className="w-4 h-4" />
-                  Unlock {userName ? `${userName.split(' ')[0]}'s` : 'Full'} Report
+                  {ctaLabel ?? `Unlock ${userName ? `${userName.split(' ')[0]}'s` : 'Full'} Report`}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </motion.div>
