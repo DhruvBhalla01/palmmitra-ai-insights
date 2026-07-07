@@ -440,10 +440,10 @@ export default function UploadPalm() {
                     </div>
                   </AnimatedSection>
 
-                  {/* Photo Tips */}
+                  {/* Trust Chips */}
                   <AnimatedSection delay={0.2}>
                     <div className="grid grid-cols-2 gap-2">
-                      {photoTips.map(({ icon: Icon, text }) => (
+                      {trustChips.map(({ icon: Icon, text }) => (
                         <div key={text} className="flex items-center gap-2 p-3 rounded-xl bg-muted/25 border border-border/40 text-xs text-muted-foreground">
                           <Icon className="w-3.5 h-3.5 text-accent flex-shrink-0" />
                           {text}
