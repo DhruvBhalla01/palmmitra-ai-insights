@@ -127,8 +127,7 @@ export function PricingSection() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
             <p className="text-sm font-medium text-foreground">
-              <span className="text-accent font-bold">120+ readings</span> completed this week ·
-              Use code <span className="text-accent font-bold">PALMFRIEND</span> for an extra discount
+              <span className="text-accent font-bold">120+ readings</span> completed this week
             </p>
           </div>
         </AnimatedSection>
@@ -300,8 +299,6 @@ export function PricingSection() {
             </span>
             <span className="text-border">·</span>
             <span>UPI, Cards, Wallets accepted</span>
-            <span className="text-border">·</span>
-            <span className="text-accent font-medium">Use code PALMFRIEND for extra savings</span>
           </div>
         </AnimatedSection>
       </div>
