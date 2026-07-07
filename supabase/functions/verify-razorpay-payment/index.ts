@@ -208,22 +208,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Increment coupon usage after confirmed successful payment
-    if (payment.coupon_code) {
-      const { data: coupon } = await supabase
-        .from('referral_codes')
-        .select('uses_count')
-        .eq('code', payment.coupon_code)
-        .single();
-
-      if (coupon) {
-        await supabase
-          .from('referral_codes')
-          .update({ uses_count: coupon.uses_count + 1 })
-          .eq('code', payment.coupon_code);
-        console.log(`Coupon ${payment.coupon_code} uses incremented to ${coupon.uses_count + 1}`);
-      }
-    }
 
     return new Response(
       JSON.stringify({
