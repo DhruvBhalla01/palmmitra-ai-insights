@@ -1,104 +1,64 @@
+# PalmMitra Production Readiness Audit
 
-# Premium Paywall Redesign — Report Unlock
+Scope is large. To keep this a single, reviewable pass, I'll do it in **4 phases**. Each phase ships together so the app stays working.
 
-## 1. Pricing update (₹149 launch price)
+## Phase 1 — Official email rebrand (fast, global)
 
-Update the single source of truth so every surface (paywall, sticky bar, modal, PDF, edge functions, schema.org) reflects ₹149 automatically.
+Replace every hardcoded email with **thepalmmitra@gmail.com**.
 
-- `src/config/pricing.ts` → `PRODUCTS.insight.prices.INR` = `{ minor: 14900, major: 149, display: '₹149' }`. USD stays $9.99 (or adjust if you want — flag if so).
-- `supabase/functions/create-razorpay-order/index.ts` → `PLAN_AMOUNTS.report99` = `14900`.
-- Sweep and replace any remaining hardcoded `₹299` strings (StickyUnlockCTA, PaymentModal copy, meta tags in `index.html`, FAQ, Help).
-- Keep the internal `planId: 'report99'` unchanged (DB CHECK constraints depend on it — no migration needed).
+Files touched:
+- `index.html` (JSON-LD `support@palmmitra.com`)
+- `src/pages/Privacy.tsx`, `src/pages/Terms.tsx`, `src/pages/Help.tsx`, `src/pages/Contact.tsx`
+- `src/pages/UploadPalm.tsx` (delete-request line)
+- `src/components/home/FAQSection.tsx`
+- Grep sweep afterward to confirm zero occurrences of `@palmmitra.com` remain.
 
-## 2. New `PremiumPaywall.tsx` — structure
+Add one constant `SUPPORT_EMAIL` in `src/config/brand.ts` so future changes are single-file.
 
-Complete rewrite of the card. Layout (top → bottom):
+## Phase 2 — Input validation layer (shared)
 
-```text
-┌───────────────────────────────────────────────────────┐
-│  ✦ Live pulse: "247 readings unlocked in last 24h"   │
-│                                                       │
-│         Your Personalized Palm Analysis               │
-│                  is Ready ✦                           │
-│      A 12-page destiny report crafted for {name}      │
-│                                                       │
-│  ┌─────────────────┐   ┌───────────────────────────┐ │
-│  │ BLURRED REPORT  │   │  What's inside (5 items)  │ │
-│  │ PREVIEW STACK   │   │  ✓ Complete Life Analysis │ │
-│  │ (3 teaser cards │   │  ✓ Career & Wealth        │ │
-│  │  behind blur +  │   │  ✓ Love & Relationships   │ │
-│  │  gold lock)     │   │  ✓ Health & Personality   │ │
-│  │                 │   │  ✓ Lucky Years & Events   │ │
-│  └─────────────────┘   └───────────────────────────┘ │
-│                                                       │
-│  ╔═══════════════════════════════════════════════╗   │
-│  ║  ✦ UNLOCK FULL REPORT — ₹149  →              ║   │  ← dominant gold CTA
-│  ║  ~~₹299~~ · Launch price · One-time payment  ║   │
-│  ╚═══════════════════════════════════════════════╝   │
-│                                                       │
-│  🛡 Razorpay · ⚡ Instant · 🔒 Private · ↺ Refund   │
-│  UPI · Cards · Wallets · Net Banking                  │
-└───────────────────────────────────────────────────────┘
-```
+Create `src/lib/validation.ts` with **Zod schemas** used by every form:
+- `nameSchema`: trim, collapse spaces, 2–60 chars, must contain a letter, reject `<>{}`.
+- `ageSchema`: integer 13–100, no decimals, coerced from string.
+- `emailSchema`: RFC via Zod `.email()`, trim + lowercase, ≤254 chars.
+- `couponSchema`: `[A-Z0-9_-]{3,32}`, uppercased.
+- `imageFileSchema`: MIME ∈ {jpeg, png, webp, heic}, size 50KB–10MB, dimension check via `createImageBitmap` (min 400×400).
 
-### Visual language
-- Glass card: `bg-gradient-to-b from-background/60 to-background/40`, `backdrop-blur-2xl`, `border-2 border-accent/40`, layered gold outer glow + inner shimmer sweep.
-- Animated aurora gradient blob behind the CTA (Motion `animate` loop, respects `prefers-reduced-motion`).
-- Typography: existing serif for headline (`font-serif`, `text-3xl md:text-4xl`), gradient-gold on "Ready". Tight tracking, generous line-height.
-- Two-column layout on `md+`, stacked on mobile with the CTA pinned as the last element.
+Wire into:
+- `src/pages/UploadPalm.tsx` — submit-time + on-blur validation, per-field error messages, disable submit when invalid, prevent double-submit (already partial).
+- `src/pages/PalmMatch.tsx` — same rules × two people.
+- `src/pages/Contact.tsx` — name/email/message, 10–2000 chars, block HTML.
+- Any coupon input in payment modal.
 
-### Teaser preview stack (left column)
-Three miniature "report cards" rendered from the user's actual report data but heavily blurred (`blur-md select-none`) with a gold `Lock` badge and a small unblurred header per card:
-1. **Marriage Timing Window** — shows real headline, blurs the age range + paragraph.
-2. **Career Breakthrough Year** — real category label, blurred prediction.
-3. **Lucky Years 2026–2030** — teaser label, blurred timeline.
+Replace generic "Something went wrong" toasts with contextual copy (blurry image, palm not visible, network failed, payment declined, etc.).
 
-Each card has a subtle hover tilt (`whileHover={{ rotateY: 2 }}`) so they feel tactile.
+## Phase 3 — Backend hardening
 
-### Benefits column (right)
-5 rows with gold line-icon → bold label → one-line hook. Each row uses `motion.div` stagger-in on scroll.
+Add server-side Zod validation in every edge function that accepts user input:
+- `analyze-palm`, `analyze-palmmatch`: validate name/age/email/imageUrl (must be same-origin Supabase storage URL), reject oversize payloads, keep existing GPT quality gate.
+- `create-razorpay-order`: strict plan enum (already), require valid email, sanitize coupon, reject client-sent `amount` (already server-side — verify no leak).
+- `verify-razorpay-payment`, `razorpay-webhook`: already signature-verified — add explicit payload shape check.
+- `get-report`, `get-palmmatch-status`, `get-unlock-status`: require report_id UUID format, restrict returned locked fields to previews only.
 
-### Primary CTA
-- Full-width gold gradient button, `py-7`, `text-xl font-bold`, gold-glow shadow that pulses every 3s.
-- Micro-interaction: `whileHover={{ scale: 1.02, boxShadow: 'gold-lg' }}`, `whileTap={{ scale: 0.98 }}`, arrow icon translates right on hover.
-- Price row underneath: `₹299` struck-through in muted, `₹149` in gold, "Launch price" pill, "One-time payment · yours forever" microcopy.
-- Secondary ghost link below: "See what Elite includes → ₹4,999" (keeps upsell path, de-emphasized).
+Confirm:
+- No client can set `payments.amount`, `status`, or `report_unlocks` (RLS already blocks — document).
+- Report route `/report/:id` shows locked preview only until `report_unlocks` row exists; premium content fetched exclusively via authenticated edge fn.
+- Storage bucket `palm-uploads`: filenames already randomized; verify `upsert:false` (yes) and consider path prefix per-email hash.
 
-### Trust + urgency
-- Trust row: 4 icon+label pills (Razorpay secured, Instant unlock, 100% private, Refund if unhappy).
-- Payment method row: monochrome UPI/Visa/Mastercard/Rupay marks.
-- FOMO (subtle, not spammy): the live "247 readings unlocked in last 24h" pulse at top + a small "Launch price ends soon" line beside the price — no fake countdown timer.
-- AI credibility line at the bottom: "Analyzed by PalmMitra AI · trained on 10,000+ traditional readings".
+## Phase 4 — Cleanup, SEO, a11y
 
-## 3. New `StickyUnlockCTA.tsx` — mobile bar refresh
+- Remove `console.log` from edge functions (keep `console.error`).
+- Remove dead validators / unused imports found during pass.
+- Ensure every public page has title + meta description + canonical + OG/Twitter (audit `Report`, `PalmMatch`, `PalmMatchReport`, `Contact`, `About`, `Help`, `Privacy`, `Terms`, `UploadPalm`, `NotFound`).
+- A11y pass on forms: `<Label htmlFor>`, `aria-invalid`, `aria-describedby` on errors, focus rings preserved, buttons have accessible names.
 
-Match the paywall's language so mobile feels equally premium.
+## Deliverable
 
-- Height +12px, dual-line layout: gold price block on the left (`₹149` big, `₹299` strikethrough small), CTA button on the right (`Unlock →`).
-- Thin gold gradient top border + soft glow.
-- Micro social-proof line above: "✦ 23 unlocked in the last hour".
-- Trust chips row (Razorpay · Instant · Private) in a single 11px line.
-- Dismiss `X` moves to a smaller top-right corner so it doesn't compete with the CTA.
-- Uses the same `useCurrency` + `PRODUCTS.insight` price so it stays in sync.
+Final report at end of implementation covering: issues found, severity, files modified, validation added, security fixes, production checklist, and confirmation the old email is gone.
 
-## 4. Files touched
+## What I will NOT change
+- Visual design, colors, layout, or copy tone.
+- Business logic in reports.
+- Razorpay pricing.
 
-- `src/config/pricing.ts` — price values.
-- `src/components/report/PremiumPaywall.tsx` — full rewrite.
-- `src/components/report/StickyUnlockCTA.tsx` — restructure + price wiring via `PRODUCTS.insight` + `useCurrency`.
-- `supabase/functions/create-razorpay-order/index.ts` — `PLAN_AMOUNTS.report99` → 14900.
-- `index.html` — update schema.org / OG price metadata.
-- Sweep: `src/pages/Help.tsx`, `src/components/home/FAQSection.tsx`, `src/components/home/PricingSection.tsx`, `src/components/payment/PaymentModal.tsx`, `src/lib/generateReportPDF.ts`, `src/components/MobileCTABar.tsx` — replace any remaining hardcoded ₹299 for the Insight tier.
-
-## 5. Guardrails
-
-- Business logic untouched: `useReportUnlock`, Razorpay order flow, verify webhook, DB CHECK constraints, `planId` strings all unchanged.
-- No new dependencies — reuse Motion, lucide, existing gold tokens (`btn-gold`, `shadow-gold`, `text-gradient-gold`, `glass-premium`).
-- Fully responsive: two-column ≥`md`, single-column stack on mobile with teaser stack first, benefits collapsed into a compact checklist, CTA sticks to bottom of card.
-- Respects `prefers-reduced-motion` for aurora/pulse loops.
-- Accessibility: single `h2` headline, aria-labels on CTA + dismiss, blurred content marked `aria-hidden`, focus ring preserved on gold button.
-
-## 6. Verification
-
-- `tsgo` typecheck after edits.
-- Playwright screenshot of `/report/:id` at 1280 and 390 widths to confirm layout, gold CTA dominance, and blur teaser render correctly in dark mode.
+Approve to proceed and I'll execute all 4 phases in one implementation pass.
