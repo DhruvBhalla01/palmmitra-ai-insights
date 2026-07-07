@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem } from "lucide-react";
+import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
