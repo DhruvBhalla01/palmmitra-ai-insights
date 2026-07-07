@@ -32,10 +32,10 @@ export function MobileCTABar() {
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
 
           <div className="glass-premium border-t border-accent/15 px-4 py-3 safe-area-bottom bg-background/95 backdrop-blur-xl">
-            <Link to="/upload" className="block" aria-label="Scan my palm for free">
-              <Button className="btn-gold w-full text-foreground font-semibold py-5 rounded-2xl flex items-center justify-center gap-2 text-base">
+            <Link to="/upload" className="block" aria-label="Analyze my palm for free">
+              <Button className="btn-gold w-full text-foreground font-semibold py-5 rounded-2xl flex items-center justify-center gap-2 text-base min-h-[52px]">
                 <Sparkles className="w-5 h-5" aria-hidden="true" />
-                Scan My Palm — Free
+                Analyze My Palm — Free
                 <ArrowRight className="w-5 h-5" aria-hidden="true" />
               </Button>
             </Link>
