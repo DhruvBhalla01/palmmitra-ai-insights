@@ -132,12 +132,18 @@ export default function UploadPalm() {
     const reader = new FileReader();
     reader.onload = (e) => setImage(e.target?.result as string);
     reader.readAsDataURL(file);
+    // Kick off storage upload in background so it's ready by the time user submits
+    uploadPromiseRef.current = uploadToStorage(file).catch((err) => {
+      uploadPromiseRef.current = null;
+      throw err;
+    });
   };
 
   const removeImage = () => {
     setImage(null);
     setImageFile(null);
     setValidationError(null);
+    uploadPromiseRef.current = null;
   };
 
   const uploadToStorage = async (file: File): Promise<string> => {
@@ -164,7 +170,8 @@ export default function UploadPalm() {
 
     try {
       setProcessingStep('uploading');
-      const imageUrl = await uploadToStorage(imageFile);
+      // Await the background upload started when image was chosen (may already be done)
+      const imageUrl = await (uploadPromiseRef.current ?? uploadToStorage(imageFile));
 
       setProcessingStep('validating');
       setProcessingStep('analyzing');
