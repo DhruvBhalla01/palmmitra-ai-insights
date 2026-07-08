@@ -603,6 +603,14 @@ export default function Report() {
                 >
                   <LifePhaseSection phases={reading.lifePhases} />
                 </LockedSection>
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="phases"
+                    question="Want more detail on the phase you're entering next?"
+                    seed="Walk me through what to expect in the next life phase according to my palm and how to prepare."
+                    onAsk={openAi}
+                  />
+                )}
               </div>
 
               {/* 8. Spiritual Remedies - First remedy free, others locked */}
