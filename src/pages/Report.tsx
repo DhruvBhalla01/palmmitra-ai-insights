@@ -15,7 +15,7 @@ import { PaymentModal } from '@/components/payment/PaymentModal';
 import { LockedSection } from '@/components/payment/LockedSection';
 import { UnlockSuccessOverlay } from '@/components/payment/UnlockSuccessOverlay';
 import { useAiEntitlement } from '@/hooks/useAiEntitlement';
-import { useAuth } from '@/hooks/useAuth';
+
 
 // Report components
 import { ReportHeader } from '@/components/report/ReportHeader';
@@ -80,8 +80,7 @@ export default function Report() {
   const [aiOpen, setAiOpen] = useState(false);
   const [aiSeed, setAiSeed] = useState<string | null>(null);
   const [aiSource, setAiSource] = useState<string>('end_of_report');
-  const { user: authUser } = useAuth();
-  const { data: aiEntitlement } = useAiEntitlement(!!authUser);
+  
 
   const openAi = (source: string, seed?: string) => {
     setAiSource(source);
@@ -104,6 +103,8 @@ export default function Report() {
     isProcessing,
     initiatePayment 
   } = useReportUnlock(resolvedReportId, userEmail);
+
+  const { data: aiEntitlement } = useAiEntitlement(resolvedReportId, userEmail, isUnlocked && !!resolvedReportId && !!userEmail);
 
   // Listen for payment success events
   useEffect(() => {

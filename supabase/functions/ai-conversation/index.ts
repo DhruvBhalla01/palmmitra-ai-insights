@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { verifyReportOwner } from "../_shared/ai-owner.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,8 +8,6 @@ const corsHeaders = {
 
 const json = (b: object, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-
-const isUuid = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
 function buildSeedMessage(name: string, report: Record<string, unknown> | null): string {
   const firstName = (name || 'friend').split(/\s+/)[0];
@@ -43,74 +42,51 @@ function buildSeedMessage(name: string, report: Record<string, unknown> | null):
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST") return json({ error: "method" }, 405);
 
-  const auth = req.headers.get("Authorization");
-  if (!auth) return json({ error: "unauthorized" }, 401);
-
-  let body: { reportId?: string };
+  let body: { reportId?: string; userEmail?: string };
   try { body = await req.json(); } catch { return json({ error: "invalid json" }, 400); }
-  const reportId = body.reportId?.trim() ?? "";
-  if (!isUuid(reportId)) return json({ error: "invalid reportId" }, 400);
 
-  const supa = createClient(
+  const admin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    { global: { headers: { Authorization: auth } } },
   );
 
-  const { data: userRes } = await supa.auth.getUser();
-  const user = userRes.user;
-  if (!user) return json({ error: "unauthorized" }, 401);
+  const owner = await verifyReportOwner(admin, body.reportId, body.userEmail);
+  if (!owner.ok) return json({ error: owner.error }, owner.status ?? 400);
+  const report = owner.report!;
+  const reportId = report.id;
 
-  const email = user.email?.toLowerCase();
-  const { data: report } = await supa
-    .from("palm_reports")
-    .select("id, user_name, user_email, report_json")
-    .eq("id", reportId)
-    .maybeSingle();
-  if (!report) return json({ error: "report not found" }, 404);
-
-  const ownsByEmail = email && report.user_email && report.user_email.toLowerCase() === email;
-  if (!ownsByEmail) {
-    const [{ data: unlock }, { data: sub }] = await Promise.all([
-      supa.from("report_unlocks").select("id").eq("report_id", reportId).eq("user_email", email ?? "").maybeSingle(),
-      supa.from("user_subscriptions").select("id").eq("user_email", email ?? "").eq("status", "active").maybeSingle(),
-    ]);
-    if (!unlock && !sub) return json({ error: "forbidden" }, 403);
-  }
-
-  // Upsert conversation
-  const { data: existing } = await supa
+  // Upsert conversation (keyed by report_id when there is no auth user)
+  const { data: existing } = await admin
     .from("ai_conversations")
     .select("id")
-    .eq("user_id", user.id)
     .eq("report_id", reportId)
+    .is("user_id", null)
     .maybeSingle();
 
   let convId = existing?.id as string | undefined;
   if (!convId) {
-    const { data: created, error: cErr } = await supa
+    const { data: created, error: cErr } = await admin
       .from("ai_conversations")
-      .insert({ user_id: user.id, report_id: reportId })
+      .insert({ report_id: reportId })
       .select("id")
       .single();
     if (cErr) return json({ error: cErr.message }, 500);
     convId = created.id;
   }
 
-  // Grant complimentary questions on first entry (idempotent per report_id)
-  const { data: freeCfg } = await supa
+  // Grant complimentary questions on first entry (idempotent — insert only)
+  const { data: freeCfg } = await admin
     .from("ai_pricing_config")
     .select("value")
     .eq("key", "free_questions_per_report")
     .maybeSingle();
-  const freeN = Number(freeCfg?.value ?? 3);
-  await supa.rpc("grant_report_free_questions", {
-    _user_id: user.id, _report_id: reportId, _n: freeN,
-  });
+  const freeN = Number((freeCfg?.value as { count?: number })?.count ?? freeCfg?.value ?? 3);
+  await admin.rpc("grant_free_questions_by_report", { _report_id: reportId, _n: freeN });
 
   // Seed pre-briefed assistant message on first entry (does NOT debit quota)
-  const { count: existingCount } = await supa
+  const { count: existingCount } = await admin
     .from("ai_messages")
     .select("id", { count: "exact", head: true })
     .eq("conversation_id", convId!);
@@ -120,7 +96,7 @@ Deno.serve(async (req) => {
       report.user_name ?? "",
       (report.report_json ?? null) as Record<string, unknown> | null,
     );
-    await supa.from("ai_messages").insert({
+    await admin.from("ai_messages").insert({
       conversation_id: convId!,
       role: "assistant",
       content: seed,
@@ -128,7 +104,7 @@ Deno.serve(async (req) => {
     });
   }
 
-  const { data: messages } = await supa
+  const { data: messages } = await admin
     .from("ai_messages")
     .select("id, role, content, created_at")
     .eq("conversation_id", convId!)

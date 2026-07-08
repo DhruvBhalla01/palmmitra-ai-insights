@@ -134,36 +134,32 @@ Deno.serve(async (req) => {
 
     } else if (payment.plan_type === 'ai_elite_monthly' || payment.plan_type === 'ai_elite_annual') {
       const days = payment.plan_type === 'ai_elite_annual' ? 365 : 30;
-      const notes = (payment.user_email ?? '').toLowerCase();
-      const { data: userLookup } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
-      const authUser = userLookup?.users?.find(u => (u.email ?? '').toLowerCase() === notes);
-      if (authUser) {
+      const rid = payment.report_id as string | null;
+      if (rid) {
         const now = Date.now();
+        await supabase.from('ai_entitlements').upsert({ report_id: rid }, { onConflict: 'report_id' });
         const { data: existing } = await supabase
-          .from('ai_entitlements').select('subscription_expires_at').eq('user_id', authUser.id).maybeSingle();
+          .from('ai_entitlements').select('subscription_expires_at').eq('report_id', rid).maybeSingle();
         const currentExp = existing?.subscription_expires_at ? new Date(existing.subscription_expires_at).getTime() : 0;
         const base = Math.max(currentExp, now);
         const expiresAt = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
-        await supabase.from('ai_entitlements').upsert({
-          user_id: authUser.id,
+        await supabase.from('ai_entitlements').update({
           subscription_plan: payment.plan_type,
           subscription_expires_at: expiresAt,
           subscription_month_usage: 0,
           subscription_month_reset_at: new Date(now + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        }, { onConflict: 'user_id' });
+        }).eq('report_id', rid);
       }
     } else if (payment.plan_type?.startsWith('ai_pack_')) {
       const packQty: Record<string, number> = { ai_pack_5: 5, ai_pack_10: 10, ai_pack_15: 15 };
       const qty = packQty[payment.plan_type] ?? 0;
-      const notes = (payment.user_email ?? '').toLowerCase();
-      const { data: userLookup } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
-      const authUser = userLookup?.users?.find(u => (u.email ?? '').toLowerCase() === notes);
-      if (authUser && qty > 0) {
-        await supabase.from('ai_entitlements').upsert({ user_id: authUser.id }, { onConflict: 'user_id' });
-        const { data: cur } = await supabase.from('ai_entitlements').select('pack_questions_remaining').eq('user_id', authUser.id).single();
+      const rid = payment.report_id as string | null;
+      if (rid && qty > 0) {
+        await supabase.from('ai_entitlements').upsert({ report_id: rid }, { onConflict: 'report_id' });
+        const { data: cur } = await supabase.from('ai_entitlements').select('pack_questions_remaining').eq('report_id', rid).single();
         await supabase.from('ai_entitlements').update({
           pack_questions_remaining: (cur?.pack_questions_remaining ?? 0) + qty,
-        }).eq('user_id', authUser.id);
+        }).eq('report_id', rid);
       }
     }
 

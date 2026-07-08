@@ -12,17 +12,20 @@ export interface AiEntitlement {
   total_remaining: number;
 }
 
-async function fetchEntitlement(): Promise<AiEntitlement> {
-  const { data, error } = await supabase.functions.invoke('ai-entitlement', { method: 'GET' });
+async function fetchEntitlement(reportId: string, userEmail: string): Promise<AiEntitlement> {
+  const { data, error } = await supabase.functions.invoke('ai-entitlement', {
+    method: 'POST',
+    body: { reportId, userEmail },
+  });
   if (error) throw error;
   return data as AiEntitlement;
 }
 
-export function useAiEntitlement(enabled = true) {
+export function useAiEntitlement(reportId: string | undefined, userEmail: string | undefined, enabled = true) {
   return useQuery({
-    queryKey: ['ai-entitlement'],
-    queryFn: fetchEntitlement,
-    enabled,
+    queryKey: ['ai-entitlement', reportId, userEmail],
+    queryFn: () => fetchEntitlement(reportId!, userEmail!),
+    enabled: enabled && !!reportId && !!userEmail,
     staleTime: 15_000,
   });
 }
