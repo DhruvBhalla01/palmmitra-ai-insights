@@ -15,7 +15,7 @@ import { PaymentModal } from '@/components/payment/PaymentModal';
 import { LockedSection } from '@/components/payment/LockedSection';
 import { UnlockSuccessOverlay } from '@/components/payment/UnlockSuccessOverlay';
 import { useAiEntitlement } from '@/hooks/useAiEntitlement';
-import { useAuth } from '@/hooks/useAuth';
+
 
 // Report components
 import { ReportHeader } from '@/components/report/ReportHeader';
