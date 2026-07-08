@@ -22,11 +22,12 @@ interface Props {
   seedPrompt?: string | null;
   onSeedConsumed?: () => void;
   source?: string;
+  reportGeneratedAt?: string | null;
 }
 
 export function AiDrawer({
   open, onOpenChange, reportId, userName, userEmail,
-  seedPrompt, onSeedConsumed, source,
+  seedPrompt, onSeedConsumed, source, reportGeneratedAt,
 }: Props) {
   const { data: entitlement, isLoading: entLoading } = useAiEntitlement(reportId, userEmail, open);
   const invalidateEnt = useInvalidateEntitlement();
