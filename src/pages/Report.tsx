@@ -104,6 +104,8 @@ export default function Report() {
     initiatePayment 
   } = useReportUnlock(resolvedReportId, userEmail);
 
+  const { data: aiEntitlement } = useAiEntitlement(resolvedReportId, userEmail, isUnlocked && !!resolvedReportId && !!userEmail);
+
   // Listen for payment success events
   useEffect(() => {
     const handlePaymentSuccess = (event: CustomEvent) => {
