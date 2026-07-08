@@ -14,6 +14,8 @@ import { useReportUnlock } from '@/hooks/useReportUnlock';
 import { PaymentModal } from '@/components/payment/PaymentModal';
 import { LockedSection } from '@/components/payment/LockedSection';
 import { UnlockSuccessOverlay } from '@/components/payment/UnlockSuccessOverlay';
+import { useAiEntitlement } from '@/hooks/useAiEntitlement';
+import { useAuth } from '@/hooks/useAuth';
 
 // Report components
 import { ReportHeader } from '@/components/report/ReportHeader';
@@ -29,6 +31,9 @@ import { ActionButtons } from '@/components/report/ActionButtons';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
+import { AskPalmMitraInline } from '@/components/report/AskPalmMitraInline';
+import { PalmMitraAiSection } from '@/components/report/PalmMitraAiSection';
+import { AiDrawer } from '@/components/ai/AiDrawer';
 import type { PalmReading, StoredData } from '@/components/report/types';
 
 interface SessionData extends StoredData {
