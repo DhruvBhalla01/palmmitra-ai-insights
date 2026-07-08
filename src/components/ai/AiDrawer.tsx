@@ -10,7 +10,7 @@ import { useAiEntitlement, useInvalidateEntitlement } from '@/hooks/useAiEntitle
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { track } from '@/lib/analytics';
-import { Sparkles } from 'lucide-react';
+import logoImg from '@/assets/logo.webp';
 import type { AiPlanId } from '@/config/ai-pricing';
 
 interface Props {
@@ -44,7 +44,6 @@ export function AiDrawer({
     onCompleted: () => { invalidateEnt(); track('ai_question_completed'); },
   });
 
-  // Bootstrap conversation when drawer opens
   useEffect(() => {
     if (!open || !reportId || !userEmail) return;
     const key = `${reportId}:${userEmail}`;
@@ -68,7 +67,6 @@ export function AiDrawer({
     })();
   }, [open, reportId, userEmail, chat, source, toast]);
 
-  // Auto-send seed prompt if provided
   useEffect(() => {
     if (!open || !seedPrompt || seedFired.current) return;
     if (bootstrapped.current !== `${reportId}:${userEmail}`) return;
@@ -142,61 +140,69 @@ export function AiDrawer({
   };
 
   const isEmpty = chat.messages.length === 0;
+  const firstName = userName ? userName.split(/\s+/)[0] : '';
 
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-lg md:max-w-xl p-0 border-l border-amber-500/20 bg-[#050302] text-amber-50 flex flex-col"
+          className="w-full sm:max-w-lg md:max-w-xl p-0 border-l border-[hsl(var(--gold)/0.2)] text-foreground flex flex-col overflow-hidden
+            bg-[radial-gradient(ellipse_120%_80%_at_50%_0%,hsl(var(--gold)/0.08),transparent_60%),radial-gradient(ellipse_100%_60%_at_100%_100%,hsl(280_45%_25%/0.35),transparent_60%),linear-gradient(180deg,hsl(var(--indigo-deep)),hsl(245_58%_10%))]"
         >
+          {/* Sacred geometry backdrop */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-screen"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 20% 30%, hsl(var(--gold)) 0.5px, transparent 1px), radial-gradient(circle at 70% 80%, hsl(var(--gold)) 0.5px, transparent 1px), radial-gradient(circle at 40% 90%, hsl(var(--gold)) 0.5px, transparent 1px)',
+              backgroundSize: '180px 180px, 240px 240px, 300px 300px',
+            }}
+          />
+
           {/* Header */}
-          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-amber-500/15 shrink-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-amber-300 to-amber-600 text-black text-xs font-semibold flex items-center justify-center shadow-[0_0_20px_rgba(251,191,36,0.35)]">
-                <Sparkles className="w-3.5 h-3.5" />
+          <div className="relative shrink-0 px-6 pt-6 pb-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative h-11 w-11 rounded-full overflow-hidden ring-1 ring-[hsl(var(--gold)/0.4)] shadow-[0_0_25px_hsl(var(--gold)/0.35)]">
+                  <img src={logoImg} alt="PalmMitra" className="h-full w-full object-contain" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-serif text-xl leading-tight text-foreground">
+                    Palm<span className="text-gradient-gold">Mitra</span> AI
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-[hsl(var(--gold)/0.75)] mt-0.5">
+                    Inspired by Ancient Indian Palmistry
+                  </div>
+                </div>
               </div>
-              <div className="min-w-0">
-                <div className="text-sm font-medium text-amber-100 truncate">PalmMitra AI</div>
-                <div className="text-[10px] uppercase tracking-[0.2em] text-amber-300/60">Your Palm · Interactive</div>
-              </div>
+              <AiQuotaBadge entitlement={entitlement} loading={entLoading} />
             </div>
-            <AiQuotaBadge entitlement={entitlement} loading={entLoading} />
+            {/* Gold divider */}
+            <div className="mt-4 h-px w-full bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.5)] to-transparent" />
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto px-5 py-5">
+          <div className="relative flex-1 overflow-y-auto px-5 sm:px-6 py-5">
             {isEmpty ? (
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.24em] text-amber-300/70">PalmMitra AI</div>
-                <h3 className="mt-1 font-serif text-2xl text-amber-100">
-                  {`Namaste${userName ? `, ${userName.split(/\s+/)[0]}` : ''}.`}
-                </h3>
-                <p className="mt-2 text-sm text-amber-100/60">
-                  I've studied your palm report. What would you like to explore?
-                </p>
-                <div className="mt-6">
-                  <AiSuggestionGrid onPick={handleSuggestion} disabled={chat.status !== 'idle'} />
-                </div>
-              </div>
+              <WelcomeCard firstName={firstName} onPick={handleSuggestion} disabled={chat.status !== 'idle'} />
             ) : (
               <AiMessageList messages={chat.messages} userInitial={userEmail?.[0]?.toUpperCase()} />
             )}
           </div>
 
           {/* Composer */}
-          <div className="shrink-0 border-t border-amber-500/15 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
+          <div className="relative shrink-0 border-t border-[hsl(var(--gold)/0.15)] bg-[linear-gradient(180deg,transparent,hsl(245_58%_6%/0.7))] px-4 sm:px-5 py-4">
             <AiComposer
               onSend={handleSend}
               onStop={chat.stop}
               disabled={chat.status !== 'idle'}
               streaming={chat.status === 'streaming'}
-              placeholder={!canSend ? 'Unlock more questions to continue…' : undefined}
+              placeholder={!canSend ? 'Unlock more questions to continue…' : 'Ask about your palm...'}
             />
             {!canSend && !entLoading && (
               <button
                 onClick={() => setShowPaywall(true)}
-                className="mt-2 w-full text-center text-xs text-amber-300 hover:text-amber-200"
+                className="mt-2.5 w-full text-center text-xs font-medium tracking-wide text-[hsl(var(--gold-light))] hover:text-[hsl(var(--gold))] transition-colors"
               >
                 Continue Your AI Guidance →
               </button>
@@ -213,6 +219,45 @@ export function AiDrawer({
       />
       {paying && <div className="sr-only">Loading payment…</div>}
     </>
+  );
+}
+
+function WelcomeCard({ firstName, onPick, disabled }: { firstName: string; onPick: (seed: string, key: string) => void; disabled: boolean }) {
+  const highlights = [
+    { label: 'Career Growth', key: 'career' },
+    { label: 'Strong Leadership', key: 'leadership' },
+    { label: 'Wealth Potential', key: 'wealth' },
+    { label: 'Relationship Stability', key: 'relationships' },
+  ];
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="relative rounded-3xl border border-[hsl(var(--gold)/0.25)] bg-[linear-gradient(160deg,hsl(var(--gold)/0.08),hsl(245_58%_10%/0.6))] p-6 shadow-[0_20px_60px_-20px_hsl(var(--gold)/0.35),inset_0_1px_0_hsl(var(--gold)/0.15)] backdrop-blur-xl">
+        <div className="absolute -top-px left-6 right-6 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.6)] to-transparent" />
+        <div className="text-[10px] uppercase tracking-[0.24em] text-[hsl(var(--gold)/0.8)]">A Message from PalmMitra AI</div>
+        <h3 className="mt-2 font-serif text-2xl sm:text-[26px] leading-tight text-foreground">
+          {`Namaste${firstName ? `, ${firstName}` : ''}`}
+        </h3>
+        <p className="mt-3 text-[15px] leading-relaxed text-foreground/80">
+          I've carefully studied your palm. Your strongest indications suggest:
+        </p>
+        <ul className="mt-4 grid grid-cols-2 gap-2.5">
+          {highlights.map(h => (
+            <li key={h.key} className="flex items-center gap-2 text-sm text-foreground/85">
+              <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--gold))] shadow-[0_0_8px_hsl(var(--gold)/0.8)]" />
+              {h.label}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-sm text-foreground/70">
+          I'm here to help you understand every part of your reading. Ask me anything.
+        </p>
+      </div>
+
+      <div>
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[hsl(var(--gold)/0.7)] mb-3 px-1">Explore</div>
+        <AiSuggestionGrid onPick={onPick} disabled={disabled} />
+      </div>
+    </div>
   );
 }
 
