@@ -553,6 +553,14 @@ export default function Report() {
                     peakPeriods={reading.careerWealth.peakPeriods}
                   />
                 </LockedSection>
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="career"
+                    question="Want more clarity about your career direction?"
+                    seed="Based on my palm, expand on my career direction for the next 3 years — what should I focus on and what to avoid?"
+                    onAsk={openAi}
+                  />
+                )}
               </div>
 
               {/* 6. Love & Relationships - Locked */}
@@ -573,9 +581,15 @@ export default function Report() {
                     relationshipAdvice={reading.loveRelationships.relationshipAdvice}
                   />
                 </LockedSection>
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="love"
+                    question="Curious about marriage timing and compatibility?"
+                    seed="Tell me more about my marriage — timing, the kind of partner suited to me, and what to work on in relationships."
+                    onAsk={openAi}
+                  />
+                )}
               </div>
-
-              {/* 7. Life Phases - Locked */}
               <div id="section-phases">
                 <LockedSection
                   isUnlocked={isUnlocked}
