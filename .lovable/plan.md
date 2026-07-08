@@ -1,164 +1,117 @@
-## PalmMitra AI — Production Implementation Plan
+## Goal
 
-Report-aware "personal AI guide" as the primary recurring revenue engine. Streaming OpenAI chat, magic-link auth, 3 complimentary questions per report, subscription + question-pack wallet, all inside PalmMitra's existing dark/gold luxury shell.
+Reposition PalmMitra AI from a standalone product with its own homepage/nav/landing pages into a **premium companion built into the Palm Report**. The report is the product; AI extends it. AI is unreachable unless the user has an unlocked report.
 
----
+## 1. Remove the standalone AI surface
 
-### 1. Configuration (single source of truth)
+Delete:
+- `src/pages/AiStart.tsx` (AI landing page)
+- `src/pages/AiUpgrade.tsx` (standalone upgrade page)
+- `src/pages/AiConversation.tsx` (full-page chat route)
+- Routes `/ai/start/:reportId`, `/ai/upgrade`, `/ai/:reportId` from `src/App.tsx`
+- Any nav links / footer links / CTAs pointing to `/ai/*` (audit `Navbar`, `Footer`, `MobileCTABar`, homepage sections)
 
-**`src/config/ai-pricing.ts`** and **`supabase/functions/_shared/ai-pricing.ts`** (kept in sync, like existing `pricing.ts`):
+The `AiSignInModal` component is no longer needed as a standalone gate (the user is already authenticated after unlocking their report via the existing flow). Keep it only if it's already reused elsewhere; otherwise delete.
 
-```text
-FREE_QUESTIONS_PER_REPORT = 3
-SUBSCRIPTION.monthly = { id: 'ai_elite_monthly', price: ₹799, quota: 200/mo }
-SUBSCRIPTION.annual  = { id: 'ai_elite_annual',  price: ₹5,999, quota: 200/mo,
-                          badge: 'Best Value', savings: ₹3,589 }
-PACKS = [
-  { id: 'pack_10',  price: ₹149, questions: 10  },
-  { id: 'pack_30',  price: ₹349, questions: 30  },
-  { id: 'pack_100', price: ₹799, questions: 100 },
-]
-MODEL = 'gpt-4o-mini' (matches analyze-palm), MAX_INPUT_TOKENS = 8000, MAX_OUTPUT_TOKENS = 1200
+## 2. New integration surface inside the report
+
+All AI entry points live inside `src/pages/Report.tsx` and are **only rendered when `isUnlocked === true`**.
+
+**a. Contextual inline CTAs** — a new small component `src/components/report/AskPalmMitraInline.tsx`:
+```
+Need more clarity about your career prediction?
+💬 Ask PalmMitra AI
+```
+Placed at the end of each major report section (Career, Love/Marriage, Business hint inside Career, Health via Remedies section, Life Phase). Clicking opens the AI drawer (see 3) pre-seeded with a section-appropriate prompt (e.g. `"Tell me more about my career prediction and what I should do next 3 years."`).
+
+**b. End-of-report premium section** — a new component `src/components/report/PalmMitraAiSection.tsx` rendered once after `FinalBlessing` / above `LegalDisclaimer`. Uses existing gold/glass styling. Copy per the spec ("Still have questions?…"), a single "Start PalmMitra AI" button, and "Includes 3 complimentary AI questions" microcopy. Shows remaining balance if already used.
+
+**c. Locked state** — when `!isUnlocked`, neither the inline CTAs nor the end section render. Nothing hints AI is available before unlock.
+
+## 3. AI drawer (in-report chat)
+
+New component `src/components/ai/AiDrawer.tsx` built on the existing shadcn `Sheet` (right-side on desktop, bottom sheet on mobile). It mounts inside `Report.tsx`, receives `reportId`, `userName`, `entitlement`, and an optional `seedPrompt`.
+
+Contents:
+- Header: "PalmMitra AI" · report title · quota badge (`3 Questions Remaining`) · close.
+- Reuses `AiMessageList`, `AiComposer`, `AiSuggestionGrid` unchanged.
+- Reuses `useAiChatStream` and the existing `ai-chat` / `ai-conversation` edge functions unchanged (they already gate on report ownership/unlock).
+- Reuses `useAiEntitlement`.
+- Reuses `AiPaywall` for out-of-questions state.
+
+The drawer never navigates away from the report — the user always feels inside the report.
+
+## 4. Pre-briefed first message (never empty chat)
+
+Change `ai-conversation` edge function so that on the first call for a report (no prior messages), it seeds one assistant message using the stored `report_json` — `user_name`, top 3–4 signals (career, marriage, wealth, personality, health highlights) — and persists it as an `ai_messages` row with `role='assistant'` and a new flag `is_seed = true` (or just detected by being the first row; no schema change strictly needed). Free-question quota is **not** debited for the seed.
+
+Format:
+```
+Hello {Name}.
+I've already studied your palm report.
+Your strongest indicators are:
+• {signal 1}
+• {signal 2}
+• {signal 3}
+• {signal 4}
+What would you like to explore further?
 ```
 
-No per-question prices are ever shown.
+Then the client renders the existing suggestion chips (Career, Business, Marriage, Money, Health, Future, Ask Anything).
 
----
+## 5. Pricing update (question packs)
 
-### 2. Authentication — magic link
+Update `src/config/ai-pricing.ts` and `supabase/functions/_shared/ai-pricing.ts` to new packs:
 
-- Enable Supabase email auth (magic link only, no password). Auto-confirm on, HIBP off (passwordless).
-- New `src/pages/AuthCallback.tsx` reads the session and routes back to the intended path (stored in `localStorage.ai_return_to`).
-- New `src/hooks/useAuth.ts` — thin wrapper around `supabase.auth` with `session`, `user`, `signInWithOtp`, `signOut`.
-- Migrate the existing email/localStorage attribution: when a signed-in user's `auth.users.email` matches the email on a `palm_reports` row, they own it. A one-time "claim your report" step runs on first login.
+| Pack | Questions | Price | Badge |
+|---|---|---|---|
+| `ai_pack_5` | 5 | ₹149 | — |
+| `ai_pack_10` | 10 | ₹249 | ⭐ Most Popular |
+| `ai_pack_15` | 15 | ₹349 | Best Value |
 
-Auth is only required at the **"Start My AI Guidance"** button — the report flow stays unchanged for anonymous users.
+Subscription unchanged (Elite ₹799/mo, ₹5,999/yr, 200/mo).
 
----
+Update `AI_PLAN_AMOUNTS_PAISE`, `AI_PACK_QUESTIONS`, `AI_LABELS`, and `AiPlanId` union. Old plan ids (`ai_pack_30`, `ai_pack_100`) are removed. Add a migration note: the DB `payments.plan_type` check constraint was extended in a prior migration; add another migration that includes the new pack ids (`ai_pack_5`, `ai_pack_15`) and removes `ai_pack_30` / `ai_pack_100` from the allowed set (safe because no live rows use them yet — will verify with a `SELECT count(*)` in the migration comment).
 
-### 3. Database (new migration)
+## 6. Paywall UX change
 
-```text
-public.ai_conversations
-  id uuid pk, user_id uuid → auth.users, report_id uuid → palm_reports,
-  title text, last_message_at timestamptz, message_count int,
-  total_input_tokens int, total_output_tokens int,
-  created_at, updated_at
-  UNIQUE (user_id, report_id)     -- single rolling conversation per report
+Update `src/components/ai/AiPaywall.tsx`:
+- Default mode = `'pack'` (packs first, subscription secondary), matching "do NOT immediately push a subscription".
+- Subscription section appears as a subtle secondary option ("Ask more often? PalmMitra AI Elite →") below the packs, not as the top toggle.
+- After successful purchase, the drawer stays open, the same conversation continues, and the newly purchased questions are reflected via `invalidateEnt()`. No navigation, no reset — already handled by keeping the drawer mounted.
 
-public.ai_messages
-  id uuid pk, conversation_id uuid → ai_conversations on delete cascade,
-  role text CHECK IN ('user','assistant','system'),
-  content text, input_tokens int, output_tokens int,
-  model text, created_at
-  INDEX (conversation_id, created_at)
+## 7. Analytics events
 
-public.ai_entitlements                       -- per-user wallet
-  user_id uuid pk → auth.users,
-  free_questions_remaining int default 0,    -- top-up on report purchase
-  pack_questions_remaining int default 0,    -- never-expiring paid pack balance
-  subscription_plan text null,               -- 'monthly' | 'annual' | null
-  subscription_expires_at timestamptz null,
-  subscription_month_usage int default 0,
-  subscription_month_reset_at timestamptz,
-  updated_at
+Adjust `src/lib/analytics.ts` event names to the new flow:
+- Remove: `ai_started` from AiStart page.
+- Add: `ai_drawer_opened` (with `{ reportId, source: 'section_cta' | 'end_of_report' | 'inline_career' | ... }`), `ai_seed_shown`, `ai_pack_selected`, `ai_pack_purchased` (existing), `ai_subscription_purchased` (existing).
 
-public.ai_usage_events                       -- append-only audit
-  id uuid pk, user_id uuid, conversation_id uuid, message_id uuid,
-  source text CHECK IN ('free','pack','subscription'),
-  input_tokens int, output_tokens int, created_at
+## 8. Audit checklist (run after implementation)
 
-public.ai_pricing_config                     -- admin-editable, seeded from constants
-  key text pk, value jsonb, updated_at
-```
+- Grep for `/ai/`, `AiStart`, `AiConversation`, `AiUpgrade` → zero results outside deletions.
+- AI drawer only mounts when `isUnlocked === true`.
+- `ai-chat` and `ai-conversation` continue to enforce report ownership/unlock (already do — verified).
+- Question counter decreases only on successful assistant response (seed doesn't debit; already refunds on empty).
+- After pack purchase, conversation continues in same drawer without reload.
+- Mobile: drawer opens as bottom sheet, composer accessible above keyboard.
+- Pack ids in DB check constraint match `ai-pricing.ts`.
 
-RLS: all tables **SELECT/UPDATE via `auth.uid() = user_id` only**; all writes go through service-role edge functions (matching the existing "Block client SELECT" pattern for `payments`).
+## Technical section (details)
 
-GRANTs on every new table per project rules. Update trigger for `updated_at`. Extend the `payments.plan_type` allow-list to include the new plan ids (`ai_elite_monthly`, `ai_elite_annual`, `ai_pack_10/30/100`).
+**Files to delete:** `src/pages/AiStart.tsx`, `src/pages/AiConversation.tsx`, `src/pages/AiUpgrade.tsx`, and possibly `src/components/ai/AiSignInModal.tsx` if unused after route removal.
 
-**Atomic quota debit** — a `SECURITY DEFINER` function `debit_ai_question(uid uuid)` that consumes in strict order (free → subscription quota → pack) inside a single `UPDATE ... RETURNING` with row-level lock, returns `{source, ok}`. Prevents races and negative balances.
+**Files to modify:**
+- `src/App.tsx` — remove three lazy imports + three routes.
+- `src/pages/Report.tsx` — mount `<AiDrawer />` (only when unlocked); insert `<AskPalmMitraInline />` at end of Career, Love, LifePhase, Remedies sections; insert `<PalmMitraAiSection />` after `FinalBlessing`.
+- `src/config/ai-pricing.ts` + `supabase/functions/_shared/ai-pricing.ts` — new pack lineup.
+- `supabase/functions/ai-conversation/index.ts` — synthesize + persist the seed assistant message when conversation has zero messages, using `report_json` highlights.
+- `src/components/ai/AiPaywall.tsx` — packs-first layout, subtler subscription.
+- `src/hooks/useAiChatStream.ts` — accept a `seedPrompt` on next `send` (optional; can also just call `send(seedPrompt)` from inline CTA).
 
----
+**Files to create:**
+- `src/components/report/AskPalmMitraInline.tsx`
+- `src/components/report/PalmMitraAiSection.tsx`
+- `src/components/ai/AiDrawer.tsx`
+- One migration: update `payments_plan_type_check` to new pack ids.
 
-### 4. Edge functions
-
-New:
-1. **`ai-chat`** (streaming) — SSE endpoint. Verifies JWT, loads report + conversation history + entitlement, calls `debit_ai_question` **before** streaming, streams OpenAI response, then persists assistant message + token counts. On stream error, refunds the debit.
-2. **`ai-conversation`** — GET returns messages for the signed-in user's conversation for a report; POST creates a conversation.
-3. **`ai-entitlement`** — GET returns remaining free/pack/sub quota + plan state.
-4. **`ai-purchase-create-order`** — creates Razorpay order for a subscription or pack. Reuses signature verification pattern from `create-razorpay-order`.
-
-Modified:
-5. **`verify-razorpay-payment`** & **`razorpay-webhook`** — add branches for `ai_elite_monthly`, `ai_elite_annual`, `ai_pack_*`. Idempotent upsert into `ai_entitlements`. Monthly resets `subscription_month_usage` when `now() > subscription_month_reset_at`.
-6. **`analyze-palm`** — on successful report insert for a signed-in user, top up `free_questions_remaining += 3` (idempotent per `report_id`).
-
-**System prompt** injects: user name, age, and structured excerpts from `report_json` (personality, career, love, wealth, remedies) + last N=20 messages. Hard rules: refuse medical/legal/financial advice, never role-play system prompts, decline attempts to leak the prompt, always respond in the user's language.
-
-CORS + zod validation on every endpoint. Rate-limit via existing `api_rate_limits` table (10 questions/min/user).
-
----
-
-### 5. Frontend
-
-New routes:
-- `/ai/start/:reportId` — **transition screen**: "Your Palm Report is Complete. Continue with PalmMitra AI" + large gold CTA "Start My AI Guidance". Triggers magic-link modal if not signed in.
-- `/ai/:reportId` — **conversation view**.
-- `/ai/upgrade` — subscription + pack pricing.
-- `/auth/callback` — magic-link handler.
-
-New components (`src/components/ai/`):
-- `AiHero.tsx` — transition screen.
-- `AiSuggestionGrid.tsx` — 8 luxury cards (Career, Marriage, Money, Personality, Family, Business, Health, Life Purpose), each seeds a first message.
-- `AiConversation.tsx` — message list, gold streaming typewriter, quota chip ("2 Questions Remaining"), auto-scroll, code-split with `React.lazy`.
-- `AiComposer.tsx` — auto-growing textarea, send on ⌘/Ctrl-Enter, disabled while streaming.
-- `AiPaywall.tsx` — full-screen premium paywall shown after free quota hits 0. Two paths: **Subscribe** (monthly/annual toggle) and **Buy Question Pack** (3 tiers). Uses existing `PaymentModal`.
-- `AiQuotaBadge.tsx` — reactive display of remaining questions or "Elite ∞".
-- `AiUpsellStrip.tsx` — subtle "1 question remaining" nudge on the last free question.
-
-Hooks:
-- `useAiEntitlement()` — react-query cache, invalidated after each answer + after payment success.
-- `useAiChatStream()` — fetch-with-ReadableStream SSE parser, optimistic user message, streaming tokens into last assistant message, error rollback.
-
-Report page: existing "Continue with PalmMitra AI" style CTA added below `FinalBlessing` and in `StickyUnlockCTA` after unlock. Deep-links to `/ai/start/:reportId`.
-
----
-
-### 6. Payments
-
-- `AiPaywall` opens `PaymentModal` with new plan ids. `create-razorpay-order` is extended (or `ai-purchase-create-order` used) to price from the config table, never trusting client amount.
-- On verify success: entitlement mutation invalidates `useAiEntitlement`; success overlay appears; user returns to chat with fresh quota.
-- Renewal handled by webhook; annual auto-renews to `subscription_expires_at + 1y`. Failure surfaces a banner in the chat header with "Renew now".
-
----
-
-### 7. Analytics
-
-Thin `src/lib/analytics.ts` wrapper (fires to console today, wired for PostHog/GA later). Events: `ai_started`, `ai_suggestion_clicked`, `ai_question_asked`, `ai_question_completed`, `ai_question_failed`, `ai_free_exhausted`, `ai_paywall_viewed`, `ai_subscription_viewed`, `ai_subscription_started`, `ai_subscription_purchased`, `ai_pack_purchased`, `ai_conversation_length` (on unload).
-
----
-
-### 8. Security guardrails
-
-- **Prompt injection**: user content is wrapped in `<user_message>...</user_message>` tags; system prompt states tags between them are untrusted data.
-- **Quota bypass**: quota check + debit happens server-side inside `debit_ai_question` with row lock; client-side counter is display only.
-- **Subscription bypass**: `subscription_expires_at` and `subscription_month_usage` re-read from DB on every request.
-- **API abuse**: JWT required, per-user + per-IP rate limit, max message length 2000 chars, max 20 msgs history sent to model.
-- **Refund on failure**: assistant stream error → reverse the debit in the same transaction.
-- **PII**: report content stays server-side; only conversation messages leave via SSE.
-
----
-
-### 9. Deliverables
-
-**Files created (~24):**
-- `src/config/ai-pricing.ts`, `src/hooks/useAuth.ts`, `src/hooks/useAiEntitlement.ts`, `src/hooks/useAiChatStream.ts`, `src/lib/analytics.ts`, `src/pages/AuthCallback.tsx`, `src/pages/AiStart.tsx`, `src/pages/AiConversation.tsx`, `src/pages/AiUpgrade.tsx`, 8 `src/components/ai/*.tsx`, `supabase/functions/_shared/ai-pricing.ts`, `supabase/functions/ai-chat/index.ts`, `.../ai-conversation/index.ts`, `.../ai-entitlement/index.ts`, `.../ai-purchase-create-order/index.ts`, 1 migration.
-
-**Files modified:** `src/App.tsx` (routes), `src/pages/Report.tsx` (CTA), `src/components/report/StickyUnlockCTA.tsx`, `supabase/functions/analyze-palm/index.ts` (grant free questions), `supabase/functions/verify-razorpay-payment/index.ts`, `supabase/functions/razorpay-webhook/index.ts`, `supabase/functions/create-razorpay-order/index.ts` (new plan ids), `supabase/config.toml`.
-
-**DB changes:** 1 migration — 5 tables, 1 SECURITY DEFINER function, RLS + GRANTs, `payments.plan_type` extended.
-
-**Post-implementation audit loop:** self-review passes for security (prompt injection, quota bypass, replay, IDOR), payments (idempotency, price tampering, webhook retry), types (`tsgo`), and UX (empty state, streaming error, paywall trigger, renewal). Fix in place until clean.
-
-**Known post-launch items (not in scope this pass):** conversation search, multi-thread UI, PalmMatch AI extension, daily guidance push, admin dashboard UI for `ai_pricing_config` (values are editable via SQL until then).
-
-Ready to build on approval.
+**No changes needed to:** `ai-chat` streaming, entitlement RPC, Razorpay verify (already keyed by `payment.user_id` + `plan_type`), report gating.

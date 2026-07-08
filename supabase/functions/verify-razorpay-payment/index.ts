@@ -191,7 +191,7 @@ Deno.serve(async (req) => {
         isSubscription = true;
       }
     } else if (payment.plan_type?.startsWith('ai_pack_')) {
-      const packQty: Record<string, number> = { ai_pack_10: 10, ai_pack_30: 30, ai_pack_100: 100 };
+      const packQty: Record<string, number> = { ai_pack_5: 5, ai_pack_10: 10, ai_pack_15: 15 };
       const qty = packQty[payment.plan_type] ?? 0;
       let userId: string | null = payment.user_id ?? null;
       if (!userId) {

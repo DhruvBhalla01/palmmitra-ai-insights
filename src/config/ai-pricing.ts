@@ -34,7 +34,7 @@ export const AI_SUBSCRIPTIONS = {
 } as const;
 
 export interface AiPack {
-  id: 'ai_pack_10' | 'ai_pack_30' | 'ai_pack_100';
+  id: 'ai_pack_5' | 'ai_pack_10' | 'ai_pack_15';
   label: string;
   questions: number;
   priceInr: number;
@@ -43,9 +43,9 @@ export interface AiPack {
 }
 
 export const AI_PACKS: readonly AiPack[] = [
-  { id: 'ai_pack_10',  label: '10 Questions',  questions: 10,  priceInr: 149, priceDisplay: '₹149' },
-  { id: 'ai_pack_30',  label: '30 Questions',  questions: 30,  priceInr: 349, priceDisplay: '₹349', badge: 'Popular' },
-  { id: 'ai_pack_100', label: '100 Questions', questions: 100, priceInr: 799, priceDisplay: '₹799' },
+  { id: 'ai_pack_5',  label: '5 Questions',  questions: 5,  priceInr: 149, priceDisplay: '₹149' },
+  { id: 'ai_pack_10', label: '10 Questions', questions: 10, priceInr: 249, priceDisplay: '₹249', badge: '⭐ Most Popular' },
+  { id: 'ai_pack_15', label: '15 Questions', questions: 15, priceInr: 349, priceDisplay: '₹349', badge: 'Best Value' },
 ] as const;
 
 export type AiPlanId =

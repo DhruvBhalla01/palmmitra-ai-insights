@@ -14,6 +14,8 @@ import { useReportUnlock } from '@/hooks/useReportUnlock';
 import { PaymentModal } from '@/components/payment/PaymentModal';
 import { LockedSection } from '@/components/payment/LockedSection';
 import { UnlockSuccessOverlay } from '@/components/payment/UnlockSuccessOverlay';
+import { useAiEntitlement } from '@/hooks/useAiEntitlement';
+import { useAuth } from '@/hooks/useAuth';
 
 // Report components
 import { ReportHeader } from '@/components/report/ReportHeader';
@@ -29,6 +31,9 @@ import { ActionButtons } from '@/components/report/ActionButtons';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
+import { AskPalmMitraInline } from '@/components/report/AskPalmMitraInline';
+import { PalmMitraAiSection } from '@/components/report/PalmMitraAiSection';
+import { AiDrawer } from '@/components/ai/AiDrawer';
 import type { PalmReading, StoredData } from '@/components/report/types';
 
 interface SessionData extends StoredData {
@@ -70,6 +75,20 @@ export default function Report() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
   const [successIsSubscription, setSuccessIsSubscription] = useState(false);
+
+  // AI drawer state
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiSeed, setAiSeed] = useState<string | null>(null);
+  const [aiSource, setAiSource] = useState<string>('end_of_report');
+  const { user: authUser } = useAuth();
+  const { data: aiEntitlement } = useAiEntitlement(!!authUser);
+
+  const openAi = (source: string, seed?: string) => {
+    setAiSource(source);
+    setAiSeed(seed ?? null);
+    setAiOpen(true);
+  };
+
 
   // Resolve reportId: prefer URL param, fallback to session data
   const resolvedReportId = urlReportId || userData?.reportId;
@@ -534,6 +553,14 @@ export default function Report() {
                     peakPeriods={reading.careerWealth.peakPeriods}
                   />
                 </LockedSection>
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="career"
+                    question="Want more clarity about your career direction?"
+                    seed="Based on my palm, expand on my career direction for the next 3 years — what should I focus on and what to avoid?"
+                    onAsk={openAi}
+                  />
+                )}
               </div>
 
               {/* 6. Love & Relationships - Locked */}
@@ -554,9 +581,15 @@ export default function Report() {
                     relationshipAdvice={reading.loveRelationships.relationshipAdvice}
                   />
                 </LockedSection>
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="love"
+                    question="Curious about marriage timing and compatibility?"
+                    seed="Tell me more about my marriage — timing, the kind of partner suited to me, and what to work on in relationships."
+                    onAsk={openAi}
+                  />
+                )}
               </div>
-
-              {/* 7. Life Phases - Locked */}
               <div id="section-phases">
                 <LockedSection
                   isUnlocked={isUnlocked}
@@ -570,6 +603,14 @@ export default function Report() {
                 >
                   <LifePhaseSection phases={reading.lifePhases} />
                 </LockedSection>
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="phases"
+                    question="Want more detail on the phase you're entering next?"
+                    seed="Walk me through what to expect in the next life phase according to my palm and how to prepare."
+                    onAsk={openAi}
+                  />
+                )}
               </div>
 
               {/* 8. Spiritual Remedies - First remedy free, others locked */}
@@ -632,6 +673,14 @@ export default function Report() {
                     />
                   </>
                 )}
+                {isUnlocked && (
+                  <AskPalmMitraInline
+                    source="remedies"
+                    question="Want more personalised guidance on health, energy or remedies?"
+                    seed="Based on my palm, what personalised remedies and lifestyle practices would help me most right now?"
+                    onAsk={openAi}
+                  />
+                )}
               </div>
 
               {/* 9. Final Blessing - Locked */}
@@ -666,24 +715,14 @@ export default function Report() {
                 userName={userData?.name}
               />
 
-              {/* Continue with PalmMitra AI */}
+              {/* Continue with PalmMitra AI — end-of-report premium section */}
               {isUnlocked && resolvedReportId && (
-                <div className="mt-8 rounded-2xl border border-amber-500/30 bg-gradient-to-b from-amber-500/[0.06] to-transparent p-6 sm:p-8 text-center">
-                  <div className="text-[10px] uppercase tracking-[0.24em] text-amber-300/80">Included with your report</div>
-                  <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-amber-100">
-                    Continue with PalmMitra AI
-                  </h3>
-                  <p className="mt-2 text-amber-100/60 max-w-lg mx-auto text-sm">
-                    Ask your personal AI guide anything about your career, marriage, wealth or future. 3 complimentary questions included.
-                  </p>
-                  <button
-                    onClick={() => navigate(`/ai/start/${resolvedReportId}`)}
-                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 text-black font-medium px-6 py-3 hover:from-amber-200 hover:to-amber-400 transition-all shadow-[0_10px_40px_-10px_rgba(251,191,36,0.5)]"
-                  >
-                    Start My AI Guidance →
-                  </button>
-                </div>
+                <PalmMitraAiSection
+                  entitlement={aiEntitlement}
+                  onStart={() => openAi('end_of_report')}
+                />
               )}
+
 
 
               {/* 11. Premium Paywall - Only show if not unlocked */}
@@ -704,6 +743,20 @@ export default function Report() {
       </main>
 
       <Footer />
+
+      {/* PalmMitra AI Drawer — only reachable when report is unlocked */}
+      {isUnlocked && resolvedReportId && (
+        <AiDrawer
+          open={aiOpen}
+          onOpenChange={setAiOpen}
+          reportId={resolvedReportId}
+          userName={userData?.name}
+          userEmail={userEmail}
+          seedPrompt={aiSeed}
+          onSeedConsumed={() => setAiSeed(null)}
+          source={aiSource}
+        />
+      )}
     </div>
   );
 }

@@ -2,15 +2,15 @@
 export const AI_PLAN_AMOUNTS_PAISE: Record<string, number> = {
   ai_elite_monthly:  79900,
   ai_elite_annual:  599900,
-  ai_pack_10:        14900,
-  ai_pack_30:        34900,
-  ai_pack_100:       79900,
+  ai_pack_5:         14900,
+  ai_pack_10:        24900,
+  ai_pack_15:        34900,
 };
 
 export const AI_PACK_QUESTIONS: Record<string, number> = {
+  ai_pack_5:   5,
   ai_pack_10:  10,
-  ai_pack_30:  30,
-  ai_pack_100: 100,
+  ai_pack_15:  15,
 };
 
 export const AI_SUBSCRIPTION_DAYS: Record<string, number> = {
@@ -21,9 +21,9 @@ export const AI_SUBSCRIPTION_DAYS: Record<string, number> = {
 export const AI_LABELS: Record<string, string> = {
   ai_elite_monthly: 'PalmMitra AI Elite — Monthly',
   ai_elite_annual:  'PalmMitra AI Elite — Annual',
+  ai_pack_5:   '5 AI Question Pack',
   ai_pack_10:  '10 AI Question Pack',
-  ai_pack_30:  '30 AI Question Pack',
-  ai_pack_100: '100 AI Question Pack',
+  ai_pack_15:  '15 AI Question Pack',
 };
 
 export const AI_MODEL = 'gpt-4o-mini';

@@ -10,6 +10,37 @@ const json = (b: object, s = 200) =>
 
 const isUuid = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
+function buildSeedMessage(name: string, report: Record<string, unknown> | null): string {
+  const firstName = (name || 'friend').split(/\s+/)[0];
+  const signals: string[] = [];
+
+  try {
+    if (report) {
+      const cw = report.careerWealth as Record<string, unknown> | undefined;
+      if (cw?.wealthStyle) signals.push(`**Financial Path** — ${String(cw.wealthStyle).slice(0, 90)}`);
+      else if (Array.isArray(cw?.bestFields) && cw.bestFields.length)
+        signals.push(`**Career Strength** — best suited for ${(cw.bestFields as string[]).slice(0, 2).join(', ')}`);
+
+      const lr = report.loveRelationships as Record<string, unknown> | undefined;
+      if (lr?.commitmentTendency) signals.push(`**Relationships** — ${String(lr.commitmentTendency).slice(0, 90)}`);
+      else if (lr?.emotionalStyle) signals.push(`**Emotional Nature** — ${String(lr.emotionalStyle).slice(0, 90)}`);
+
+      const traits = report.personalityTraits as Array<{ trait?: string }> | undefined;
+      if (Array.isArray(traits) && traits[0]?.trait) signals.push(`**Core Personality** — ${traits[0].trait}`);
+
+      const lines = report.majorLines as Record<string, { strength?: string; keyInsight?: string }> | undefined;
+      if (lines?.lifeLine?.keyInsight) signals.push(`**Vitality** — ${String(lines.lifeLine.keyInsight).slice(0, 90)}`);
+    }
+  } catch { /* ignore malformed report */ }
+
+  if (signals.length === 0) {
+    signals.push('**Career Growth Potential**', '**Relationship Insights**', '**Wealth Timeline**', '**Personal Growth Path**');
+  }
+
+  const bullets = signals.slice(0, 4).map(s => `• ${s}`).join('\n');
+  return `Namaste ${firstName}.\n\nI've already studied your palm report in full. Your strongest indicators are:\n\n${bullets}\n\nWhat would you like to explore further?`;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -31,19 +62,16 @@ Deno.serve(async (req) => {
   const user = userRes.user;
   if (!user) return json({ error: "unauthorized" }, 401);
 
-  // Verify the user is entitled to this report:
-  // owns the row by email OR has an unlock/subscription/active claim.
   const email = user.email?.toLowerCase();
   const { data: report } = await supa
     .from("palm_reports")
-    .select("id, user_email")
+    .select("id, user_name, user_email, report_json")
     .eq("id", reportId)
     .maybeSingle();
   if (!report) return json({ error: "report not found" }, 404);
 
   const ownsByEmail = email && report.user_email && report.user_email.toLowerCase() === email;
   if (!ownsByEmail) {
-    // Fall back: allow if there's an existing unlock or active subscription tied to this email.
     const [{ data: unlock }, { data: sub }] = await Promise.all([
       supa.from("report_unlocks").select("id").eq("report_id", reportId).eq("user_email", email ?? "").maybeSingle(),
       supa.from("user_subscriptions").select("id").eq("user_email", email ?? "").eq("status", "active").maybeSingle(),
@@ -80,6 +108,25 @@ Deno.serve(async (req) => {
   await supa.rpc("grant_report_free_questions", {
     _user_id: user.id, _report_id: reportId, _n: freeN,
   });
+
+  // Seed pre-briefed assistant message on first entry (does NOT debit quota)
+  const { count: existingCount } = await supa
+    .from("ai_messages")
+    .select("id", { count: "exact", head: true })
+    .eq("conversation_id", convId!);
+
+  if ((existingCount ?? 0) === 0) {
+    const seed = buildSeedMessage(
+      report.user_name ?? "",
+      (report.report_json ?? null) as Record<string, unknown> | null,
+    );
+    await supa.from("ai_messages").insert({
+      conversation_id: convId!,
+      role: "assistant",
+      content: seed,
+      model: "seed",
+    });
+  }
 
   const { data: messages } = await supa
     .from("ai_messages")
