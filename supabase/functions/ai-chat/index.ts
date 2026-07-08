@@ -82,8 +82,14 @@ Deno.serve(async (req) => {
   if (debitErr || !debit?.ok) return json({ error: "quota_exhausted" }, 402);
   const source = debit.source;
 
-  // Build messages
-  const systemPrompt = buildSystemPrompt(report.user_name ?? "friend", (report.user_age?.toString() ?? null), report.report_json);
+  // Build structured Report Context (never send raw report_json to the model)
+  const ctx = buildReportContext(
+    report.user_name ?? null,
+    report.user_age ?? null,
+    null,
+    report.report_json,
+  );
+  const systemPrompt = buildSystemPrompt(ctx);
   const messages: Array<{ role: string; content: string }> = [
     { role: "system", content: systemPrompt },
     ...historyAsc.map(m => ({
@@ -103,7 +109,10 @@ Deno.serve(async (req) => {
         model: AI_MODEL,
         messages,
         stream: true,
-        temperature: 0.7,
+        temperature: 0.6,
+        top_p: 0.9,
+        presence_penalty: 0.3,
+        frequency_penalty: 0.2,
         max_tokens: 1000,
       }),
     });
