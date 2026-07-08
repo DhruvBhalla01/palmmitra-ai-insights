@@ -80,7 +80,7 @@ export default function Report() {
   const [aiOpen, setAiOpen] = useState(false);
   const [aiSeed, setAiSeed] = useState<string | null>(null);
   const [aiSource, setAiSource] = useState<string>('end_of_report');
-  const { user: authUser } = useAuth();
+  
 
   const openAi = (source: string, seed?: string) => {
     setAiSource(source);
