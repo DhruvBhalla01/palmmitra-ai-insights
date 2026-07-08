@@ -81,6 +81,7 @@ export default function Report() {
   const [aiSeed, setAiSeed] = useState<string | null>(null);
   const [aiSource, setAiSource] = useState<string>('end_of_report');
   const { user: authUser } = useAuth();
+  const { data: aiEntitlement } = useAiEntitlement(resolvedReportId, userEmail, isUnlocked && !!resolvedReportId && !!userEmail);
 
   const openAi = (source: string, seed?: string) => {
     setAiSource(source);
