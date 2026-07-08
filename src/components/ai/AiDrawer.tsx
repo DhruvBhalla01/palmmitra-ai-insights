@@ -183,13 +183,17 @@ export function AiDrawer({
           </div>
 
           {/* Body */}
-          <div className="relative flex-1 overflow-y-auto px-5 sm:px-6 py-5">
+          <div className="relative flex-1 overflow-y-auto px-5 sm:px-6 py-6">
             {isEmpty ? (
-              <WelcomeCard firstName={firstName} onPick={handleSuggestion} disabled={chat.status !== 'idle'} />
+              <WelcomeCard firstName={firstName} onPick={handleSuggestion} disabled={chat.status !== 'idle'} reportGeneratedAt={reportGeneratedAt} />
             ) : (
-              <AiMessageList messages={chat.messages} userInitial={userEmail?.[0]?.toUpperCase()} />
+              <div className="space-y-5">
+                <ContextMemoryBanner date={reportGeneratedAt} />
+                <AiMessageList messages={chat.messages} userInitial={userEmail?.[0]?.toUpperCase()} />
+              </div>
             )}
           </div>
+
 
           {/* Composer */}
           <div className="relative shrink-0 border-t border-[hsl(var(--gold)/0.15)] bg-[linear-gradient(180deg,transparent,hsl(245_58%_6%/0.7))] px-4 sm:px-5 py-4">
