@@ -756,6 +756,7 @@ export default function Report() {
           seedPrompt={aiSeed}
           onSeedConsumed={() => setAiSeed(null)}
           source={aiSource}
+          reportGeneratedAt={generatedAt}
         />
       )}
     </div>
