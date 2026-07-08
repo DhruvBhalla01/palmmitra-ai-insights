@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface UiMessage {
   id: string;
@@ -12,13 +11,15 @@ export type ChatError = 'quota' | 'rate_limit' | 'network' | 'auth' | 'unknown';
 
 interface Options {
   reportId: string;
+  userEmail: string;
   onQuotaExhausted?: () => void;
   onCompleted?: () => void;
 }
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
-export function useAiChatStream({ reportId, onQuotaExhausted, onCompleted }: Options) {
+export function useAiChatStream({ reportId, userEmail, onQuotaExhausted, onCompleted }: Options) {
   const [messages, setMessages] = useState<UiMessage[]>([]);
   const [status, setStatus] = useState<'idle' | 'sending' | 'streaming'>('idle');
   const [error, setError] = useState<ChatError | null>(null);
@@ -36,14 +37,6 @@ export function useAiChatStream({ reportId, onQuotaExhausted, onCompleted }: Opt
     const aiMsgId = crypto.randomUUID();
     setMessages(m => [...m, userMsg, { id: aiMsgId, role: 'assistant', content: '', streaming: true }]);
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      setError('auth');
-      setStatus('idle');
-      setMessages(m => m.filter(x => x.id !== aiMsgId && x.id !== userMsg.id));
-      return;
-    }
-
     const ctrl = new AbortController();
     abortRef.current = ctrl;
 
@@ -52,9 +45,10 @@ export function useAiChatStream({ reportId, onQuotaExhausted, onCompleted }: Opt
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
+          apikey: SUPABASE_ANON,
+          Authorization: `Bearer ${SUPABASE_ANON}`,
         },
-        body: JSON.stringify({ reportId, message: trimmed }),
+        body: JSON.stringify({ reportId, userEmail, message: trimmed }),
         signal: ctrl.signal,
       });
 
@@ -67,6 +61,12 @@ export function useAiChatStream({ reportId, onQuotaExhausted, onCompleted }: Opt
       }
       if (res.status === 429) {
         setError('rate_limit');
+        setStatus('idle');
+        setMessages(m => m.filter(x => x.id !== aiMsgId));
+        return;
+      }
+      if (res.status === 403 || res.status === 401) {
+        setError('auth');
         setStatus('idle');
         setMessages(m => m.filter(x => x.id !== aiMsgId));
         return;
@@ -111,7 +111,7 @@ export function useAiChatStream({ reportId, onQuotaExhausted, onCompleted }: Opt
       setStatus('idle');
       setMessages(m => m.filter(x => x.id !== aiMsgId));
     }
-  }, [reportId, status, onCompleted, onQuotaExhausted]);
+  }, [reportId, userEmail, status, onCompleted, onQuotaExhausted]);
 
   const stop = useCallback(() => abortRef.current?.abort(), []);
 
