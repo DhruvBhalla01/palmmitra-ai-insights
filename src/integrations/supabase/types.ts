@@ -340,6 +340,7 @@ export type Database = {
       }
       user_subscriptions: {
         Row: {
+          expires_at: string | null
           id: string
           payment_id: string | null
           plan: string
@@ -348,6 +349,7 @@ export type Database = {
           user_email: string
         }
         Insert: {
+          expires_at?: string | null
           id?: string
           payment_id?: string | null
           plan?: string
@@ -356,6 +358,7 @@ export type Database = {
           user_email: string
         }
         Update: {
+          expires_at?: string | null
           id?: string
           payment_id?: string | null
           plan?: string
