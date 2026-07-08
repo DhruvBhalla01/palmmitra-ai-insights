@@ -25,7 +25,7 @@ export type Database = {
           total_input_tokens: number
           total_output_tokens: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -37,7 +37,7 @@ export type Database = {
           total_input_tokens?: number
           total_output_tokens?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -49,7 +49,7 @@ export type Database = {
           total_input_tokens?: number
           total_output_tokens?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -65,35 +65,41 @@ export type Database = {
         Row: {
           free_questions_remaining: number
           granted_report_ids: string[]
+          id: string
           pack_questions_remaining: number
+          report_id: string | null
           subscription_expires_at: string | null
           subscription_month_reset_at: string | null
           subscription_month_usage: number
           subscription_plan: string | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           free_questions_remaining?: number
           granted_report_ids?: string[]
+          id?: string
           pack_questions_remaining?: number
+          report_id?: string | null
           subscription_expires_at?: string | null
           subscription_month_reset_at?: string | null
           subscription_month_usage?: number
           subscription_plan?: string | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           free_questions_remaining?: number
           granted_report_ids?: string[]
+          id?: string
           pack_questions_remaining?: number
+          report_id?: string | null
           subscription_expires_at?: string | null
           subscription_month_reset_at?: string | null
           subscription_month_usage?: number
           subscription_plan?: string | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -164,8 +170,9 @@ export type Database = {
           input_tokens: number
           message_id: string | null
           output_tokens: number
+          report_id: string | null
           source: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           conversation_id?: string | null
@@ -174,8 +181,9 @@ export type Database = {
           input_tokens?: number
           message_id?: string | null
           output_tokens?: number
+          report_id?: string | null
           source: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           conversation_id?: string | null
@@ -184,8 +192,9 @@ export type Database = {
           input_tokens?: number
           message_id?: string | null
           output_tokens?: number
+          report_id?: string | null
           source?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -388,12 +397,27 @@ export type Database = {
           source: string
         }[]
       }
+      debit_ai_question_by_report: {
+        Args: { _report_id: string }
+        Returns: {
+          ok: boolean
+          source: string
+        }[]
+      }
+      grant_free_questions_by_report: {
+        Args: { _n: number; _report_id: string }
+        Returns: undefined
+      }
       grant_report_free_questions: {
         Args: { _n: number; _report_id: string; _user_id: string }
         Returns: undefined
       }
       refund_ai_question: {
         Args: { _source: string; _user_id: string }
+        Returns: undefined
+      }
+      refund_ai_question_by_report: {
+        Args: { _report_id: string; _source: string }
         Returns: undefined
       }
     }
