@@ -743,6 +743,20 @@ export default function Report() {
       </main>
 
       <Footer />
+
+      {/* PalmMitra AI Drawer — only reachable when report is unlocked */}
+      {isUnlocked && resolvedReportId && (
+        <AiDrawer
+          open={aiOpen}
+          onOpenChange={setAiOpen}
+          reportId={resolvedReportId}
+          userName={userData?.name}
+          userEmail={userEmail}
+          seedPrompt={aiSeed}
+          onSeedConsumed={() => setAiSeed(null)}
+          source={aiSource}
+        />
+      )}
     </div>
   );
 }
