@@ -76,6 +76,20 @@ export default function Report() {
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
   const [successIsSubscription, setSuccessIsSubscription] = useState(false);
 
+  // AI drawer state
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiSeed, setAiSeed] = useState<string | null>(null);
+  const [aiSource, setAiSource] = useState<string>('end_of_report');
+  const { user: authUser } = useAuth();
+  const { data: aiEntitlement } = useAiEntitlement(!!authUser);
+
+  const openAi = (source: string, seed?: string) => {
+    setAiSource(source);
+    setAiSeed(seed ?? null);
+    setAiOpen(true);
+  };
+
+
   // Resolve reportId: prefer URL param, fallback to session data
   const resolvedReportId = urlReportId || userData?.reportId;
 
