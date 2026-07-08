@@ -227,7 +227,24 @@ export function AiDrawer({
   );
 }
 
-function WelcomeCard({ firstName, onPick, disabled }: { firstName: string; onPick: (seed: string, key: string) => void; disabled: boolean }) {
+function ContextMemoryBanner({ date }: { date?: string | null }) {
+  const formatted = (() => {
+    if (!date) return null;
+    try {
+      return new Date(date).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch { return null; }
+  })();
+  return (
+    <div className="flex items-center gap-2.5 rounded-full border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.05)] px-4 py-2 text-[11px] text-foreground/70">
+      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--gold))] shadow-[0_0_6px_hsl(var(--gold)/0.8)]" />
+      <span className="tracking-wide">
+        Based on your Palm Report{formatted ? <> · <span className="text-[hsl(var(--gold-light))]">{formatted}</span></> : null}
+      </span>
+    </div>
+  );
+}
+
+function WelcomeCard({ firstName, onPick, disabled, reportGeneratedAt }: { firstName: string; onPick: (seed: string, key: string) => void; disabled: boolean; reportGeneratedAt?: string | null }) {
   const highlights = [
     { label: 'Career Growth', key: 'career' },
     { label: 'Strong Leadership', key: 'leadership' },
@@ -235,31 +252,32 @@ function WelcomeCard({ firstName, onPick, disabled }: { firstName: string; onPic
     { label: 'Relationship Stability', key: 'relationships' },
   ];
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="relative rounded-3xl border border-[hsl(var(--gold)/0.25)] bg-[linear-gradient(160deg,hsl(var(--gold)/0.08),hsl(245_58%_10%/0.6))] p-6 shadow-[0_20px_60px_-20px_hsl(var(--gold)/0.35),inset_0_1px_0_hsl(var(--gold)/0.15)] backdrop-blur-xl">
+    <div className="space-y-8 animate-fade-in">
+      <ContextMemoryBanner date={reportGeneratedAt} />
+      <div className="relative rounded-3xl border border-[hsl(var(--gold)/0.25)] bg-[linear-gradient(160deg,hsl(var(--gold)/0.08),hsl(245_58%_10%/0.6))] p-7 shadow-[0_20px_60px_-20px_hsl(var(--gold)/0.35),inset_0_1px_0_hsl(var(--gold)/0.15)] backdrop-blur-xl">
         <div className="absolute -top-px left-6 right-6 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.6)] to-transparent" />
         <div className="text-[10px] uppercase tracking-[0.24em] text-[hsl(var(--gold)/0.8)]">A Message from PalmMitra AI</div>
-        <h3 className="mt-2 font-serif text-2xl sm:text-[26px] leading-tight text-foreground">
+        <h3 className="mt-3 font-serif text-[26px] sm:text-[28px] leading-[1.15] text-foreground">
           {`Namaste${firstName ? `, ${firstName}` : ''}`}
         </h3>
-        <p className="mt-3 text-[15px] leading-relaxed text-foreground/80">
+        <p className="mt-4 text-[15px] leading-relaxed text-foreground/80">
           I've carefully studied your palm. Your strongest indications suggest:
         </p>
-        <ul className="mt-4 grid grid-cols-2 gap-2.5">
+        <ul className="mt-5 grid grid-cols-2 gap-3">
           {highlights.map(h => (
-            <li key={h.key} className="flex items-center gap-2 text-sm text-foreground/85">
+            <li key={h.key} className="flex items-center gap-2.5 text-sm text-foreground/85">
               <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--gold))] shadow-[0_0_8px_hsl(var(--gold)/0.8)]" />
               {h.label}
             </li>
           ))}
         </ul>
-        <p className="mt-4 text-sm text-foreground/70">
+        <p className="mt-6 text-sm leading-relaxed text-foreground/70">
           I'm here to help you understand every part of your reading. Ask me anything.
         </p>
       </div>
 
       <div>
-        <div className="text-[10px] uppercase tracking-[0.22em] text-[hsl(var(--gold)/0.7)] mb-3 px-1">Explore</div>
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[hsl(var(--gold)/0.7)] mb-4 px-1">Explore</div>
         <AiSuggestionGrid onPick={onPick} disabled={disabled} />
       </div>
     </div>
