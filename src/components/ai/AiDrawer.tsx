@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { AiComposer } from './AiComposer';
 import { AiMessageList } from './AiMessageList';
 import { AiSuggestionGrid } from './AiSuggestionGrid';
