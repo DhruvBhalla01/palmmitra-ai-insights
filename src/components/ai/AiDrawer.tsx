@@ -36,6 +36,7 @@ export function AiDrawer({
 
   const [showPaywall, setShowPaywall] = useState(false);
   const [paying, setPaying] = useState<AiPlanId | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const bootstrapped = useRef<string | null>(null);
   const seedFired = useRef(false);
 
@@ -51,6 +52,7 @@ export function AiDrawer({
     const key = `${reportId}:${userEmail}`;
     if (bootstrapped.current === key) return;
     bootstrapped.current = key;
+    setHydrated(false);
     (async () => {
       const { data, error } = await supabase.functions.invoke('ai-conversation', {
         method: 'POST',
@@ -58,12 +60,14 @@ export function AiDrawer({
       });
       if (error) {
         toast({ title: 'Could not load conversation', description: error.message, variant: 'destructive' });
+        setHydrated(true);
         return;
       }
       const rows = ((data?.messages ?? []) as Array<{ id: string; role: string; content: string }>)
         .filter(m => m.role === 'user' || m.role === 'assistant')
         .map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content })) as UiMessage[];
       chat.hydrate(rows);
+      setHydrated(true);
       if (rows.length === 1 && rows[0].role === 'assistant') track('ai_seed_shown', { reportId });
       track('ai_drawer_opened', { reportId, source: source ?? 'unknown' });
     })();
@@ -71,15 +75,26 @@ export function AiDrawer({
 
   useEffect(() => {
     if (!open || !seedPrompt || seedFired.current) return;
-    if (bootstrapped.current !== `${reportId}:${userEmail}`) return;
+    if (!hydrated) return;
     if (chat.status !== 'idle') return;
+    // Don't re-ask if this exact question is already the last user turn
+    const lastUser = [...chat.messages].reverse().find(m => m.role === 'user');
+    if (lastUser && lastUser.content.trim() === seedPrompt.trim()) {
+      seedFired.current = true;
+      onSeedConsumed?.();
+      return;
+    }
     seedFired.current = true;
     chat.send(seedPrompt);
     track('ai_suggestion_clicked', { key: 'inline_seed', source: source ?? 'inline' });
     onSeedConsumed?.();
-  }, [open, seedPrompt, reportId, userEmail, chat, source, onSeedConsumed]);
+  }, [open, seedPrompt, hydrated, chat, source, onSeedConsumed]);
 
-  useEffect(() => { if (!open) seedFired.current = false; }, [open]);
+  useEffect(() => {
+    if (!open) {
+      seedFired.current = false;
+    }
+  }, [open]);
 
   const remaining = entitlement?.total_remaining ?? 0;
   const isElite = !!entitlement?.has_active_subscription;
