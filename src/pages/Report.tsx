@@ -427,7 +427,18 @@ export default function Report() {
                           </span>
                         </div>
                         <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full bg-green-500 rounded-full w-4/5" />
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{
+                              width:
+                                reading.majorLines.lifeLine.strength === 'Strong' ? '88%'
+                                : reading.majorLines.lifeLine.strength === 'Moderate' ? '65%'
+                                : reading.majorLines.lifeLine.strength === 'Developing' ? '45%'
+                                : '55%',
+                            }}
+                            transition={{ duration: 1.1, ease: 'easeOut', delay: 0.2 }}
+                            className="h-full bg-green-500 rounded-full"
+                          />
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground mb-4">
