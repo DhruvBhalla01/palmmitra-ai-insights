@@ -176,6 +176,11 @@ export function AiDrawer({
             }}
           />
 
+          <VisuallyHidden>
+            <SheetTitle>PalmMitra AI</SheetTitle>
+            <SheetDescription>Ask questions about your palm reading and get personalised guidance.</SheetDescription>
+          </VisuallyHidden>
+
           {/* Header */}
           <div className="relative shrink-0 px-6 pt-6 pb-4">
             <div className="flex items-start justify-between gap-3">
