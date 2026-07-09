@@ -134,13 +134,14 @@ export function ReportHeader({
 
             <div className="flex items-center gap-3">
               <motion.div
-                className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-accent/10 border border-accent/20"
+                className="flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-xl bg-accent/10 border border-accent/20"
                 whileHover={{ scale: 1.02 }}
+                aria-label={`AI confidence score ${confidenceScore} percent`}
               >
                 <ConfidenceRing score={confidenceScore} />
-                <div>
-                  <p className="text-xs text-muted-foreground leading-none mb-0.5">Confidence</p>
-                  <p className="text-sm font-bold text-accent leading-none">Score</p>
+                <div className="leading-tight">
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">AI Confidence</p>
+                  <p className="text-sm font-bold text-accent">Verified reading</p>
                 </div>
               </motion.div>
 
