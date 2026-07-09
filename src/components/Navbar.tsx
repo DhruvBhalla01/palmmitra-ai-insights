@@ -44,7 +44,7 @@ export function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
           ? 'glass-premium shadow-soft py-3' 
-          : 'bg-background/40 backdrop-blur-md py-5'
+          : 'bg-card/70 backdrop-blur-lg border-b border-border/40 py-5'
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
