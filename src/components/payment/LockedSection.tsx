@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Lock, ArrowRight, Sparkles, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReactNode } from 'react';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 type SectionKey = 'lines' | 'mounts' | 'personality' | 'career' | 'love' | 'phases' | 'remedies' | 'blessing' | 'palmmatch-communication' | 'palmmatch-goals' | 'palmmatch-romance' | 'palmmatch-spiritual';
 
