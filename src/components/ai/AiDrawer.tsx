@@ -156,7 +156,8 @@ export function AiDrawer({
     } finally { setPaying(null); }
   };
 
-  const isEmpty = chat.messages.length === 0;
+  const hasUserTurn = chat.messages.some(m => m.role === 'user');
+  const isEmpty = !hasUserTurn;
   const firstName = userName ? userName.split(/\s+/)[0] : '';
 
   return (
