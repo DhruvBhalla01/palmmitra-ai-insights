@@ -68,6 +68,18 @@ const sectionTeasers: Record<SectionKey, { teaser: string; hook: string }> = {
   },
 };
 
+/** Vary the social-proof microcopy so each locked card feels distinct. */
+const socialProofBySection: Partial<Record<SectionKey, string>> = {
+  lines:       '1,284 people revealed their lines this week',
+  mounts:      '892 mount analyses unlocked in the last 7 days',
+  personality: 'Avg. reader unlocks within 2 minutes of reading this',
+  career:      '76% of readers unlock after seeing their career preview',
+  love:        '2,140 love timelines revealed this month',
+  phases:      'Your growth window may already be active — check inside',
+  remedies:    'Hand-matched remedies · not generic advice',
+  blessing:    'A one-of-a-kind blessing written for your palm',
+};
+
 export function LockedSection({
   isUnlocked,
   sectionName,
@@ -77,6 +89,9 @@ export function LockedSection({
   sectionKey,
   userName,
 }: LockedSectionProps) {
+  const { currency } = useCurrency();
+  const insightPrice = PRODUCTS.insight.prices[currency].display;
+
   if (isUnlocked) {
     return <>{children}</>;
   }
@@ -85,6 +100,8 @@ export function LockedSection({
     ? sectionTeasers[sectionKey]
     : { teaser: 'Unlock your complete reading to reveal this section.', hook: '' };
   const personalizedName = userName ? `${userName}'s` : 'Your';
+  const socialProof = (sectionKey && socialProofBySection[sectionKey]) ||
+    '2,847+ readings unlocked this month';
 
   return (
     <div className="relative mb-12">
@@ -116,13 +133,13 @@ export function LockedSection({
           </h3>
 
           {/* Teaser text */}
-          <p className="text-sm text-foreground/80 mb-2 text-center max-w-xs leading-relaxed">
+          <p className="text-sm text-foreground/80 mb-2 text-center max-w-sm leading-relaxed">
             {teaserData.teaser}
           </p>
 
           {/* Hook */}
           {teaserData.hook && (
-            <div className="flex items-start gap-2 mb-4 px-4 py-3 rounded-xl bg-accent/8 border border-accent/15 max-w-xs">
+            <div className="flex items-start gap-2 mb-4 px-4 py-3 rounded-xl bg-accent/8 border border-accent/15 max-w-sm">
               <Eye className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
               <p className="text-xs text-foreground/70 leading-relaxed italic">
                 {teaserData.hook}
@@ -130,10 +147,10 @@ export function LockedSection({
             </div>
           )}
 
-          {/* Social proof */}
-          <p className="text-xs text-muted-foreground mb-5 flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3 text-accent" aria-hidden="true" />
-            2,847+ readings unlocked this month
+          {/* Social proof — varies per section */}
+          <p className="text-xs text-muted-foreground mb-5 flex items-center gap-1.5 text-center">
+            <Sparkles className="w-3 h-3 text-accent flex-shrink-0" aria-hidden="true" />
+            {socialProof}
           </p>
 
           <Button
@@ -144,7 +161,9 @@ export function LockedSection({
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Button>
 
-          <p className="text-xs text-muted-foreground/60 mt-3">One-time ₹149 · Unlocks entire report · PDF included</p>
+          <p className="text-xs text-muted-foreground/60 mt-3">
+            One-time {insightPrice} · Unlocks entire report · PDF included
+          </p>
         </motion.div>
       </div>
     </div>
