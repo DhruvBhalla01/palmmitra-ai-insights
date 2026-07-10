@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
+import { breadcrumbLd } from '@/lib/seo';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Shield, Eye, Lock, Trash2, Server, Mail } from 'lucide-react';
@@ -59,6 +60,7 @@ export default function Privacy() {
         title="Privacy Policy — How PalmMitra Handles Your Data"
         description="PalmMitra's privacy policy: how we collect, use, store, and protect your palm images and personal data. Encrypted in transit and at rest. Never sold. Deletion on request."
         path="/privacy"
+        jsonLd={breadcrumbLd([["Privacy", "/privacy"]])}
       />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />

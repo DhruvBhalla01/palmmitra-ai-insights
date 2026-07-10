@@ -10,6 +10,7 @@ import {
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
+import { breadcrumbLd } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -282,9 +283,10 @@ export default function UploadPalm() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Upload Your Palm — Get Your AI Palm Reading | PalmMitra"
-        description="Upload a photo of your dominant palm. PalmMitra's AI reads 150+ palm markers and delivers a 2,000+ word personalised destiny report in under 2 minutes. Free preview, full report ₹149 / $9.99."
+        title="Palm Reading Online — Upload Your Palm Photo | PalmMitra"
+        description="Get a palm reading online in 2 minutes. Upload a photo of your dominant palm and PalmMitra reads 150+ markers to deliver a 2,000+ word personalised destiny report. Free preview, full report ₹149 / $9.99."
         path="/upload"
+        jsonLd={breadcrumbLd([["Upload Palm", "/upload"]])}
       />
       <Navbar />
 

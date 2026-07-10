@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
+import { breadcrumbLd } from '@/lib/seo';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { FileText, Check, AlertTriangle, CreditCard, Scale, Ban } from 'lucide-react';
@@ -65,6 +66,7 @@ export default function Terms() {
         title="Terms of Service — PalmMitra"
         description="PalmMitra's terms of service. Service description, payments and refunds, disclaimers, limitation of liability, prohibited uses, and governing law."
         path="/terms"
+        jsonLd={breadcrumbLd([["Terms", "/terms"]])}
       />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
