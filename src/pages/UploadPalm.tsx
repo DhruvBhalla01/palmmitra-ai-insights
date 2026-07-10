@@ -842,7 +842,7 @@ export default function UploadPalm() {
 
                       {/* Sections */}
                       <div className="space-y-2">
-                        {reportSections.map(({ icon: Icon, label, free }, i) => (
+                        {reportSections.map(({ icon: Icon, label, free }) => (
                           <div
                             key={label}
                             className={`group relative flex items-center gap-3 p-3 pl-4 rounded-xl border transition-all ${
