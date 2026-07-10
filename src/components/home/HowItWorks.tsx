@@ -53,9 +53,9 @@ export function HowItWorks() {
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-16">
           <p className="sanskrit-accent mb-3">ॐ Margadarshan</p>
-          <h2 id="hiw-heading" className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            From Photo to Destiny{' '}
-            <span className="text-gradient-gold">in 3 Steps</span>
+          <h2 id="hiw-heading" className="text-[1.9rem] sm:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4 leading-[1.15] text-balance">
+            From Photo to Destiny
+            <span className="block sm:inline sm:ml-2 text-gradient-gold">in 3 Steps</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             The most detailed AI palm reading in India — under 2 minutes start to finish.
