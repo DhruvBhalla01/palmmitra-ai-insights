@@ -425,34 +425,68 @@ export default function UploadPalm() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="flex flex-col items-center py-10 px-6 text-center"
+                            className="relative flex flex-col items-center py-10 sm:py-12 px-5 sm:px-6 text-center"
                           >
-                            <m.div
-                              animate={{
-                                filter: [
-                                  'drop-shadow(0 0 10px hsl(42 87% 55% / 0.3))',
-                                  'drop-shadow(0 0 24px hsl(42 87% 55% / 0.6))',
-                                  'drop-shadow(0 0 10px hsl(42 87% 55% / 0.3))',
-                                ],
+                            {/* Ambient gold radiance */}
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-x-8 top-4 h-40 opacity-70 blur-3xl"
+                              style={{
+                                background:
+                                  'radial-gradient(closest-side, hsl(var(--accent) / 0.22), transparent 70%)',
                               }}
-                              transition={{ duration: 2.5, repeat: Infinity }}
-                              className="mb-5"
-                            >
-                              <img src={palmIconGold} alt="Palm" className="w-16 h-16 object-contain" />
-                            </m.div>
+                            />
 
-                            <h3 className="text-lg font-serif font-bold text-foreground mb-1.5">
-                              Photograph Your Dominant Hand
+                            {/* Step chip */}
+                            <div className="relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/25 mb-5">
+                              <span className="text-accent text-[10px]">✦</span>
+                              <span className="text-[10px] uppercase tracking-[0.18em] text-accent font-semibold">
+                                Step 1 · Capture
+                              </span>
+                            </div>
+
+                            {/* Palm icon with orbit ring */}
+                            <div className="relative mb-5">
+                              <div
+                                aria-hidden="true"
+                                className="absolute inset-0 -m-3 rounded-full border border-accent/25"
+                                style={{
+                                  background:
+                                    'conic-gradient(from 0deg, hsl(var(--accent) / 0.35), transparent 40%, hsl(var(--accent) / 0.25) 70%, transparent)',
+                                  mask: 'radial-gradient(circle, transparent 55%, black 56%)',
+                                  WebkitMask: 'radial-gradient(circle, transparent 55%, black 56%)',
+                                }}
+                              />
+                              <m.div
+                                animate={{
+                                  filter: [
+                                    'drop-shadow(0 0 10px hsl(42 87% 55% / 0.3))',
+                                    'drop-shadow(0 0 24px hsl(42 87% 55% / 0.6))',
+                                    'drop-shadow(0 0 10px hsl(42 87% 55% / 0.3))',
+                                  ],
+                                }}
+                                transition={{ duration: 2.5, repeat: Infinity }}
+                                className="relative"
+                              >
+                                <img src={palmIconGold} alt="Palm" className="w-16 h-16 sm:w-20 sm:h-20 object-contain" />
+                              </m.div>
+                            </div>
+
+                            <h3 className="relative text-xl sm:text-2xl font-serif font-bold text-foreground mb-2 leading-tight text-balance">
+                              Photograph Your <span className="text-gradient-gold">Dominant Hand</span>
                             </h3>
-                            <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-                              Right hand if right-handed · Left if left-handed. Open palm facing camera.
+                            <p className="relative text-sm text-muted-foreground mb-6 max-w-[19rem] leading-relaxed">
+                              Right hand if right-handed · Left if left-handed.
+                              <br className="hidden sm:inline" />
+                              Open palm facing the camera in soft, even light.
                             </p>
 
                             {/* Primary: Camera capture (opens camera directly on mobile) */}
-                            <label htmlFor="camera-capture" className="cursor-pointer w-full max-w-[220px]">
-                              <div className="btn-gold text-foreground font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 w-full hover:scale-[1.02] active:scale-[0.98] transition-transform text-sm">
-                                <Camera className="w-4 h-4" />
+                            <label htmlFor="camera-capture" className="relative cursor-pointer w-full max-w-[280px]">
+                              <div className="btn-gold text-foreground font-semibold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 w-full active:scale-[0.98] transition-transform text-[15px] shadow-gold-lg">
+                                <Camera className="w-[18px] h-[18px]" />
                                 Take Photo Now
+                                <ArrowRight className="w-4 h-4 opacity-80" />
                               </div>
                               <input
                                 id="camera-capture"
@@ -464,10 +498,17 @@ export default function UploadPalm() {
                               />
                             </label>
 
+                            {/* Divider "or" */}
+                            <div className="relative flex items-center gap-3 w-full max-w-[280px] my-3">
+                              <div className="flex-1 h-px bg-border/50" />
+                              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">or</span>
+                              <div className="flex-1 h-px bg-border/50" />
+                            </div>
+
                             {/* Secondary: Upload from gallery */}
-                            <label htmlFor="gallery-upload" className="cursor-pointer w-full max-w-[220px] mt-2.5">
-                              <div className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl border border-border/60 text-sm text-muted-foreground hover:bg-accent/5 hover:border-accent/30 transition-all">
-                                <Upload className="w-3.5 h-3.5" />
+                            <label htmlFor="gallery-upload" className="relative cursor-pointer w-full max-w-[280px]">
+                              <div className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl border border-accent/25 bg-background/40 text-sm text-foreground/90 hover:bg-accent/5 hover:border-accent/45 transition-all">
+                                <Upload className="w-4 h-4 text-accent" />
                                 Upload from Gallery
                               </div>
                               <input
@@ -479,9 +520,25 @@ export default function UploadPalm() {
                               />
                             </label>
 
-                            <p className="text-xs text-muted-foreground mt-4 hidden lg:block opacity-60">
-                              Or drag & drop here
-                            </p>
+                            {/* Micro trust */}
+                            <div className="relative mt-6 flex items-center gap-3 text-[11px] text-muted-foreground">
+                              <span className="flex items-center gap-1.5">
+                                <ShieldCheck className="w-3 h-3 text-accent" />
+                                Private
+                              </span>
+                              <span className="opacity-40">·</span>
+                              <span className="flex items-center gap-1.5">
+                                <Zap className="w-3 h-3 text-accent" />
+                                Instant AI verify
+                              </span>
+                              <span className="opacity-40">·</span>
+                              <span className="hidden sm:flex items-center gap-1.5">
+                                Drag &amp; drop supported
+                              </span>
+                              <span className="sm:hidden flex items-center gap-1.5">
+                                JPG · PNG · WEBP
+                              </span>
+                            </div>
                           </m.div>
                         )}
                       </AnimatePresence>
