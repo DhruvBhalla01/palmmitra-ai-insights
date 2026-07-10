@@ -60,6 +60,7 @@ function progressLabel(pct: number, done: boolean) {
 export function PalmMatchAnalysisOverlay({
   open, isComplete, hasError, person1Name, person2Name, image1Url, image2Url,
 }: Props) {
+  const reduceMotion = useReducedMotion();
   const startRef = useRef(0);
   const [progress, setProgress] = useState(0);
   const [insightIdx, setInsightIdx] = useState(0);
