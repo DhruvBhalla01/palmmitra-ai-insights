@@ -240,7 +240,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                       return (
                         <m.div
                           key={label}
-                          layout
+
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: done ? 0.55 : 1, y: 0 }}
                           exit={{ opacity: 0, y: -8 }}

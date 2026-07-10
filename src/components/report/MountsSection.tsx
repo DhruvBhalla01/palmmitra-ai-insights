@@ -61,7 +61,7 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08, duration: 0.3 }}
-                layout
+
                 onClick={() => setExpandedMount(isExpanded ? null : key)}
                 className={`glass-premium gradient-border rounded-2xl border ${borderColor} hover:border-accent/30 transition-all duration-300 cursor-pointer overflow-hidden`}
               >
