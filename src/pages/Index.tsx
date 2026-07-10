@@ -17,6 +17,7 @@ const AboutSection = lazy(() => import('@/components/home/AboutSection').then(m 
 const Testimonials = lazy(() => import('@/components/home/Testimonials').then(m => ({ default: m.Testimonials })));
 const FAQSection = lazy(() => import('@/components/home/FAQSection').then(m => ({ default: m.FAQSection })));
 const FinalCTABanner = lazy(() => import('@/components/home/FinalCTABanner').then(m => ({ default: m.FinalCTABanner })));
+const PricingSection = lazy(() => import('@/components/home/PricingSection').then(m => ({ default: m.PricingSection })));
 
 const SectionLoader = () => (
   <div className="py-24 flex items-center justify-center">
