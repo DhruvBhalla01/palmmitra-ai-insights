@@ -101,9 +101,10 @@ export default function Help() {
   return (
     <div className="min-h-screen bg-background relative">
       <SEO
-        title="Help Center — PalmMitra FAQ & Support"
-        description="Answers to common PalmMitra questions: how AI palm reading works, which hand to photograph, pricing, payments, privacy and refunds."
+        title="Palm Reading Help & FAQ — How PalmMitra Works | PalmMitra"
+        description="Palm reading help centre: how AI palm reading works, which hand to photograph, image quality tips, pricing, payments, privacy and refunds. Answers to the most common PalmMitra questions."
         path="/help"
+        jsonLd={breadcrumbLd([["Help", "/help"]])}
       />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
