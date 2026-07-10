@@ -218,20 +218,14 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/8 overflow-hidden mb-6">
                 <m.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70 bg-[length:200%_100%]"
-                  animate={{
-                    width: `${progress}%`,
-                    backgroundPosition: ['0% 0%', '200% 0%'],
-                  }}
-                  transition={{
-                    width: { duration: 0.4, ease: 'easeOut' },
-                    backgroundPosition: { duration: 2, repeat: Infinity, ease: 'linear' },
-                  }}
+                  className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ width: { duration: 0.4, ease: 'easeOut' } }}
                 />
               </div>
 
               {/* Steps */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 mb-5">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4 mb-5">
                 <div className="space-y-2.5">
                   <AnimatePresence initial={false} mode="popLayout">
                     {visibleSteps.map(({ label, i }) => {
