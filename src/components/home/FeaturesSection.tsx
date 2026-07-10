@@ -67,7 +67,7 @@ const reportStats = [
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-24 md:py-32 relative" aria-labelledby="features-heading">
+    <section id="features" className="py-16 md:py-32 relative" aria-labelledby="features-heading">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left - Features list */}

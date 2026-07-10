@@ -26,7 +26,7 @@ const highlights = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-24 md:py-32 relative scroll-mt-20" aria-labelledby="about-heading">
+    <section id="about" className="py-16 md:py-32 relative scroll-mt-20" aria-labelledby="about-heading">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
