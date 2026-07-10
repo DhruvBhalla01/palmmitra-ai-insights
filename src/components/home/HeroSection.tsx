@@ -6,6 +6,13 @@ import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
 import { SampleReportModal } from "./SampleReportModal";
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp";
+const heroPalmSrcSet = [
+  "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-320w.webp 320w",
+  "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-480w.webp 480w",
+  "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-800w.webp 800w",
+  "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp 900w",
+].join(", ");
+const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 200px";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -152,6 +159,8 @@ export function HeroSection() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <m.img
                   src={heroPalmImg}
+                  srcSet={heroPalmSrcSet}
+                  sizes={heroPalmSizes}
                   alt="AI palm reading illustration — PalmMitra decodes your life path, career, love and destiny from your palm lines"
                   className="object-contain w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] opacity-95"
                   animate={{ y: [0, -12, 0] }}
