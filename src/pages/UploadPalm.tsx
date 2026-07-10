@@ -843,12 +843,8 @@ export default function UploadPalm() {
                       {/* Sections */}
                       <div className="space-y-2">
                         {reportSections.map(({ icon: Icon, label, free }, i) => (
-                          <m.div
+                          <div
                             key={label}
-                            initial={{ opacity: 0, x: 10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.45 + i * 0.06 }}
                             className={`group relative flex items-center gap-3 p-3 pl-4 rounded-xl border transition-all ${
                               free
                                 ? 'bg-card/50 border-accent/25 hover:border-accent/40'
