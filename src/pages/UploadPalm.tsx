@@ -159,6 +159,7 @@ export default function UploadPalm() {
   const uploadToStorage = async (file: File): Promise<string> => {
     const ext = file.name.split('.').pop() || 'jpg';
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+    const supabase = await getSupabase();
     const { data, error } = await supabase.storage
       .from('palm-uploads')
       .upload(fileName, file, { cacheControl: '3600', upsert: false });
