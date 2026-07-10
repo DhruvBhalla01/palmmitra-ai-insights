@@ -594,90 +594,148 @@ export default function UploadPalm() {
 
                   {/* ── About You Form ── */}
                   <AnimatedSection delay={0.25}>
-                    <div className="glass-premium rounded-3xl p-6 border border-accent/15 space-y-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                          <User className="w-4 h-4 text-accent" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-foreground text-sm">About You</p>
-                          <p className="text-xs text-muted-foreground">Personalises your reading</p>
-                        </div>
+                    <div className="relative">
+                      {/* Gradient border shell */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 rounded-3xl p-[1px] pointer-events-none"
+                        style={{
+                          background:
+                            'linear-gradient(135deg, hsl(var(--accent) / 0.55), hsl(var(--accent) / 0.05) 45%, hsl(var(--primary) / 0.4))',
+                        }}
+                      >
+                        <div className="w-full h-full rounded-3xl bg-card/60" />
                       </div>
 
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <Label htmlFor="name" className="text-sm font-medium text-foreground">Your Name</Label>
-                          <Input
-                            id="name"
-                            placeholder="e.g. Priya Sharma"
-                            autoComplete="name"
-                            maxLength={60}
-                            aria-invalid={!!fieldErrors.name}
-                            aria-describedby={fieldErrors.name ? 'name-error' : undefined}
-                            value={formData.name}
-                            onChange={(e) => {
-                              setFormData({ ...formData, name: e.target.value });
-                              if (fieldErrors.name) setFieldErrors((p) => ({ ...p, name: undefined }));
-                            }}
-                            className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.name ? 'border-destructive' : 'border-border/60'}`}
-                          />
-                          {fieldErrors.name && (
-                            <p id="name-error" className="text-xs text-destructive">{fieldErrors.name}</p>
-                          )}
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="age" className="text-sm font-medium text-foreground">Your Age</Label>
-                          <Input
-                            id="age"
-                            type="number"
-                            inputMode="numeric"
-                            min={13}
-                            max={100}
-                            step={1}
-                            placeholder="e.g. 28"
-                            aria-invalid={!!fieldErrors.age}
-                            aria-describedby={fieldErrors.age ? 'age-error' : 'age-help'}
-                            value={formData.age}
-                            onChange={(e) => {
-                              // strip non-digits for iOS safari edge cases
-                              const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
-                              setFormData({ ...formData, age: v });
-                              if (fieldErrors.age) setFieldErrors((p) => ({ ...p, age: undefined }));
-                            }}
-                            className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.age ? 'border-destructive' : 'border-border/60'}`}
-                          />
-                          {fieldErrors.age ? (
-                            <p id="age-error" className="text-xs text-destructive">{fieldErrors.age}</p>
-                          ) : (
-                            <p id="age-help" className="text-xs text-muted-foreground">Used to personalise your life timeline (13–100).</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label htmlFor="email" className="text-sm font-medium text-foreground">Email Address</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          inputMode="email"
-                          autoComplete="email"
-                          maxLength={254}
-                          placeholder="your@email.com"
-                          aria-invalid={!!fieldErrors.email}
-                          aria-describedby={fieldErrors.email ? 'email-error' : 'email-help'}
-                          value={formData.email}
-                          onChange={(e) => {
-                            setFormData({ ...formData, email: e.target.value });
-                            if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                      <div className="relative glass-premium rounded-3xl p-5 sm:p-6 border border-accent/20 space-y-5 overflow-hidden">
+                        {/* Top hairline */}
+                        <div
+                          aria-hidden="true"
+                          className="absolute top-0 left-6 right-6 h-px"
+                          style={{
+                            background:
+                              'linear-gradient(90deg, transparent, hsl(var(--accent) / 0.6), transparent)',
                           }}
-                          className={`rounded-xl py-5 bg-background/50 focus:border-accent ${fieldErrors.email ? 'border-destructive' : 'border-border/60'}`}
                         />
-                        {fieldErrors.email ? (
-                          <p id="email-error" className="text-xs text-destructive">{fieldErrors.email}</p>
-                        ) : (
-                          <p id="email-help" className="text-xs text-muted-foreground">We'll send your secure report link here. Never shared with third parties.</p>
-                        )}
+
+                        {/* Header */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/25 flex items-center justify-center flex-shrink-0 shadow-gold">
+                              <User className="w-4 h-4 text-accent" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] uppercase tracking-[0.18em] text-accent/80 font-semibold">
+                                  Step 2
+                                </span>
+                                <span className="h-2.5 w-px bg-accent/30" />
+                                <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                                  30 seconds
+                                </span>
+                              </div>
+                              <p className="font-serif font-bold text-foreground text-base sm:text-lg leading-tight mt-0.5">
+                                About <span className="text-gradient-gold">You</span>
+                              </p>
+                            </div>
+                          </div>
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/10 border border-accent/25 flex-shrink-0">
+                            <Lock className="w-2.5 h-2.5 text-accent" />
+                            <span className="text-[9px] uppercase tracking-[0.14em] text-accent font-semibold">
+                              Private
+                            </span>
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-muted-foreground leading-relaxed -mt-2">
+                          Personalises your destiny timeline and life-cycle predictions.
+                        </p>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="name" className="text-[13px] font-medium text-foreground/90 flex items-center gap-1.5">
+                              <span className="w-1 h-1 rounded-full bg-accent" />
+                              Your Name
+                            </Label>
+                            <Input
+                              id="name"
+                              placeholder="e.g. Priya Sharma"
+                              autoComplete="name"
+                              maxLength={60}
+                              aria-invalid={!!fieldErrors.name}
+                              aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                              value={formData.name}
+                              onChange={(e) => {
+                                setFormData({ ...formData, name: e.target.value });
+                                if (fieldErrors.name) setFieldErrors((p) => ({ ...p, name: undefined }));
+                              }}
+                              className={`rounded-xl h-12 bg-background/60 focus:border-accent focus:ring-1 focus:ring-accent/40 text-[15px] ${fieldErrors.name ? 'border-destructive' : 'border-border/60'}`}
+                            />
+                            {fieldErrors.name && (
+                              <p id="name-error" className="text-xs text-destructive">{fieldErrors.name}</p>
+                            )}
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor="age" className="text-[13px] font-medium text-foreground/90 flex items-center gap-1.5">
+                              <span className="w-1 h-1 rounded-full bg-accent" />
+                              Your Age
+                            </Label>
+                            <Input
+                              id="age"
+                              type="number"
+                              inputMode="numeric"
+                              min={13}
+                              max={100}
+                              step={1}
+                              placeholder="e.g. 28"
+                              aria-invalid={!!fieldErrors.age}
+                              aria-describedby={fieldErrors.age ? 'age-error' : 'age-help'}
+                              value={formData.age}
+                              onChange={(e) => {
+                                const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+                                setFormData({ ...formData, age: v });
+                                if (fieldErrors.age) setFieldErrors((p) => ({ ...p, age: undefined }));
+                              }}
+                              className={`rounded-xl h-12 bg-background/60 focus:border-accent focus:ring-1 focus:ring-accent/40 text-[15px] ${fieldErrors.age ? 'border-destructive' : 'border-border/60'}`}
+                            />
+                            {fieldErrors.age ? (
+                              <p id="age-error" className="text-xs text-destructive">{fieldErrors.age}</p>
+                            ) : (
+                              <p id="age-help" className="text-[11px] text-muted-foreground/80">Anchors your life timeline (13–100).</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label htmlFor="email" className="text-[13px] font-medium text-foreground/90 flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-accent" />
+                            Email Address
+                          </Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            inputMode="email"
+                            autoComplete="email"
+                            maxLength={254}
+                            placeholder="your@email.com"
+                            aria-invalid={!!fieldErrors.email}
+                            aria-describedby={fieldErrors.email ? 'email-error' : 'email-help'}
+                            value={formData.email}
+                            onChange={(e) => {
+                              setFormData({ ...formData, email: e.target.value });
+                              if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                            }}
+                            className={`rounded-xl h-12 bg-background/60 focus:border-accent focus:ring-1 focus:ring-accent/40 text-[15px] ${fieldErrors.email ? 'border-destructive' : 'border-border/60'}`}
+                          />
+                          {fieldErrors.email ? (
+                            <p id="email-error" className="text-xs text-destructive">{fieldErrors.email}</p>
+                          ) : (
+                            <p id="email-help" className="text-[11px] text-muted-foreground/80 flex items-center gap-1.5">
+                              <ShieldCheck className="w-3 h-3 text-accent/70 flex-shrink-0" />
+                              Secure report link sent here. Never shared.
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </AnimatedSection>
