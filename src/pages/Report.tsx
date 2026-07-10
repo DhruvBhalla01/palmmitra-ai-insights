@@ -639,10 +639,12 @@ export default function Report() {
                       viewport={{ once: true }}
                       className="mb-6"
                     >
-                      <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-4 flex items-center gap-3">
-                        <Zap className="w-8 h-8 text-accent" />
-                        Spiritual <span className="text-gradient-gold">Remedies</span> & Guidance
-                      </h2>
+                      <div className="flex items-start gap-3 mb-4">
+                        <Zap className="w-6 h-6 md:w-8 md:h-8 text-accent flex-shrink-0 mt-1" />
+                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground leading-tight text-balance">
+                          Spiritual <span className="text-gradient-gold">Remedies</span> &amp; Guidance
+                        </h2>
+                      </div>
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> First remedy included.
                       </p>
