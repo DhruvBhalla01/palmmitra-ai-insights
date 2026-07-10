@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { m } from '@/lib/motion';
 import logoImg from '@/assets/logo.webp';
 import { SmartLink } from '@/components/SmartLink';
 
@@ -33,17 +32,15 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
           {/* Brand */}
           <div>
-            <Link to="/" className="flex items-center gap-2.5 mb-6">
-            <m.div 
-                className="w-10 h-10 rounded-full overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-              >
+            <Link to="/" className="flex items-center gap-2.5 mb-6 group">
+              <div className="w-10 h-10 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-105">
                 <img src={logoImg} alt="PalmMitra logo" className="w-full h-full object-contain" />
-              </m.div>
+              </div>
               <span className="text-2xl font-serif font-bold">
                 Palm<span className="text-accent">Mitra</span>
               </span>
             </Link>
+
             <p className="text-white/70 text-sm leading-relaxed mb-4">
               AI Powered Palm Reading, Inspired by Ancient India. Discover your destiny through the wisdom of your palms.
             </p>

@@ -1,4 +1,3 @@
-import { m } from '@/lib/motion';
 import { ShieldCheck, Zap, Star, Lock, Users, Brain, CheckCircle } from 'lucide-react';
 
 const trustItems = [
@@ -21,25 +20,16 @@ export function TrustStrip() {
 
       <div className="container mx-auto px-4 relative">
         {/* Top label */}
-        <m.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center text-xs uppercase tracking-widest text-muted-foreground/50 mb-6 font-medium"
-        >
+        <p className="text-center text-xs uppercase tracking-widest text-muted-foreground/50 mb-6 font-medium animate-fade-in">
           Why 12,000+ people trust PalmMitra
-        </m.p>
+        </p>
 
         <div className="flex flex-wrap justify-center gap-4 md:gap-8">
           {trustItems.map((item, index) => (
-            <m.div
+            <div
               key={item.text}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.06 }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              className="flex items-center gap-2.5 group cursor-default"
+              className="flex items-center gap-2.5 group cursor-default animate-reveal-fade transition-transform duration-300 hover:-translate-y-0.5 hover:scale-[1.05]"
+              style={{ animationDelay: `${index * 60}ms` }}
             >
               <div className="w-8 h-8 rounded-xl glass-premium flex items-center justify-center border border-accent/15 group-hover:border-accent/35 transition-all duration-300 flex-shrink-0">
                 <item.icon className="w-3.5 h-3.5 text-accent" aria-hidden="true" />
@@ -47,7 +37,7 @@ export function TrustStrip() {
               <span className="font-medium text-sm text-foreground/80 group-hover:text-foreground transition-colors">
                 {item.text}
               </span>
-            </m.div>
+            </div>
           ))}
         </div>
       </div>
