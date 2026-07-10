@@ -480,7 +480,7 @@ export default function Report() {
                   userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
-                    <div className="glass rounded-2xl p-6 h-64" />
+                    <div className="glass rounded-2xl p-6 h-48 md:h-64" />
                   }
                 >
                   <MountsSection mounts={reading.mounts} />
@@ -557,7 +557,7 @@ export default function Report() {
                   userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
-                    <div className="glass rounded-2xl p-6 h-80" />
+                    <div className="glass rounded-2xl p-6 h-56 md:h-80" />
                   }
                 >
                   <CareerWealth
@@ -586,7 +586,7 @@ export default function Report() {
                   userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
-                    <div className="glass rounded-2xl p-6 h-64" />
+                    <div className="glass rounded-2xl p-6 h-48 md:h-64" />
                   }
                 >
                   <LoveRelationships
@@ -612,7 +612,7 @@ export default function Report() {
                   userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                   previewContent={
-                    <div className="glass rounded-2xl p-6 h-96" />
+                    <div className="glass rounded-2xl p-6 h-64 md:h-96" />
                   }
                 >
                   <LifePhaseSection phases={reading.lifePhases} />
