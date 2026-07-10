@@ -208,6 +208,7 @@ export default function UploadPalm() {
       setProcessingStep('validating');
       setProcessingStep('analyzing');
 
+      const supabase = await getSupabase();
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
         body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
       });
