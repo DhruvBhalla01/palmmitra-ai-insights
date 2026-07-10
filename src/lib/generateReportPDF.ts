@@ -1,4 +1,8 @@
-import jsPDF from 'jspdf';
+// jspdf is intentionally NOT statically imported. It is a ~350KB dependency
+// (with dompurify + html2canvas siblings) that we lazy-load only when the
+// user actually clicks "Download PDF". Keeping it out of the static graph
+// removes it from Vite's initial module preload on every route.
+import type JsPDFType from 'jspdf';
 import type { PalmReading } from '@/components/report/types';
 
 interface UserData {
