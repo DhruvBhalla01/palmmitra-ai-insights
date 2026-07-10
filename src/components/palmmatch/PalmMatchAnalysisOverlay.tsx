@@ -225,9 +225,9 @@ export function PalmMatchAnalysisOverlay({
                 {/* Central connection */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                   <m.div
-                    animate={{ scale: showDone ? 1 : [0.85, 1.05, 0.85], opacity: [0.6, 1, 0.6] }}
-                    transition={{ duration: 2.2, repeat: showDone ? 0 : Infinity, ease: 'easeInOut' }}
-                    className="w-10 h-10 rounded-full bg-accent/20 backdrop-blur-md border border-accent/50 flex items-center justify-center shadow-[0_0_30px_hsl(42_87%_55%/0.6)]"
+                    animate={{ scale: showDone || reduceMotion ? 1 : [0.85, 1.05, 0.85], opacity: reduceMotion ? 1 : [0.6, 1, 0.6] }}
+                    transition={{ duration: 2.2, repeat: showDone || reduceMotion ? 0 : Infinity, ease: 'easeInOut' }}
+                    className="w-10 h-10 rounded-full bg-accent/25 border border-accent/50 flex items-center justify-center shadow-[0_0_30px_hsl(42_87%_55%/0.6)]"
                     style={{ willChange: 'transform, opacity' }}
                   >
                     {showDone ? (
