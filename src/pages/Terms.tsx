@@ -66,6 +66,7 @@ export default function Terms() {
         title="Terms of Service — PalmMitra"
         description="PalmMitra's terms of service. Service description, payments and refunds, disclaimers, limitation of liability, prohibited uses, and governing law."
         path="/terms"
+        jsonLd={breadcrumbLd([["Terms", "/terms"]])}
       />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
