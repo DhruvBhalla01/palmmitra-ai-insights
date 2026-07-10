@@ -1,4 +1,4 @@
-import { m, AnimatePresence } from '@/lib/motion';
+import { m, AnimatePresence, useReducedMotion } from '@/lib/motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Loader2, Sparkles, ShieldCheck, Lock } from 'lucide-react';
 
@@ -42,6 +42,7 @@ function computeProgress(elapsedMs: number): number {
 }
 
 export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName }: AnalysisOverlayProps) {
+  const reduceMotion = useReducedMotion();
   const startRef = useRef<number>(0);
   const [progress, setProgress] = useState(0);
   const [insightIdx, setInsightIdx] = useState(0);
@@ -109,10 +110,10 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] bg-[#0a0a12] overflow-y-auto"
         >
-          {/* Ambient background */}
+          {/* Ambient background — trimmed blur for perf */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-accent/10 blur-[120px]" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-accent/5 blur-[100px]" />
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-accent/10 blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-[320px] h-[320px] rounded-full bg-accent/5 blur-3xl" />
           </div>
 
           <div className="relative min-h-screen flex items-center justify-center px-4 py-10">
@@ -159,7 +160,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                 ))}
 
                 {/* Scan line */}
-                {!showSuccess && (
+                {!showSuccess && !reduceMotion && (
                   <m.div
                     initial={{ top: '-10%' }}
                     animate={{ top: ['-10%', '110%'] }}
@@ -168,7 +169,6 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                     style={{
                       background:
                         'linear-gradient(180deg, transparent 0%, hsl(42 87% 55% / 0.35) 50%, transparent 100%)',
-                      boxShadow: '0 0 40px hsl(42 87% 55% / 0.6)',
                     }}
                   />
                 )}
@@ -189,7 +189,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                     <m.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="absolute inset-0 flex items-center justify-center bg-accent/30 backdrop-blur-sm"
+                      className="absolute inset-0 flex items-center justify-center bg-accent/40"
                     >
                       <m.div
                         initial={{ scale: 0 }}
@@ -218,20 +218,14 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/8 overflow-hidden mb-6">
                 <m.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70 bg-[length:200%_100%]"
-                  animate={{
-                    width: `${progress}%`,
-                    backgroundPosition: ['0% 0%', '200% 0%'],
-                  }}
-                  transition={{
-                    width: { duration: 0.4, ease: 'easeOut' },
-                    backgroundPosition: { duration: 2, repeat: Infinity, ease: 'linear' },
-                  }}
+                  className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ width: { duration: 0.4, ease: 'easeOut' } }}
                 />
               </div>
 
               {/* Steps */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 mb-5">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4 mb-5">
                 <div className="space-y-2.5">
                   <AnimatePresence initial={false} mode="popLayout">
                     {visibleSteps.map(({ label, i }) => {

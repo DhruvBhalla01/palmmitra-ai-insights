@@ -1,4 +1,4 @@
-import { m, AnimatePresence } from '@/lib/motion';
+import { m, AnimatePresence, useReducedMotion } from '@/lib/motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check, Loader2, Sparkles, Shield, Trash2, Cpu, Heart,
@@ -60,6 +60,7 @@ function progressLabel(pct: number, done: boolean) {
 export function PalmMatchAnalysisOverlay({
   open, isComplete, hasError, person1Name, person2Name, image1Url, image2Url,
 }: Props) {
+  const reduceMotion = useReducedMotion();
   const startRef = useRef(0);
   const [progress, setProgress] = useState(0);
   const [insightIdx, setInsightIdx] = useState(0);
@@ -121,12 +122,12 @@ export function PalmMatchAnalysisOverlay({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] bg-[#0a0a12] overflow-y-auto"
         >
-          {/* Ambient background — GPU only */}
+          {/* Ambient background — reduced blur for perf */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-accent/10 blur-[110px]" />
-            <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-accent/5 blur-[90px]" />
-            {/* Soft floating particles */}
-            {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-accent/10 blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-accent/5 blur-3xl" />
+            {/* Soft floating particles — skipped if reduced motion */}
+            {!reduceMotion && [0, 1, 2].map((i) => (
               <m.span
                 key={i}
                 initial={{ opacity: 0 }}
@@ -142,7 +143,7 @@ export function PalmMatchAnalysisOverlay({
                 }}
                 className="absolute w-1 h-1 rounded-full bg-accent/70"
                 style={{
-                  left: `${12 + i * 14}%`,
+                  left: `${20 + i * 25}%`,
                   top: `${60 + (i % 3) * 8}%`,
                   willChange: 'transform, opacity',
                 }}
@@ -224,9 +225,9 @@ export function PalmMatchAnalysisOverlay({
                 {/* Central connection */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                   <m.div
-                    animate={{ scale: showDone ? 1 : [0.85, 1.05, 0.85], opacity: [0.6, 1, 0.6] }}
-                    transition={{ duration: 2.2, repeat: showDone ? 0 : Infinity, ease: 'easeInOut' }}
-                    className="w-10 h-10 rounded-full bg-accent/20 backdrop-blur-md border border-accent/50 flex items-center justify-center shadow-[0_0_30px_hsl(42_87%_55%/0.6)]"
+                    animate={{ scale: showDone || reduceMotion ? 1 : [0.85, 1.05, 0.85], opacity: reduceMotion ? 1 : [0.6, 1, 0.6] }}
+                    transition={{ duration: 2.2, repeat: showDone || reduceMotion ? 0 : Infinity, ease: 'easeInOut' }}
+                    className="w-10 h-10 rounded-full bg-accent/25 border border-accent/50 flex items-center justify-center shadow-[0_0_30px_hsl(42_87%_55%/0.6)]"
                     style={{ willChange: 'transform, opacity' }}
                   >
                     {showDone ? (
@@ -249,7 +250,7 @@ export function PalmMatchAnalysisOverlay({
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: revealed ? 1 : 0.35, y: 0 }}
                       transition={{ duration: 0.4 }}
-                      className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-2.5 flex items-center gap-2"
+                      className="rounded-xl border border-white/10 bg-white/[0.05] p-2.5 flex items-center gap-2"
                     >
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -275,21 +276,15 @@ export function PalmMatchAnalysisOverlay({
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/8 overflow-hidden mb-6">
                 <m.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70 bg-[length:200%_100%]"
-                  animate={{
-                    width: `${progress}%`,
-                    backgroundPosition: ['0% 0%', '200% 0%'],
-                  }}
-                  transition={{
-                    width: { duration: 0.4, ease: 'easeOut' },
-                    backgroundPosition: { duration: 2, repeat: Infinity, ease: 'linear' },
-                  }}
-                  style={{ willChange: 'width, background-position' }}
+                  className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ width: { duration: 0.4, ease: 'easeOut' } }}
+                  style={{ willChange: 'width' }}
                 />
               </div>
 
               {/* Stages */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 mb-5">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4 mb-5">
                 <div className="space-y-2.5">
                   <AnimatePresence initial={false} mode="popLayout">
                     {visibleStages.map(({ label: text, i }) => {
