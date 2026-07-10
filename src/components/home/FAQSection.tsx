@@ -53,7 +53,7 @@ const faqs = [
 
 export function FAQSection() {
   return (
-    <section id="faq" className="py-24 md:py-32 relative scroll-mt-24" aria-labelledby="faq-heading">
+    <section id="faq" className="py-16 md:py-32 relative scroll-mt-24" aria-labelledby="faq-heading">
       <div className="container mx-auto px-4 max-w-4xl">
         <AnimatedSection className="text-center mb-16">
           <p className="sanskrit-accent mb-3">ॐ Prashna Samadhan</p>

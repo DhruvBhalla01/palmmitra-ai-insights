@@ -177,7 +177,7 @@ export function Testimonials() {
   };
 
   return (
-    <section id="testimonials" className="py-24 md:py-32 relative" aria-labelledby="testimonials-heading">
+    <section id="testimonials" className="py-16 md:py-32 relative" aria-labelledby="testimonials-heading">
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-10">
           <p className="sanskrit-accent mb-3">ॐ Jana Vani</p>

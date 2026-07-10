@@ -106,7 +106,7 @@ export function PricingSection() {
 
 
   return (
-    <section id="pricing" className="py-24 md:py-32 relative scroll-mt-20" aria-labelledby="pricing-heading">
+    <section id="pricing" className="py-16 md:py-32 relative scroll-mt-20" aria-labelledby="pricing-heading">
       <div className="container mx-auto px-4">
         <AnimatedSection className="text-center mb-6">
           <p className="sanskrit-accent mb-3">ॐ Sampatti Yoga</p>
