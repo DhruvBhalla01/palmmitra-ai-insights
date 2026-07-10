@@ -250,7 +250,7 @@ export function PalmMatchAnalysisOverlay({
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: revealed ? 1 : 0.35, y: 0 }}
                       transition={{ duration: 0.4 }}
-                      className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-2.5 flex items-center gap-2"
+                      className="rounded-xl border border-white/10 bg-white/[0.05] p-2.5 flex items-center gap-2"
                     >
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
