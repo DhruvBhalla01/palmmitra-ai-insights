@@ -356,7 +356,7 @@ export default function UploadPalm() {
 
           {/* ── Main Grid ─────────────────────────────── */}
           <div className="max-w-4xl mx-auto">
-            <div className="grid lg:grid-cols-5 gap-8">
+            <div className="grid lg:grid-cols-5 gap-5 lg:gap-8">
 
               {/* LEFT: Form (3 cols) */}
               <div className="lg:col-span-3">
