@@ -17,11 +17,11 @@ interface PalmMatchRequest {
 }
 
 const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<{ is_palm: boolean; confidence: number }> => {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "google/gemini-2.5-flash",
       messages: [
         {
           role: "system",
@@ -60,11 +60,11 @@ const generateCompatibilityReading = async (
   relationshipType: string,
   apiKey: string
 ): Promise<object> => {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "google/gemini-2.5-flash",
       messages: [
         {
           role: "system",
@@ -172,7 +172,7 @@ serve(async (req) => {
   }
 
   try {
-    const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
+    const openaiApiKey = Deno.env.get("LOVABLE_API_KEY");
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 

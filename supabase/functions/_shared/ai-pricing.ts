@@ -26,7 +26,7 @@ export const AI_LABELS: Record<string, string> = {
   ai_pack_15:  '15 AI Question Pack',
 };
 
-export const AI_MODEL = 'gpt-4o-mini';
+export const AI_MODEL = 'google/gemini-2.5-flash';
 export const AI_MAX_MESSAGE_CHARS = 2000;
 export const AI_HISTORY_WINDOW = 20;
 export const AI_RATE_LIMIT_PER_MIN = 10;
