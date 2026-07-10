@@ -369,6 +369,7 @@ export default function PalmMatch() {
 
       setProcessing('analyzing');
 
+      const supabase = await getSupabase();
       const { data, error } = await supabase.functions.invoke('analyze-palmmatch', {
         body: {
           image1Url: url1,
