@@ -1,4 +1,3 @@
-import { m } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 
 interface Particle {
@@ -21,7 +20,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
   useEffect(() => {
     const particleCount = intensity === 'light' ? 20 : intensity === 'medium' ? 35 : 50;
     const newParticles: Particle[] = [];
-    
+
     for (let i = 0; i < particleCount; i++) {
       newParticles.push({
         id: i,
@@ -32,14 +31,14 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
         delay: Math.random() * 5,
       });
     }
-    
+
     setParticles(newParticles);
   }, [intensity]);
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {/* Multi-layer radial gradients */}
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: `
@@ -56,27 +55,18 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {/* Floating spiritual particles */}
       <div className="absolute inset-0">
         {particles.map((particle) => (
-          <m.div
+          <div
             key={particle.id}
-            className="absolute rounded-full"
+            className={`absolute rounded-full ${particle.id % 2 === 0 ? 'animate-particle-drift' : 'animate-particle-drift-alt'}`}
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
               width: particle.size,
               height: particle.size,
               background: `radial-gradient(circle, hsl(42 87% 55% / 0.6), hsl(42 87% 55% / 0.2))`,
-            }}
-            animate={{
-              y: [-20, -40, -20],
-              x: [0, particle.id % 2 === 0 ? 10 : -10, 0],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [0.8, 1.2, 0.8],
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              delay: particle.delay,
-              ease: 'easeInOut',
+              ['--particle-duration' as string]: `${particle.duration}s`,
+              animationDelay: `${particle.delay}s`,
+              willChange: 'transform, opacity',
             }}
           />
         ))}
@@ -85,17 +75,16 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {/* Mandala watermark */}
       {showMandala && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <m.svg
-            className="w-[800px] h-[800px] opacity-[0.03]"
+          <svg
+            className="w-[800px] h-[800px] opacity-[0.03] animate-rotate-slow"
+            style={{ animationDuration: '120s' }}
             viewBox="0 0 200 200"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
           >
             {/* Outer ring */}
             <circle cx="100" cy="100" r="95" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
             <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-accent" />
             <circle cx="100" cy="100" r="75" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
-            
+
             {/* Petals */}
             {[...Array(12)].map((_, i) => (
               <g key={i} transform={`rotate(${i * 30} 100 100)`}>
@@ -103,7 +92,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
                 <ellipse cx="100" cy="40" rx="8" ry="15" fill="none" stroke="currentColor" strokeWidth="0.2" className="text-primary" />
               </g>
             ))}
-            
+
             {/* Inner patterns */}
             {[...Array(8)].map((_, i) => (
               <g key={`inner-${i}`} transform={`rotate(${i * 45} 100 100)`}>
@@ -116,17 +105,17 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
                 />
               </g>
             ))}
-            
+
             {/* Center */}
             <circle cx="100" cy="100" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-accent" />
             <circle cx="100" cy="100" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-primary" />
             <circle cx="100" cy="100" r="3" fill="currentColor" className="text-accent" opacity="0.5" />
-          </m.svg>
+          </svg>
         </div>
       )}
 
       {/* Subtle noise texture overlay */}
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.015]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
