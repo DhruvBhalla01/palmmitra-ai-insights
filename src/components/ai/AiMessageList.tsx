@@ -17,21 +17,21 @@ export function AiMessageList({ messages, userInitial = 'You' }: Props) {
 
   return (
     <div className="space-y-6">
-      {messages.map((m) => (
+      {messages.map((msg) => (
         <m.div
-          key={m.id}
+          key={msg.id}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}
+          className={msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'}
         >
-          {m.role === 'user' ? (
+          {msg.role === 'user' ? (
             <div className="max-w-[80%] rounded-2xl rounded-tr-md px-4 py-2.5 text-[14.5px] leading-relaxed
               bg-[linear-gradient(135deg,hsl(var(--gold)/0.18),hsl(var(--gold)/0.1))]
               border border-[hsl(var(--gold)/0.35)]
               text-foreground/95
               shadow-[0_6px_20px_-8px_hsl(var(--gold)/0.3),inset_0_1px_0_hsl(var(--gold)/0.2)]">
-              {m.content}
+              {msg.content}
             </div>
           ) : (
             <div className="max-w-full w-full flex flex-col gap-2">
@@ -59,10 +59,10 @@ export function AiMessageList({ messages, userInitial = 'You' }: Props) {
                   [&_blockquote>*]:not-italic [&_blockquote>p]:my-0 [&_blockquote>p]:text-foreground/85
                   [&_blockquote]:before:content-['From_your_Palm_Report'] [&_blockquote]:before:block [&_blockquote]:before:text-[9px] [&_blockquote]:before:uppercase [&_blockquote]:before:tracking-[0.24em] [&_blockquote]:before:text-[hsl(var(--gold))] [&_blockquote]:before:mb-1.5
                 ">
-                  {m.content
-                    ? <ReactMarkdown>{m.content}</ReactMarkdown>
+                  {msg.content
+                    ? <ReactMarkdown>{msg.content}</ReactMarkdown>
                     : <ReadingShimmer />}
-                  {m.streaming && m.content && (
+                  {msg.streaming && msg.content && (
                     <span className="inline-block w-[3px] h-[1em] bg-[hsl(var(--gold))] ml-0.5 align-middle animate-pulse rounded-sm shadow-[0_0_8px_hsl(var(--gold)/0.9)]" />
                   )}
                 </div>
