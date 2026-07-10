@@ -67,7 +67,7 @@ export function ComparisonSection() {
           <div className="w-full">
             {/* Column headers */}
             <div className="grid grid-cols-[1.3fr_1fr_1fr] md:grid-cols-4 gap-2 md:gap-3 mb-3 md:mb-4">
-              <div className="hidden md:block" /> {/* Row label spacer (desktop only) */}
+              <div /> {/* Row label spacer — aligns headers with row check columns */}
               {cols.map((col, colIdx) => (
                 <div
                   key={col.name}
