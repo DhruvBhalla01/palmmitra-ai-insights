@@ -95,9 +95,10 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-background relative">
       <SEO
-        title="Contact PalmMitra — Support & Help"
-        description="Reach the PalmMitra team at thepalmmitra@gmail.com. Response within 24 hours, Monday to Saturday, 9 AM – 6 PM IST. Support in English and Hindi."
+        title="Contact PalmMitra — Palm Reading Support Team"
+        description="Contact the PalmMitra support team at thepalmmitra@gmail.com. Response within 24 hours, Monday to Saturday, 9 AM – 6 PM IST. Support available in English and Hindi."
         path="/contact"
+        jsonLd={breadcrumbLd([["Contact", "/contact"]])}
       />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
