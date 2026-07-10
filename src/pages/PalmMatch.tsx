@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
+const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 
@@ -294,6 +294,7 @@ export default function PalmMatch() {
       try {
         const ext = file.name.split('.').pop() || 'jpg';
         const path = `palmmatch/${Date.now()}_${slot}.${ext}`;
+        const supabase = await getSupabase();
         const { error } = await supabase.storage
           .from('palm-uploads')
           .upload(path, file, { upsert: true });
@@ -368,6 +369,7 @@ export default function PalmMatch() {
 
       setProcessing('analyzing');
 
+      const supabase = await getSupabase();
       const { data, error } = await supabase.functions.invoke('analyze-palmmatch', {
         body: {
           image1Url: url1,

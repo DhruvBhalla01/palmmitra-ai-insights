@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
-import { supabase } from '@/integrations/supabase/client';
+const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
 import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
 import { z } from 'zod';
@@ -159,6 +159,7 @@ export default function UploadPalm() {
   const uploadToStorage = async (file: File): Promise<string> => {
     const ext = file.name.split('.').pop() || 'jpg';
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+    const supabase = await getSupabase();
     const { data, error } = await supabase.storage
       .from('palm-uploads')
       .upload(fileName, file, { cacheControl: '3600', upsert: false });
@@ -207,6 +208,7 @@ export default function UploadPalm() {
       setProcessingStep('validating');
       setProcessingStep('analyzing');
 
+      const supabase = await getSupabase();
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
         body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
       });
