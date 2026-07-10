@@ -165,8 +165,10 @@ const getScoreMatchedInsight = (score: number, category: string): string => {
 // Main PDF generator
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function generateReportPDF(reading: PalmReading, userData: UserData): void {
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+export async function generateReportPDF(reading: PalmReading, userData: UserData): Promise<void> {
+  // Dynamic import: pulls jspdf + its dompurify/html2canvas siblings only on click.
+  const { default: JsPDFCtor } = await import('jspdf');
+  const doc: JsPDFType = new JsPDFCtor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   const W  = 210;
   const H  = 297;

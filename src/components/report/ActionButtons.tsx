@@ -106,8 +106,8 @@ export function ActionButtons({
     setIsDownloading(true);
     
     try {
-      // Generate the PDF
-      generateReportPDF(reading, {
+      // Generate the PDF (jspdf is lazy-loaded inside this call)
+      await generateReportPDF(reading, {
         name: userData?.name || 'User',
         readingType: userData?.readingType || 'full',
         generatedAt: userData?.generatedAt || new Date().toISOString(),

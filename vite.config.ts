@@ -26,11 +26,13 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         // Split heavy vendor libs so the initial page doesn't ship them all.
+        // Only chunk vendors that are ACTUALLY on the initial route graph.
+        // jspdf and recharts are lazy-loaded on-demand — listing them here
+        // would force Vite to <link modulepreload> them on every page load
+        // (measured: ~117KB gz of jspdf shipped on the homepage). Removed.
         manualChunks: {
           "vendor-react": ["react", "react-dom", "react-router-dom"],
           "vendor-motion": ["framer-motion"],
-          "vendor-charts": ["recharts"],
-          "vendor-pdf": ["jspdf"],
           "vendor-query": ["@tanstack/react-query"],
           "vendor-supabase": ["@supabase/supabase-js"],
         },
