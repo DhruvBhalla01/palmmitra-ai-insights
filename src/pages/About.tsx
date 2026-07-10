@@ -43,9 +43,10 @@ export default function About() {
   return (
     <div className="min-h-screen bg-background relative">
       <SEO
-        title="About PalmMitra — Ancient Indian Palmistry Meets AI"
-        description="PalmMitra combines Hasta Samudrika Shastra, the 3,000-year-old Indian science of palm reading, with modern AI to generate personalised destiny reports on career, love, wealth and life path."
+        title="AI Palmistry — About PalmMitra & Hasta Samudrika Shastra"
+        description="Learn how PalmMitra brings AI palmistry to life — combining Hasta Samudrika Shastra, the 3,000-year-old Indian science of palm reading, with modern AI to generate personalised destiny reports on career, love, wealth and life path."
         path="/about"
+        jsonLd={breadcrumbLd([["About", "/about"]])}
       />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
