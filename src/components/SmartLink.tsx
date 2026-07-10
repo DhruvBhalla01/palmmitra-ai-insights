@@ -22,38 +22,40 @@ export const SmartLink = forwardRef<HTMLAnchorElement, SmartLinkProps>(
     const navigate = useNavigate();
 
     const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
-      // Check if this is a hash link
       const hasHash = to.includes('#');
-      
+
       if (hasHash) {
         const [path, hash] = to.split('#');
         const targetPath = path || '/';
         const isCurrentPage = location.pathname === targetPath;
 
         if (isCurrentPage) {
-          // Same page - scroll directly with offset
+          // Same page: close menu first, then scroll (retry for lazy sections)
           e.preventDefault();
-          const element = document.getElementById(hash);
-          
-          if (element) {
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.scrollY - NAVBAR_HEIGHT;
-            
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-            
-            // Update URL hash without navigation
-            window.history.pushState(null, '', `#${hash}`);
-          }
-        } else {
-          // Different page - navigate and let useHashScroll handle scrolling
-          e.preventDefault();
-          navigate(to);
+          onClick?.();
+
+          const scrollToHash = (attempt = 0) => {
+            const element = document.getElementById(hash);
+            if (element) {
+              const top = element.getBoundingClientRect().top + window.scrollY - NAVBAR_HEIGHT;
+              window.scrollTo({ top, behavior: 'smooth' });
+              window.history.pushState(null, '', `#${hash}`);
+            } else if (attempt < 10) {
+              setTimeout(() => scrollToHash(attempt + 1), 100);
+            }
+          };
+          // Defer past the menu-close render so layout is stable
+          requestAnimationFrame(() => scrollToHash());
+          return;
         }
+
+        // Different page: let useHashScroll handle scrolling after nav
+        e.preventDefault();
+        onClick?.();
+        navigate(to);
+        return;
       }
-      
+
       onClick?.();
     };
 
