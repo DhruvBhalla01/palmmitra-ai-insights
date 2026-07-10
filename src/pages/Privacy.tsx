@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Shield, Eye, Lock, Trash2, Server, Mail } from 'lucide-react';
@@ -54,8 +55,14 @@ export default function Privacy() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="Privacy Policy — How PalmMitra Handles Your Data"
+        description="PalmMitra's privacy policy: how we collect, use, store, and protect your palm images and personal data. Encrypted in transit and at rest. Never sold. Deletion on request."
+        path="/privacy"
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
+      
       
       <main className="relative z-10 pt-28 pb-20">
         <div className="container mx-auto px-4 max-w-4xl">

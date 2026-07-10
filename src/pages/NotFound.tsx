@@ -4,6 +4,7 @@ import { m } from '@/lib/motion';
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PremiumBackground } from "@/components/PremiumBackground";
+import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Home, Sparkles, ArrowLeft } from "lucide-react";
 import { useHashScroll } from "@/hooks/useHashScroll";
@@ -21,8 +22,15 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="Page Not Found — PalmMitra"
+        description="The page you're looking for doesn't exist. Return to PalmMitra to upload your palm or explore compatibility with PalmMatch."
+        path={location.pathname}
+        noindex
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
+      
       
       <main className="relative z-10 pt-28 pb-20 min-h-[80vh] flex items-center justify-center">
         <div className="container mx-auto px-4">

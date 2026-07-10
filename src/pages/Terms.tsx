@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { FileText, Check, AlertTriangle, CreditCard, Scale, Ban } from 'lucide-react';
@@ -60,8 +61,14 @@ export default function Terms() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="Terms of Service — PalmMitra"
+        description="PalmMitra's terms of service. Service description, payments and refunds, disclaimers, limitation of liability, prohibited uses, and governing law."
+        path="/terms"
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
+      
       
       <main className="relative z-10 pt-28 pb-20">
         <div className="container mx-auto px-4 max-w-4xl">

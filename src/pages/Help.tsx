@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -98,8 +99,14 @@ export default function Help() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="Help Center — PalmMitra FAQ & Support"
+        description="Answers to common PalmMitra questions: how AI palm reading works, which hand to photograph, pricing, payments, privacy and refunds."
+        path="/help"
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
+      
       
       <main className="relative z-10 pt-28 pb-20">
         <div className="container mx-auto px-4 max-w-4xl">

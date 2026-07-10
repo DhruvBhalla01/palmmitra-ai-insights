@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -92,8 +93,14 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="Contact PalmMitra — Support & Help"
+        description="Reach the PalmMitra team at thepalmmitra@gmail.com. Response within 24 hours, Monday to Saturday, 9 AM – 6 PM IST. Support in English and Hindi."
+        path="/contact"
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
+      
       
       <main className="relative z-10 pt-28 pb-20">
         <div className="container mx-auto px-4">
