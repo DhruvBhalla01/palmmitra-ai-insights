@@ -294,6 +294,7 @@ export default function PalmMatch() {
       try {
         const ext = file.name.split('.').pop() || 'jpg';
         const path = `palmmatch/${Date.now()}_${slot}.${ext}`;
+        const supabase = await getSupabase();
         const { error } = await supabase.storage
           .from('palm-uploads')
           .upload(path, file, { upsert: true });
