@@ -110,10 +110,10 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] bg-[#0a0a12] overflow-y-auto"
         >
-          {/* Ambient background */}
+          {/* Ambient background — trimmed blur for perf */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-accent/10 blur-[120px]" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-accent/5 blur-[100px]" />
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-accent/10 blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-[320px] h-[320px] rounded-full bg-accent/5 blur-3xl" />
           </div>
 
           <div className="relative min-h-screen flex items-center justify-center px-4 py-10">
