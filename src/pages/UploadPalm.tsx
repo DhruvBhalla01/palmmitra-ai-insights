@@ -880,7 +880,8 @@ export default function UploadPalm() {
                                 PREMIUM
                               </span>
                             )}
-                          </m.div>
+                          </div>
+
                         ))}
                       </div>
 
