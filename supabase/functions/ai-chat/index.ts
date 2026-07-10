@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
   // Call OpenAI streaming
   let openaiRes: Response;
   try {
-    openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    openaiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${openaiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
