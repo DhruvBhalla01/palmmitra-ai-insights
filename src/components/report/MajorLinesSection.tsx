@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Activity, Heart, Brain, Compass, Sparkles } from 'lucide-react';
 import type { MajorLine } from './types';
 
@@ -32,7 +32,7 @@ const strengthToPercent: Record<string, number> = {
 export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>(
   function MajorLinesSection({ lines }, ref) {
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -57,7 +57,7 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
             const strengthPercent = strengthToPercent[line.strength] || 50;
 
             return (
-              <motion.div
+              <m.div
                 key={key}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -68,14 +68,14 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
               >
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-5">
-                  <motion.div
+                  <m.div
                     className={`w-14 h-14 rounded-2xl ${bgColor}/10 flex items-center justify-center relative`}
                     whileHover={{ rotate: [0, -10, 10, 0] }}
                     transition={{ duration: 0.5 }}
                   >
                     <Icon className={`w-7 h-7 ${color}`} />
                     <div className={`absolute inset-0 rounded-2xl ${bgColor}/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
-                  </motion.div>
+                  </m.div>
                   <div>
                     <h3 className="font-serif font-bold text-foreground text-lg">{name}</h3>
                     <p className="text-xs text-muted-foreground">{subtitle}</p>
@@ -91,7 +91,7 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
                     </span>
                   </div>
                   <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                    <motion.div
+                    <m.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${strengthPercent}%` }}
                       viewport={{ once: true }}
@@ -99,7 +99,7 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
                       className={`h-full ${bgColor} rounded-full relative`}
                     >
                       <div className="absolute inset-0 shimmer" />
-                    </motion.div>
+                    </m.div>
                   </div>
                 </div>
 
@@ -115,11 +115,11 @@ export const MajorLinesSection = forwardRef<HTMLElement, MajorLinesSectionProps>
                     <span>{line.keyInsight}</span>
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             );
           })}
         </div>
-      </motion.section>
+      </m.section>
     );
   }
 );

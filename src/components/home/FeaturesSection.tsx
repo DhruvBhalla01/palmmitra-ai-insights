@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Briefcase, Heart, TrendingUp, Calendar, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { AnimatedSection } from '@/components/AnimatedSection';
@@ -85,7 +85,7 @@ export function FeaturesSection() {
 
             <div className="space-y-4">
               {features.map((feature, index) => (
-                <motion.div
+                <m.div
                   key={feature.title}
                   initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -115,7 +115,7 @@ export function FeaturesSection() {
                       {feature.description}
                     </p>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
@@ -134,19 +134,19 @@ export function FeaturesSection() {
           <AnimatedSection direction="right" className="relative hidden lg:block lg:sticky top-28">
             <div className="relative">
               {/* Decorative glows */}
-              <motion.div
+              <m.div
                 className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-accent/15 blur-3xl"
                 animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.8, 0.5] }}
                 transition={{ duration: 5, repeat: Infinity }}
               />
-              <motion.div
+              <m.div
                 className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-primary/12 blur-3xl"
                 animate={{ scale: [1, 1.18, 1], opacity: [0.4, 0.7, 0.4] }}
                 transition={{ duration: 6, repeat: Infinity, delay: 1.5 }}
               />
 
               {/* Main card */}
-              <motion.div
+              <m.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                 className="relative card-premium p-8 border border-accent/25 overflow-hidden"
@@ -155,7 +155,7 @@ export function FeaturesSection() {
 
                 {/* Header */}
                 <div className="text-center mb-6 relative z-10">
-                  <motion.img
+                  <m.img
                     src={palmIconGold}
                     alt="AI Palm Reading Analysis"
                     className="w-20 h-20 object-contain mx-auto mb-3"
@@ -174,13 +174,13 @@ export function FeaturesSection() {
 
                 {/* Animated analysis lines */}
                 <div className="aspect-video rounded-2xl bg-gradient-mystic relative overflow-hidden mb-6">
-                  <motion.div
+                  <m.div
                     className="absolute inset-0"
                     animate={{ opacity: [0.3, 0.7, 0.3] }}
                     transition={{ duration: 3, repeat: Infinity }}
                   >
                     <svg className="w-full h-full" viewBox="0 0 200 100" fill="none">
-                      <motion.path
+                      <m.path
                         d="M20 70 Q60 30 100 60 Q140 90 180 40"
                         stroke="hsl(var(--gold) / 0.6)"
                         strokeWidth="2"
@@ -188,7 +188,7 @@ export function FeaturesSection() {
                         animate={{ pathLength: 1 }}
                         transition={{ duration: 2, repeat: Infinity, repeatType: 'loop' }}
                       />
-                      <motion.path
+                      <m.path
                         d="M20 50 Q70 20 120 45 Q160 65 180 30"
                         stroke="hsl(var(--gold) / 0.35)"
                         strokeWidth="1.5"
@@ -196,7 +196,7 @@ export function FeaturesSection() {
                         animate={{ pathLength: 1 }}
                         transition={{ duration: 2.5, repeat: Infinity, repeatType: 'loop', delay: 0.5 }}
                       />
-                      <motion.path
+                      <m.path
                         d="M30 80 Q80 55 130 70 Q165 80 185 60"
                         stroke="hsl(var(--gold) / 0.25)"
                         strokeWidth="1"
@@ -205,22 +205,22 @@ export function FeaturesSection() {
                         transition={{ duration: 3, repeat: Infinity, repeatType: 'loop', delay: 1 }}
                       />
                     </svg>
-                  </motion.div>
+                  </m.div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.p
+                    <m.p
                       className="text-white/70 text-sm font-medium"
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
                       AI Analysing Your Lines...
-                    </motion.p>
+                    </m.p>
                   </div>
                 </div>
 
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-3 relative z-10">
                   {reportStats.map((stat, i) => (
-                    <motion.div
+                    <m.div
                       key={stat.label}
                       initial={{ opacity: 0, scale: 0.9 }}
                       whileInView={{ opacity: 1, scale: 1 }}
@@ -230,7 +230,7 @@ export function FeaturesSection() {
                     >
                       <div className="text-xl font-serif font-bold text-gradient-gold">{stat.value}</div>
                       <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
 
@@ -246,7 +246,7 @@ export function FeaturesSection() {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </AnimatedSection>
         </div>

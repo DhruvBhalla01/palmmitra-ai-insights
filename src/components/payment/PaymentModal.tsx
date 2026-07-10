@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from '@/lib/m';
 import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -42,7 +42,7 @@ export function PaymentModal({
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -51,7 +51,7 @@ export function PaymentModal({
           />
 
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -69,13 +69,13 @@ export function PaymentModal({
 
                 {/* Header */}
                 <div className="text-center mb-8">
-                  <motion.div
+                  <m.div
                     className="w-20 h-20 mx-auto mb-4 rounded-3xl bg-accent/10 flex items-center justify-center"
                     animate={{ rotate: [0, 5, -5, 0] }}
                     transition={{ repeat: Infinity, duration: 4 }}
                   >
                     <Lock className="w-10 h-10 text-accent" />
-                  </motion.div>
+                  </m.div>
                   <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-2">
                     Unlock Your Complete<br />
                     <span className="text-gradient-gold">Destiny Report</span>
@@ -86,7 +86,7 @@ export function PaymentModal({
                 {/* Plan Selection */}
                 <div className="space-y-4 mb-6">
                   {/* Insight — single report */}
-                  <motion.button
+                  <m.button
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedPlan("report99")}
                     className={`w-full text-left p-5 rounded-2xl border-2 transition-all ${
@@ -114,10 +114,10 @@ export function PaymentModal({
                         </div>
                       </div>
                     </div>
-                  </motion.button>
+                  </m.button>
 
                   {/* Elite — flagship lifetime */}
-                  <motion.button
+                  <m.button
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedPlan("unlimited999")}
                     className={`w-full text-left p-5 rounded-2xl border-2 transition-all relative overflow-hidden ${
@@ -160,7 +160,7 @@ export function PaymentModal({
                         </div>
                       </div>
                     </div>
-                  </motion.button>
+                  </m.button>
                 </div>
 
 
@@ -192,12 +192,12 @@ export function PaymentModal({
                 >
                   {isProcessing ? (
                     <>
-                      <motion.div
+                      <m.div
                         animate={{ rotate: 360 }}
                         transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                       >
                         <Sparkles className="w-5 h-5" />
-                      </motion.div>
+                      </m.div>
                       Processing...
                     </>
                   ) : (
@@ -219,7 +219,7 @@ export function PaymentModal({
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </>
       )}

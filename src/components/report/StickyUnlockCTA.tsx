@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import { Sparkles, X, Shield, Zap, Lock, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PRODUCTS } from '@/config/pricing';
@@ -45,7 +45,7 @@ export function StickyUnlockCTA({
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <m.div
           initial={{ y: 120, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 120, opacity: 0 }}
@@ -95,7 +95,7 @@ export function StickyUnlockCTA({
                 <p className="text-[10px] text-muted-foreground mt-0.5">{subLabel ?? 'One-time · forever'}</p>
               </div>
 
-              <motion.div whileTap={{ scale: 0.97 }} className="flex-1">
+              <m.div whileTap={{ scale: 0.97 }} className="flex-1">
                 <Button
                   onClick={onUnlockClick}
                   className="btn-gold w-full font-bold py-5 rounded-xl flex items-center justify-center gap-1.5 text-sm shadow-gold"
@@ -105,7 +105,7 @@ export function StickyUnlockCTA({
                   {ctaLabel ?? `Unlock ${userName ? `${userName.split(' ')[0]}'s` : 'Full'} Report`}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
-              </motion.div>
+              </m.div>
             </div>
 
             {/* Trust chips */}
@@ -123,7 +123,7 @@ export function StickyUnlockCTA({
               </span>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Heart, Users, HeartHandshake } from 'lucide-react';
 
 interface LoveRelationshipsProps {
@@ -17,7 +17,7 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
     ];
 
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
         <div className="glass gradient-border rounded-2xl p-6 md:p-8">
           <div className="grid md:grid-cols-3 gap-6">
             {items.map(({ icon: Icon, label, value, color, bg }, index) => (
-              <motion.div
+              <m.div
                 key={label}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -48,11 +48,11 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">{label}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{value}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -63,9 +63,9 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
               <Heart className="w-4 h-4 text-pink-400 inline mr-1.5 mb-0.5" />
               "Love flows best when it grows naturally. Trust the timing of your heart."
             </p>
-          </motion.div>
+          </m.div>
         </div>
-      </motion.section>
+      </m.section>
     );
   }
 );

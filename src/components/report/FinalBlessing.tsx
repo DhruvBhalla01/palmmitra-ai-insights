@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 
 interface FinalBlessingProps {
   message: string;
@@ -9,7 +9,7 @@ interface FinalBlessingProps {
 export const FinalBlessing = forwardRef<HTMLElement, FinalBlessingProps>(
   function FinalBlessing({ message, name }, ref) {
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -26,7 +26,7 @@ export const FinalBlessing = forwardRef<HTMLElement, FinalBlessingProps>(
         <div className="h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
 
         <div className="relative z-10 p-10 md:p-16 text-center">
-          <motion.p
+          <m.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -34,9 +34,9 @@ export const FinalBlessing = forwardRef<HTMLElement, FinalBlessingProps>(
             className="sanskrit-accent mb-6"
           >
             ॐ Ashirvaad · Divine Blessing
-          </motion.p>
+          </m.p>
 
-          <motion.blockquote
+          <m.blockquote
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -44,9 +44,9 @@ export const FinalBlessing = forwardRef<HTMLElement, FinalBlessingProps>(
             className="text-xl md:text-2xl font-serif italic text-foreground/90 leading-relaxed max-w-2xl mx-auto mb-6"
           >
             "{message}"
-          </motion.blockquote>
+          </m.blockquote>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -54,12 +54,12 @@ export const FinalBlessing = forwardRef<HTMLElement, FinalBlessingProps>(
           >
             <p className="text-gradient-gold font-semibold">— Blessed for {name}</p>
             <p className="sanskrit-accent mt-2">ॐ शुभ आशीर्वाद</p>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Bottom gradient line */}
         <div className="h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-      </motion.section>
+      </m.section>
     );
   }
 );

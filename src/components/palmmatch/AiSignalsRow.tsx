@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { CheckCircle2, Cpu } from 'lucide-react';
 
 const SIGNALS = [
@@ -12,7 +12,7 @@ const SIGNALS = [
 
 export function AiSignalsRow() {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -28,7 +28,7 @@ export function AiSignalsRow() {
       </div>
       <div className="flex flex-wrap justify-center gap-1.5">
         {SIGNALS.map((s, i) => (
-          <motion.span
+          <m.span
             key={s}
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -38,9 +38,9 @@ export function AiSignalsRow() {
           >
             <CheckCircle2 className="w-2.5 h-2.5 text-green-400" />
             {s}
-          </motion.span>
+          </m.span>
         ))}
       </div>
-    </motion.div>
+    </m.div>
   );
 }

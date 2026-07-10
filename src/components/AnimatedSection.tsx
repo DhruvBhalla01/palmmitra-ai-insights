@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { ReactNode, forwardRef } from 'react';
 
 interface AnimatedSectionProps {
@@ -26,7 +26,7 @@ export const AnimatedSection = forwardRef<HTMLDivElement, AnimatedSectionProps>(
   const initial = directionVariants[direction];
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       id={id}
       initial={{ opacity: 0, ...initial }}
@@ -40,7 +40,7 @@ export const AnimatedSection = forwardRef<HTMLDivElement, AnimatedSectionProps>(
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 });
 

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import { useEffect, useState } from 'react';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 
@@ -50,7 +50,7 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
   return (
     <AnimatePresence>
       {isLoading && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -60,7 +60,7 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
           <div className="relative flex flex-col items-center">
             {/* Expanding mandala rings */}
             {[...Array(4)].map((_, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="absolute flex items-center justify-center"
                 style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
@@ -92,11 +92,11 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
                     />
                   ))}
                 </svg>
-              </motion.div>
+              </m.div>
             ))}
 
             {/* Center palm */}
-            <motion.img
+            <m.img
               src={palmIconGold}
               alt="Palm Reading"
               className="relative z-10 w-20 h-20"
@@ -114,7 +114,7 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
             {/* Loading text with cycling messages */}
             <div className="mt-24 text-center min-h-[80px]">
               <AnimatePresence mode="wait">
-                <motion.div
+                <m.div
                   key={messageIndex}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -127,14 +127,14 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
                   <p className="text-sm text-muted-foreground">
                     {mysticalMessages[messageIndex].sub}
                   </p>
-                </motion.div>
+                </m.div>
               </AnimatePresence>
             </div>
 
             {/* Progress dots */}
             <div className="flex gap-2 mt-6">
               {mysticalMessages.map((_, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   className={`w-2 h-2 rounded-full transition-colors duration-300 ${
                     i <= messageIndex ? 'bg-accent' : 'bg-accent/20'
@@ -145,19 +145,19 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
               ))}
             </div>
           </div>
-        </motion.div>
+        </m.div>
       )}
 
       {/* Completion burst */}
       {!isLoading && particles.length > 0 && (
-        <motion.div
+        <m.div
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
           transition={{ duration: 1.5, delay: 0.5 }}
           className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none"
         >
           {particles.map((particle) => (
-            <motion.div
+            <m.div
               key={particle.id}
               className="absolute w-2 h-2 rounded-full bg-accent"
               initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
@@ -175,15 +175,15 @@ export function DestinyRevealLoader({ isLoading, onComplete }: DestinyRevealLoad
             />
           ))}
           
-          <motion.div
+          <m.div
             initial={{ scale: 0.8, opacity: 1 }}
             animate={{ scale: 2, opacity: 0 }}
             transition={{ duration: 0.8 }}
             className="text-8xl"
           >
             ✨
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

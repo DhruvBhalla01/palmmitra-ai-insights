@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Sparkles, Calendar, Shield, Crown, Briefcase, Heart, TrendingUp } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -86,14 +86,14 @@ export function ReportHeader({
   const ReadingIcon = readingTypeIcons[readingType] || Crown;
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       className="relative mb-12"
     >
       {/* Key Destiny Message Box */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
@@ -112,7 +112,7 @@ export function ReportHeader({
         <p className="text-lg md:text-xl font-serif text-foreground leading-relaxed">
           "{headlineSummary}"
         </p>
-      </motion.div>
+      </m.div>
 
       {/* Premium Summary Card */}
       <div className="glass-premium rounded-3xl p-5 sm:p-8 md:p-10 overflow-hidden relative">
@@ -122,7 +122,7 @@ export function ReportHeader({
         <div className="relative z-10">
           {/* Top row: Badges */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6 md:mb-8">
-            <motion.div
+            <m.div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl glass-premium border-accent/20"
               whileHover={{ scale: 1.02 }}
             >
@@ -130,10 +130,10 @@ export function ReportHeader({
               <span className="text-xs sm:text-sm font-semibold text-foreground whitespace-nowrap">
                 {readingTypeLabels[readingType] || 'Palm Reading'}
               </span>
-            </motion.div>
+            </m.div>
 
             <div className="flex items-center gap-2">
-              <motion.div
+              <m.div
                 className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-xl bg-accent/10 border border-accent/20"
                 whileHover={{ scale: 1.02 }}
                 aria-label={`AI confidence score ${confidenceScore} percent`}
@@ -143,15 +143,15 @@ export function ReportHeader({
                   <p className="text-[9px] uppercase tracking-widest text-muted-foreground whitespace-nowrap">AI Confidence</p>
                   <p className="text-xs sm:text-sm font-bold text-accent whitespace-nowrap">Verified</p>
                 </div>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
                 whileHover={{ scale: 1.02 }}
               >
                 <Shield className="w-4 h-4 text-primary" />
                 <span className="text-sm font-medium text-primary">Verified</span>
-              </motion.div>
+              </m.div>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ export function ReportHeader({
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
             {/* Palm Image */}
             {palmImage && (
-              <motion.div
+              <m.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
@@ -173,18 +173,18 @@ export function ReportHeader({
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <motion.div
+                <m.div
                   className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  <motion.div
+                  <m.div
                     className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent/50 to-transparent"
                     animate={{ top: ['0%', '100%'] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                   />
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
             )}
 
             {/* Text Content */}
@@ -215,7 +215,7 @@ export function ReportHeader({
             </div>
           </div>
 
-          <motion.div
+          <m.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
@@ -223,6 +223,6 @@ export function ReportHeader({
           />
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

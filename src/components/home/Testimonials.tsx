@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import { ChevronLeft, ChevronRight, Star, Quote, CheckCircle, TrendingUp } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -95,7 +95,7 @@ function StarRating({ rating }: { rating: number }) {
 
 function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; animate?: boolean }) {
   return (
-    <motion.article
+    <m.article
       initial={animate ? { opacity: 0, y: 24 } : undefined}
       whileInView={animate ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true }}
@@ -146,7 +146,7 @@ function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; an
           </div>
         </div>
       </div>
-    </motion.article>
+    </m.article>
   );
 }
 
@@ -207,7 +207,7 @@ export function Testimonials() {
         {/* Desktop: 3-column grid */}
         <div className="hidden lg:grid grid-cols-3 gap-5 max-w-5xl mx-auto">
           {testimonials.slice(0, 3).map((t, i) => (
-            <motion.div
+            <m.div
               key={t.name}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -215,14 +215,14 @@ export function Testimonials() {
               transition={{ duration: 0.5, delay: i * 0.12 }}
             >
               <TestimonialCard t={t} />
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
         {/* Bottom 2 on desktop */}
         <div className="hidden lg:grid grid-cols-2 gap-5 max-w-[672px] mx-auto mt-5">
           {testimonials.slice(3).map((t, i) => (
-            <motion.div
+            <m.div
               key={t.name}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -230,7 +230,7 @@ export function Testimonials() {
               transition={{ duration: 0.5, delay: 0.36 + i * 0.12 }}
             >
               <TestimonialCard t={t} />
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
@@ -257,7 +257,7 @@ export function Testimonials() {
 
           <div className="overflow-hidden px-2">
             <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
+              <m.div
                 key={currentIndex}
                 custom={direction}
                 variants={variants}
@@ -267,7 +267,7 @@ export function Testimonials() {
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               >
                 <TestimonialCard t={testimonials[currentIndex]} />
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
 

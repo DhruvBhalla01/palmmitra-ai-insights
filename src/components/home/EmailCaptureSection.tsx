@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Mail, Sparkles, Check, Shield, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,7 +47,7 @@ export function EmailCaptureSection() {
 
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
         <AnimatedSection>
-          <motion.div
+          <m.div
             className="glass-premium rounded-3xl p-8 md:p-12 border border-accent/30 text-center relative overflow-hidden"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
@@ -57,7 +57,7 @@ export function EmailCaptureSection() {
             
             {/* Floating sparkles */}
             {[...Array(5)].map((_, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="absolute text-accent/60"
                 style={{
@@ -76,17 +76,17 @@ export function EmailCaptureSection() {
                 }}
               >
                 <Sparkles className="w-4 h-4" />
-              </motion.div>
+              </m.div>
             ))}
 
             <div className="relative z-10">
-              <motion.div
+              <m.div
                 className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-6"
                 animate={{ rotate: [0, 5, -5, 0] }}
                 transition={{ duration: 4, repeat: Infinity }}
               >
                 <Mail className="w-8 h-8 text-accent" />
-              </motion.div>
+              </m.div>
 
               <p className="sanskrit-accent mb-3">ॐ Jyotish Sandesh</p>
               
@@ -115,12 +115,12 @@ export function EmailCaptureSection() {
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
-                        <motion.div
+                        <m.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                         >
                           <Sparkles className="w-5 h-5" />
-                        </motion.div>
+                        </m.div>
                       ) : (
                         <>
                           <Sparkles className="w-5 h-5 mr-2" />
@@ -131,7 +131,7 @@ export function EmailCaptureSection() {
                   </div>
                 </form>
               ) : (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="flex items-center justify-center gap-3 text-accent"
@@ -140,7 +140,7 @@ export function EmailCaptureSection() {
                     <Check className="w-5 h-5" />
                   </div>
                   <span className="font-medium">Check your inbox for your free insights!</span>
-                </motion.div>
+                </m.div>
               )}
 
               {/* Trust indicators */}
@@ -155,7 +155,7 @@ export function EmailCaptureSection() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </AnimatedSection>
       </div>
     </section>

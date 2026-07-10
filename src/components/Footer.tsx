@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import logoImg from '@/assets/logo.webp';
 import { SmartLink } from '@/components/SmartLink';
 
@@ -34,12 +34,12 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2.5 mb-6">
-            <motion.div 
+            <m.div 
                 className="w-10 h-10 rounded-full overflow-hidden"
                 whileHover={{ scale: 1.05 }}
               >
                 <img src={logoImg} alt="PalmMitra logo" className="w-full h-full object-contain" />
-              </motion.div>
+              </m.div>
               <span className="text-2xl font-serif font-bold">
                 Palm<span className="text-accent">Mitra</span>
               </span>

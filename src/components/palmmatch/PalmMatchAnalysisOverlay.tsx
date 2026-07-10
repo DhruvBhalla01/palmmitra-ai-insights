@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check, Loader2, Sparkles, Shield, Trash2, Cpu, Heart,
@@ -115,7 +115,7 @@ export function PalmMatchAnalysisOverlay({
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -127,7 +127,7 @@ export function PalmMatchAnalysisOverlay({
             <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-accent/5 blur-[90px]" />
             {/* Soft floating particles */}
             {[0, 1, 2, 3, 4, 5].map((i) => (
-              <motion.span
+              <m.span
                 key={i}
                 initial={{ opacity: 0 }}
                 animate={{
@@ -154,7 +154,7 @@ export function PalmMatchAnalysisOverlay({
             <div className="w-full max-w-md mx-auto">
               {/* Header */}
               <div className="text-center mb-6">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/25 mb-3"
@@ -163,7 +163,7 @@ export function PalmMatchAnalysisOverlay({
                   <span className="text-[11px] font-medium text-accent tracking-wide">
                     AI COMPATIBILITY ENGINE
                   </span>
-                </motion.div>
+                </m.div>
                 <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-1.5">
                   {showDone
                     ? 'Compatibility Analysis Complete'
@@ -200,7 +200,7 @@ export function PalmMatchAnalysisOverlay({
                         <div key={c} className={`absolute w-3 h-3 border-accent ${c} rounded-sm`} />
                       ))}
                       {!showDone && (
-                        <motion.div
+                        <m.div
                           initial={{ top: '-10%' }}
                           animate={{ top: ['-10%', '110%'] }}
                           transition={{
@@ -223,7 +223,7 @@ export function PalmMatchAnalysisOverlay({
 
                 {/* Central connection */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <motion.div
+                  <m.div
                     animate={{ scale: showDone ? 1 : [0.85, 1.05, 0.85], opacity: [0.6, 1, 0.6] }}
                     transition={{ duration: 2.2, repeat: showDone ? 0 : Infinity, ease: 'easeInOut' }}
                     className="w-10 h-10 rounded-full bg-accent/20 backdrop-blur-md border border-accent/50 flex items-center justify-center shadow-[0_0_30px_hsl(42_87%_55%/0.6)]"
@@ -234,7 +234,7 @@ export function PalmMatchAnalysisOverlay({
                     ) : (
                       <Heart className="w-5 h-5 text-accent" />
                     )}
-                  </motion.div>
+                  </m.div>
                 </div>
               </div>
 
@@ -244,7 +244,7 @@ export function PalmMatchAnalysisOverlay({
                   const revealed = progress > i * 22;
                   const Icon = d.icon;
                   return (
-                    <motion.div
+                    <m.div
                       key={d.label}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: revealed ? 1 : 0.35, y: 0 }}
@@ -263,7 +263,7 @@ export function PalmMatchAnalysisOverlay({
                           {revealed ? (showDone ? 'Ready' : d.hint) : 'Queued'}
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>
@@ -274,7 +274,7 @@ export function PalmMatchAnalysisOverlay({
                 <span className="text-accent font-semibold">{label}</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/8 overflow-hidden mb-6">
-                <motion.div
+                <m.div
                   className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70 bg-[length:200%_100%]"
                   animate={{
                     width: `${progress}%`,
@@ -296,7 +296,7 @@ export function PalmMatchAnalysisOverlay({
                       const done = i < activeStage || isComplete;
                       const active = i === activeStage && !isComplete;
                       return (
-                        <motion.div
+                        <m.div
                           key={text}
                           layout
                           initial={{ opacity: 0, y: 8 }}
@@ -323,7 +323,7 @@ export function PalmMatchAnalysisOverlay({
                           >
                             {text}
                           </span>
-                        </motion.div>
+                        </m.div>
                       );
                     })}
                   </AnimatePresence>
@@ -333,7 +333,7 @@ export function PalmMatchAnalysisOverlay({
               {/* Rotating insight */}
               <div className="min-h-[44px] mb-5 flex items-center justify-center">
                 <AnimatePresence mode="wait">
-                  <motion.p
+                  <m.p
                     key={insightIdx}
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -342,7 +342,7 @@ export function PalmMatchAnalysisOverlay({
                     className="text-center text-sm text-white/70 italic px-4"
                   >
                     {showDone ? 'Preparing Your Personalized Report…' : INSIGHTS[insightIdx]}
-                  </motion.p>
+                  </m.p>
                 </AnimatePresence>
               </div>
 
@@ -363,18 +363,18 @@ export function PalmMatchAnalysisOverlay({
               </div>
 
               {showDone && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-6 flex items-center justify-center gap-2 text-sm text-accent"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   Opening your compatibility report…
-                </motion.div>
+                </m.div>
               )}
             </div>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

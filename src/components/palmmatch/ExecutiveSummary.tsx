@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Heart, TrendingUp, ShieldCheck, Sparkles, AlertTriangle } from 'lucide-react';
 import type { PalmMatchReading } from './types';
 
@@ -45,7 +45,7 @@ export function ExecutiveSummary({ reading, isUnlocked }: Props) {
     : bottom.short;
 
   return (
-    <motion.section
+    <m.section
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -131,6 +131,6 @@ export function ExecutiveSummary({ reading, isUnlocked }: Props) {
           </div>
         </div>
       </div>
-    </motion.section>
+    </m.section>
   );
 }

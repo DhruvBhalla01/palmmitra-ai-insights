@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Sparkles, Send, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -36,7 +36,7 @@ export function AskPalmMatchAI({ person1Name, person2Name, isUnlocked, onUnlockC
   };
 
   return (
-    <motion.section
+    <m.section
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -70,7 +70,7 @@ export function AskPalmMatchAI({ person1Name, person2Name, isUnlocked, onUnlockC
           {/* Suggested questions */}
           <div className="flex flex-wrap justify-center gap-2 mb-5">
             {SUGGESTIONS.map((s, i) => (
-              <motion.button
+              <m.button
                 key={s}
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -80,7 +80,7 @@ export function AskPalmMatchAI({ person1Name, person2Name, isUnlocked, onUnlockC
                 className="text-[11px] md:text-xs px-3 py-1.5 rounded-full border border-accent/20 bg-accent/[0.04] text-foreground/80 hover:bg-accent/10 hover:border-accent/40 transition-colors"
               >
                 {s}
-              </motion.button>
+              </m.button>
             ))}
           </div>
 
@@ -116,6 +116,6 @@ export function AskPalmMatchAI({ person1Name, person2Name, isUnlocked, onUnlockC
           )}
         </div>
       </div>
-    </motion.section>
+    </m.section>
   );
 }

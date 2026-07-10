@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import {
   Heart, MessageCircle, Target, Sparkles, Infinity as InfinityIcon,
   CheckCircle, AlertTriangle, Share2, ArrowRight,
@@ -92,18 +92,18 @@ export default function PalmMatchReport() {
             backgroundSize: '28px 28px',
           }}
         />
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
-          <motion.div
+          <m.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
             className="w-14 h-14 rounded-full border-2 border-accent/20 border-t-accent mx-auto mb-5"
           />
           <p className="text-white/60 text-sm font-medium">Loading your reading...</p>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function PalmMatchReport() {
           {/* SVG Constellation starfield */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden>
             {CONSTELLATION_STARS.map(s => (
-              <motion.circle
+              <m.circle
                 key={s.id}
                 cx={`${s.x}%`}
                 cy={`${s.y}%`}
@@ -159,7 +159,7 @@ export default function PalmMatchReport() {
               />
             ))}
             {CONSTELLATION_LINES.map(([a, b], i) => (
-              <motion.line
+              <m.line
                 key={i}
                 x1={`${CONSTELLATION_STARS[a].x}%`} y1={`${CONSTELLATION_STARS[a].y}%`}
                 x2={`${CONSTELLATION_STARS[b].x}%`} y2={`${CONSTELLATION_STARS[b].y}%`}
@@ -175,7 +175,7 @@ export default function PalmMatchReport() {
             {/* Large OM */}
             <span className="absolute text-[22rem] md:text-[30rem] text-accent/[0.028] font-serif leading-none">ॐ</span>
             {/* Rotating Sri Yantra hexagram */}
-            <motion.svg
+            <m.svg
               className="absolute w-[420px] h-[420px] opacity-[0.038]"
               viewBox="0 0 200 200"
               animate={{ rotate: 360 }}
@@ -185,9 +185,9 @@ export default function PalmMatchReport() {
               <polygon points="100,190 10,35 190,35" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.5" />
               <circle cx="100" cy="100" r="20" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.5" />
               <circle cx="100" cy="100" r="90" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.3" strokeDasharray="3 8" />
-            </motion.svg>
+            </m.svg>
             {/* Counter-rotating inner square */}
-            <motion.svg
+            <m.svg
               className="absolute w-[200px] h-[200px] opacity-[0.045]"
               viewBox="0 0 100 100"
               animate={{ rotate: -360 }}
@@ -195,12 +195,12 @@ export default function PalmMatchReport() {
             >
               <rect x="20" y="20" width="60" height="60" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.8" transform="rotate(45 50 50)" />
               <rect x="20" y="20" width="60" height="60" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.5" />
-            </motion.svg>
+            </m.svg>
           </div>
 
           <div className="relative z-10 max-w-xl mx-auto text-center">
             {/* Live activity pill */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
@@ -216,16 +216,16 @@ export default function PalmMatchReport() {
                 </span>
                 <span className="text-[11px] text-foreground/65 font-medium">3 couples reading right now</span>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Sanskrit eyebrow — ornate with flanking lines */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
               className="flex items-center justify-center gap-3 mb-6"
             >
-              <motion.div
+              <m.div
                 initial={{ width: 0 }}
                 animate={{ width: '44px' }}
                 transition={{ delay: 0.3, duration: 0.7 }}
@@ -235,54 +235,54 @@ export default function PalmMatchReport() {
               <p className="text-sm tracking-[0.22em] text-accent italic font-medium whitespace-nowrap">
                 ॐ Yugal Rekha · Compatibility Reading
               </p>
-              <motion.div
+              <m.div
                 initial={{ width: 0 }}
                 animate={{ width: '44px' }}
                 transition={{ delay: 0.3, duration: 0.7 }}
                 className="h-px flex-shrink-0"
                 style={{ background: 'linear-gradient(270deg, transparent, hsl(42 87% 55% / 0.65))' }}
               />
-            </motion.div>
+            </m.div>
 
             {/* Names — orchestrated cinematic reveal */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-3">
-              <motion.span
+              <m.span
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="text-3xl md:text-5xl font-serif font-bold text-gradient-gold"
               >
                 {person1Name}
-              </motion.span>
+              </m.span>
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
                 className="flex flex-col items-center gap-0.5"
               >
-                <motion.span
+                <m.span
                   animate={{ scale: [1, 1.4, 1] }}
                   transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
                   className="text-2xl md:text-3xl text-accent leading-none"
                   style={{ filter: 'drop-shadow(0 0 14px hsl(42 87% 55% / 0.9))' }}
                 >
                   ♥
-                </motion.span>
+                </m.span>
                 <span className="text-[9px] text-accent/60 tracking-[0.3em] uppercase font-medium">yugal</span>
-              </motion.div>
+              </m.div>
 
-              <motion.span
+              <m.span
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="text-3xl md:text-5xl font-serif font-bold text-gradient-gold"
               >
                 {person2Name}
-              </motion.span>
+              </m.span>
             </div>
 
-            <motion.p
+            <m.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.25 }}
@@ -290,10 +290,10 @@ export default function PalmMatchReport() {
             >
               {relationshipType} Compatibility ·{' '}
               {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </motion.p>
+            </m.p>
 
             {/* Score Ring — cinematic pedestal */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.2, duration: 1.0, ease: [0.34, 1.1, 0.64, 1] }}
@@ -313,10 +313,10 @@ export default function PalmMatchReport() {
                   size={280}
                 />
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Share CTA */}
-            <motion.button
+            <m.button
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.2 }}
@@ -327,7 +327,7 @@ export default function PalmMatchReport() {
               <Share2 className="w-3.5 h-3.5 text-accent" />
               Share your result
               <ArrowRight className="w-3.5 h-3.5" />
-            </motion.button>
+            </m.button>
           </div>
         </section>
 
@@ -335,7 +335,7 @@ export default function PalmMatchReport() {
         <div className="relative">
           {/* Ambient floating particles in content area */}
           {CONTENT_PARTICLES.map((p, i) => (
-            <motion.div
+            <m.div
               key={i}
               className="absolute rounded-full pointer-events-none"
               style={{ left: p.left, top: p.top, width: p.size, height: p.size, background: p.color }}
@@ -401,7 +401,7 @@ export default function PalmMatchReport() {
                 { label: 'Romance',   score: romance.score,              icon: '✿',  unlocked: isUnlocked, from: 'hsl(320 70% 60%)', to: 'hsl(270 60% 65%)' },
                 { label: 'Spirit',    score: spiritualAlignment.score,   icon: 'ॐ', unlocked: isUnlocked, from: 'hsl(270 60% 55%)', to: 'hsl(245 58% 45%)' },
               ].map(({ label, score, icon, unlocked, from, to }, idx) => (
-                <motion.div
+                <m.div
                   key={label}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -421,7 +421,7 @@ export default function PalmMatchReport() {
                   </span>
                   <span className="text-[9px] text-muted-foreground font-medium leading-tight text-center">{label}</span>
                   {unlocked ? (
-                    <motion.span
+                    <m.span
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 + idx * 0.08 }}
@@ -429,11 +429,11 @@ export default function PalmMatchReport() {
                       style={{ color: from }}
                     >
                       {score}%
-                    </motion.span>
+                    </m.span>
                   ) : (
                     <span className="text-sm font-bold text-foreground/15">??%</span>
                   )}
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </AnimatedSection>
@@ -482,7 +482,7 @@ export default function PalmMatchReport() {
 
                 {/* Score bar — thicker with shimmer */}
                 <div className="h-4 bg-secondary rounded-full overflow-hidden mb-6 relative">
-                  <motion.div
+                  <m.div
                     className="h-full rounded-full shimmer relative"
                     style={{ background: 'linear-gradient(90deg, hsl(350 80% 60%), hsl(42 87% 55%), hsl(42 90% 68%))' }}
                     initial={{ width: 0 }}
@@ -492,7 +492,7 @@ export default function PalmMatchReport() {
                 </div>
 
                 {/* Dramatic score centrepiece */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 1.1, duration: 0.7, ease: [0.34, 1.2, 0.64, 1] }}
@@ -518,7 +518,7 @@ export default function PalmMatchReport() {
                   >
                     %
                   </span>
-                </motion.div>
+                </m.div>
 
                 {/* Ornate divider before guidance */}
                 <div className="flex items-center gap-3 mb-5">
@@ -669,7 +669,7 @@ export default function PalmMatchReport() {
                     </h3>
                     <div className="space-y-3">
                       {strengthsAndChallenges.strengths.map((s, i) => (
-                        <motion.div
+                        <m.div
                           key={i}
                           initial={{ opacity: 0, x: -16 }}
                           whileInView={{ opacity: 1, x: 0 }}
@@ -679,7 +679,7 @@ export default function PalmMatchReport() {
                         >
                           <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
                           <p className="text-sm text-foreground/80 leading-relaxed">{s}</p>
-                        </motion.div>
+                        </m.div>
                       ))}
                     </div>
                   </div>
@@ -689,7 +689,7 @@ export default function PalmMatchReport() {
                     </h3>
                     <div className="space-y-3">
                       {strengthsAndChallenges.challenges.map((c, i) => (
-                        <motion.div
+                        <m.div
                           key={i}
                           initial={{ opacity: 0, x: 16 }}
                           whileInView={{ opacity: 1, x: 0 }}
@@ -699,7 +699,7 @@ export default function PalmMatchReport() {
                         >
                           <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
                           <p className="text-sm text-foreground/80 leading-relaxed">{c}</p>
-                        </motion.div>
+                        </m.div>
                       ))}
                     </div>
                   </div>
@@ -749,7 +749,7 @@ export default function PalmMatchReport() {
                 </div>
                 <div className="space-y-4">
                   {remediesForPair.map((remedy, i) => (
-                    <motion.div
+                    <m.div
                       key={i}
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -762,7 +762,7 @@ export default function PalmMatchReport() {
                         {i + 1}
                       </div>
                       <p className="text-sm text-foreground/80 leading-relaxed pt-0.5">{remedy}</p>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
               </div>
@@ -771,7 +771,7 @@ export default function PalmMatchReport() {
 
           {/* ── Final Blessing (always shown) — grand finale ── */}
           <AnimatedSection delay={0.25} className="mb-10">
-            <motion.section
+            <m.section
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -792,18 +792,18 @@ export default function PalmMatchReport() {
 
               {/* Animated OM watermark */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                <motion.span
+                <m.span
                   animate={{ scale: [1, 1.04, 1], opacity: [0.06, 0.11, 0.06] }}
                   transition={{ repeat: Infinity, duration: 8, ease: 'easeInOut' }}
                   className="text-[14rem] md:text-[18rem] text-accent font-serif leading-none"
                 >
                   ॐ
-                </motion.span>
+                </m.span>
               </div>
 
               {/* Rotating mandala watermark */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04]">
-                <motion.svg
+                <m.svg
                   className="w-[500px] h-[500px]"
                   viewBox="0 0 200 200"
                   animate={{ rotate: 360 }}
@@ -816,14 +816,14 @@ export default function PalmMatchReport() {
                   ))}
                   <circle cx="100" cy="100" r="88" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.3" strokeDasharray="4 8" />
                   <circle cx="100" cy="100" r="60" fill="none" stroke="hsl(42 87% 55%)" strokeWidth="0.25" />
-                </motion.svg>
+                </m.svg>
               </div>
 
               {/* Top border line */}
               <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, hsl(42 87% 55% / 0.3) 20%, hsl(42 87% 55% / 0.8) 50%, hsl(42 87% 55% / 0.3) 80%, transparent 100%)' }} />
 
               <div className="relative z-10 p-12 md:p-16 text-center">
-                <motion.p
+                <m.p
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
@@ -831,10 +831,10 @@ export default function PalmMatchReport() {
                   className="text-[11px] tracking-[0.3em] text-accent/80 uppercase font-semibold mb-3"
                 >
                   ॐ Ashirvaad · Divine Blessing
-                </motion.p>
+                </m.p>
 
                 {/* Animated divider line */}
-                <motion.div
+                <m.div
                   initial={{ width: 0 }}
                   whileInView={{ width: '120px' }}
                   viewport={{ once: true }}
@@ -843,7 +843,7 @@ export default function PalmMatchReport() {
                   style={{ background: 'linear-gradient(90deg, transparent, hsl(42 87% 55% / 0.7), transparent)' }}
                 />
 
-                <motion.blockquote
+                <m.blockquote
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -852,9 +852,9 @@ export default function PalmMatchReport() {
                   style={{ textShadow: '0 2px 24px hsl(42 87% 55% / 0.2)' }}
                 >
                   "{finalBlessing}"
-                </motion.blockquote>
+                </m.blockquote>
 
-                <motion.div
+                <m.div
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
@@ -866,19 +866,19 @@ export default function PalmMatchReport() {
                   >
                     {person1Name} & {person2Name}
                   </p>
-                  <motion.p
+                  <m.p
                     className="text-xl text-accent/65 mt-4 font-serif"
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
                   >
                     ॐ शुभ आशीर्वाद
-                  </motion.p>
-                </motion.div>
+                  </m.p>
+                </m.div>
               </div>
 
               {/* Bottom border line */}
               <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, hsl(42 87% 55% / 0.8) 50%, transparent 100%)' }} />
-            </motion.section>
+            </m.section>
           </AnimatedSection>
 
           {/* ── Emotional Closing ── */}

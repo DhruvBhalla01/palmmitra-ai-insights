@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 
 interface SectionDividerProps {
   variant?: 'wave' | 'mandala' | 'gradient' | 'ornate';
@@ -8,7 +8,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
   if (variant === 'wave') {
     return (
       <div className="relative h-20 overflow-hidden">
-        <motion.svg
+        <m.svg
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -34,14 +34,14 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
             stroke="hsl(var(--gold) / 0.3)"
             strokeWidth="1"
           />
-        </motion.svg>
+        </m.svg>
       </div>
     );
   }
 
   if (variant === 'gradient') {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scaleX: 0 }}
         whileInView={{ opacity: 1, scaleX: 1 }}
         viewport={{ once: true }}
@@ -49,13 +49,13 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         className="h-16 flex items-center justify-center"
       >
         <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-      </motion.div>
+      </m.div>
     );
   }
 
   if (variant === 'ornate') {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -64,30 +64,30 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
       >
         <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/40" />
         <div className="flex items-center gap-2">
-          <motion.span
+          <m.span
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
             className="text-accent/70 text-xs"
           >
             ✦
-          </motion.span>
+          </m.span>
           <span className="text-accent/60 text-lg">◆</span>
-          <motion.span
+          <m.span
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
             className="text-accent/70 text-xs"
           >
             ✦
-          </motion.span>
+          </m.span>
         </div>
         <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/40" />
-      </motion.div>
+      </m.div>
     );
   }
 
   // Default: mandala
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -98,7 +98,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
         <div className="flex-1 h-px bg-gradient-to-r from-transparent to-accent/40" />
         
         {/* Mini mandala */}
-        <motion.svg 
+        <m.svg 
           className="w-8 h-8 text-accent/50"
           viewBox="0 0 32 32"
           animate={{ rotate: 360 }}
@@ -120,10 +120,10 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
               transform={`rotate(${i * 45} 16 16)`}
             />
           ))}
-        </motion.svg>
+        </m.svg>
         
         <div className="flex-1 h-px bg-gradient-to-l from-transparent to-accent/40" />
       </div>
-    </motion.div>
+    </m.div>
   );
 }

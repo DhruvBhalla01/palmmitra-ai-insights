@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from '@/lib/m';
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PremiumBackground } from "@/components/PremiumBackground";
@@ -26,14 +26,14 @@ const NotFound = () => {
       
       <main className="relative z-10 pt-28 pb-20 min-h-[80vh] flex items-center justify-center">
         <div className="container mx-auto px-4">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-2xl mx-auto"
           >
             {/* Mystical 404 */}
-            <motion.div
+            <m.div
               animate={{ 
                 y: [0, -10, 0],
                 filter: ['drop-shadow(0 0 20px rgba(255,193,7,0.3))', 'drop-shadow(0 0 40px rgba(255,193,7,0.5))', 'drop-shadow(0 0 20px rgba(255,193,7,0.3))']
@@ -42,7 +42,7 @@ const NotFound = () => {
               className="mb-8"
             >
               <img src={palmIconGold} alt="Palm" className="w-28 h-28 md:w-36 md:h-36 object-contain" />
-            </motion.div>
+            </m.div>
 
             <p className="sanskrit-accent mb-4">ॐ Marg Bhool</p>
             
@@ -87,7 +87,7 @@ const NotFound = () => {
               <ArrowLeft className="w-4 h-4" />
               Go back to previous page
             </button>
-          </motion.div>
+          </m.div>
         </div>
       </main>
 

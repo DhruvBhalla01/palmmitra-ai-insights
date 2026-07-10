@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { HelpCircle } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import {
@@ -79,7 +79,7 @@ export function FAQSection() {
 
             <Accordion type="single" collapsible className="space-y-3">
               {faqs.map((faq, index) => (
-                <motion.div
+                <m.div
                   key={index}
                   initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -97,7 +97,7 @@ export function FAQSection() {
                       {faq.a}
                     </AccordionContent>
                   </AccordionItem>
-                </motion.div>
+                </m.div>
               ))}
             </Accordion>
           </div>

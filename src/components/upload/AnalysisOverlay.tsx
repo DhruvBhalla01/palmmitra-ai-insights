@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Loader2, Sparkles, ShieldCheck, Lock } from 'lucide-react';
 
@@ -103,7 +103,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -119,14 +119,14 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
             <div className="w-full max-w-md mx-auto">
               {/* Header */}
               <div className="text-center mb-6">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/25 mb-3"
                 >
                   <Sparkles className="w-3 h-3 text-accent" />
                   <span className="text-[11px] font-medium text-accent tracking-wide">AI ANALYSIS IN PROGRESS</span>
-                </motion.div>
+                </m.div>
                 <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-1.5">
                   {showSuccess
                     ? 'Your Palm Analysis is Ready'
@@ -160,7 +160,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
 
                 {/* Scan line */}
                 {!showSuccess && (
-                  <motion.div
+                  <m.div
                     initial={{ top: '-10%' }}
                     animate={{ top: ['-10%', '110%'] }}
                     transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
@@ -186,20 +186,20 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                 {/* Success overlay */}
                 <AnimatePresence>
                   {showSuccess && (
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="absolute inset-0 flex items-center justify-center bg-accent/30 backdrop-blur-sm"
                     >
-                      <motion.div
+                      <m.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                         className="w-20 h-20 rounded-full bg-accent flex items-center justify-center shadow-[0_0_60px_hsl(42_87%_55%/0.8)]"
                       >
                         <Check className="w-10 h-10 text-[#0a0a12]" strokeWidth={3} />
-                      </motion.div>
-                    </motion.div>
+                      </m.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </div>
@@ -207,17 +207,17 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
               {/* Progress bar */}
               <div className="mb-2 flex items-center justify-between text-[11px] tracking-wide">
                 <span className="text-white/50 uppercase">Analysis</span>
-                <motion.span
+                <m.span
                   key={Math.floor(progress)}
                   initial={{ opacity: 0.5 }}
                   animate={{ opacity: 1 }}
                   className="text-accent font-semibold tabular-nums"
                 >
                   {Math.floor(progress)}%
-                </motion.span>
+                </m.span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/8 overflow-hidden mb-6">
-                <motion.div
+                <m.div
                   className="h-full rounded-full bg-gradient-to-r from-accent/70 via-accent to-accent/70 bg-[length:200%_100%]"
                   animate={{
                     width: `${progress}%`,
@@ -238,7 +238,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                       const done = i < activeStep || isComplete;
                       const active = i === activeStep && !isComplete;
                       return (
-                        <motion.div
+                        <m.div
                           key={label}
                           layout
                           initial={{ opacity: 0, y: 8 }}
@@ -249,14 +249,14 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                         >
                           <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                             {done ? (
-                              <motion.div
+                              <m.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: 'spring', stiffness: 300, damping: 18 }}
                                 className="w-5 h-5 rounded-full bg-accent flex items-center justify-center"
                               >
                                 <Check className="w-3 h-3 text-[#0a0a12]" strokeWidth={3.5} />
-                              </motion.div>
+                              </m.div>
                             ) : active ? (
                               <Loader2 className="w-4 h-4 text-accent animate-spin" />
                             ) : (
@@ -270,7 +270,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                           >
                             {label}
                           </span>
-                        </motion.div>
+                        </m.div>
                       );
                     })}
                   </AnimatePresence>
@@ -280,7 +280,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
               {/* Rotating insight */}
               <div className="min-h-[48px] mb-5 flex items-center justify-center">
                 <AnimatePresence mode="wait">
-                  <motion.p
+                  <m.p
                     key={insightIdx}
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -289,7 +289,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                     className="text-center text-sm text-white/70 italic px-4"
                   >
                     "{INSIGHTS[insightIdx]}"
-                  </motion.p>
+                  </m.p>
                 </AnimatePresence>
               </div>
 
@@ -306,7 +306,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

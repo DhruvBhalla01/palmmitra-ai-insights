@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -285,7 +285,7 @@ export default function UploadPalm() {
 
           {/* ── Page Header ──────────────────────────── */}
           <AnimatedSection className="text-center mb-8">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
@@ -293,7 +293,7 @@ export default function UploadPalm() {
             >
               <Sparkles className="w-3.5 h-3.5 text-accent" />
               <span className="text-sm font-medium text-accent">Free scan · No payment needed to start</span>
-            </motion.div>
+            </m.div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
               Upload Your{' '}
               <span className="text-gradient-gold text-shadow-luxury">Dominant Hand</span>
@@ -309,7 +309,7 @@ export default function UploadPalm() {
               {progressSteps.map((s, i) => (
                 <div key={s.n} className="flex items-center">
                   <div className="flex flex-col items-center gap-1">
-                    <motion.div
+                    <m.div
                       animate={{
                         backgroundColor: formStep > s.n
                           ? 'hsl(var(--accent))'
@@ -327,13 +327,13 @@ export default function UploadPalm() {
                       }`}
                     >
                       {formStep > s.n ? <CheckCircle className="w-4 h-4" /> : s.n}
-                    </motion.div>
+                    </m.div>
                     <span className={`text-xs whitespace-nowrap transition-colors ${formStep >= s.n ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {s.label}
                     </span>
                   </div>
                   {i < progressSteps.length - 1 && (
-                    <motion.div
+                    <m.div
                       animate={{ backgroundColor: formStep > s.n ? 'hsl(var(--accent))' : 'hsl(var(--border))' }}
                       transition={{ duration: 0.35 }}
                       className="h-px w-10 mx-2 mb-4 rounded-full"
@@ -371,7 +371,7 @@ export default function UploadPalm() {
                       <AnimatePresence mode="wait">
                         {image ? (
                           /* ── Preview state ── */
-                          <motion.div
+                          <m.div
                             key="preview"
                             initial={{ opacity: 0, scale: 0.96 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -407,17 +407,17 @@ export default function UploadPalm() {
                                 )}
                               </p>
                             </div>
-                          </motion.div>
+                          </m.div>
                         ) : (
                           /* ── Empty state ── */
-                          <motion.div
+                          <m.div
                             key="upload"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="flex flex-col items-center py-10 px-6 text-center"
                           >
-                            <motion.div
+                            <m.div
                               animate={{
                                 filter: [
                                   'drop-shadow(0 0 10px hsl(42 87% 55% / 0.3))',
@@ -429,7 +429,7 @@ export default function UploadPalm() {
                               className="mb-5"
                             >
                               <img src={palmIconGold} alt="Palm" className="w-16 h-16 object-contain" />
-                            </motion.div>
+                            </m.div>
 
                             <h3 className="text-lg font-serif font-bold text-foreground mb-1.5">
                               Photograph Your Dominant Hand
@@ -472,7 +472,7 @@ export default function UploadPalm() {
                             <p className="text-xs text-muted-foreground mt-4 hidden lg:block opacity-60">
                               Or drag & drop here
                             </p>
-                          </motion.div>
+                          </m.div>
                         )}
                       </AnimatePresence>
                     </div>
@@ -493,7 +493,7 @@ export default function UploadPalm() {
                   {/* Validation Error */}
                   <AnimatePresence>
                     {validationError && (
-                      <motion.div
+                      <m.div
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
@@ -521,7 +521,7 @@ export default function UploadPalm() {
                             </Button>
                           </div>
                         </div>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
 
@@ -672,7 +672,7 @@ export default function UploadPalm() {
 
                     <div className="space-y-2">
                       {reportSections.map(({ icon: Icon, label, free }, i) => (
-                        <motion.div
+                        <m.div
                           key={label}
                           initial={{ opacity: 0, x: 10 }}
                           whileInView={{ opacity: 1, x: 0 }}
@@ -689,7 +689,7 @@ export default function UploadPalm() {
                           ) : (
                             <Lock className="w-3 h-3 text-muted-foreground/40" />
                           )}
-                        </motion.div>
+                        </m.div>
                       ))}
                     </div>
 

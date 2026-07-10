@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Lock, Sparkles, Eye, ArrowRight, CheckCircle, Star } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -65,7 +65,7 @@ export function SampleReportTeaser() {
           </p>
         </AnimatedSection>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -75,14 +75,14 @@ export function SampleReportTeaser() {
           {/* Glow behind card */}
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-96 h-48 bg-accent/8 blur-3xl rounded-full" aria-hidden="true" />
 
-          <motion.div
+          <m.div
             className="relative glass-premium rounded-3xl overflow-hidden border border-accent/20"
             whileHover={{ y: -4 }}
             transition={{ duration: 0.3 }}
           >
             {/* Card header */}
             <div className="bg-gradient-indigo p-7 text-center relative overflow-hidden">
-              <motion.div
+              <m.div
                 className="absolute inset-0 opacity-12"
                 aria-hidden="true"
                 style={{
@@ -90,7 +90,7 @@ export function SampleReportTeaser() {
                   backgroundSize: '28px 28px',
                 }}
               />
-              <motion.div
+              <m.div
                 className="mb-3 relative z-10 flex justify-center"
                 animate={{
                   filter: [
@@ -102,7 +102,7 @@ export function SampleReportTeaser() {
                 transition={{ duration: 2.5, repeat: Infinity }}
               >
                 <img src={palmIconGold} alt="Palm Reading Report" width={80} height={80} className="w-20 h-20 object-contain" />
-              </motion.div>
+              </m.div>
               <h3 className="text-xl font-serif font-bold text-primary-foreground relative z-10">
                 Sample Destiny Report
               </h3>
@@ -133,7 +133,7 @@ export function SampleReportTeaser() {
             {/* Insight rows */}
             <div className="p-5 space-y-3 relative">
               {sampleInsights.map((insight, index) => (
-                <motion.div
+                <m.div
                   key={insight.title}
                   initial={{ opacity: 0, x: -16 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -168,31 +168,31 @@ export function SampleReportTeaser() {
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
 
               {/* Gradient fade + CTA */}
               <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-card via-card/85 to-transparent flex items-end justify-center pb-5 pointer-events-none" aria-hidden="true">
                 <div className="pointer-events-auto">
                   <Link to="/upload">
-                    <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                       <Button className="btn-gold text-foreground font-semibold px-9 py-6 rounded-2xl gap-2 shadow-gold-lg">
                         <Sparkles className="w-4 h-4" aria-hidden="true" />
                         Unlock My Full Reading
                         <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
                       </Button>
-                    </motion.div>
+                    </m.div>
                   </Link>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Below-card trust */}
           <p className="text-center text-xs text-muted-foreground mt-5">
             2 sections free · Full 2,000-word report unlocked at ₹149 · Downloadable PDF included
           </p>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

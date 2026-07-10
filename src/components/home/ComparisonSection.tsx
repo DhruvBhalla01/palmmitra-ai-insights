@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Check, X, Sparkles } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -57,7 +57,7 @@ export function ComparisonSection() {
           </p>
         </AnimatedSection>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -99,7 +99,7 @@ export function ComparisonSection() {
             {/* Rows */}
             <div className="space-y-1.5 md:space-y-2">
               {rows.map((row, rowIdx) => (
-                <motion.div
+                <m.div
                   key={row.label}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -130,7 +130,7 @@ export function ComparisonSection() {
                       )}
                     </div>
                   ))}
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
@@ -155,16 +155,16 @@ export function ComparisonSection() {
               Compared vs generic horoscope apps · Full 3-way comparison on desktop
             </p>
           </div>
-        </motion.div>
+        </m.div>
 
         <AnimatedSection delay={0.4} className="text-center mt-12">
           <Link to="/upload">
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block">
+            <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block">
               <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl gap-2 shadow-gold-lg">
                 <Sparkles className="w-5 h-5" />
                 Try PalmMitra Free
               </Button>
-            </motion.div>
+            </m.div>
           </Link>
           <p className="text-xs text-muted-foreground mt-3">No credit card · Free preview · Results in 2 min</p>
         </AnimatedSection>

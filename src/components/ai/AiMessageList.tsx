@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { UiMessage } from '@/hooks/useAiChatStream';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Sparkles } from 'lucide-react';
 
 interface Props {
@@ -18,7 +18,7 @@ export function AiMessageList({ messages, userInitial = 'You' }: Props) {
   return (
     <div className="space-y-6">
       {messages.map((m) => (
-        <motion.div
+        <m.div
           key={m.id}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export function AiMessageList({ messages, userInitial = 'You' }: Props) {
               </div>
             </div>
           )}
-        </motion.div>
+        </m.div>
       ))}
       <div ref={endRef} aria-hidden />
       <span className="sr-only">{userInitial}</span>
@@ -96,7 +96,7 @@ function ReadingShimmer() {
   return (
     <div className="flex items-center gap-2.5 py-1.5" aria-label="Thinking">
       <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--gold))] animate-pulse" strokeWidth={1.75} />
-      <motion.span
+      <m.span
         key={idx}
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
@@ -104,7 +104,7 @@ function ReadingShimmer() {
         className="text-[14px] italic bg-[linear-gradient(90deg,hsl(var(--gold)/0.5),hsl(var(--gold-light)),hsl(var(--gold)/0.5))] bg-[length:200%_100%] bg-clip-text text-transparent animate-shimmer"
       >
         {READING_PHRASES[idx]}
-      </motion.span>
+      </m.span>
     </div>
   );
 }

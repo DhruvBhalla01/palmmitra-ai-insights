@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/m';
 import { useNavigate } from 'react-router-dom';
 import {
   Upload, X, Camera, CheckCircle, ArrowRight, ArrowLeft,
@@ -538,7 +538,7 @@ export default function PalmMatch() {
 
               <AnimatePresence mode="wait">
                 {step === 1 && (
-                  <motion.div
+                  <m.div
                     key="step1"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -596,11 +596,11 @@ export default function PalmMatch() {
                       Continue — add their palm
                       <ArrowRight className="w-4 h-4" />
                     </Button>
-                  </motion.div>
+                  </m.div>
                 )}
 
                 {step === 2 && (
-                  <motion.div
+                  <m.div
                     key="step2"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -699,7 +699,7 @@ export default function PalmMatch() {
                         Reveal our compatibility
                       </Button>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
 

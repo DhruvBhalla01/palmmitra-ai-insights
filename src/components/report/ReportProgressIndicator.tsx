@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 
 interface Section {
   id: string;
@@ -24,7 +24,7 @@ export function ReportProgressIndicator({ sections, activeSection }: ReportProgr
             <div key={section.id} className="flex flex-col items-center">
               {/* Connector line */}
               {index > 0 && (
-                <motion.div 
+                <m.div 
                   className="w-0.5 h-6"
                   initial={{ backgroundColor: 'hsl(var(--muted))' }}
                   animate={{ 
@@ -37,7 +37,7 @@ export function ReportProgressIndicator({ sections, activeSection }: ReportProgr
               )}
               
               {/* Chakra dot */}
-              <motion.button
+              <m.button
                 onClick={() => {
                   const element = document.getElementById(`section-${section.id}`);
                   element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -49,29 +49,29 @@ export function ReportProgressIndicator({ sections, activeSection }: ReportProgr
               >
                 {/* Pulse ring for active */}
                 {isActive && (
-                  <motion.div
+                  <m.div
                     className="absolute inset-0 rounded-full bg-accent/30"
                     animate={{ scale: [1, 1.8, 1], opacity: [0.5, 0, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
                 )}
-              </motion.button>
+              </m.button>
               
               {/* Tooltip on hover */}
-              <motion.div
+              <m.div
                 className="absolute left-8 bg-card rounded-lg px-3 py-1.5 text-xs font-medium text-foreground shadow-lg border border-border opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap"
                 initial={{ opacity: 0, x: -5 }}
                 whileHover={{ opacity: 1, x: 0 }}
               >
                 {section.label}
-              </motion.div>
+              </m.div>
             </div>
           );
         })}
       </div>
 
       {/* Section label */}
-      <motion.div
+      <m.div
         key={activeSection}
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
@@ -80,7 +80,7 @@ export function ReportProgressIndicator({ sections, activeSection }: ReportProgr
         <p className="text-xs text-muted-foreground font-medium">
           {sections.find(s => s.id === activeSection)?.label}
         </p>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

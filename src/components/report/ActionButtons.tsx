@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Download, RefreshCw, Share2, Sparkles, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -130,7 +130,7 @@ export function ActionButtons({
   };
 
   return (
-    <motion.section
+    <m.section
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -140,7 +140,7 @@ export function ActionButtons({
       <div className="glass-premium rounded-3xl p-8 border border-accent/20">
         <div className="flex flex-wrap justify-center gap-4">
           {/* Primary CTA with sparkle effect */}
-          <motion.div 
+          <m.div 
             className="relative group"
             whileHover={{ scale: 1.02 }} 
             whileTap={{ scale: 0.98 }}
@@ -148,7 +148,7 @@ export function ActionButtons({
             {/* Sparkle particles on hover */}
             <div className="absolute -inset-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               {[...Array(6)].map((_, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   className="absolute w-1.5 h-1.5 rounded-full bg-accent"
                   style={{
@@ -201,10 +201,10 @@ export function ActionButtons({
                 </>
               )}
             </Button>
-          </motion.div>
+          </m.div>
 
           {/* Secondary Actions */}
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={() => navigate('/upload')}
               className="btn-secondary-premium rounded-2xl px-6 py-6 text-base gap-2"
@@ -212,9 +212,9 @@ export function ActionButtons({
               <RefreshCw className="w-5 h-5" />
               New Reading
             </Button>
-          </motion.div>
+          </m.div>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={handleShare}
               className="btn-secondary-premium rounded-2xl px-6 py-6 text-base gap-2"
@@ -222,9 +222,9 @@ export function ActionButtons({
               <Share2 className="w-5 h-5" />
               Share Report
             </Button>
-          </motion.div>
+          </m.div>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={handleWhatsAppShare}
               className="rounded-2xl px-6 py-6 text-base gap-2 text-white font-semibold"
@@ -235,9 +235,9 @@ export function ActionButtons({
               </svg>
               WhatsApp
             </Button>
-          </motion.div>
+          </m.div>
         </div>
       </div>
-    </motion.section>
+    </m.section>
   );
 }

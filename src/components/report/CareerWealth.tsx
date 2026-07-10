@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Briefcase, TrendingUp, Target } from 'lucide-react';
 import type { PeakPeriod } from './types';
 
@@ -21,7 +21,7 @@ const intensityColors: Record<string, { bg: string; dot: string }> = {
 export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
   function CareerWealth({ bestFields, turningPointAge, wealthStyle, peakPeriods }, ref) {
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -45,7 +45,7 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
             </div>
             <div className="flex flex-wrap gap-2">
               {bestFields.map((field, index) => (
-                <motion.span
+                <m.span
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -54,7 +54,7 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
                   className="px-4 py-2 rounded-xl bg-accent/10 text-accent font-medium text-sm"
                 >
                   {field}
-                </motion.span>
+                </m.span>
               ))}
             </div>
           </div>
@@ -94,7 +94,7 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
                   const isPeak = period.intensity === 'peak';
 
                   return (
-                    <motion.div
+                    <m.div
                       key={index}
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -111,7 +111,7 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
                       <span className={`text-[10px] capitalize ${isPeak ? 'text-amber-500 font-medium' : 'text-muted-foreground'}`}>
                         {period.intensity}
                       </span>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>
@@ -123,7 +123,7 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
             These insights suggest potential patterns based on your palm. Your choices shape your destiny.
           </p>
         </div>
-      </motion.section>
+      </m.section>
     );
   }
 );

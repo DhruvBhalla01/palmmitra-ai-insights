@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Zap, Heart, Lightbulb, Trophy, Sparkles } from 'lucide-react';
 import type { PersonalityTrait } from './types';
 
@@ -26,7 +26,7 @@ const colorMap: Record<string, { text: string; bg: string }> = {
 export const PersonalityTraits = forwardRef<HTMLElement, PersonalityTraitsProps>(
   function PersonalityTraits({ traits }, ref) {
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ export const PersonalityTraits = forwardRef<HTMLElement, PersonalityTraitsProps>
               const colors = colorMap[trait.icon] || colorMap.spiritual;
 
               return (
-                <motion.div
+                <m.div
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -63,12 +63,12 @@ export const PersonalityTraits = forwardRef<HTMLElement, PersonalityTraitsProps>
                     <h3 className="font-semibold text-foreground mb-1">{trait.trait}</h3>
                     <p className="text-sm text-muted-foreground">{trait.description}</p>
                   </div>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
         </div>
-      </motion.section>
+      </m.section>
     );
   }
 );

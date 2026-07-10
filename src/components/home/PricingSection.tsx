@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { Check, Sparkles, Crown, Users, TrendingUp, Zap, Lock, Shield, Star, Heart, Gem } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -148,7 +148,7 @@ export function PricingSection() {
             const isFlagship = plan.flagship;
             const isHero = (plan as { hero?: boolean }).hero;
             return (
-            <motion.div
+            <m.div
               key={plan.name}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -156,7 +156,7 @@ export function PricingSection() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="relative"
             >
-              <motion.div
+              <m.div
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
                 className={`relative rounded-3xl p-7 h-full flex flex-col transition-all duration-300 ${
@@ -176,7 +176,7 @@ export function PricingSection() {
               >
                 {/* Badge */}
                 {plan.badge && (
-                  <motion.div
+                  <m.div
                     className="absolute -top-4 left-1/2 -translate-x-1/2 z-10"
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -197,7 +197,7 @@ export function PricingSection() {
                        <Sparkles className="w-3.5 h-3.5 text-accent" aria-hidden="true" />}
                       {plan.badge}
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
 
                 {(plan.highlight || isFlagship) && <div className="absolute inset-0 rounded-3xl shimmer pointer-events-none" />}
@@ -238,7 +238,7 @@ export function PricingSection() {
                   {/* Features */}
                   <ul className="space-y-3 mb-7" aria-label={`${plan.name} features`}>
                     {plan.features.map((feature, i) => (
-                      <motion.li
+                      <m.li
                         key={feature}
                         className="flex items-start gap-2.5"
                         initial={{ opacity: 0, x: -10 }}
@@ -254,7 +254,7 @@ export function PricingSection() {
                           }`} aria-hidden="true" />
                         </div>
                         <span className="text-foreground text-xs leading-snug">{feature}</span>
-                      </motion.li>
+                      </m.li>
                     ))}
                   </ul>
                 </div>
@@ -285,8 +285,8 @@ export function PricingSection() {
                     </p>
                   </div>
                 )}
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           );})}
         </div>
 

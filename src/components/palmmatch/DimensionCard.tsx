@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/m';
 import { LucideIcon, Lock, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { CompatibilityDimension } from './types';
 import { CompareBar } from './CompareBar';
@@ -67,7 +67,7 @@ function ScoreBar({ score, gradientFrom, gradientTo }: {
   return (
     <div className="flex items-center gap-3 mb-4">
       <div className="flex-1 h-2.5 bg-secondary rounded-full overflow-hidden">
-        <motion.div
+        <m.div
           className="h-full rounded-full"
           style={{ background: `linear-gradient(90deg, ${from}, ${to})` }}
           initial={{ width: 0 }}
@@ -104,7 +104,7 @@ export function DimensionCard({
     .trim();
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
@@ -187,7 +187,7 @@ export function DimensionCard({
         </div>
       ) : (
         /* ── Locked State — dimension color + gradient CTA ── */
-        <motion.div
+        <m.div
           whileHover={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 280, damping: 22 }}
           className="relative h-full min-h-[240px] rounded-2xl overflow-hidden"
@@ -232,7 +232,7 @@ export function DimensionCard({
           {/* Lock overlay centered */}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5 py-5 text-center">
             {/* Pulsing lock icon with dimension color ring */}
-            <motion.div
+            <m.div
               animate={{
                 scale: [1, 1.1, 1],
                 boxShadow: [`0 0 0px ${colors.glow}`, `0 0 28px ${colors.glow}`, `0 0 0px ${colors.glow}`],
@@ -246,7 +246,7 @@ export function DimensionCard({
               }}
             >
               <Lock className="w-5 h-5" style={{ color: colors.from }} />
-            </motion.div>
+            </m.div>
 
             <p
               className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-1.5"
@@ -277,8 +277,8 @@ export function DimensionCard({
 
             <p className="text-[9px] text-muted-foreground mt-2 uppercase tracking-wider">Unlock all 4 →</p>
           </div>
-        </motion.div>
+        </m.div>
       )}
-    </motion.div>
+    </m.div>
   );
 }
