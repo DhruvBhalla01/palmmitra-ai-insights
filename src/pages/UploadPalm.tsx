@@ -10,6 +10,7 @@ import {
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
+import { breadcrumbLd } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
