@@ -392,13 +392,13 @@ export default function Report() {
                       viewport={{ once: true }}
                       className="mb-6"
                     >
-                      <div className="flex items-center gap-3 mb-2">
-                        <Activity className="w-8 h-8 text-accent" />
-                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
+                      <div className="flex items-start gap-3 mb-2">
+                        <Activity className="w-6 h-6 md:w-8 md:h-8 text-accent flex-shrink-0 mt-1" />
+                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground leading-tight text-balance">
                           Your Palm Lines <span className="text-gradient-gold">Speak</span>
                         </h2>
                       </div>
-                      <p className="sanskrit-accent mb-6 ml-12">ॐ Rekha Vigyan</p>
+                      <p className="sanskrit-accent mb-6 ml-9 md:ml-11">ॐ Rekha Vigyan</p>
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> Life Line analysis included. Unlock for complete breakdown.
                       </p>
