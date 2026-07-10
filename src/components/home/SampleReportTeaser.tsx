@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Lock, Sparkles, Eye, ArrowRight, CheckCircle, Star } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';

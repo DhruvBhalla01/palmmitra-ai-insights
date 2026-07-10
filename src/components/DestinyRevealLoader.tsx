@@ -1,4 +1,4 @@
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 

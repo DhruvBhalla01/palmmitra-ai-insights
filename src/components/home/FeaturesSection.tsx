@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Briefcase, Heart, TrendingUp, Calendar, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { AnimatedSection } from '@/components/AnimatedSection';

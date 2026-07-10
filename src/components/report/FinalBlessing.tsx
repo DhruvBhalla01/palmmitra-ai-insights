@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 
 interface FinalBlessingProps {
   message: string;

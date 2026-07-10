@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Link } from 'react-router-dom';
 import { Heart, MessageCircle, Target, Sparkles, Infinity, ArrowRight, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';

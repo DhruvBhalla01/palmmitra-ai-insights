@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { useNavigate } from 'react-router-dom';
 import {

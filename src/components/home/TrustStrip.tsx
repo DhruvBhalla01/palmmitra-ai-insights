@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { ShieldCheck, Zap, Star, Lock, Users, Brain, CheckCircle } from 'lucide-react';
 
 const trustItems = [

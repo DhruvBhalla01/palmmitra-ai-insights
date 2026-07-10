@@ -1,4 +1,4 @@
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";

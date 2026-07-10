@@ -1,5 +1,5 @@
 import { AI_SUGGESTIONS } from '@/config/ai-pricing';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Briefcase, Heart, Coins, User, Users, Rocket, Activity, Compass } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 

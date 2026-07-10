@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { CheckCircle2, Cpu } from 'lucide-react';
 
 const SIGNALS = [

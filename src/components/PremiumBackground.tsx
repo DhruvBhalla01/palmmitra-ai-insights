@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 
 interface Particle {

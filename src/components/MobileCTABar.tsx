@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Shield, Star } from 'lucide-react';

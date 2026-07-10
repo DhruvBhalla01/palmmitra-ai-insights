@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 
 interface SectionDividerProps {
   variant?: 'wave' | 'mandala' | 'gradient' | 'ornate';

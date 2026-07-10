@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Crown, Activity, Brain, Zap } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';

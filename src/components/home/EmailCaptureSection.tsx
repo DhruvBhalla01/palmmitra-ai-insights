@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Mail, Sparkles, Check, Shield, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

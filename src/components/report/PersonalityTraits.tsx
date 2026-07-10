@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Zap, Heart, Lightbulb, Trophy, Sparkles } from 'lucide-react';
 import type { PersonalityTrait } from './types';
 

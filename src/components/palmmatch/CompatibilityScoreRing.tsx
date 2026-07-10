@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Heart } from 'lucide-react';
 
 interface CompatibilityScoreRingProps {

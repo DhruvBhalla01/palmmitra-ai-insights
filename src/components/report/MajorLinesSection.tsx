@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Activity, Heart, Brain, Compass, Sparkles } from 'lucide-react';
 import type { MajorLine } from './types';
 

@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { HelpCircle } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import {

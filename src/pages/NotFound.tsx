@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PremiumBackground } from "@/components/PremiumBackground";

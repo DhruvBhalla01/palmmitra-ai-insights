@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Gem, Clock, Sparkles } from 'lucide-react';
 import type { SpiritualRemedy } from './types';
 

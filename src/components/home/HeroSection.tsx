@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";

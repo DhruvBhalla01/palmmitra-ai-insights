@@ -1,4 +1,4 @@
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check, Loader2, Sparkles, Shield, Trash2, Cpu, Heart,

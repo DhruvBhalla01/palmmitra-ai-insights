@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Sparkles, Calendar, Shield, Crown, Briefcase, Heart, TrendingUp } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 

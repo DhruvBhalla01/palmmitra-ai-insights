@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Info } from 'lucide-react';
 
 export function LegalDisclaimer() {

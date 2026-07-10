@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Lock, ArrowRight, Sparkles, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReactNode } from 'react';

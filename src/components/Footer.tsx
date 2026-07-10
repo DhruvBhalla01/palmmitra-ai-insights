@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import logoImg from '@/assets/logo.webp';
 import { SmartLink } from '@/components/SmartLink';
 

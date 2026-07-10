@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Upload, X, Camera, CheckCircle, ArrowRight, ArrowLeft,

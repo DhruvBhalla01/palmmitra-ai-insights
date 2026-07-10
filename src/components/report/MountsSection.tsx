@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Heart, Crown, Shield, Palette, MessageCircle, ChevronDown, Layers } from 'lucide-react';
 import type { Mount } from './types';
 

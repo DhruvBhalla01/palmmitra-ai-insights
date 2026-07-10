@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { LucideIcon, Lock, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { CompatibilityDimension } from './types';
 import { CompareBar } from './CompareBar';

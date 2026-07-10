@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Sparkles, ArrowRight, Shield, Zap, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';

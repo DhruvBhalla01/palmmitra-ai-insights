@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { TrendingUp, AlertTriangle, Sparkles, Clock } from 'lucide-react';
 import type { LifePhase } from './types';
 

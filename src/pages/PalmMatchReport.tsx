@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { m, AnimatePresence } from '@/lib/m';
+import { m, AnimatePresence } from '@/lib/motion';
 import {
   Heart, MessageCircle, Target, Sparkles, Infinity as InfinityIcon,
   CheckCircle, AlertTriangle, Share2, ArrowRight,

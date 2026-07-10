@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { UiMessage } from '@/hooks/useAiChatStream';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Sparkles } from 'lucide-react';
 
 interface Props {

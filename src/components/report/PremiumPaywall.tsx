@@ -1,4 +1,4 @@
-import { m, useReducedMotion } from '@/lib/m';
+import { m, useReducedMotion } from '@/lib/motion';
 import {
   Sparkles, Crown, Shield, Zap, Lock, ArrowRight, Check, Flame,
   Star, Heart, Briefcase, Activity, Calendar, Brain, ChevronRight, TrendingUp,

@@ -1,4 +1,4 @@
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Brain, Shield, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';

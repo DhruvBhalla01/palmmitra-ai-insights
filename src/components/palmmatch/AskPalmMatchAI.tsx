@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Sparkles, Send, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { m } from '@/lib/m';
+import { m } from '@/lib/motion';
 import { Check, Flame, Lock, Sparkles, ArrowRight, Quote, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PalmMatchPlanType } from '@/hooks/usePalmMatchUnlock';
