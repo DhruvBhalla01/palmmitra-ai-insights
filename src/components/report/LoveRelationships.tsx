@@ -25,10 +25,12 @@ export const LoveRelationships = forwardRef<HTMLElement, LoveRelationshipsProps>
         transition={{ duration: 0.5 }}
         className="mb-12"
       >
-        <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-3">
-          <Heart className="w-8 h-8 text-accent" />
-          Love & <span className="text-gradient-gold text-shadow-luxury">Relationship Reading</span>
-        </h2>
+        <div className="flex items-start gap-3 mb-8">
+          <Heart className="w-6 h-6 md:w-8 md:h-8 text-accent flex-shrink-0 mt-1" />
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground leading-tight text-balance">
+            Love &amp; <span className="text-gradient-gold text-shadow-luxury">Relationship Reading</span>
+          </h2>
+        </div>
 
         <div className="glass gradient-border rounded-2xl p-6 md:p-8">
           <div className="grid md:grid-cols-3 gap-6">
