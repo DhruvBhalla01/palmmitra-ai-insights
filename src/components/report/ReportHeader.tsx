@@ -115,38 +115,38 @@ export function ReportHeader({
       </motion.div>
 
       {/* Premium Summary Card */}
-      <div className="glass-premium rounded-3xl p-8 md:p-10 overflow-hidden relative">
+      <div className="glass-premium rounded-3xl p-5 sm:p-8 md:p-10 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
 
         <div className="relative z-10">
           {/* Top row: Badges */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 md:mb-8">
             <motion.div
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl glass-premium border-accent/20"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl glass-premium border-accent/20"
               whileHover={{ scale: 1.02 }}
             >
-              <ReadingIcon className="w-4 h-4 text-accent" />
-              <span className="text-sm font-semibold text-foreground">
+              <ReadingIcon className="w-4 h-4 text-accent flex-shrink-0" />
+              <span className="text-xs sm:text-sm font-semibold text-foreground whitespace-nowrap">
                 {readingTypeLabels[readingType] || 'Palm Reading'}
               </span>
             </motion.div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <motion.div
-                className="flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-xl bg-accent/10 border border-accent/20"
+                className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-xl bg-accent/10 border border-accent/20"
                 whileHover={{ scale: 1.02 }}
                 aria-label={`AI confidence score ${confidenceScore} percent`}
               >
                 <ConfidenceRing score={confidenceScore} />
                 <div className="leading-tight">
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">AI Confidence</p>
-                  <p className="text-sm font-bold text-accent">Verified reading</p>
+                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground whitespace-nowrap">AI Confidence</p>
+                  <p className="text-xs sm:text-sm font-bold text-accent whitespace-nowrap">Verified</p>
                 </div>
               </motion.div>
 
               <motion.div
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
                 whileHover={{ scale: 1.02 }}
               >
                 <Shield className="w-4 h-4 text-primary" />
@@ -154,6 +154,7 @@ export function ReportHeader({
               </motion.div>
             </div>
           </div>
+
 
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
             {/* Palm Image */}

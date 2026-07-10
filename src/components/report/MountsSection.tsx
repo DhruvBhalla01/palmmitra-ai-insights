@@ -40,10 +40,10 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
         transition={{ duration: 0.5 }}
         className="mb-12"
       >
-        <div className="flex items-center gap-3 mb-2">
-          <Layers className="w-8 h-8 text-accent" />
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-            Palm Mounts & <span className="text-gradient-gold text-shadow-luxury">Personality Forces</span>
+        <div className="flex items-start gap-3 mb-2">
+          <Layers className="w-6 h-6 md:w-8 md:h-8 text-accent flex-shrink-0 mt-1" />
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground leading-tight text-balance">
+            Palm Mounts &amp; <span className="text-gradient-gold text-shadow-luxury">Personality Forces</span>
           </h2>
         </div>
         <p className="sanskrit-accent mb-8 ml-11">ॐ Parvat Shakti</p>

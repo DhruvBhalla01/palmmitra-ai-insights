@@ -29,10 +29,12 @@ export const CareerWealth = forwardRef<HTMLElement, CareerWealthProps>(
         transition={{ duration: 0.5 }}
         className="mb-12"
       >
-        <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-3">
-          <Briefcase className="w-8 h-8 text-accent" />
-          <span className="text-gradient-gold text-shadow-luxury">Career & Wealth</span> Direction
-        </h2>
+        <div className="flex items-start gap-3 mb-8">
+          <Briefcase className="w-6 h-6 md:w-8 md:h-8 text-accent flex-shrink-0 mt-1" />
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground leading-tight text-balance">
+            <span className="text-gradient-gold text-shadow-luxury">Career &amp; Wealth</span> Direction
+          </h2>
+        </div>
 
         <div className="glass gradient-border rounded-2xl p-6 md:p-8 space-y-6">
           {/* Best Fields */}
