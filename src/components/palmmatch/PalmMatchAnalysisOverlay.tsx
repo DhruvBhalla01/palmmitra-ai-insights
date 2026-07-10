@@ -122,12 +122,12 @@ export function PalmMatchAnalysisOverlay({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] bg-[#0a0a12] overflow-y-auto"
         >
-          {/* Ambient background — GPU only */}
+          {/* Ambient background — reduced blur for perf */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-accent/10 blur-[110px]" />
-            <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-accent/5 blur-[90px]" />
-            {/* Soft floating particles */}
-            {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-accent/10 blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-accent/5 blur-3xl" />
+            {/* Soft floating particles — skipped if reduced motion */}
+            {!reduceMotion && [0, 1, 2].map((i) => (
               <m.span
                 key={i}
                 initial={{ opacity: 0 }}
@@ -143,7 +143,7 @@ export function PalmMatchAnalysisOverlay({
                 }}
                 className="absolute w-1 h-1 rounded-full bg-accent/70"
                 style={{
-                  left: `${12 + i * 14}%`,
+                  left: `${20 + i * 25}%`,
                   top: `${60 + (i % 3) * 8}%`,
                   willChange: 'transform, opacity',
                 }}
