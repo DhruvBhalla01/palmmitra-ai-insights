@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { m } from '@/lib/motion';
@@ -40,8 +41,14 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="About PalmMitra — Ancient Indian Palmistry Meets AI"
+        description="PalmMitra combines Hasta Samudrika Shastra, the 3,000-year-old Indian science of palm reading, with modern AI to generate personalised destiny reports on career, love, wealth and life path."
+        path="/about"
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
+      
       
       <main className="relative z-10 pt-28 pb-20">
         <div className="container mx-auto px-4">

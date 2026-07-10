@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -441,6 +442,11 @@ export default function PalmMatch() {
   // ─── Main Upload UI ───────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="PalmMatch — AI Palm Compatibility Report for Couples | PalmMitra"
+        description="PalmMatch is an AI relationship compatibility analysis generated from two palm readings. Get a compatibility score, dimension-by-dimension breakdown, and shared destiny insights in under 3 minutes. ₹999 / $19.99."
+        path="/palmmatch"
+      />
       <Navbar />
 
       <style>{`
