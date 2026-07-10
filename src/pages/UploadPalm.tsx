@@ -946,7 +946,6 @@ export default function UploadPalm() {
                         {[
                           'Photo used only for your reading',
                           'Never shared with third parties',
-                          'Delete request: thepalmmitra@gmail.com',
                         ].map((line) => (
                           <p key={line} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
                             <span className="mt-1 w-1 h-1 rounded-full bg-accent/60 flex-shrink-0" />
