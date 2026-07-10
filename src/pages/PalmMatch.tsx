@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
+const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 
