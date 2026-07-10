@@ -73,6 +73,12 @@ const Index = () => {
           <FAQSection />
         </Suspense>
 
+        {/* 8b. Pricing */}
+        <Suspense fallback={<SectionLoader />}>
+          <PricingSection />
+        </Suspense>
+
+
         {/* 9. Final CTA */}
         <SectionDivider variant="gradient" />
         <Suspense fallback={<SectionLoader />}>
