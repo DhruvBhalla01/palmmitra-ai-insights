@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { TrendingUp, AlertTriangle, Sparkles, Clock } from 'lucide-react';
 import type { LifePhase } from './types';
 
@@ -41,7 +41,7 @@ const phaseConfig = [
 export const LifePhaseSection = forwardRef<HTMLElement, LifePhaseSectionProps>(
   function LifePhaseSection({ phases }, ref) {
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ export const LifePhaseSection = forwardRef<HTMLElement, LifePhaseSectionProps>(
             const phase = phases[key];
 
             return (
-              <motion.div
+              <m.div
                 key={key}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -83,11 +83,11 @@ export const LifePhaseSection = forwardRef<HTMLElement, LifePhaseSectionProps>(
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {phase.description}
                 </p>
-              </motion.div>
+              </m.div>
             );
           })}
         </div>
-      </motion.section>
+      </m.section>
     );
   }
 );

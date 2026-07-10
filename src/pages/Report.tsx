@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Crown, Activity, Brain, Zap } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
@@ -263,7 +263,7 @@ export default function Report() {
         <PremiumBackground showMandala={false} intensity="light" />
         <Navbar />
         <main className="pt-24 pb-20 flex items-center justify-center min-h-[80vh] relative z-10">
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center max-w-md mx-auto px-4"
@@ -284,7 +284,7 @@ export default function Report() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               New Reading
             </Button>
-          </motion.div>
+          </m.div>
         </main>
         <Footer />
       </div>
@@ -344,7 +344,7 @@ export default function Report() {
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Subscription Badge */}
           {hasSubscription && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-6 flex justify-center"
@@ -353,7 +353,7 @@ export default function Report() {
                 <Crown className="w-4 h-4" />
                 Unlimited Plan Active
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           <div className="flex flex-col lg:flex-row gap-8">
@@ -386,7 +386,7 @@ export default function Report() {
                 ) : (
                   <>
                     {/* Show only Life Line for free */}
-                    <motion.section
+                    <m.section
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -402,10 +402,10 @@ export default function Report() {
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> Life Line analysis included. Unlock for complete breakdown.
                       </p>
-                    </motion.section>
+                    </m.section>
 
                     {/* Life Line Card - Free */}
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="glass-premium rounded-2xl p-6 border border-green-500/20 mb-6"
@@ -427,7 +427,7 @@ export default function Report() {
                           </span>
                         </div>
                         <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                          <motion.div
+                          <m.div
                             initial={{ width: 0 }}
                             animate={{
                               width:
@@ -450,7 +450,7 @@ export default function Report() {
                           <span>{reading.majorLines.lifeLine.keyInsight}</span>
                         </p>
                       </div>
-                    </motion.div>
+                    </m.div>
 
                     {/* Locked: Other Lines */}
                     <LockedSection
@@ -493,7 +493,7 @@ export default function Report() {
                   <PersonalityTraits traits={reading.personalityTraits} />
                 ) : (
                   <>
-                    <motion.section
+                    <m.section
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -508,7 +508,7 @@ export default function Report() {
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> First trait included.
                       </p>
-                    </motion.section>
+                    </m.section>
 
                     {/* First trait - Free */}
                     {reading.personalityTraits[0] && (
@@ -633,7 +633,7 @@ export default function Report() {
                   <SpiritualRemediesSection remedies={reading.spiritualRemedies} />
                 ) : (
                   <>
-                    <motion.section
+                    <m.section
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -648,7 +648,7 @@ export default function Report() {
                       <p className="text-sm text-muted-foreground mb-4">
                         <span className="text-accent font-medium">Free Preview:</span> First remedy included.
                       </p>
-                    </motion.section>
+                    </m.section>
 
                     {/* First remedy - Free */}
                     {reading.spiritualRemedies[0] && (

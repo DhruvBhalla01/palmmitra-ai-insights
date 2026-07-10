@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Sparkles, Download, RefreshCw, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -57,7 +57,7 @@ export function UnlockSuccessOverlay({
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -67,7 +67,7 @@ export function UnlockSuccessOverlay({
           {/* Background with gold particles */}
           <div className="absolute inset-0 bg-background/95 backdrop-blur-md">
             {[...Array(30)].map((_, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 className="absolute w-2 h-2 rounded-full bg-accent"
                 initial={{ x: '50%', y: '50%', scale: 0, opacity: 1 }}
@@ -81,7 +81,7 @@ export function UnlockSuccessOverlay({
               />
             ))}
             {[...Array(3)].map((_, i) => (
-              <motion.div
+              <m.div
                 key={`ring-${i}`}
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-accent/30 rounded-full"
                 initial={{ width: 0, height: 0, opacity: 1 }}
@@ -92,7 +92,7 @@ export function UnlockSuccessOverlay({
           </div>
 
           {/* Content */}
-          <motion.div
+          <m.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
@@ -101,7 +101,7 @@ export function UnlockSuccessOverlay({
             onClick={e => e.stopPropagation()}
           >
             {/* Icon */}
-            <motion.div
+            <m.div
               animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 3 }}
               className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-gold flex items-center justify-center shadow-gold-lg"
@@ -111,10 +111,10 @@ export function UnlockSuccessOverlay({
               ) : (
                 <Sparkles className="w-12 h-12 text-foreground" />
               )}
-            </motion.div>
+            </m.div>
 
             {/* Title */}
-            <motion.h2
+            <m.h2
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
@@ -125,9 +125,9 @@ export function UnlockSuccessOverlay({
               ) : (
                 <>Your Destiny Report is<br /><span className="text-gradient-gold">Now Unlocked!</span></>
               )}
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6 }}
@@ -136,20 +136,20 @@ export function UnlockSuccessOverlay({
               {isSubscription
                 ? 'Unlimited readings for you and your family are now active.'
                 : 'All premium insights are revealed. Discover your complete destiny.'}
-            </motion.p>
+            </m.p>
 
             {/* WhatsApp share nudge */}
-            <motion.p
+            <m.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.65 }}
               className="text-sm text-accent mb-8"
             >
               Share your reading on WhatsApp with friends ✨
-            </motion.p>
+            </m.p>
 
             {/* Action Buttons */}
-            <motion.div
+            <m.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
@@ -184,18 +184,18 @@ export function UnlockSuccessOverlay({
                 <RefreshCw className="w-4 h-4" />
                 New Reading
               </Button>
-            </motion.div>
+            </m.div>
 
-            <motion.p
+            <m.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5 }}
               className="text-xs text-muted-foreground mt-6"
             >
               Tap anywhere to continue reading
-            </motion.p>
-          </motion.div>
-        </motion.div>
+            </m.p>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

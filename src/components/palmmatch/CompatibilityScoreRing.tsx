@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Heart } from 'lucide-react';
 
 interface CompatibilityScoreRingProps {
@@ -156,7 +156,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             />
 
             {/* Outermost subtle ring — slow-rotating dashed */}
-            <motion.circle
+            <m.circle
               cx={cx} cy={cy}
               r={scoreR + 20}
               fill="none"
@@ -170,7 +170,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             />
 
             {/* Glow halo ring (replaces old dashed ring) */}
-            <motion.circle
+            <m.circle
               cx={cx} cy={cy}
               r={scoreR + 12}
               fill="none"
@@ -191,7 +191,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             />
 
             {/* Center nebula — aurora glow inside the ring */}
-            <motion.circle
+            <m.circle
               cx={cx} cy={cy}
               r={scoreR - 12}
               fill={`url(#nebula-${score})`}
@@ -200,7 +200,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             />
 
             {/* Pulsing glow track */}
-            <motion.circle
+            <m.circle
               cx={cx} cy={cy}
               r={scoreR}
               fill="none"
@@ -212,7 +212,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             />
 
             {/* Animated gradient score arc */}
-            <motion.circle
+            <m.circle
               cx={cx} cy={cy}
               r={scoreR}
               fill="none"
@@ -227,7 +227,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             />
 
             {/* Counter-rotating inner dashed ring */}
-            <motion.circle
+            <m.circle
               cx={cx} cy={cy}
               r={scoreR - 20}
               fill="none"
@@ -252,7 +252,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             {/* Golden spikes (score >= 75) */}
             <AnimatePresence>
               {sparklesVisible && score >= 75 && spikes.map((spike, i) => (
-                <motion.path
+                <m.path
                   key={i}
                   d={spike.d}
                   fill={config.strokeTo}
@@ -268,7 +268,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             {/* Star orbit dots */}
             <AnimatePresence>
               {sparklesVisible && starDots.map((dot, i) => (
-                <motion.circle
+                <m.circle
                   key={i}
                   cx={dot.x} cy={dot.y}
                   r={dot.large ? 2.5 : 1.5}
@@ -289,7 +289,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             {/* Sparkle reveal dots on inner ring */}
             <AnimatePresence>
               {sparklesVisible && sparklePositions.map((pos, i) => (
-                <motion.circle
+                <m.circle
                   key={i}
                   cx={pos.x} cy={pos.y}
                   r={0}
@@ -304,7 +304,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             {/* Particle burst on score complete */}
             <AnimatePresence>
               {burstFired && burstParticles.map((p, i) => (
-                <motion.circle
+                <m.circle
                   key={i}
                   cx={cx} cy={cy}
                   r={p.r}
@@ -319,7 +319,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
 
           {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-            <motion.span
+            <m.span
               initial={{ opacity: 0, scale: 0.3 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, delay: 0.8, ease: 'backOut' }}
@@ -327,9 +327,9 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
               style={{ color: config.strokeFrom, fontSize: size * 0.36, textShadow: `0 0 40px ${config.glow}` }}
             >
               {displayScore}
-            </motion.span>
+            </m.span>
             <span className="text-[11px] text-muted-foreground font-semibold tracking-widest uppercase">% match</span>
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.5, duration: 0.45, ease: 'backOut' }}
@@ -337,13 +337,13 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
             >
               <Heart className="w-3.5 h-3.5 fill-current" style={{ color: config.strokeFrom }} />
               <Heart className="w-3.5 h-3.5 fill-current" style={{ color: config.strokeTo }} />
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </div>
 
       {/* Verdict badge — springy overshoot + outer glow halo */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 14, scale: 0.7 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ delay: 1.8, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -359,7 +359,7 @@ export function CompatibilityScoreRing({ score, verdict, size = 280 }: Compatibi
         >
           ✦ {verdict} ✦
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

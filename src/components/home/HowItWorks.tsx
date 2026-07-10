@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Camera, Cpu, FileText, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -69,7 +69,7 @@ export function HowItWorks() {
           </div>
 
           {steps.map((step, index) => (
-            <motion.div
+            <m.div
               key={step.title}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -77,7 +77,7 @@ export function HowItWorks() {
               transition={{ duration: 0.6, delay: index * 0.2 }}
               className="relative group"
             >
-              <motion.div
+              <m.div
                 whileHover={{ y: -8 }}
                 transition={{ duration: 0.3 }}
                 className={`relative card-premium p-8 border ${step.borderColor} hover:border-accent/35 h-full`}
@@ -95,14 +95,14 @@ export function HowItWorks() {
                 </div>
 
                 {/* Icon */}
-                <motion.div
+                <m.div
                   className={`w-16 h-16 rounded-2xl ${step.color} flex items-center justify-center mb-5 relative`}
                   whileHover={{ scale: 1.08 }}
                   transition={{ duration: 0.25 }}
                 >
                   <step.icon className={`w-8 h-8 ${step.iconColor}`} aria-hidden="true" />
                   <div className={`absolute inset-0 rounded-2xl ${step.color} blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300`} />
-                </motion.div>
+                </m.div>
 
                 <h3 className="text-xl font-serif font-bold text-foreground mb-3">
                   {step.title}
@@ -120,8 +120,8 @@ export function HowItWorks() {
                     </div>
                   </div>
                 )}
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           ))}
         </div>
 
@@ -140,13 +140,13 @@ export function HowItWorks() {
         {/* Post-steps CTA */}
         <AnimatedSection delay={0.5} className="text-center mt-10">
           <Link to="/upload">
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block">
+            <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-block">
               <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg">
                 <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
                 Scan My Palm — Free
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Button>
-            </motion.div>
+            </m.div>
           </Link>
           <p className="text-sm text-muted-foreground mt-3">No account needed · Free preview included · Full report ₹149 / $9.99</p>
         </AnimatedSection>

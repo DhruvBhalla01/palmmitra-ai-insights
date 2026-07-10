@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Sparkles, ArrowRight, Shield, Zap, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -42,7 +42,7 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
   const display = String(value).padStart(2, '0');
   return (
     <div className="flex flex-col items-center">
-      <motion.div
+      <m.div
         key={display}
         initial={{ opacity: 0.6, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -52,7 +52,7 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
         <span className="text-2xl font-serif font-bold text-gradient-gold tabular-nums">
           {display}
         </span>
-      </motion.div>
+      </m.div>
       <span className="text-[10px] uppercase tracking-widest text-white/40 mt-1.5">{label}</span>
     </div>
   );
@@ -85,7 +85,7 @@ export function FinalCTABanner() {
 
       <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl">
         {/* Sanskrit accent */}
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -93,10 +93,10 @@ export function FinalCTABanner() {
           className="sanskrit-accent mb-5 text-white/45"
         >
           ॐ Kaal Chakra
-        </motion.p>
+        </m.p>
 
         {/* Headline */}
-        <motion.h2
+        <m.h2
           id="final-cta-heading"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -106,10 +106,10 @@ export function FinalCTABanner() {
         >
           Your Destiny Won't Wait —{' '}
           <span className="text-gradient-gold block sm:inline">Neither Should You</span>
-        </motion.h2>
+        </m.h2>
 
         {/* Subtext */}
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -118,10 +118,10 @@ export function FinalCTABanner() {
         >
           Join 12,400+ Indians who already know what their palm reveals. Start free — no
           sign-up, no credit card, results in 2 minutes.
-        </motion.p>
+        </m.p>
 
         {/* Countdown Timer */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -139,10 +139,10 @@ export function FinalCTABanner() {
             <CountdownUnit value={seconds} label="sec" />
           </div>
           
-        </motion.div>
+        </m.div>
 
         {/* CTA */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -150,18 +150,18 @@ export function FinalCTABanner() {
           className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
         >
           <Link to="/upload">
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+            <m.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
               <Button className="btn-gold text-foreground font-semibold text-lg px-12 py-7 rounded-2xl group shadow-gold-lg">
                 <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
                 Scan My Palm — Free
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Button>
-            </motion.div>
+            </m.div>
           </Link>
-        </motion.div>
+        </m.div>
 
         {/* Micro-trust */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -180,7 +180,7 @@ export function FinalCTABanner() {
             <Lock className="w-3.5 h-3.5 text-accent/60" aria-hidden="true" />
             100% private · No card needed
           </span>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

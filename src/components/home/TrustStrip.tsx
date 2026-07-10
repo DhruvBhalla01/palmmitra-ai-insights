@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { ShieldCheck, Zap, Star, Lock, Users, Brain, CheckCircle } from 'lucide-react';
 
 const trustItems = [
@@ -21,18 +21,18 @@ export function TrustStrip() {
 
       <div className="container mx-auto px-4 relative">
         {/* Top label */}
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           className="text-center text-xs uppercase tracking-widest text-muted-foreground/50 mb-6 font-medium"
         >
           Why 12,000+ people trust PalmMitra
-        </motion.p>
+        </m.p>
 
         <div className="flex flex-wrap justify-center gap-4 md:gap-8">
           {trustItems.map((item, index) => (
-            <motion.div
+            <m.div
               key={item.text}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -47,7 +47,7 @@ export function TrustStrip() {
               <span className="font-medium text-sm text-foreground/80 group-hover:text-foreground transition-colors">
                 {item.text}
               </span>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>

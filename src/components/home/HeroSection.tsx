@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from '@/lib/motion';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
@@ -31,7 +31,7 @@ export function HeroSection() {
       <div className="container mx-auto px-5 relative z-10">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 xl:gap-16 items-center">
           {/* ── Copy ───────────────────────────── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
@@ -103,10 +103,10 @@ export function HeroSection() {
             <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
               No sign-up needed · Full report ₹149 / $9.99
             </p>
-          </motion.div>
+          </m.div>
 
           {/* ── Palm visual — smaller/compact on mobile ────── */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
@@ -116,7 +116,7 @@ export function HeroSection() {
 
             <div className="relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
               {/* Rotating gold ring */}
-              <motion.div
+              <m.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0"
@@ -134,23 +134,23 @@ export function HeroSection() {
                     />
                   ))}
                 </svg>
-              </motion.div>
+              </m.div>
 
               {/* AI scan line */}
-              <motion.div
+              <m.div
                 aria-hidden="true"
                 className="absolute inset-8 rounded-full overflow-hidden pointer-events-none"
               >
-                <motion.div
+                <m.div
                   className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-accent to-transparent"
                   style={{ boxShadow: "0 0 24px hsl(var(--accent) / 0.7)" }}
                   animate={{ top: ["10%", "90%", "10%"] }}
                   transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
                 />
-              </motion.div>
+              </m.div>
 
               <div className="absolute inset-0 flex items-center justify-center">
-                <motion.img
+                <m.img
                   src={heroPalmImg}
                   alt="AI palm reading illustration — PalmMitra decodes your life path, career, love and destiny from your palm lines"
                   className="object-contain w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] opacity-95"
@@ -164,7 +164,7 @@ export function HeroSection() {
                 />
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Menu, X, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SmartLink } from '@/components/SmartLink';
@@ -37,7 +37,7 @@ export function Navbar() {
   }, [location]);
 
   return (
-    <motion.nav
+    <m.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
@@ -50,13 +50,13 @@ export function Navbar() {
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group" aria-label="PalmMitra — Home">
-          <motion.div
+          <m.div
             className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ duration: 0.2 }}
           >
             <img src={logoImg} alt="" width={40} height={40} className="w-full h-full object-contain" aria-hidden="true" />
-          </motion.div>
+          </m.div>
           <span className="text-2xl font-serif font-bold text-foreground">
             Palm<span className="text-gradient-gold">Mitra</span>
           </span>
@@ -102,7 +102,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile Menu Button */}
-        <motion.button
+        <m.button
           className="lg:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           whileTap={{ scale: 0.95 }}
@@ -112,7 +112,7 @@ export function Navbar() {
         >
           <AnimatePresence mode="wait">
             {isMobileMenuOpen ? (
-              <motion.div
+              <m.div
                 key="close"
                 initial={{ rotate: -90, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
@@ -120,9 +120,9 @@ export function Navbar() {
                 transition={{ duration: 0.2 }}
               >
                 <X size={24} />
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.div
+              <m.div
                 key="menu"
                 initial={{ rotate: 90, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
@@ -130,16 +130,16 @@ export function Navbar() {
                 transition={{ duration: 0.2 }}
               >
                 <Menu size={24} />
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
-        </motion.button>
+        </m.button>
       </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -148,7 +148,7 @@ export function Navbar() {
             id="mobile-nav"
           >
             <div className="p-4 flex flex-col gap-2">
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
@@ -160,9 +160,9 @@ export function Navbar() {
                     Scan My Palm — Free
                   </Button>
                 </Link>
-              </motion.div>
+              </m.div>
               {navLinks.map((link, index) => (
-                <motion.div
+                <m.div
                   key={link.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -180,9 +180,9 @@ export function Navbar() {
                       </span>
                     )}
                   </SmartLink>
-                </motion.div>
+                </m.div>
               ))}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
@@ -198,11 +198,11 @@ export function Navbar() {
                   <span>{isDark ? "Light mode" : "Dark mode"}</span>
                   {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </m.nav>
   );
 }

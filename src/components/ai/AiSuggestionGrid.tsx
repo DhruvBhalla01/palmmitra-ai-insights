@@ -1,5 +1,5 @@
 import { AI_SUGGESTIONS } from '@/config/ai-pricing';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Briefcase, Heart, Coins, User, Users, Rocket, Activity, Compass } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -25,7 +25,7 @@ export function AiSuggestionGrid({ onPick, disabled }: Props) {
       {AI_SUGGESTIONS.map((s, i) => {
         const Icon = ICONS[s.key];
         return (
-          <motion.button
+          <m.button
             key={s.key}
             onClick={() => !disabled && onPick(s.seed, s.key)}
             disabled={disabled}
@@ -40,7 +40,7 @@ export function AiSuggestionGrid({ onPick, disabled }: Props) {
           >
             {Icon && <Icon className="w-3.5 h-3.5 text-[hsl(var(--gold-light))] group-hover:text-[hsl(var(--gold))] transition-colors" strokeWidth={1.75} />}
             <span className="tracking-wide">{s.label}</span>
-          </motion.button>
+          </m.button>
         );
       })}
     </div>

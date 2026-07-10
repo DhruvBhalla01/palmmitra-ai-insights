@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/motion';
 import { X, Lock, ArrowRight, Sparkles, Star, Heart, Briefcase, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -52,7 +52,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -63,7 +63,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
           <div className="absolute inset-0 bg-background/80 backdrop-blur-md" />
           
           {/* Modal */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -95,7 +95,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
             {/* Content */}
             <div className="p-6 space-y-4">
               {/* Destiny highlight box */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -106,11 +106,11 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                   "Your strongest growth cycle begins mid-2026 and peaks in 2028."
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">— AI Destiny Analysis</p>
-              </motion.div>
+              </m.div>
 
               {/* Report sections */}
               {sampleSections.map((section, index) => (
-                <motion.div
+                <m.div
                   key={section.title}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -151,11 +151,11 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                       </span>
                     </div>
                   )}
-                </motion.div>
+                </m.div>
               ))}
 
               {/* CTA */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
@@ -171,10 +171,10 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                 <p className="text-center text-sm text-muted-foreground mt-3">
                   Upload your palm and unlock all premium insights
                 </p>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

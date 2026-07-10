@@ -2,7 +2,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { AnimatedSection } from '@/components/AnimatedSection';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Brain, Shield, Heart, Users, Star } from 'lucide-react';
@@ -77,7 +77,7 @@ export default function About() {
                   </p>
                 </div>
                 <div className="flex justify-center">
-                  <motion.img
+                  <m.img
                     src={heroPalmImg}
                     alt="Mystical Palm"
                     className="w-48 h-48 md:w-64 md:h-64 object-contain rounded-full"
@@ -102,7 +102,7 @@ export default function About() {
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               {values.map((value, index) => (
-                <motion.div
+                <m.div
                   key={value.title}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -119,7 +119,7 @@ export default function About() {
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {value.description}
                   </p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </AnimatedSection>
@@ -129,7 +129,7 @@ export default function About() {
             <div className="glass-premium rounded-3xl p-8 md:p-12 border border-accent/20">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {stats.map((stat, index) => (
-                  <motion.div
+                  <m.div
                     key={stat.label}
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -141,7 +141,7 @@ export default function About() {
                       {stat.value}
                     </div>
                     <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </div>

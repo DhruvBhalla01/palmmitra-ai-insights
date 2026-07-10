@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 
 interface Props {
   person1Name: string;
@@ -38,7 +38,7 @@ export function CompareBar({ person1Name, person2Name, score, trait, color, seed
         <div key={i} className="flex items-center gap-2 mb-1.5 last:mb-0">
           <span className="text-[11px] text-foreground/80 w-16 truncate">{p.name}</span>
           <div className="flex-1 h-1.5 rounded-full bg-foreground/8 overflow-hidden">
-            <motion.div
+            <m.div
               initial={{ width: 0 }}
               whileInView={{ width: `${p.val}%` }}
               viewport={{ once: true }}

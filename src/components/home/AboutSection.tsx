@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Brain, Shield, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -51,7 +51,7 @@ export function AboutSection() {
             <AnimatedSection delay={0.2}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 {highlights.map((item, index) => (
-                  <motion.div
+                  <m.div
                     key={item.title}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export function AboutSection() {
                     </div>
                     <h3 className="font-semibold text-foreground text-sm mb-1">{item.title}</h3>
                     <p className="text-xs text-muted-foreground">{item.description}</p>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </AnimatedSection>
@@ -82,26 +82,26 @@ export function AboutSection() {
           <AnimatedSection direction="right" className="relative hidden lg:block">
             <div className="relative">
               {/* Glows */}
-              <motion.div 
+              <m.div 
                 className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-accent/15 blur-3xl"
                 animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.7, 0.4] }}
                 transition={{ duration: 4, repeat: Infinity }}
               />
-              <motion.div 
+              <m.div 
                 className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-primary/10 blur-3xl"
                 animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
                 transition={{ duration: 5, repeat: Infinity, delay: 1 }}
               />
 
               {/* Stats Card with Mandala */}
-              <motion.div
+              <m.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                 className="glass-premium rounded-3xl p-8 border border-accent/20 relative overflow-hidden"
               >
                 {/* Mandala Background */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                  <motion.img 
+                  <m.img 
                     src={mandalaOrnament} 
                     alt="" 
                     className="w-96 h-96 object-contain"
@@ -111,7 +111,7 @@ export function AboutSection() {
                 </div>
 
                 <div className="text-center mb-8 relative z-10">
-                  <motion.img
+                  <m.img
                     src={palmIconGold}
                     alt="Palm Reading"
                     className="w-24 h-24 object-contain mb-4 inline-block"
@@ -136,7 +136,7 @@ export function AboutSection() {
                     { value: '98%', label: 'Satisfaction' },
                     { value: '~2 min', label: 'Analysis Time' },
                   ].map((stat, index) => (
-                    <motion.div
+                    <m.div
                       key={stat.label}
                       initial={{ opacity: 0, scale: 0.8 }}
                       whileInView={{ opacity: 1, scale: 1 }}
@@ -148,10 +148,10 @@ export function AboutSection() {
                         {stat.value}
                       </div>
                       <div className="text-xs text-muted-foreground">{stat.label}</div>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </AnimatedSection>
         </div>

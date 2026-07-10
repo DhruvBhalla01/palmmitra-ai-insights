@@ -32,7 +32,6 @@ export default defineConfig(({ mode }) => ({
         // (measured: ~117KB gz of jspdf shipped on the homepage). Removed.
         manualChunks: {
           "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-motion": ["framer-motion"],
           "vendor-query": ["@tanstack/react-query"],
           "vendor-supabase": ["@supabase/supabase-js"],
         },

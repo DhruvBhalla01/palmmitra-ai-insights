@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from '@/lib/motion';
 import { Heart, Crown, Shield, Palette, MessageCircle, ChevronDown, Layers } from 'lucide-react';
 import type { Mount } from './types';
 
@@ -32,7 +32,7 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
     const [expandedMount, setExpandedMount] = useState<string | null>(null);
 
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -55,23 +55,23 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
             const levelStyle = levelColors[mount.level] || levelColors.Medium;
 
             return (
-              <motion.div
+              <m.div
                 key={key}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08, duration: 0.3 }}
-                layout
+
                 onClick={() => setExpandedMount(isExpanded ? null : key)}
                 className={`glass-premium gradient-border rounded-2xl border ${borderColor} hover:border-accent/30 transition-all duration-300 cursor-pointer overflow-hidden`}
               >
                 <div className="p-5 flex items-center gap-4">
-                  <motion.div
+                  <m.div
                     className={`w-12 h-12 rounded-2xl ${bgColor}/10 flex items-center justify-center`}
                     whileHover={{ scale: 1.1 }}
                   >
                     <Icon className={`w-6 h-6 ${color}`} />
-                  </motion.div>
+                  </m.div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-serif font-bold text-foreground">{name}</h3>
@@ -81,18 +81,18 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
                     </div>
                     <p className="text-xs text-muted-foreground">{subtitle}</p>
                   </div>
-                  <motion.div
+                  <m.div
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
                     className="flex-shrink-0"
                   >
                     <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  </motion.div>
+                  </m.div>
                 </div>
 
                 <AnimatePresence>
                   {isExpanded && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -105,23 +105,23 @@ export const MountsSection = forwardRef<HTMLElement, MountsSectionProps>(
                           {mount.meaning}
                         </p>
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </m.div>
             );
           })}
         </div>
 
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="text-center text-xs text-muted-foreground mt-4"
         >
           Tap any mount to reveal its meaning
-        </motion.p>
-      </motion.section>
+        </m.p>
+      </m.section>
     );
   }
 );

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Lock, ArrowRight, Sparkles, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReactNode } from 'react';
@@ -112,20 +112,20 @@ export function LockedSection({
           </div>
         )}
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/78 to-background/96 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl border border-accent/25"
         >
           {/* Lock icon with glow */}
-          <motion.div
+          <m.div
             animate={{ scale: [1, 1.08, 1] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
             className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 border border-accent/25"
           >
             <Lock className="w-7 h-7 text-accent" aria-hidden="true" />
             <div className="absolute inset-0 rounded-2xl bg-accent/10 blur-lg" />
-          </motion.div>
+          </m.div>
 
           {/* Section title */}
           <h3 className="text-base font-serif font-bold text-foreground mb-1.5 text-center">
@@ -164,7 +164,7 @@ export function LockedSection({
           <p className="text-xs text-muted-foreground/60 mt-3">
             One-time {insightPrice} · Unlocks entire report · PDF included
           </p>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

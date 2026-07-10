@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Gem, Clock, Sparkles } from 'lucide-react';
 import type { SpiritualRemedy } from './types';
 
@@ -10,7 +10,7 @@ interface SpiritualRemediesSectionProps {
 export const SpiritualRemediesSection = forwardRef<HTMLElement, SpiritualRemediesSectionProps>(
   function SpiritualRemediesSection({ remedies }, ref) {
     return (
-      <motion.section
+      <m.section
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -28,7 +28,7 @@ export const SpiritualRemediesSection = forwardRef<HTMLElement, SpiritualRemedie
         <div className="glass gradient-border rounded-2xl p-6 md:p-8">
           <div className="space-y-4">
             {remedies.map((remedy, index) => (
-              <motion.div
+              <m.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -53,11 +53,11 @@ export const SpiritualRemediesSection = forwardRef<HTMLElement, SpiritualRemedie
                     {remedy.benefit}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -66,9 +66,9 @@ export const SpiritualRemediesSection = forwardRef<HTMLElement, SpiritualRemedie
           >
             <Gem className="w-4 h-4 text-accent" />
             Based on traditional Indian palmistry (Hast Rekha Shastra)
-          </motion.div>
+          </m.div>
         </div>
-      </motion.section>
+      </m.section>
     );
   }
 );

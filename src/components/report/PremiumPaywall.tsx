@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from '@/lib/motion';
 import {
   Sparkles, Crown, Shield, Zap, Lock, ArrowRight, Check, Flame,
   Star, Heart, Briefcase, Activity, Calendar, Brain, ChevronRight, TrendingUp,
@@ -66,7 +66,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
   ];
 
   return (
-    <motion.section
+    <m.section
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
@@ -96,7 +96,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
         >
           {/* Aurora blob */}
           {!reduce && (
-            <motion.div
+            <m.div
               aria-hidden="true"
               className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full opacity-30 blur-3xl"
               style={{ background: 'radial-gradient(circle, hsl(42 87% 55% / 0.6), transparent 60%)' }}
@@ -108,7 +108,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
           <div className="relative z-10 p-6 md:p-10">
             {/* Live pulse */}
             <div className="flex justify-center mb-6">
-              <motion.div
+              <m.div
                 animate={reduce ? undefined : { scale: [1, 1.03, 1] }}
                 transition={{ duration: 2.4, repeat: Infinity }}
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/25 text-xs md:text-sm font-medium text-foreground/90"
@@ -120,7 +120,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                     <Star key={i} className="w-3 h-3 fill-accent text-accent" />
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             </div>
 
             {/* Headline */}
@@ -149,7 +149,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                   Locked in your report
                 </p>
                 {teaserCards.map(({ badge, icon: Icon, preview }, i) => (
-                  <motion.div
+                  <m.div
                     key={badge}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -176,7 +176,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/70"
                     />
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
 
@@ -187,7 +187,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                 </p>
                 <ul className="space-y-3.5">
                   {benefits.map(({ icon: Icon, label, hook }, i) => (
-                    <motion.li
+                    <m.li
                       key={label}
                       initial={{ opacity: 0, y: 8 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -203,7 +203,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                         <p className="text-xs text-muted-foreground mt-0.5">{hook}</p>
                       </div>
                       <Check className="w-4 h-4 text-accent/80 flex-shrink-0 mt-1" aria-hidden="true" />
-                    </motion.li>
+                    </m.li>
                   ))}
                 </ul>
               </div>
@@ -213,7 +213,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
             <div className="relative rounded-2xl p-5 md:p-6 border border-accent/40 overflow-hidden"
                  style={{ background: 'linear-gradient(135deg, hsl(42 87% 55% / 0.08), hsl(42 87% 55% / 0.02))' }}>
               {!reduce && (
-                <motion.div
+                <m.div
                   aria-hidden="true"
                   className="absolute inset-0 pointer-events-none opacity-40"
                   style={{
@@ -245,7 +245,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                 </div>
               </div>
 
-              <motion.div
+              <m.div
                 whileHover={reduce ? undefined : { scale: 1.015 }}
                 whileTap={reduce ? undefined : { scale: 0.985 }}
                 className="relative"
@@ -259,7 +259,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                   Unlock Full Report — {insightPrice}
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Button>
-              </motion.div>
+              </m.div>
 
               {/* Trust pills */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
@@ -298,6 +298,6 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
           </div>
         </div>
       </div>
-    </motion.section>
+    </m.section>
   );
 }

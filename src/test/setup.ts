@@ -3,7 +3,7 @@ import React from "react";
 import { cleanup } from "@testing-library/react";
 import { vi } from "vitest";
 
-vi.mock("framer-motion", () => {
+const makeMotionMock = () => {
   const MotionProxy = new Proxy(
     {},
     {
@@ -36,9 +36,17 @@ vi.mock("framer-motion", () => {
   return {
     AnimatePresence: ({ children }: { children: React.ReactNode }) =>
       React.createElement(React.Fragment, null, children),
+    LazyMotion: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
+    domAnimation: {},
+    useReducedMotion: () => false,
     motion: MotionProxy,
+    m: MotionProxy,
   };
-});
+};
+
+vi.mock("framer-motion", () => makeMotionMock());
+vi.mock("@/lib/motion", () => makeMotionMock());
 
 afterEach(() => {
   cleanup();

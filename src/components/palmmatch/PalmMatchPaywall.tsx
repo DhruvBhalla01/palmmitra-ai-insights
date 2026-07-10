@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Check, Flame, Lock, Sparkles, ArrowRight, Quote, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PalmMatchPlanType } from '@/hooks/usePalmMatchUnlock';
@@ -59,7 +59,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
   }, []);
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 32 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -87,7 +87,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
       <div className="p-8 md:p-10">
         {/* Urgency pill with animated count */}
         <div className="flex justify-center mb-6">
-          <motion.div
+          <m.div
             animate={{ scale: [1, 1.03, 1] }}
             transition={{ repeat: Infinity, duration: 2.4 }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-foreground"
@@ -99,7 +99,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           >
             <Flame className="w-4 h-4 text-accent animate-pulse" />
             <span>
-              <motion.span
+              <m.span
                 key={unlockCount}
                 initial={{ y: -8, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -107,10 +107,10 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 className="inline-block tabular-nums text-accent font-bold"
               >
                 {unlockCount}
-              </motion.span>
+              </m.span>
               {' '}couples unlocked this week · Launch price ending soon
             </span>
-          </motion.div>
+          </m.div>
         </div>
 
         <div className="text-center mb-7">
@@ -130,7 +130,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
         <div className="flex items-center gap-3 mb-6 justify-center">
           <div className="flex -space-x-3">
             {avatarStack.map((av, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -144,7 +144,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 }}
               >
                 {av.initial}
-              </motion.div>
+              </m.div>
             ))}
           </div>
           <div>
@@ -184,7 +184,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
         {/* Locked dimension teaser grid — dimension colors */}
         <div className="grid grid-cols-4 gap-3 max-w-xs mx-auto mb-8">
           {teaserDimensions.map(({ label, icon, from, to }, idx) => (
-            <motion.div
+            <m.div
               key={label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -208,7 +208,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
               </div>
               <span className="text-[10px] text-muted-foreground/80 text-center leading-tight">{label}</span>
               <span className="text-xs font-bold" style={{ color: `${from}55` }}>??%</span>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
@@ -219,7 +219,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
             {unlockItems.map((item, i) => (
-              <motion.li
+              <m.li
                 key={item}
                 initial={{ opacity: 0, x: -8 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -231,7 +231,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                   <Check className="w-2.5 h-2.5 text-accent" strokeWidth={3} />
                 </div>
                 <span className="leading-snug">{item}</span>
-              </motion.li>
+              </m.li>
             ))}
           </ul>
         </div>
@@ -244,7 +244,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
             <span className="text-[11px] font-bold text-accent">7,439 / 10,000</span>
           </div>
           <div className="h-2 bg-secondary rounded-full overflow-hidden">
-            <motion.div
+            <m.div
               className="h-full rounded-full"
               style={{ background: 'linear-gradient(90deg, hsl(42 87% 55%), hsl(42 90% 72%))' }}
               initial={{ width: '0%' }}
@@ -268,7 +268,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
             <div className="flex items-baseline justify-center gap-2 mb-1.5">
               <span className="text-4xl font-serif font-bold text-accent" style={{ textShadow: '0 0 20px hsl(42 87% 55% / 0.4)' }}>₹999</span>
               <span className="text-sm text-muted-foreground line-through">₹1,999</span>
-              <motion.span
+              <m.span
                 animate={{
                   scale: [1, 1.08, 1],
                   boxShadow: ['0 0 0px hsl(142 72% 50% / 0)', '0 0 16px hsl(142 72% 50% / 0.5)', '0 0 0px hsl(142 72% 50% / 0)'],
@@ -277,7 +277,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 className="text-xs bg-green-500/20 text-green-400 font-bold px-3 py-1.5 rounded-full border border-green-500/30"
               >
                 Save ₹1,000
-              </motion.span>
+              </m.span>
             </div>
             <p className="text-xs text-accent/70 font-medium">
               ✦ Launch pricing — increases after 10,000 reports
@@ -288,7 +288,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
           {/* Heartbeat glow wrapper on primary CTA */}
-          <motion.div
+          <m.div
             animate={{
               boxShadow: [
                 '0 4px 20px hsl(42 87% 55% / 0.4)',
@@ -320,7 +320,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 </span>
               )}
             </Button>
-          </motion.div>
+          </m.div>
 
           <Button
             variant="outline"
@@ -347,6 +347,6 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

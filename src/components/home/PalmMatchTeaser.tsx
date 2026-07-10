@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Link } from 'react-router-dom';
 import { Heart, MessageCircle, Target, Sparkles, Infinity, ArrowRight, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -51,13 +51,13 @@ export function PalmMatchTeaser() {
             </div>
 
             <Link to="/palmmatch">
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl group shadow-gold-lg">
                   <Heart className="w-5 h-5 mr-2" />
                   Try PalmMatch — Free
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
-              </motion.div>
+              </m.div>
             </Link>
 
             <p className="text-xs text-muted-foreground mt-4">
@@ -67,7 +67,7 @@ export function PalmMatchTeaser() {
 
           {/* Right: Mockup card */}
           <AnimatedSection direction="right">
-            <motion.div
+            <m.div
               whileHover={{ y: -6 }}
               transition={{ duration: 0.3 }}
               className="glass-premium rounded-3xl p-6 md:p-8 border border-accent/20 shadow-gold-lg"
@@ -114,7 +114,7 @@ export function PalmMatchTeaser() {
               {/* Dimension bars */}
               <div className="space-y-3">
                 {dimensions.map(({ icon: Icon, label, score, color }, i) => (
-                  <motion.div
+                  <m.div
                     key={label}
                     initial={{ opacity: 0, x: 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -125,7 +125,7 @@ export function PalmMatchTeaser() {
                     <Icon className="w-4 h-4 text-accent flex-shrink-0" />
                     <span className="text-xs text-muted-foreground w-28 flex-shrink-0">{label}</span>
                     <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-                      <motion.div
+                      <m.div
                         className={`h-full rounded-full ${color}`}
                         initial={{ width: 0 }}
                         whileInView={{ width: `${score}%` }}
@@ -134,14 +134,14 @@ export function PalmMatchTeaser() {
                       />
                     </div>
                     <span className="text-xs font-bold text-accent w-8 text-right">{score}%</span>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
 
               <p className="text-center text-xs text-muted-foreground mt-5 italic">
                 *Sample report — your results will be personalised to your palms
               </p>
-            </motion.div>
+            </m.div>
           </AnimatedSection>
         </div>
       </div>

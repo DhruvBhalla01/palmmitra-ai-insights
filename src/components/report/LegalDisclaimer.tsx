@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { Info } from 'lucide-react';
 
 export function LegalDisclaimer() {
   return (
-    <motion.section
+    <m.section
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -18,6 +18,6 @@ export function LegalDisclaimer() {
           interpretations and should not be used as the sole basis for life decisions. Individual experiences may vary.
         </p>
       </div>
-    </motion.section>
+    </m.section>
   );
 }

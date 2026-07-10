@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 
 interface Particle {
@@ -56,7 +56,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {/* Floating spiritual particles */}
       <div className="absolute inset-0">
         {particles.map((particle) => (
-          <motion.div
+          <m.div
             key={particle.id}
             className="absolute rounded-full"
             style={{
@@ -85,7 +85,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {/* Mandala watermark */}
       {showMandala && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <motion.svg
+          <m.svg
             className="w-[800px] h-[800px] opacity-[0.03]"
             viewBox="0 0 200 200"
             animate={{ rotate: 360 }}
@@ -121,7 +121,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
             <circle cx="100" cy="100" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-accent" />
             <circle cx="100" cy="100" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-primary" />
             <circle cx="100" cy="100" r="3" fill="currentColor" className="text-accent" opacity="0.5" />
-          </motion.svg>
+          </m.svg>
         </div>
       )}
 
