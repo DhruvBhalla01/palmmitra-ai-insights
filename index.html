@@ -18,7 +18,8 @@
     <link rel="icon" type="image/png" sizes="256x256" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/logo.webp" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link
       rel="preload"
       as="image"
@@ -78,156 +79,197 @@
     <!-- Razorpay Checkout SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
 
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data (single @graph — one source of truth for AI crawlers) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "PalmMitra",
-      "description": "AI-powered palm reading app that combines ancient Indian Hasta Samudrika Shastra with modern computer vision to decode your palm lines, mounts, and patterns — revealing insights about career, love, wealth, and spiritual path.",
-      "url": "https://palmmitra.com",
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "Web, iOS, Android",
-      "inLanguage": "en-IN",
-      "isAccessibleForFree": true,
-      "offers": [
+      "@graph": [
         {
-          "@type": "Offer",
-          "name": "Free Preview",
-          "price": "0",
-          "priceCurrency": "INR",
-          "description": "Free palm reading preview including Life Line analysis and first personality trait"
+          "@type": "Organization",
+          "@id": "https://palmmitra.com/#organization",
+          "name": "PalmMitra",
+          "url": "https://palmmitra.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://palmmitra.com/logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "description": "PalmMitra is an AI-powered life guidance platform inspired by Ancient Indian Palmistry (Hasta Samudrika Shastra). It analyses the physical lines and mounts on a user's palm to generate a personalised destiny report covering career, love, wealth, health, personality and spiritual remedies.",
+          "foundingLocation": {
+            "@type": "Place",
+            "name": "India"
+          },
+          "knowsAbout": [
+            "Palmistry",
+            "Hasta Samudrika Shastra",
+            "Ancient Indian Palmistry",
+            "AI Palm Reading",
+            "Palm Line Analysis",
+            "Palm Compatibility",
+            "Life Guidance",
+            "Spiritual Remedies"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "thepalmmitra@gmail.com",
+            "contactType": "customer support",
+            "availableLanguage": ["English", "Hindi"],
+            "areaServed": "Worldwide"
+          },
+          "sameAs": [
+            "https://instagram.com/palmmitra",
+            "https://twitter.com/palmmitra"
+          ]
         },
         {
-          "@type": "Offer",
-          "name": "PalmMitra Insight",
-          "price": "149",
-          "priceCurrency": "INR",
-          "description": "Complete AI palm reading report with all 5 major lines, mounts, career, love, wealth insights and downloadable PDF"
+          "@type": "WebSite",
+          "@id": "https://palmmitra.com/#website",
+          "url": "https://palmmitra.com/",
+          "name": "PalmMitra",
+          "description": "AI Palm Reading rooted in Ancient Indian Hasta Samudrika Shastra.",
+          "inLanguage": "en-IN",
+          "publisher": { "@id": "https://palmmitra.com/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://palmmitra.com/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         },
         {
-          "@type": "Offer",
+          "@type": "SoftwareApplication",
+          "@id": "https://palmmitra.com/#software",
+          "name": "PalmMitra",
+          "url": "https://palmmitra.com/",
+          "description": "AI-powered palm reading app that combines ancient Indian Hasta Samudrika Shastra with modern computer vision to decode palm lines, mounts, and patterns — revealing personalised insights on career, love, wealth, personality and spiritual path in under two minutes.",
+          "applicationCategory": "LifestyleApplication",
+          "applicationSubCategory": "Palmistry, Spirituality, Life Guidance",
+          "operatingSystem": "Web, iOS, Android",
+          "inLanguage": ["en-IN", "en-US"],
+          "isAccessibleForFree": true,
+          "publisher": { "@id": "https://palmmitra.com/#organization" },
+          "featureList": [
+            "AI palm line analysis (Life, Heart, Head, Fate, Marriage)",
+            "Mounts and personality trait reading",
+            "Career, love, wealth and health forecasts",
+            "Downloadable PDF report",
+            "Conversational AI guide grounded in your reading",
+            "Palm compatibility analysis for couples",
+            "Palm image validation to reject non-palm uploads"
+          ],
+          "about": [
+            { "@type": "Thing", "name": "Palmistry" },
+            { "@type": "Thing", "name": "Hasta Samudrika Shastra" },
+            { "@type": "Thing", "name": "Ancient Indian Palmistry" }
+          ],
+          "offers": [
+            { "@type": "Offer", "name": "Free Preview", "price": "0", "priceCurrency": "INR", "description": "Free palm reading preview: Life Line analysis and first personality trait." },
+            { "@type": "Offer", "name": "PalmMitra Insight", "price": "149", "priceCurrency": "INR", "url": "https://palmmitra.com/upload", "description": "Complete AI palm reading — five major lines, mounts, career, love, wealth, and spiritual remedies. Includes downloadable PDF and 3 free AI follow-up questions." },
+            { "@type": "Offer", "name": "PalmMatch", "price": "999", "priceCurrency": "INR", "url": "https://palmmitra.com/palmmatch", "description": "Relationship compatibility analysis generated from two palm readings." },
+            { "@type": "Offer", "name": "PalmMitra Elite", "price": "4999", "priceCurrency": "INR", "description": "Lifetime access — unlimited readings for the family with priority AI." }
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "2100",
+            "reviewCount": "2100",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://palmmitra.com/#service-palm-report",
+          "name": "Palm Report (PalmMitra Insight)",
+          "serviceType": "AI Palm Reading",
+          "description": "The primary PalmMitra product: a 2,000+ word AI-generated palm reading covering the five major lines, seven mounts, career, love, wealth, personality traits, life phases and spiritual remedies. Delivered as an interactive report plus downloadable PDF.",
+          "provider": { "@id": "https://palmmitra.com/#organization" },
+          "isPartOf": { "@id": "https://palmmitra.com/#software" },
+          "areaServed": "Worldwide",
+          "audience": { "@type": "PeopleAudience", "name": "Adults seeking life guidance and self-reflection" },
+          "offers": {
+            "@type": "Offer",
+            "price": "149",
+            "priceCurrency": "INR",
+            "url": "https://palmmitra.com/upload"
+          },
+          "url": "https://palmmitra.com/upload"
+        },
+        {
+          "@type": "Service",
+          "@id": "https://palmmitra.com/#service-palmmatch",
           "name": "PalmMatch",
-          "price": "999",
-          "priceCurrency": "INR",
-          "description": "Compatibility palm reading for you and your partner"
+          "serviceType": "AI Palm Compatibility Analysis",
+          "description": "PalmMatch is a relationship compatibility analysis generated from two palm readings — yours and your partner's. It produces a compatibility score, dimension-by-dimension breakdown (emotional, mental, physical, spiritual) and shared destiny insights, all grounded in classical palmistry.",
+          "provider": { "@id": "https://palmmitra.com/#organization" },
+          "isPartOf": { "@id": "https://palmmitra.com/#software" },
+          "areaServed": "Worldwide",
+          "offers": {
+            "@type": "Offer",
+            "price": "999",
+            "priceCurrency": "INR",
+            "url": "https://palmmitra.com/palmmatch"
+          },
+          "url": "https://palmmitra.com/palmmatch"
         },
         {
-          "@type": "Offer",
-          "name": "PalmMitra Elite",
-          "price": "4999",
-          "priceCurrency": "INR",
-          "description": "Lifetime access — unlimited palm readings for the whole family with priority AI"
-        }
-      ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "2100",
-        "reviewCount": "2100",
-        "bestRating": "5",
-        "worstRating": "1"
-      }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "PalmMitra",
-      "url": "https://palmmitra.com",
-      "logo": "https://palmmitra.com/logo.png",
-      "description": "India's leading AI-powered palmistry platform combining ancient Hasta Samudrika Shastra with modern artificial intelligence.",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "thepalmmitra@gmail.com",
-        "contactType": "customer support",
-        "availableLanguage": ["English", "Hindi"]
-      },
-      "sameAs": [
-        "https://instagram.com/palmmitra",
-        "https://twitter.com/palmmitra"
-      ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Is PalmMitra's AI palm reading scientifically accurate?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "PalmMitra is rooted in Hasta Samudrika Shastra — a 3,000-year-old Indian science of palm analysis — combined with AI trained on thousands of verified palm readings. While palmistry is a traditional practice and not a medical discipline, the AI identifies patterns specific to your unique palm, unlike generic horoscope predictions."
-          }
+          "@type": "Service",
+          "@id": "https://palmmitra.com/#service-palmmitra-ai",
+          "name": "PalmMitra AI",
+          "serviceType": "Conversational AI Life Guide",
+          "description": "PalmMitra AI is a conversational AI guide built on top of a purchased Palm Report. It answers open-ended life questions — career, love, timing, decisions — using the user's own palm reading as context. Included with every paid report; first questions are free.",
+          "provider": { "@id": "https://palmmitra.com/#organization" },
+          "isPartOf": { "@id": "https://palmmitra.com/#service-palm-report" },
+          "areaServed": "Worldwide",
+          "url": "https://palmmitra.com/upload"
         },
         {
-          "@type": "Question",
-          "name": "Which hand should I photograph for my palm reading?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Photograph your dominant hand — right hand if you are right-handed, left hand if you are left-handed. Your dominant hand shows your current path and life potential."
-          }
+          "@type": "HowTo",
+          "@id": "https://palmmitra.com/#howto-palm-reading",
+          "name": "How to get an AI palm reading with PalmMitra",
+          "description": "Three-step process to generate a personalised AI palm reading in under two minutes.",
+          "totalTime": "PT2M",
+          "estimatedCost": { "@type": "MonetaryAmount", "currency": "INR", "value": "149" },
+          "supply": [{ "@type": "HowToSupply", "name": "A well-lit photo of your dominant palm" }],
+          "tool": [{ "@type": "HowToTool", "name": "Smartphone or camera" }],
+          "step": [
+            { "@type": "HowToStep", "position": 1, "name": "Upload your palm photo", "text": "Photograph your dominant hand in good lighting with fingers spread. Upload it on the Upload page.", "url": "https://palmmitra.com/upload" },
+            { "@type": "HowToStep", "position": 2, "name": "AI analyses 15 palm markers", "text": "PalmMitra's AI validates the image is a real palm, then reads the five major lines, seven mounts, and personality patterns using computer vision trained on classical Hasta Samudrika Shastra." },
+            { "@type": "HowToStep", "position": 3, "name": "Receive your destiny report", "text": "In under two minutes you get a 2,000+ word personalised report on career, love, wealth, personality and spiritual remedies — plus 3 free AI follow-up questions." }
+          ]
         },
         {
-          "@type": "Question",
-          "name": "How long does a PalmMitra reading take?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Your palm reading is generated in under 2 minutes. Upload your photo, fill in basic details, and our AI delivers a 2,000+ word personalised destiny report."
-          }
+          "@type": "FAQPage",
+          "@id": "https://palmmitra.com/#faq",
+          "mainEntity": [
+            { "@type": "Question", "name": "What is PalmMitra?", "acceptedAnswer": { "@type": "Answer", "text": "PalmMitra is an AI-powered life guidance platform inspired by Ancient Indian Palmistry (Hasta Samudrika Shastra). It analyses the physical lines and mounts on your palm to generate a personalised report on career, love, wealth, personality and spiritual remedies — plus a conversational AI guide that answers follow-up questions grounded in your own reading." } },
+            { "@type": "Question", "name": "How does AI palm reading work?", "acceptedAnswer": { "@type": "Answer", "text": "You upload a photo of your dominant palm. Computer-vision AI validates that it is a real palm, then identifies the five major lines (Life, Heart, Head, Fate, Marriage) and seven mounts. A large language model trained on classical Hasta Samudrika Shastra texts generates a 2,000+ word personalised report in under two minutes." } },
+            { "@type": "Question", "name": "How accurate is PalmMitra?", "acceptedAnswer": { "@type": "Answer", "text": "PalmMitra combines a 3,000-year-old Indian palmistry tradition with AI trained on thousands of verified readings. Unlike horoscope apps, every reading is generated from the unique lines on your own palm. Palmistry is a traditional practice for self-reflection and is not medical, legal or financial advice." } },
+            { "@type": "Question", "name": "How does PalmMatch work?", "acceptedAnswer": { "@type": "Answer", "text": "PalmMatch generates a relationship compatibility analysis from two palm photos — yours and your partner's. It returns a compatibility score, dimension-by-dimension breakdown (emotional, mental, physical, spiritual) and shared destiny insights." } },
+            { "@type": "Question", "name": "What is PalmMitra AI?", "acceptedAnswer": { "@type": "Answer", "text": "PalmMitra AI is a conversational AI life guide built on top of your purchased Palm Report. It answers open-ended questions about career, love, timing and decisions using your own palm reading as context. Included with every paid report; the first questions are free." } },
+            { "@type": "Question", "name": "How long does a PalmMitra reading take?", "acceptedAnswer": { "@type": "Answer", "text": "Your palm reading is generated in under 2 minutes after you upload a photo and fill in basic details." } },
+            { "@type": "Question", "name": "How much does PalmMitra cost?", "acceptedAnswer": { "@type": "Answer", "text": "The free preview is ₹0. The full Palm Report (PalmMitra Insight) is ₹149 in India or $9.99 internationally. PalmMatch compatibility is ₹999 / $19.99. PalmMitra Elite is a ₹4,999 / $99 lifetime plan with unlimited readings for the family." } },
+            { "@type": "Question", "name": "What is included in a PalmMitra report?", "acceptedAnswer": { "@type": "Answer", "text": "Every full report includes: the five major lines (Life, Heart, Head, Fate, Marriage), the seven mounts, personality traits, career direction, love and relationships, wealth forecast, health outlook, life phases, spiritual remedies, a final blessing, and a downloadable PDF. Three follow-up questions with PalmMitra AI are also included." } },
+            { "@type": "Question", "name": "Which hand should I photograph?", "acceptedAnswer": { "@type": "Answer", "text": "Photograph your dominant hand — right hand if you are right-handed, left hand if you are left-handed. Your dominant hand shows your current path and life potential." } },
+            { "@type": "Question", "name": "Is PalmMitra private?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Palm images are stored securely, only used to generate your reading, and are never shared with third parties. Reports are protected and only accessible to the email that generated them." } },
+            { "@type": "Question", "name": "How is PalmMitra different from horoscope apps?", "acceptedAnswer": { "@type": "Answer", "text": "Horoscope apps give the same prediction to everyone born on the same date. PalmMitra analyses the actual physical lines on YOUR palm — unique to you like a fingerprint — using computer vision AI trained on traditional Hasta Samudrika Shastra." } },
+            { "@type": "Question", "name": "What payment methods does PalmMitra accept?", "acceptedAnswer": { "@type": "Answer", "text": "All major methods via Razorpay in India — UPI, credit/debit cards, net banking, Paytm, PhonePe, Google Pay. International customers can pay by card." } }
+          ]
         },
         {
-          "@type": "Question",
-          "name": "What does the free palm reading preview include?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The free preview includes your palm summary, Life Line deep analysis, your first personality trait reveal, and one personalised spiritual remedy. Full report — including all 5 major lines, mounts, career, love, and wealth insights — is available for ₹149 (India) or $9.99 (international)."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How is PalmMitra different from horoscope apps?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Horoscope apps use your birth date and give the same prediction to millions of people. PalmMitra analyses the actual physical lines on YOUR palm — unique to you like a fingerprint — using computer vision AI trained on traditional Hasta Samudrika Shastra texts."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What payment methods does PalmMitra accept?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "We accept all major payment methods through Razorpay — UPI, credit/debit cards, net banking, and popular wallets like Paytm, PhonePe, and Google Pay."
-          }
-        }
-      ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://palmmitra.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Upload Palm",
-          "item": "https://palmmitra.com/upload"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "Palm Match",
-          "item": "https://palmmitra.com/palmmatch"
+          "@type": "BreadcrumbList",
+          "@id": "https://palmmitra.com/#breadcrumbs",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://palmmitra.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Upload Palm", "item": "https://palmmitra.com/upload" },
+            { "@type": "ListItem", "position": 3, "name": "PalmMatch", "item": "https://palmmitra.com/palmmatch" },
+            { "@type": "ListItem", "position": 4, "name": "About", "item": "https://palmmitra.com/about" },
+            { "@type": "ListItem", "position": 5, "name": "Help", "item": "https://palmmitra.com/help" },
+            { "@type": "ListItem", "position": 6, "name": "Contact", "item": "https://palmmitra.com/contact" }
+          ]
         }
       ]
     }
