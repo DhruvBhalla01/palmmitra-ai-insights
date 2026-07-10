@@ -210,6 +210,39 @@ export default {
             transform: "scale(1.02) rotate(3deg)"
           },
         },
+        "particle-drift": {
+          "0%, 100%": {
+            transform: "translate(0, -20px) scale(0.8)",
+            opacity: "0.2",
+          },
+          "50%": {
+            transform: "translate(10px, -40px) scale(1.2)",
+            opacity: "0.6",
+          },
+        },
+        "particle-drift-alt": {
+          "0%, 100%": {
+            transform: "translate(0, -20px) scale(0.8)",
+            opacity: "0.2",
+          },
+          "50%": {
+            transform: "translate(-10px, -40px) scale(1.2)",
+            opacity: "0.6",
+          },
+        },
+        "twinkle": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+        },
+        "reveal-fade": {
+          from: { opacity: "0", transform: "translateY(12px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "reveal-scale-x": {
+          from: { opacity: "0", transform: "scaleX(0)" },
+          to: { opacity: "1", transform: "scaleX(1)" },
+        },
+
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -229,6 +262,12 @@ export default {
         "rotate-slow": "rotate-slow 30s linear infinite",
         "rotate-reverse": "rotate-slow 20s linear infinite reverse",
         "mandala-pulse": "mandala-pulse 8s ease-in-out infinite",
+        "particle-drift": "particle-drift var(--particle-duration, 10s) ease-in-out infinite",
+        "particle-drift-alt": "particle-drift-alt var(--particle-duration, 10s) ease-in-out infinite",
+        "twinkle": "twinkle 2s ease-in-out infinite",
+        "reveal-fade": "reveal-fade 0.6s ease-out both",
+        "reveal-scale-x": "reveal-scale-x 0.8s ease-out both",
+
       },
       boxShadow: {
         'soft': '0 4px 20px -4px hsl(var(--primary) / 0.1)',
