@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { AnalysisOverlay } from '@/components/upload/AnalysisOverlay';
-import { supabase } from '@/integrations/supabase/client';
+const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
 import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
 import { z } from 'zod';
