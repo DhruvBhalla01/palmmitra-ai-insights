@@ -668,70 +668,180 @@ export default function UploadPalm() {
               {/* RIGHT: Sidebar (2 cols) */}
               <div className="lg:col-span-2">
                 <AnimatedSection delay={0.4}>
-                  <div className="glass-premium rounded-3xl p-6 border border-accent/20 lg:sticky top-28 space-y-5">
+                  <div className="relative lg:sticky top-28">
+                    {/* Gradient border shell */}
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-3xl p-[1px] pointer-events-none"
+                      style={{
+                        background:
+                          'linear-gradient(135deg, hsl(var(--accent) / 0.6), hsl(var(--accent) / 0.05) 45%, hsl(var(--primary) / 0.45))',
+                      }}
+                    >
+                      <div className="w-full h-full rounded-3xl bg-card/60" />
+                    </div>
 
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-accent" />
+                    {/* Ambient gold glow */}
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -inset-4 rounded-[2rem] opacity-60 blur-2xl"
+                      style={{
+                        background:
+                          'radial-gradient(400px 220px at 50% 0%, hsl(var(--accent) / 0.18), transparent 70%)',
+                      }}
+                    />
+
+                    <div className="relative glass-premium rounded-3xl p-6 border border-accent/20 space-y-5 overflow-hidden">
+                      {/* Top hairline */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute top-0 left-6 right-6 h-px"
+                        style={{
+                          background:
+                            'linear-gradient(90deg, transparent, hsl(var(--accent) / 0.7), transparent)',
+                        }}
+                      />
+
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="relative w-11 h-11 rounded-xl bg-accent/10 border border-accent/25 flex items-center justify-center flex-shrink-0 shadow-gold">
+                            <FileText className="w-5 h-5 text-accent" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-serif font-bold text-foreground text-base leading-tight">
+                              What You'll <span className="text-gradient-gold">Unlock</span>
+                            </h3>
+                            <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                              <Sparkles className="w-3 h-3 text-accent/70" />
+                              2,000+ words · 15 markers
+                            </p>
+                          </div>
+                        </div>
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/10 border border-accent/25 flex-shrink-0">
+                          <span className="text-[9px] uppercase tracking-[0.14em] text-accent font-semibold">
+                            Preview
+                          </span>
+                        </span>
                       </div>
-                      <div>
-                        <h3 className="font-serif font-bold text-foreground text-base">What You'll Unlock</h3>
-                        <p className="text-xs text-muted-foreground">2,000+ word personalised report</p>
-                      </div>
-                    </div>
 
-                    <div className="space-y-2">
-                      {reportSections.map(({ icon: Icon, label, free }, i) => (
-                        <m.div
-                          key={label}
-                          initial={{ opacity: 0, x: 10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.45 + i * 0.07 }}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/40"
-                        >
-                          <Icon className="w-4 h-4 text-accent flex-shrink-0" />
-                          <span className="text-sm text-foreground flex-1">{label}</span>
-                          {free ? (
-                            <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full">
-                              Free
-                            </span>
-                          ) : (
-                            <Lock className="w-3 h-3 text-muted-foreground/40" />
-                          )}
-                        </m.div>
-                      ))}
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-accent/5 border border-accent/15 text-center">
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        <span className="text-accent font-semibold">Free preview</span> included with every scan.{' '}
-                        Unlock all 7 sections for just{' '}
-                        <span className="text-accent font-bold">₹149</span>
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2 justify-center">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-accent text-accent" />
+                      {/* Sections */}
+                      <div className="space-y-2">
+                        {reportSections.map(({ icon: Icon, label, free }, i) => (
+                          <m.div
+                            key={label}
+                            initial={{ opacity: 0, x: 10 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.45 + i * 0.06 }}
+                            className={`group relative flex items-center gap-3 p-3 pl-4 rounded-xl border transition-all ${
+                              free
+                                ? 'bg-card/50 border-accent/25 hover:border-accent/40'
+                                : 'bg-background/40 border-border/40 hover:border-accent/25'
+                            }`}
+                          >
+                            {/* Left accent bar */}
+                            <div
+                              aria-hidden="true"
+                              className={`absolute left-0 top-2.5 bottom-2.5 w-[2px] rounded-r-full ${
+                                free ? 'bg-gradient-to-b from-accent to-accent/30' : 'bg-muted/40'
+                              }`}
+                            />
+                            <div
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 border ${
+                                free
+                                  ? 'bg-accent/10 border-accent/25'
+                                  : 'bg-muted/20 border-muted/30'
+                              }`}
+                            >
+                              <Icon
+                                className={`w-3.5 h-3.5 ${free ? 'text-accent' : 'text-muted-foreground'}`}
+                              />
+                            </div>
+                            <span className="text-sm text-foreground flex-1 font-medium">{label}</span>
+                            {free ? (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-green-500/15 text-green-500 border border-green-500/25 tracking-wider">
+                                FREE
+                              </span>
+                            ) : (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/25 flex items-center gap-1 tracking-wider">
+                                <Lock className="w-2.5 h-2.5" />
+                                PREMIUM
+                              </span>
+                            )}
+                          </m.div>
                         ))}
                       </div>
-                      <span className="text-xs text-muted-foreground">4.9★ · 12,400+ readings done</span>
-                    </div>
 
-                    <div className="border-t border-border/30 pt-4 space-y-2">
-                      <p className="text-xs font-medium text-foreground mb-2">Your Privacy, Guaranteed</p>
-                      {[
-                        'Photo used only for your reading',
-                        'Never shared with third parties',
-                        'Delete request: thepalmmitra@gmail.com',
-                      ].map((line) => (
-                        <p key={line} className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <Shield className="w-3 h-3 text-accent flex-shrink-0" />
-                          {line}
-                        </p>
-                      ))}
+                      {/* Price highlight */}
+                      <div
+                        className="relative overflow-hidden rounded-2xl p-4 text-center border border-accent/25 bg-gradient-mystic"
+                      >
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 opacity-20"
+                          style={{
+                            backgroundImage:
+                              'radial-gradient(circle at center, hsl(var(--accent) / 0.5) 1px, transparent 1px)',
+                            backgroundSize: '18px 18px',
+                          }}
+                        />
+                        <div className="relative">
+                          <p className="text-[10px] uppercase tracking-[0.18em] text-accent/80 font-semibold mb-1">
+                            Unlock All 7 Sections
+                          </p>
+                          <div className="flex items-baseline justify-center gap-2">
+                            <span className="font-serif text-3xl font-bold text-gradient-gold leading-none">
+                              ₹149
+                            </span>
+                            <span className="text-xs text-muted-foreground line-through">₹299</span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground mt-1.5">
+                            One-time · Lifetime access · PDF included
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Trust row */}
+                      <div className="flex items-center justify-center gap-2.5">
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className="w-3.5 h-3.5 fill-accent text-accent" />
+                          ))}
+                        </div>
+                        <div className="h-3 w-px bg-border" />
+                        <span className="text-xs text-muted-foreground">4.9 · 12,400+ readings</span>
+                      </div>
+
+                      {/* Divider */}
+                      <div
+                        aria-hidden="true"
+                        className="h-px w-full"
+                        style={{
+                          background:
+                            'linear-gradient(90deg, transparent, hsl(var(--accent) / 0.3), transparent)',
+                        }}
+                      />
+
+                      {/* Privacy */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+                          <p className="text-xs font-semibold text-foreground tracking-wide">
+                            Your Privacy, Guaranteed
+                          </p>
+                        </div>
+                        {[
+                          'Photo used only for your reading',
+                          'Never shared with third parties',
+                          'Delete request: thepalmmitra@gmail.com',
+                        ].map((line) => (
+                          <p key={line} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                            <span className="mt-1 w-1 h-1 rounded-full bg-accent/60 flex-shrink-0" />
+                            {line}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </AnimatedSection>
