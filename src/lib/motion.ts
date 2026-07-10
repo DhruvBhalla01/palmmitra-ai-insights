@@ -1,10 +1,9 @@
 // Central re-export for framer-motion primitives.
-// Use `m` (not `motion`) so LazyMotion can tree-shake features.
-// Features are loaded once at the app root via <LazyMotion features={domAnimation}>.
+// Components must import `m` (not `motion`) so LazyMotion can defer feature loading.
+// Feature set is dynamically imported once at the app root — see src/App.tsx.
 export {
   m,
   AnimatePresence,
   LazyMotion,
-  domAnimation,
   useReducedMotion,
 } from 'framer-motion';

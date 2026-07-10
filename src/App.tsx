@@ -4,7 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LazyMotion, domAnimation } from "@/lib/motion";
+import { LazyMotion } from "@/lib/motion";
+const loadMotionFeatures = () =>
+  import("@/lib/motion-features").then((mod) => mod.default);
 import Index from "./pages/Index";
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -29,7 +31,7 @@ const RouteFallback = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadMotionFeatures} strict>
       <TooltipProvider>
         <Toaster />
         <Sonner />
