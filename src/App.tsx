@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Lazy-load non-critical routes to shrink the initial bundle.
 const UploadPalm = lazy(() => import("./pages/UploadPalm"));
