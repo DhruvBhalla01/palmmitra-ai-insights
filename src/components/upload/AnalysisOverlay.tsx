@@ -160,7 +160,7 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                 ))}
 
                 {/* Scan line */}
-                {!showSuccess && (
+                {!showSuccess && !reduceMotion && (
                   <m.div
                     initial={{ top: '-10%' }}
                     animate={{ top: ['-10%', '110%'] }}
@@ -169,7 +169,6 @@ export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName
                     style={{
                       background:
                         'linear-gradient(180deg, transparent 0%, hsl(42 87% 55% / 0.35) 50%, transparent 100%)',
-                      boxShadow: '0 0 40px hsl(42 87% 55% / 0.6)',
                     }}
                   />
                 )}
