@@ -42,6 +42,7 @@ function computeProgress(elapsedMs: number): number {
 }
 
 export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName }: AnalysisOverlayProps) {
+  const reduceMotion = useReducedMotion();
   const startRef = useRef<number>(0);
   const [progress, setProgress] = useState(0);
   const [insightIdx, setInsightIdx] = useState(0);
