@@ -1,0 +1,41 @@
+# PalmMitra
+
+> PalmMitra is an AI-powered life guidance platform inspired by Ancient Indian Palmistry (Hasta Samudrika Shastra). Upload a photo of your palm and receive a personalised destiny report covering career, love, wealth, health, personality and spiritual remedies — plus an interactive AI guide that answers follow-up questions grounded in your reading.
+
+PalmMitra is not a horoscope app. Every reading is generated from the actual physical lines, mounts and patterns on the user's own palm using computer-vision AI trained on classical palmistry texts. Reports are delivered in under two minutes and are downloadable as PDF.
+
+## Products
+
+- [Palm Report (PalmMitra Insight)](https://palmmitra.com/upload): The primary product. A 2,000+ word personalised palm reading covering the five major lines (Life, Heart, Head, Fate, Marriage), the seven mounts, and life-domain sections (career, love, wealth, personality, remedies). ₹149 / $9.99. One-time purchase per palm.
+- [PalmMatch](https://palmmitra.com/palmmatch): Relationship compatibility analysis generated from two palm readings (yours and your partner's). Produces a compatibility score, dimension-by-dimension breakdown, and shared destiny insights. ₹999 / $19.99.
+- [PalmMitra AI](https://palmmitra.com/upload): A conversational AI guide built on top of a purchased Palm Report. Answers open-ended life questions (career, love, timing, decisions) using the user's own reading as context. Included with every paid report; first questions free.
+- [PalmMitra Elite](https://palmmitra.com/#pricing): Lifetime plan — unlimited readings for the family, priority AI, all future features. ₹4,999 / $99.
+
+## Pages
+
+- [Home](https://palmmitra.com/): Overview of PalmMitra, how it works, sample report, pricing, testimonials, FAQ.
+- [Upload Palm](https://palmmitra.com/upload): The entry point for generating a new palm reading.
+- [PalmMatch](https://palmmitra.com/palmmatch): Entry point for couples compatibility analysis.
+- [About](https://palmmitra.com/about): Mission, the ancient science of Hasta Samudrika Shastra, and how PalmMitra combines it with AI.
+- [Pricing](https://palmmitra.com/#pricing): Full pricing for Insight, PalmMatch, and Elite tiers with currency auto-detection (INR / USD).
+- [FAQ](https://palmmitra.com/#faq): Common questions on accuracy, privacy, which hand to photograph, refund policy and payment methods.
+- [Help](https://palmmitra.com/help): Photo guidelines, troubleshooting, and payment / report access help.
+- [Contact](https://palmmitra.com/contact): Support email thepalmmitra@gmail.com and contact form.
+- [Privacy](https://palmmitra.com/privacy): Data handling, image retention, and privacy commitments.
+- [Terms](https://palmmitra.com/terms): Terms of service and disclaimers.
+
+## Key Facts
+
+- Founded on Hasta Samudrika Shastra, a 3,000-year-old Indian science of palm analysis.
+- AI stack: computer vision + large language models running on the Lovable AI Gateway.
+- Reports delivered in under 2 minutes.
+- 2,100+ readings generated, 4.9/5 average rating.
+- Payments: Razorpay (UPI, cards, net banking, wallets) in India; card payments internationally.
+- Languages: English and Hindi supported.
+- Disclaimer: PalmMitra provides guidance and self-reflection. It is not medical, legal, financial, or psychiatric advice.
+
+## Optional
+
+- [Sample Report Preview](https://palmmitra.com/#sample): Free preview of what a full report contains.
+- [How It Works](https://palmmitra.com/#how-it-works): Three-step flow — upload, AI analysis, receive report.
+- [Testimonials](https://palmmitra.com/#testimonials): User reviews.
