@@ -783,7 +783,7 @@ export default function UploadPalm() {
               {/* RIGHT: Sidebar (2 cols) */}
               <div className="lg:col-span-2">
                 <AnimatedSection delay={0.4}>
-                  <div className="relative lg:sticky top-28">
+                  <div className="relative lg:sticky lg:top-28">
                     {/* Gradient border shell */}
                     <div
                       aria-hidden="true"
