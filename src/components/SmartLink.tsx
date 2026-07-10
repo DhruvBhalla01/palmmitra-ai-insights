@@ -56,6 +56,15 @@ export const SmartLink = forwardRef<HTMLAnchorElement, SmartLinkProps>(
         return;
       }
 
+      // Non-hash link. If navigating to the same pathname, scroll to top
+      // (otherwise React Router no-ops and the user sees no change).
+      if (location.pathname === to) {
+        e.preventDefault();
+        onClick?.();
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        return;
+      }
+
       onClick?.();
     };
 
