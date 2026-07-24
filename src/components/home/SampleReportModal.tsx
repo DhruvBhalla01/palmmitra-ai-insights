@@ -148,30 +148,55 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="relative overflow-hidden rounded-2xl p-6 text-center bg-gradient-mystic border border-accent/20"
+                  className="relative overflow-hidden rounded-2xl p-7 sm:p-8 text-center bg-gradient-mystic border border-accent/25 shadow-[0_10px_40px_-12px_hsl(var(--accent)/0.35)]"
                 >
+                  {/* Dot field */}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 opacity-20"
+                    className="absolute inset-0 opacity-[0.18]"
                     style={{
                       backgroundImage:
-                        'radial-gradient(circle at center, hsl(var(--accent) / 0.5) 1px, transparent 1px)',
+                        'radial-gradient(circle at center, hsl(var(--accent) / 0.6) 1px, transparent 1px)',
                       backgroundSize: '22px 22px',
                     }}
                   />
+                  {/* Soft radial glow */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'radial-gradient(circle at 50% 0%, hsl(var(--accent) / 0.22), transparent 60%)',
+                    }}
+                  />
+                  {/* Corner ornaments */}
+                  <div aria-hidden="true" className="absolute top-3 left-3 w-6 h-6 border-t border-l border-accent/40 rounded-tl-lg" />
+                  <div aria-hidden="true" className="absolute top-3 right-3 w-6 h-6 border-t border-r border-accent/40 rounded-tr-lg" />
+                  <div aria-hidden="true" className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-accent/40 rounded-bl-lg" />
+                  <div aria-hidden="true" className="absolute bottom-3 right-3 w-6 h-6 border-b border-r border-accent/40 rounded-br-lg" />
+
                   <div className="relative">
-                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent/15 border border-accent/30 mb-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/15 border border-accent/40 mb-4 shadow-[0_0_24px_hsl(var(--accent)/0.35)]">
                       <Sparkles className="w-5 h-5 text-accent" />
                     </div>
-                    <p className="font-serif text-lg sm:text-xl text-foreground italic leading-snug text-balance">
-                      "Your strongest growth cycle begins mid-2026 and peaks in 2028."
-                    </p>
-                    <div className="flex items-center justify-center gap-2 mt-3">
-                      <div className="h-px w-8 bg-accent/40" />
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-accent/80 font-medium">
+                    <div className="relative px-4 sm:px-6">
+                      <span aria-hidden="true" className="absolute -top-3 left-0 font-serif text-4xl leading-none text-accent/50 select-none">“</span>
+                      <p className="font-serif text-lg sm:text-2xl text-foreground italic leading-snug text-balance">
+                        Your strongest growth cycle begins{' '}
+                        <span className="text-gradient-gold not-italic font-semibold">mid-2026</span>{' '}
+                        and peaks in{' '}
+                        <span className="text-gradient-gold not-italic font-semibold">2028</span>.
+                      </p>
+                      <span aria-hidden="true" className="absolute -bottom-6 right-0 font-serif text-4xl leading-none text-accent/50 select-none">”</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 mt-5">
+                      <div className="h-px w-10 bg-gradient-to-r from-transparent to-accent/60" />
+                      <div className="w-1 h-1 rounded-full bg-accent/70" />
+                      <p className="text-[10px] uppercase tracking-[0.22em] text-accent/90 font-semibold">
                         AI Destiny Analysis
                       </p>
-                      <div className="h-px w-8 bg-accent/40" />
+                      <div className="w-1 h-1 rounded-full bg-accent/70" />
+                      <div className="h-px w-10 bg-gradient-to-l from-transparent to-accent/60" />
                     </div>
                   </div>
                 </m.div>
