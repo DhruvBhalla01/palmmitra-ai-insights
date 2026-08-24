@@ -9,6 +9,7 @@ const loadMotionFeatures = () =>
   import("@/lib/motion-features").then((mod) => mod.default);
 import Index from "./pages/Index";
 import ScrollToTop from "./components/ScrollToTop";
+import { AnalyticsProvider } from "@/lib/analytics";
 
 // Lazy-load non-critical routes to shrink the initial bundle.
 const UploadPalm = lazy(() => import("./pages/UploadPalm"));
@@ -37,6 +38,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <ScrollToTop />
+          <AnalyticsProvider>
           <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -54,6 +56,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
+          </AnalyticsProvider>
         </BrowserRouter>
       </TooltipProvider>
     </LazyMotion>

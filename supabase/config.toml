@@ -27,3 +27,6 @@ verify_jwt = true
 [functions.ai-purchase-create-order]
 verify_jwt = true
 
+
+[functions.analytics-ingest]
+verify_jwt = false
