@@ -56,6 +56,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
+          </AnalyticsProvider>
         </BrowserRouter>
       </TooltipProvider>
     </LazyMotion>
