@@ -9,6 +9,7 @@ const loadMotionFeatures = () =>
   import("@/lib/motion-features").then((mod) => mod.default);
 import Index from "./pages/Index";
 import ScrollToTop from "./components/ScrollToTop";
+import { AnalyticsProvider } from "@/lib/analytics";
 
 // Lazy-load non-critical routes to shrink the initial bundle.
 const UploadPalm = lazy(() => import("./pages/UploadPalm"));
