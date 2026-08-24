@@ -78,6 +78,7 @@ export default function UploadPalm() {
   const [loadingMessageIdx, setLoadingMessageIdx] = useState(0);
   // Background upload — kicks off as soon as image is chosen, awaited at submit
   const uploadPromiseRef = useRef<Promise<string> | null>(null);
+  const submittingRef = useRef(false);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     age: '',
@@ -172,7 +173,7 @@ export default function UploadPalm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLoading) return;                        // prevent double-submit
+    if (submittingRef.current || isLoading) return;
     if (!imageFile) {
       toast({ title: 'Photo required', description: 'Please upload your palm photo first.', variant: 'destructive' });
       return;
@@ -191,6 +192,7 @@ export default function UploadPalm() {
       return;
     }
     setFieldErrors({});
+    submittingRef.current = true;
 
     const cleanName = parsed.data.name;
     const cleanEmail = parsed.data.email;
@@ -215,7 +217,17 @@ export default function UploadPalm() {
         body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
       });
 
-      if (fnError) throw new Error(fnError.message || 'Failed to analyze palm');
+      if (fnError) {
+        let message = fnError.message || 'Failed to analyze palm';
+        const context = 'context' in fnError ? fnError.context : null;
+        if (context instanceof Response) {
+          try {
+            const payload = await context.clone().json();
+            if (typeof payload?.error === 'string') message = payload.error;
+          } catch { /* retain the transport error */ }
+        }
+        throw new Error(message);
+      }
 
       if (!response.validated) {
         setProcessingStep('error');
@@ -255,12 +267,18 @@ export default function UploadPalm() {
       clearInterval(msgInterval);
       const msg = err instanceof Error ? err.message : '';
       const friendly =
-        /network|fetch|Failed to fetch/i.test(msg)
+        /AI capacity|temporarily unavailable/i.test(msg)
+          ? 'Our AI reading capacity is being restored. Your photo is safe—please try again shortly.'
+          : /briefly busy|rate limit|too many/i.test(msg)
+          ? 'The reading engine is briefly busy. Please wait a minute and try again.'
+          : /network|fetch|Failed to fetch/i.test(msg)
           ? "We couldn't reach the PalmMitra servers. Please check your connection and try again."
           : /upload/i.test(msg)
           ? "Your photo couldn't be uploaded. Please try a different image or check your connection."
           : "We couldn't complete your reading right now. Please try again in a moment.";
       toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
+    } finally {
+      submittingRef.current = false;
     }
   };
 

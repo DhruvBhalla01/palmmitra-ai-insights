@@ -23,6 +23,20 @@ interface ValidationResult {
   next_step: "analyze" | "reupload";
 }
 
+const throwOpenAIError = (status: number, errorText: string): never => {
+  const normalized = errorText.toLowerCase();
+  if (
+    normalized.includes("insufficient_quota") ||
+    normalized.includes("credit_balance_exhausted") ||
+    normalized.includes("billing_hard_limit_reached")
+  ) {
+    throw new Error("AI_CREDITS_EXHAUSTED");
+  }
+  if (status === 429) throw new Error("AI_RATE_LIMITED");
+  if (status >= 500) throw new Error("AI_TEMPORARILY_UNAVAILABLE");
+  throw new Error("AI_REQUEST_FAILED");
+};
+
 // Step 1: Validate if image is a palm
 const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<ValidationResult> => {
   console.log("Step 1: Validating palm image...");
@@ -91,9 +105,7 @@ Return this exact JSON structure:
   if (!response.ok) {
     const errorText = await response.text();
     console.error("AI validation error:", response.status, errorText);
-    if (response.status === 402) throw new Error("AI_CREDITS_EXHAUSTED");
-    if (response.status === 429) throw new Error("AI_RATE_LIMITED");
-    throw new Error("Failed to validate image");
+    throwOpenAIError(response.status, errorText);
   }
 
   const data = await response.json();
@@ -379,7 +391,7 @@ const generatePalmReading = async (
   if (!response.ok) {
     const errorText = await response.text();
     console.error("OpenAI reading error:", response.status, errorText);
-    throw new Error("Failed to generate palm reading");
+    throwOpenAIError(response.status, errorText);
   }
 
   const data = await response.json();
@@ -643,14 +655,23 @@ serve(async (req) => {
     const msg = error instanceof Error ? error.message : "";
     if (msg === "AI_CREDITS_EXHAUSTED") {
       return new Response(
-        JSON.stringify({ error: "Our AI readings are temporarily unavailable. Please try again shortly." }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({
+          error: "Palm readings are temporarily unavailable while AI capacity is restored. Please try again shortly.",
+          code: "AI_CREDITS_EXHAUSTED",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "300" } },
       );
     }
     if (msg === "AI_RATE_LIMITED") {
       return new Response(
-        JSON.stringify({ error: "Too many readings right now. Please try again in a minute." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: "The reading engine is briefly busy. Please try again in a minute.", code: "AI_RATE_LIMITED" }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
+      );
+    }
+    if (msg === "AI_TEMPORARILY_UNAVAILABLE") {
+      return new Response(
+        JSON.stringify({ error: "The reading engine is temporarily unavailable. Please try again shortly.", code: "AI_TEMPORARILY_UNAVAILABLE" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
       );
     }
     return new Response(
