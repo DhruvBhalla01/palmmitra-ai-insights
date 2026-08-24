@@ -1,5 +1,5 @@
 import { m, AnimatePresence } from '@/lib/motion';
-import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard, Star, FileText, Infinity as InfinityIcon, Users, MessageCircle } from "lucide-react";
+import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard, Star, Infinity as InfinityIcon, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
@@ -13,13 +13,6 @@ interface PaymentModalProps {
   isProcessing: boolean;
   reportName?: string;
 }
-
-const includedItems = [
-  { icon: FileText, label: 'All 8 destiny sections unlocked' },
-  { icon: Sparkles, label: '2,000+ word personalised reading' },
-  { icon: MessageCircle, label: 'PalmMitra AI guide access' },
-  { icon: ShieldCheck, label: 'Downloadable keepsake PDF' },
-];
 
 export function PaymentModal({
   isOpen,
@@ -111,23 +104,6 @@ export function PaymentModal({
                     </div>
                     <span className="text-xs text-muted-foreground">4.9 · 2,100+ readings unlocked</span>
                   </div>
-                </div>
-
-                {/* What you unlock */}
-                <div className="rounded-2xl border border-accent/20 bg-background/40 p-4 mb-5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-accent font-semibold mb-3">
-                    What unlocks instantly
-                  </p>
-                  <ul className="space-y-2.5">
-                    {includedItems.map(({ icon: Icon, label }) => (
-                      <li key={label} className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-lg bg-accent/12 border border-accent/25 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-3.5 h-3.5 text-accent" />
-                        </span>
-                        <span className="text-[13px] sm:text-sm text-foreground/85 leading-snug">{label}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
 
                 {/* Plan Selection */}
