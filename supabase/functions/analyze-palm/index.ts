@@ -48,7 +48,7 @@ const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<Vali
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
@@ -360,7 +360,7 @@ const generatePalmReading = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
