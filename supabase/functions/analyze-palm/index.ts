@@ -506,15 +506,14 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Rate limiting: max 5 analyze-palm calls per IP per hour
+    // Rate limiting: max 15 analyze-palm calls per IP in a rolling hour
     const identifier =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       req.headers.get("cf-connecting-ip") ||
       req.headers.get("x-real-ip") ||
       "unknown";
 
-    const windowStart = new Date();
-    windowStart.setMinutes(0, 0, 0, 0);
+    const windowStart = new Date(Date.now() - 60 * 60 * 1000);
 
     const { count: requestCount } = await supabase
       .from("api_rate_limits")
@@ -523,7 +522,7 @@ serve(async (req) => {
       .eq("endpoint", "analyze-palm")
       .gte("created_at", windowStart.toISOString());
 
-    if ((requestCount ?? 0) >= 5) {
+    if ((requestCount ?? 0) >= 15) {
       console.warn(`Rate limit exceeded for identifier: ${identifier}`);
       return new Response(
         JSON.stringify({ error: "Rate limit exceeded. Please try again in an hour." }),
