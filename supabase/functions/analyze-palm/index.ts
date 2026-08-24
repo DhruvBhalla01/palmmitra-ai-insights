@@ -27,14 +27,14 @@ interface ValidationResult {
 const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<ValidationResult> => {
   console.log("Step 1: Validating palm image...");
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -341,14 +341,14 @@ const generatePalmReading = async (
 ) => {
   console.log("Step 2: Generating palm reading...");
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -484,12 +484,12 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!OPENAI_API_KEY) {
-      console.error("LOVABLE_API_KEY is not configured");
+      console.error("OPENAI_API_KEY is not configured");
       return new Response(JSON.stringify({ error: "AI is not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
