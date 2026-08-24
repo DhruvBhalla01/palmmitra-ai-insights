@@ -104,10 +104,13 @@ export function LockedSection({
     '2,847+ readings unlocked this month';
 
   return (
-    <div className="relative mb-12">
+    <div className="relative mb-8 sm:mb-12">
       <div className="relative overflow-hidden rounded-2xl">
         {previewContent && (
-          <div className="blur-md pointer-events-none select-none opacity-50" aria-hidden="true">
+          <div
+            className="absolute inset-0 blur-md pointer-events-none select-none opacity-50 overflow-hidden"
+            aria-hidden="true"
+          >
             {previewContent}
           </div>
         )}
@@ -115,53 +118,53 @@ export function LockedSection({
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/78 to-background/96 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl border border-accent/25"
+          className="relative bg-gradient-to-b from-background/55 via-background/78 to-background/96 backdrop-blur-sm flex flex-col items-center justify-center px-4 py-8 sm:p-8 rounded-2xl border border-accent/25"
         >
           {/* Lock icon with glow */}
           <m.div
             animate={{ scale: [1, 1.08, 1] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-            className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-4 border border-accent/25"
+            className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-3 sm:mb-4 border border-accent/25"
           >
-            <Lock className="w-7 h-7 text-accent" aria-hidden="true" />
+            <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-accent" aria-hidden="true" />
             <div className="absolute inset-0 rounded-2xl bg-accent/10 blur-lg" />
           </m.div>
 
           {/* Section title */}
-          <h3 className="text-base font-serif font-bold text-foreground mb-1.5 text-center">
+          <h3 className="text-base sm:text-lg font-serif font-bold text-foreground mb-1.5 text-center text-balance leading-snug">
             {personalizedName} {sectionName}
           </h3>
 
           {/* Teaser text */}
-          <p className="text-sm text-foreground/80 mb-2 text-center max-w-sm leading-relaxed">
+          <p className="text-[13px] sm:text-sm text-foreground/80 mb-3 text-center max-w-sm leading-relaxed text-balance">
             {teaserData.teaser}
           </p>
 
           {/* Hook */}
           {teaserData.hook && (
-            <div className="flex items-start gap-2 mb-4 px-4 py-3 rounded-xl bg-accent/8 border border-accent/15 max-w-sm">
+            <div className="flex items-start gap-2 mb-4 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-accent/8 border border-accent/15 max-w-sm">
               <Eye className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <p className="text-xs text-foreground/70 leading-relaxed italic">
+              <p className="text-[12px] sm:text-xs text-foreground/70 leading-relaxed italic">
                 {teaserData.hook}
               </p>
             </div>
           )}
 
           {/* Social proof — varies per section */}
-          <p className="text-xs text-muted-foreground mb-5 flex items-center gap-1.5 text-center">
+          <p className="text-[11px] sm:text-xs text-muted-foreground mb-4 sm:mb-5 flex items-center gap-1.5 text-center max-w-[19rem] justify-center">
             <Sparkles className="w-3 h-3 text-accent flex-shrink-0" aria-hidden="true" />
             {socialProof}
           </p>
 
           <Button
             onClick={onUnlockClick}
-            className="btn-gold rounded-xl px-7 py-3.5 gap-2 font-semibold"
+            className="btn-gold rounded-xl w-full sm:w-auto max-w-xs px-6 sm:px-7 py-3.5 gap-2 font-semibold text-sm sm:text-base whitespace-normal h-auto min-h-[48px]"
           >
             Reveal {sectionName}
-            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Button>
 
-          <p className="text-xs text-muted-foreground/60 mt-3">
+          <p className="text-[11px] sm:text-xs text-muted-foreground/60 mt-3 text-center text-balance">
             One-time {insightPrice} · Unlocks entire report · PDF included
           </p>
         </m.div>
@@ -169,3 +172,4 @@ export function LockedSection({
     </div>
   );
 }
+
