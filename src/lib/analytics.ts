@@ -43,3 +43,12 @@ export function track(event: AiEvent, props?: Record<string, unknown>) {
 }
 
 export { analytics } from '@/lib/analytics/index';
+export {
+  AnalyticsProvider,
+  useSectionView,
+  useFormAnalytics,
+  markSectionViewed,
+  recordInteraction,
+  trackApiError,
+} from '@/lib/analytics/index';
+export type { AnalyticsEventName } from '@/lib/analytics/events';
