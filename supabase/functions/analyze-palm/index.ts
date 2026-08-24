@@ -90,7 +90,9 @@ Return this exact JSON structure:
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("OpenAI validation error:", response.status, errorText);
+    console.error("AI validation error:", response.status, errorText);
+    if (response.status === 402) throw new Error("AI_CREDITS_EXHAUSTED");
+    if (response.status === 429) throw new Error("AI_RATE_LIMITED");
     throw new Error("Failed to validate image");
   }
 
@@ -639,6 +641,19 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("Error in analyze-palm function:", error);
+    const msg = error instanceof Error ? error.message : "";
+    if (msg === "AI_CREDITS_EXHAUSTED") {
+      return new Response(
+        JSON.stringify({ error: "Our AI readings are temporarily unavailable. Please try again shortly." }),
+        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    if (msg === "AI_RATE_LIMITED") {
+      return new Response(
+        JSON.stringify({ error: "Too many readings right now. Please try again in a minute." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
     return new Response(
       JSON.stringify({ error: "We couldn't process your reading right now. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
