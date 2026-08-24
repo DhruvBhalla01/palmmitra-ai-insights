@@ -1,5 +1,5 @@
 import { m, AnimatePresence } from '@/lib/motion';
-import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard, Star, FileText, Infinity as InfinityIcon, Users, MessageCircle } from "lucide-react";
+import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCard, Star, Infinity as InfinityIcon, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
@@ -13,13 +13,6 @@ interface PaymentModalProps {
   isProcessing: boolean;
   reportName?: string;
 }
-
-const includedItems = [
-  { icon: FileText, label: 'All 8 destiny sections unlocked' },
-  { icon: Sparkles, label: '2,000+ word personalised reading' },
-  { icon: MessageCircle, label: 'PalmMitra AI guide access' },
-  { icon: ShieldCheck, label: 'Downloadable keepsake PDF' },
-];
 
 export function PaymentModal({
   isOpen,
