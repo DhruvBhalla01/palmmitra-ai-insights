@@ -113,23 +113,6 @@ export function PaymentModal({
                   </div>
                 </div>
 
-                {/* What you unlock */}
-                <div className="rounded-2xl border border-accent/20 bg-background/40 p-4 mb-5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-accent font-semibold mb-3">
-                    What unlocks instantly
-                  </p>
-                  <ul className="space-y-2.5">
-                    {includedItems.map(({ icon: Icon, label }) => (
-                      <li key={label} className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-lg bg-accent/12 border border-accent/25 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-3.5 h-3.5 text-accent" />
-                        </span>
-                        <span className="text-[13px] sm:text-sm text-foreground/85 leading-snug">{label}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Plan Selection */}
                 <div className="space-y-3 mb-5">
                   {/* Insight — single report */}
