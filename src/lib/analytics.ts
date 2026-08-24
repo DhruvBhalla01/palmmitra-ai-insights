@@ -36,7 +36,8 @@ export function track(event: AiEvent, props?: Record<string, unknown>) {
   if (!mapped) return;
   const safe: Record<string, string | number | boolean | null> = {};
   for (const [k, v] of Object.entries(props ?? {})) {
-    if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || v === null) safe[k] = v;
+    if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') safe[k] = v;
+    else if (v === null) safe[k] = null;
   }
   analytics.track(mapped.name, { legacy_event: event, ...mapped.props, ...safe });
 }
