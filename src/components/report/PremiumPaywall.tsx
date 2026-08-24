@@ -44,7 +44,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
   const { currency } = useCurrency();
   const insightPrice = PRODUCTS.insight.prices[currency].display;
   const elitePrice   = PRODUCTS.elite.prices[currency].display;
-  const listPrice    = currency === 'INR' ? '₹299' : '$19.99';
+  const listPrice    = currency === 'INR' ? '₹499' : '$19.99';
   const reduce       = useReducedMotion();
 
   const teaserCards = [

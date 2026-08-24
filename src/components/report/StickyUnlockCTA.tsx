@@ -26,7 +26,7 @@ export function StickyUnlockCTA({
   const [isDismissed, setIsDismissed] = useState(false);
   const { currency } = useCurrency();
   const price     = priceOverride ?? PRODUCTS.insight.prices[currency].display;
-  const listPrice = listPriceOverride ?? (currency === 'INR' ? '₹299' : '$19.99');
+  const listPrice = listPriceOverride ?? (currency === 'INR' ? '₹499' : '$19.99');
 
   useEffect(() => {
     setIsDismissed(sessionStorage.getItem(DISMISSED_KEY) === 'true');

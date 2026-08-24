@@ -108,7 +108,7 @@ export function HeroSection() {
             </div>
 
             <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
-              No sign-up needed · Full report ₹149 / $9.99
+              No sign-up needed · Full report ₹299 / $9.99
             </p>
           </m.div>
 
