@@ -83,7 +83,7 @@ export function PaymentModal({
                   aria-label="Close"
                   className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/60 border border-border/60 flex items-center justify-center hover:border-accent/50 transition-colors z-10"
                 >
-                  <X className="w-4.5 h-4.5 text-muted-foreground" />
+                  <X className="w-4 h-4 text-muted-foreground" />
                 </button>
 
                 {/* Header */}
