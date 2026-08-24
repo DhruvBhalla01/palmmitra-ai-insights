@@ -198,6 +198,117 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_events: {
+        Row: {
+          anonymous_id: string | null
+          browser: string | null
+          device_type: string | null
+          environment: string
+          event_id: string
+          event_name: string
+          first_touch: Json
+          id: string
+          landing_page: string | null
+          language: string | null
+          latest_touch: Json
+          occurred_at: string
+          os: string | null
+          page_path: string | null
+          page_title: string | null
+          page_url: string | null
+          previous_page: string | null
+          properties: Json
+          received_at: string
+          referrer: string | null
+          screen_height: number | null
+          screen_width: number | null
+          session_id: string | null
+          source: string
+          timezone: string | null
+          user_email: string | null
+          user_id: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          viewport_height: number | null
+          viewport_width: number | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          browser?: string | null
+          device_type?: string | null
+          environment?: string
+          event_id: string
+          event_name: string
+          first_touch?: Json
+          id?: string
+          landing_page?: string | null
+          language?: string | null
+          latest_touch?: Json
+          occurred_at?: string
+          os?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          page_url?: string | null
+          previous_page?: string | null
+          properties?: Json
+          received_at?: string
+          referrer?: string | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id?: string | null
+          source?: string
+          timezone?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          browser?: string | null
+          device_type?: string | null
+          environment?: string
+          event_id?: string
+          event_name?: string
+          first_touch?: Json
+          id?: string
+          landing_page?: string | null
+          language?: string | null
+          latest_touch?: Json
+          occurred_at?: string
+          os?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          page_url?: string | null
+          previous_page?: string | null
+          properties?: Json
+          received_at?: string
+          referrer?: string | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id?: string | null
+          source?: string
+          timezone?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Relationships: []
+      }
       api_rate_limits: {
         Row: {
           created_at: string
@@ -387,7 +498,149 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      analytics_funnel: {
+        Row: {
+          analysis_completed: number | null
+          checkout_started: number | null
+          day: string | null
+          device_type: string | null
+          environment: string | null
+          palm_image_uploaded: number | null
+          palm_reading_started: number | null
+          payment_initiated: number | null
+          payment_success: number | null
+          pdf_downloaded: number | null
+          plan_selected: number | null
+          preview_viewed: number | null
+          pricing_viewed: number | null
+          report_unlocked: number | null
+          visitors: number | null
+        }
+        Relationships: []
+      }
+      analytics_page_exits: {
+        Row: {
+          active_time_on_page_seconds: number | null
+          anonymous_id: string | null
+          device_type: string | null
+          environment: string | null
+          exit_type: string | null
+          first_touch: Json | null
+          landing_page: string | null
+          last_interaction_element: string | null
+          last_interaction_type: string | null
+          latest_touch: Json | null
+          max_scroll_depth_percent: number | null
+          occurred_at: string | null
+          page_path: string | null
+          pages_in_session: number | null
+          previous_page: string | null
+          session_duration_seconds: number | null
+          session_id: string | null
+          time_on_page_seconds: number | null
+          user_id: string | null
+        }
+        Insert: {
+          active_time_on_page_seconds?: never
+          anonymous_id?: string | null
+          device_type?: string | null
+          environment?: string | null
+          exit_type?: never
+          first_touch?: Json | null
+          landing_page?: string | null
+          last_interaction_element?: never
+          last_interaction_type?: never
+          latest_touch?: Json | null
+          max_scroll_depth_percent?: never
+          occurred_at?: string | null
+          page_path?: string | null
+          pages_in_session?: never
+          previous_page?: string | null
+          session_duration_seconds?: never
+          session_id?: string | null
+          time_on_page_seconds?: never
+          user_id?: string | null
+        }
+        Update: {
+          active_time_on_page_seconds?: never
+          anonymous_id?: string | null
+          device_type?: string | null
+          environment?: string | null
+          exit_type?: never
+          first_touch?: Json | null
+          landing_page?: string | null
+          last_interaction_element?: never
+          last_interaction_type?: never
+          latest_touch?: Json | null
+          max_scroll_depth_percent?: never
+          occurred_at?: string | null
+          page_path?: string | null
+          pages_in_session?: never
+          previous_page?: string | null
+          session_duration_seconds?: never
+          session_id?: string | null
+          time_on_page_seconds?: never
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      analytics_page_report: {
+        Row: {
+          avg_active_time_seconds: number | null
+          avg_scroll_depth_percent: number | null
+          avg_time_on_page_seconds: number | null
+          cta_rate: number | null
+          device_type: string | null
+          exit_rate: number | null
+          median_active_time_seconds: number | null
+          page_path: string | null
+          page_visits: number | null
+          sessions: number | null
+        }
+        Relationships: []
+      }
+      analytics_session_journey: {
+        Row: {
+          anonymous_id: string | null
+          device_type: string | null
+          event_name: string | null
+          first_touch: Json | null
+          landing_page: string | null
+          latest_touch: Json | null
+          occurred_at: string | null
+          page_path: string | null
+          properties: Json | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          device_type?: string | null
+          event_name?: string | null
+          first_touch?: Json | null
+          landing_page?: string | null
+          latest_touch?: Json | null
+          occurred_at?: string | null
+          page_path?: string | null
+          properties?: Json | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          device_type?: string | null
+          event_name?: string | null
+          first_touch?: Json | null
+          landing_page?: string | null
+          latest_touch?: Json | null
+          occurred_at?: string | null
+          page_path?: string | null
+          properties?: Json | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       debit_ai_question: {
