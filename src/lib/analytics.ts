@@ -51,4 +51,5 @@ export {
   recordInteraction,
   trackApiError,
 } from '@/lib/analytics/index';
+export { getServerCorrelationContext } from '@/lib/analytics/index';
 export type { AnalyticsEventName } from '@/lib/analytics/events';

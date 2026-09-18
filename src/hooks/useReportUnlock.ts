@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
+import { PRODUCTS } from '@/config/pricing';
 
 declare global {
   interface Window {
@@ -107,6 +109,15 @@ export function useReportUnlock(
 
     setIsProcessing(true);
 
+    const product = plan === 'unlimited999' ? PRODUCTS.elite : PRODUCTS.insight;
+    const commerce = {
+      plan_id: product.id,
+      plan_name: product.name,
+      amount: product.prices.INR.major,
+      currency: 'INR',
+    } as const;
+    analytics.track('checkout_payment_initiated', { ...commerce, checkout_step: 'create_order' });
+
     try {
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
         'create-razorpay-order',
@@ -115,6 +126,7 @@ export function useReportUnlock(
             user_email: userEmail,
             report_id: plan === 'report99' ? reportId : undefined,
             plan,
+            analytics_context: getServerCorrelationContext(),
           },
         }
       );
@@ -144,6 +156,7 @@ export function useReportUnlock(
         order_id,
         handler: async (response: RazorpayResponse) => {
           try {
+            analytics.track('checkout_payment_success', { ...commerce, checkout_step: 'provider_callback' });
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
               'verify-razorpay-payment',
               {
@@ -165,6 +178,7 @@ export function useReportUnlock(
             if (verifyData.subscription) {
               setHasSubscription(true);
             }
+            analytics.track('checkout_completed', { ...commerce, checkout_step: 'server_verified' });
 
             const successMessage =
               plan === 'report99'      ? 'Your Insight report is now fully unlocked!' :
@@ -183,6 +197,12 @@ export function useReportUnlock(
           } catch (error) {
             console.error('Payment verification error:', error);
             setIsProcessing(false);
+            analytics.track('checkout_payment_failed', {
+              ...commerce,
+              checkout_step: 'verification',
+              error_category: 'provider_error',
+            });
+            trackApiError('verify-razorpay-payment', error);
             toast({
               title: 'Verification Failed',
               description: 'Please contact support if your amount was deducted.',
@@ -195,6 +215,11 @@ export function useReportUnlock(
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
+            analytics.track('checkout_payment_cancelled', {
+              ...commerce,
+              checkout_step: 'provider_modal',
+              error_category: 'user_cancelled',
+            });
             toast({ title: 'Payment Cancelled', description: 'You can try again anytime.' });
           },
         },
@@ -203,6 +228,12 @@ export function useReportUnlock(
       const razorpay = new window.Razorpay(options);
       razorpay.on('payment.failed', () => {
         setIsProcessing(false);
+        analytics.track('checkout_payment_failed', {
+          ...commerce,
+          checkout_step: 'provider_payment',
+          error_category: 'provider_error',
+          payment_provider: 'razorpay',
+        });
         toast({
           title: 'Payment Failed',
           description: 'Please try again or use a different payment method.',
@@ -210,9 +241,21 @@ export function useReportUnlock(
         });
       });
       razorpay.open();
+      analytics.track('checkout_payment_redirected', {
+        ...commerce,
+        checkout_step: 'provider_modal',
+        payment_provider: 'razorpay',
+      });
 
     } catch (error) {
       console.error('Payment initiation error:', error);
+      analytics.track('checkout_payment_failed', {
+        ...commerce,
+        checkout_step: 'create_order',
+        error_category: 'network_error',
+        payment_provider: 'razorpay',
+      });
+      trackApiError('create-razorpay-order', error);
       toast({
         title: 'Payment Error',
         description: error instanceof Error ? error.message : 'Something went wrong',

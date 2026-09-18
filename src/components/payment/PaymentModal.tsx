@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
 import { PRODUCTS } from "@/config/pricing";
 import { useCurrency } from "@/hooks/useCurrency";
+import { analytics, recordInteraction } from '@/lib/analytics';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -25,11 +26,43 @@ export function PaymentModal({
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
+    if (isOpen) {
+      analytics.track('checkout_viewed', { checkout_step: 'plan_selection' });
+      analytics.track('pricing_viewed', { context: 'report_checkout' });
+    }
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
   const handleProceed = () => {
+    const product = selectedPlan === 'report99' ? PRODUCTS.insight : PRODUCTS.elite;
+    analytics.track('checkout_started', {
+      plan_id: product.id,
+      plan_name: product.name,
+      amount: product.prices[currency].major,
+      currency,
+      checkout_step: 'payment',
+    });
+    recordInteraction('checkout_started', 'pay_now');
     onSelectPlan(selectedPlan);
+  };
+
+  const selectPlan = (plan: PlanType) => {
+    setSelectedPlan(plan);
+    const product = plan === 'report99' ? PRODUCTS.insight : PRODUCTS.elite;
+    analytics.track('pricing_plan_selected', {
+      plan_id: product.id,
+      plan_name: product.name,
+      amount: product.prices[currency].major,
+      currency,
+    });
+    analytics.track('checkout_plan_selected', {
+      plan_id: product.id,
+      plan_name: product.name,
+      amount: product.prices[currency].major,
+      currency,
+      checkout_step: 'plan_selection',
+    });
+    recordInteraction('pricing_plan_selected', product.id);
   };
 
   const { currency } = useCurrency();
@@ -111,7 +144,8 @@ export function PaymentModal({
                   {/* Insight — single report */}
                   <m.button
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedPlan("report99")}
+                    onClick={() => selectPlan("report99")}
+                    data-analytics-id="select_insight"
                     className={`w-full text-left p-4 sm:p-5 rounded-2xl border-2 transition-all ${
                       selectedPlan === "report99"
                         ? "border-accent bg-accent/5 shadow-gold"
@@ -145,7 +179,8 @@ export function PaymentModal({
                   {/* Elite — flagship lifetime */}
                   <m.button
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedPlan("unlimited999")}
+                    onClick={() => selectPlan("unlimited999")}
+                    data-analytics-id="select_elite"
                     className={`w-full text-left p-4 sm:p-5 pt-7 sm:pt-7 rounded-2xl border-2 transition-all relative overflow-hidden ${
                       selectedPlan === "unlimited999"
                         ? "border-accent bg-accent/5 shadow-gold-lg"
@@ -227,6 +262,7 @@ export function PaymentModal({
               <div className="relative border-t border-accent/20 bg-card/85 backdrop-blur-xl px-5 py-4 sm:px-8 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <Button
                   onClick={handleProceed}
+                  data-analytics-id="pay_now"
                   disabled={isProcessing}
                   className="w-full btn-gold rounded-2xl py-6 text-base sm:text-lg font-semibold gap-2 min-h-[54px]"
                 >
