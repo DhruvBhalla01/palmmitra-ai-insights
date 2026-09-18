@@ -258,6 +258,19 @@ export function setUser(id: string | null, email?: string | null) {
 export function getUserId() { return userId; }
 export function getUserEmail() { return userEmail; }
 
+/** Safe correlation/attribution payload forwarded to payment functions. */
+export function getServerCorrelationContext() {
+  const session = getSession();
+  return {
+    anonymous_id: getAnonymousId(),
+    session_id: session.session_id,
+    environment: getEnvironment(),
+    page_path: window.location.pathname,
+    first_touch: getFirstTouch(),
+    latest_touch: getLatestTouch(),
+  };
+}
+
 /* --------------------------------- device --------------------------------- */
 
 function detectDeviceType(): 'mobile' | 'tablet' | 'desktop' {
