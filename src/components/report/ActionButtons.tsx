@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { generateReportPDF } from '@/lib/generateReportPDF';
 import type { PalmReading } from './types';
+import { analytics } from '@/lib/analytics';
 
 interface UserDataForPDF {
   name: string;
@@ -72,6 +73,7 @@ export function ActionButtons({
   const isReportDataReady = Boolean(reading && reading.headlineSummary && reading.majorLines);
   
   const handleDownload = async () => {
+    analytics.track('pdf_download_clicked', { asset_type: 'report_pdf' });
     // Check unlock status first
     if (!isUnlocked) {
       onUnlockClick?.();
@@ -104,6 +106,7 @@ export function ActionButtons({
     }
 
     setIsDownloading(true);
+    analytics.track('download_started', { asset_type: 'report_pdf' });
     
     try {
       // Generate the PDF (jspdf is lazy-loaded inside this call)
@@ -112,6 +115,7 @@ export function ActionButtons({
         readingType: userData?.readingType || 'full',
         generatedAt: userData?.generatedAt || new Date().toISOString(),
       });
+      analytics.track('download_completed', { asset_type: 'report_pdf' });
       
       toast({
         title: "✨ PDF Downloaded!",
@@ -119,6 +123,7 @@ export function ActionButtons({
       });
     } catch (error) {
       console.error('PDF generation error:', error);
+      analytics.track('download_failed', { asset_type: 'report_pdf', error_category: 'unknown' });
       toast({
         title: "Download Failed",
         description: "Unable to generate PDF. Please try again.",
@@ -172,6 +177,7 @@ export function ActionButtons({
             
             <Button
               onClick={handleDownload}
+              data-analytics-id="download_pdf"
               disabled={isDownloading || !isReportDataReady}
               className={`rounded-2xl px-8 py-6 text-base font-semibold gap-2 shadow-gold-lg relative overflow-hidden ${
                 isUnlocked && isReportDataReady 
@@ -207,6 +213,7 @@ export function ActionButtons({
           <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={() => navigate('/upload')}
+              data-analytics-id="start_reading"
               className="btn-secondary-premium rounded-2xl px-6 py-6 text-base gap-2"
             >
               <RefreshCw className="w-5 h-5" />

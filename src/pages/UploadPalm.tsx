@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { m, AnimatePresence } from '@/lib/motion';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,7 @@ const getSupabase = () => import('@/integrations/supabase/client').then((m) => m
 import { useToast } from '@/hooks/use-toast';
 import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
 import { z } from 'zod';
+import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -86,6 +87,11 @@ export default function UploadPalm() {
     readingType: 'full',
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
+  const formAnalytics = useFormAnalytics('palm_upload');
+
+  useEffect(() => {
+    analytics.track('palm_reading_started', { entry_page: '/upload' });
+  }, []);
 
   const uploadFormSchema = useMemo(
     () => z.object({ name: nameSchema, age: ageSchema, email: emailSchema }),
@@ -141,15 +147,25 @@ export default function UploadPalm() {
   }, [toast]);
 
   const processImage = (file: File) => {
+    analytics.track('palm_image_upload_started', {
+      file_size_kb: Math.round(file.size / 1024),
+      file_type: file.type,
+    });
     setImageFile(file);
     const reader = new FileReader();
     reader.onload = (e) => setImage(e.target?.result as string);
     reader.readAsDataURL(file);
     // Kick off storage upload in background so it's ready by the time user submits
-    uploadPromiseRef.current = uploadToStorage(file).catch((err) => {
-      uploadPromiseRef.current = null;
-      throw err;
-    });
+    uploadPromiseRef.current = uploadToStorage(file)
+      .then((url) => {
+        analytics.track('palm_image_uploaded', { file_size_kb: Math.round(file.size / 1024) });
+        return url;
+      })
+      .catch((err) => {
+        uploadPromiseRef.current = null;
+        analytics.track('palm_image_upload_failed', { error_category: 'network_error' });
+        throw err;
+      });
   };
 
   const removeImage = () => {
@@ -188,11 +204,18 @@ export default function UploadPalm() {
     if (!parsed.success) {
       setFieldErrors(zodFieldErrors(parsed.error));
       const first = parsed.error.errors[0]?.message ?? 'Please fix the highlighted fields.';
+      parsed.error.errors.forEach((validationIssue) => {
+        formAnalytics.validationError(String(validationIssue.path[0] ?? 'unknown'), validationIssue.code);
+      });
       toast({ title: 'Please check your details', description: first, variant: 'destructive' });
       return;
     }
     setFieldErrors({});
     submittingRef.current = true;
+    formAnalytics.submit('details');
+    analytics.track('palm_analysis_started', { reading_type: formData.readingType });
+    analytics.track('ai_request_started', { feature: 'palm_analysis' });
+    const analysisStartedAt = Date.now();
 
     const cleanName = parsed.data.name;
     const cleanEmail = parsed.data.email;
@@ -231,6 +254,11 @@ export default function UploadPalm() {
 
       if (!response.validated) {
         setProcessingStep('error');
+        analytics.track('palm_analysis_failed', {
+          error_category: 'validation_error',
+          latency_ms: Date.now() - analysisStartedAt,
+        });
+        formAnalytics.failure('palm_validation_rejected');
         setValidationError({
           reason: response.message || response.validation?.reason || 'This does not appear to be a palm image.',
           suggestions: [
@@ -260,6 +288,17 @@ export default function UploadPalm() {
 
       setProcessingStep('complete');
       clearInterval(msgInterval);
+      analytics.track('palm_analysis_completed', {
+        latency_ms: Date.now() - analysisStartedAt,
+        reading_type: formData.readingType,
+        has_report_id: Boolean(response.reportId),
+      });
+      analytics.track('ai_request_completed', {
+        feature: 'palm_analysis',
+        latency_ms: Date.now() - analysisStartedAt,
+        success: true,
+      });
+      formAnalytics.success({ reading_type: formData.readingType });
       setTimeout(() => navigate(response.reportId ? `/report/${response.reportId}` : '/report'), 500);
 
     } catch (err) {
@@ -276,6 +315,18 @@ export default function UploadPalm() {
           : /upload/i.test(msg)
           ? "Your photo couldn't be uploaded. Please try a different image or check your connection."
           : "We couldn't complete your reading right now. Please try again in a moment.";
+      analytics.track('palm_analysis_failed', {
+        error_category: /network|fetch/i.test(msg) ? 'network_error'
+          : /rate limit|too many|capacity/i.test(msg) ? 'timeout' : 'provider_error',
+        latency_ms: Date.now() - analysisStartedAt,
+      });
+      analytics.track('ai_request_failed', {
+        feature: 'palm_analysis',
+        latency_ms: Date.now() - analysisStartedAt,
+        success: false,
+      });
+      trackApiError('analyze-palm', err);
+      formAnalytics.failure('analysis_failed');
       toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
     } finally {
       submittingRef.current = false;

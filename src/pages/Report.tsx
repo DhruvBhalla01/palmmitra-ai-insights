@@ -35,6 +35,7 @@ import { AskPalmMitraInline } from '@/components/report/AskPalmMitraInline';
 import { PalmMitraAiSection } from '@/components/report/PalmMitraAiSection';
 import { AiDrawer } from '@/components/ai/AiDrawer';
 import type { PalmReading, StoredData } from '@/components/report/types';
+import { analytics, markSectionViewed, recordInteraction, trackApiError } from '@/lib/analytics';
 
 interface SessionData extends StoredData {
   imageUrl?: string;
@@ -83,6 +84,7 @@ export default function Report() {
   
 
   const openAi = (source: string, seed?: string) => {
+    analytics.track('ai_guide_opened', { source });
     setAiSource(source);
     setAiSeed(seed ?? null);
     setAiOpen(true);
@@ -112,6 +114,10 @@ export default function Report() {
       setShowPaymentModal(false);
       setSuccessIsSubscription(event.detail.subscription);
       setShowSuccessOverlay(true);
+      analytics.track('checkout_completed', {
+        plan_id: event.detail.plan,
+        checkout_step: 'complete',
+      });
     };
 
     window.addEventListener('paymentSuccess', handlePaymentSuccess as EventListener);
@@ -133,6 +139,7 @@ export default function Report() {
             setReading(data.reading);
             setGeneratedAt(data.generatedAt || new Date().toISOString());
             setLoading(false);
+            analytics.track('reading_preview_viewed', { report_id: data.reportId ?? urlReportId ?? null });
             return;
           }
         } catch (e) {
@@ -169,13 +176,16 @@ export default function Report() {
             }
             setGeneratedAt(report.created_at || new Date().toISOString());
             setLoading(false);
+            analytics.track('reading_preview_viewed', { report_id: urlReportId });
             if (!report.report_json) {
               setError('This report is locked. Unlock it to view your reading.');
+              analytics.track('report_locked_viewed', { report_id: urlReportId });
             }
             return;
           }
         } catch (err) {
           console.error('Error loading report from database:', err);
+          trackApiError('get-report', err);
         }
       }
 
@@ -204,6 +214,20 @@ export default function Report() {
           const rect = section.element.getBoundingClientRect();
           if (rect.top <= 200 && rect.bottom >= 200) {
             setActiveSection(section.id);
+              const sectionIndex = reportSections.findIndex((candidate) => candidate.id === section.id);
+              markSectionViewed(`report_${section.id}`, {
+                section_name: reportSections[sectionIndex]?.label ?? section.id,
+                section_index: sectionIndex,
+              });
+              analytics.track('destiny_section_viewed', {
+                section_id: section.id,
+                section_name: reportSections[sectionIndex]?.label ?? section.id,
+                section_index: sectionIndex,
+              });
+              analytics.track('report_section_viewed', {
+                section_id: section.id,
+                section_index: sectionIndex,
+              });
             break;
           }
         }
@@ -215,6 +239,9 @@ export default function Report() {
   }, []);
 
   const handleUnlockClick = () => {
+    analytics.track('unlock_report_clicked', { report_id: resolvedReportId ?? null });
+    analytics.track('pricing_cta_clicked', { element_id: 'unlock_report', plan_id: 'insight' });
+    recordInteraction('cta_clicked', 'unlock_report');
     if (!userEmail) {
       toast({
         title: 'Email Required',
