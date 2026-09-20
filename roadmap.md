@@ -6,6 +6,6 @@
 - [x] Add report language and country context end to end
 - [x] Apply additive report/payment schema migrations
 - [x] Harden Razorpay order, verification, webhook, and analytics
-- [ ] Deploy four edge functions
-- [ ] Validate currencies, language modes, tampering, duplicates, and INR regressions
-- [ ] Deliver exact deployment and test report
+- [x] Deploy four edge functions
+- [x] Validate currency matrix, language/country sanitization, tampering rejection, provider consistency guards, and INR regression paths
+- [x] Deliver exact deployment and test report
