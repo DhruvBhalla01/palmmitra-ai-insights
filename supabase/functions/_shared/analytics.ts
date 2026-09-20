@@ -12,6 +12,7 @@ export type ServerEventName =
   | 'payment_failed'
   | 'payment_refunded'
   | 'report_unlocked'
+  | 'ai_request_started'
   | 'ai_request_completed'
   | 'ai_request_failed'
   | 'palm_analysis_completed'
