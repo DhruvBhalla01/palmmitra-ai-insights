@@ -71,7 +71,7 @@ describe("UploadPalm", () => {
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "Invalid file type",
+        title: "Unsupported file type.",
       })
     );
   });
@@ -166,9 +166,7 @@ describe("UploadPalm", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
 
-    expect(
-      await screen.findByText(/this does not look like a clear palm photo/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/not a palm image/i)).toBeInTheDocument();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });
