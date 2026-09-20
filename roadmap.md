@@ -16,3 +16,8 @@
 - [x] Remove avoidable post-generation report delays
 - [x] Enforce and verify Hinglish before saving reports
 - [x] Deploy affected functions and validate mobile and desktop flows
+
+# Concise conversion-focused report output
+
+- [ ] Tighten English and Hinglish generation for concise, mobile-readable reports
+- [ ] Deploy and validate the updated report generator
