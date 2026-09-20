@@ -10,7 +10,7 @@ import { useAiChatStream, type UiMessage } from '@/hooks/useAiChatStream';
 import { useAiEntitlement, useInvalidateEntitlement } from '@/hooks/useAiEntitlement';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { track } from '@/lib/analytics';
+import { analytics, getServerCorrelationContext, track } from '@/lib/analytics';
 import logoImg from '@/assets/logo.webp';
 import type { AiPlanId } from '@/config/ai-pricing';
 
@@ -103,11 +103,14 @@ export function AiDrawer({
   const handleSend = (text: string) => {
     if (!canSend) { setShowPaywall(true); return; }
     track('ai_question_asked', { seed: false });
+    analytics.track('ai_request_started', { feature: 'palmmitra_ai', source: source ?? 'composer' });
     chat.send(text);
   };
   const handleSuggestion = (seed: string, key: string) => {
     if (!canSend) { setShowPaywall(true); return; }
     track('ai_suggestion_clicked', { key });
+    analytics.track('ai_guide_message_sent', { feature: 'palmmitra_ai', source: 'suggestion', suggestion_id: key });
+    analytics.track('ai_request_started', { feature: 'palmmitra_ai', source: 'suggestion' });
     chat.send(seed);
   };
 
@@ -115,7 +118,7 @@ export function AiDrawer({
     setPaying(plan);
     try {
       const { data, error } = await supabase.functions.invoke('ai-purchase-create-order', {
-        body: { plan, reportId, userEmail },
+        body: { plan, reportId, userEmail, analytics_context: getServerCorrelationContext() },
       });
       if (error || !data?.success) {
         toast({ title: 'Could not start payment', description: data?.error ?? error?.message ?? 'Try again', variant: 'destructive' });

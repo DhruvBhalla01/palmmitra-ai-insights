@@ -19,6 +19,7 @@ import {
 const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
+import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
 
 type Step = 1 | 2;
 type ProcessingState = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
@@ -283,6 +284,11 @@ export default function PalmMatch() {
   const [person2Age, setPerson2Age] = useState('');
   const [relationshipType, setRelationshipType] = useState('');
   const [email, setEmail] = useState('');
+  const formAnalytics = useFormAnalytics('palmmatch_upload');
+
+  useEffect(() => {
+    analytics.track('palm_reading_started', { reading_type: 'palmmatch' });
+  }, []);
 
   // Background upload
   const uploadInBackground = useCallback(
@@ -293,6 +299,9 @@ export default function PalmMatch() {
       setStatus: (s: UploadStatus) => void,
     ) => {
       setStatus('uploading');
+      analytics.track('palm_image_upload_started', {
+        reading_type: 'palmmatch', slot, file_size_kb: Math.round(file.size / 1024),
+      });
       try {
         const ext = file.name.split('.').pop() || 'jpg';
         const path = `palmmatch/${Date.now()}_${slot}.${ext}`;
@@ -304,9 +313,13 @@ export default function PalmMatch() {
         const { data } = supabase.storage.from('palm-uploads').getPublicUrl(path);
         setUrl(data.publicUrl);
         setStatus('ready');
+        analytics.track('palm_image_uploaded', { reading_type: 'palmmatch', slot });
       } catch (e) {
         console.error('bg upload failed', e);
         setStatus('error');
+        analytics.track('palm_image_upload_failed', {
+          reading_type: 'palmmatch', slot, error_category: 'network_error',
+        });
       }
     },
     [],
@@ -345,10 +358,15 @@ export default function PalmMatch() {
         description: 'Please complete all fields to reveal your compatibility.',
         variant: 'destructive',
       });
+      formAnalytics.validationError('required_fields', 'incomplete');
       return;
     }
 
     setProcessing('uploading');
+    formAnalytics.submit('details');
+    analytics.track('palm_analysis_started', { reading_type: 'palmmatch' });
+    analytics.track('ai_request_started', { feature: 'palmmatch_analysis' });
+    const analysisStartedAt = Date.now();
 
     try {
       // Wait for background uploads to finish
@@ -392,6 +410,11 @@ export default function PalmMatch() {
           });
           setProcessing('idle');
           setStep(data.person === 'person2' ? 2 : 1);
+          analytics.track('palm_analysis_failed', {
+            reading_type: 'palmmatch', error_category: 'validation_error',
+            latency_ms: Date.now() - analysisStartedAt,
+          });
+          formAnalytics.failure('palm_validation_rejected');
           return;
         }
         throw new Error(data?.error || 'Analysis failed');
@@ -409,9 +432,26 @@ export default function PalmMatch() {
       );
 
       setProcessing('complete');
+      analytics.track('palm_analysis_completed', {
+        reading_type: 'palmmatch', latency_ms: Date.now() - analysisStartedAt,
+        has_report_id: Boolean(data.reportId),
+      });
+      analytics.track('ai_request_completed', {
+        feature: 'palmmatch_analysis', latency_ms: Date.now() - analysisStartedAt, success: true,
+      });
+      formAnalytics.success({ reading_type: 'palmmatch' });
       setTimeout(() => navigate(`/palmmatch-report/${data.reportId}`), 900);
     } catch (err) {
       console.error('PalmMatch error:', err);
+      analytics.track('palm_analysis_failed', {
+        reading_type: 'palmmatch', error_category: 'provider_error',
+        latency_ms: Date.now() - analysisStartedAt,
+      });
+      analytics.track('ai_request_failed', {
+        feature: 'palmmatch_analysis', latency_ms: Date.now() - analysisStartedAt, success: false,
+      });
+      trackApiError('analyze-palmmatch', err);
+      formAnalytics.failure('analysis_failed');
       toast({
         title: 'Analysis failed',
         description: err instanceof Error ? err.message : 'Please try again.',
@@ -523,6 +563,7 @@ export default function PalmMatch() {
 
             <a
               href="#start"
+              data-analytics-id="start_palmmatch"
               className="inline-flex items-center gap-1.5 mt-5 text-xs text-accent hover:text-accent/80 transition-colors"
             >
               Start your reading below <ArrowRight className="w-3 h-3" />
@@ -600,6 +641,7 @@ export default function PalmMatch() {
 
                     <Button
                       onClick={() => setStep(2)}
+                      data-analytics-id="palmmatch_continue"
                       disabled={!canAdvanceStep1}
                       className="btn-gold w-full mt-6 h-12 rounded-2xl text-foreground font-semibold text-[15px] gap-2"
                     >
@@ -702,6 +744,7 @@ export default function PalmMatch() {
                       </Button>
                       <Button
                         onClick={handleSubmit}
+                        data-analytics-id="start_palmmatch_analysis"
                         disabled={!canAdvanceStep2}
                         className="btn-gold flex-1 h-12 rounded-2xl text-foreground font-semibold text-[15px] gap-2"
                       >
