@@ -12,7 +12,7 @@
 
 # Location, speed, and Hinglish reliability
 
-- [ ] Detect supported countries from request metadata with browser fallback
-- [ ] Remove avoidable post-generation report delays
-- [ ] Enforce and verify Hinglish before saving reports
+- [x] Detect supported countries from request metadata with browser fallback
+- [x] Remove avoidable post-generation report delays
+- [x] Enforce and verify Hinglish before saving reports
 - [ ] Deploy affected functions and validate mobile and desktop flows

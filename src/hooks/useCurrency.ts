@@ -48,7 +48,7 @@ export function useCurrency() {
           return;
         }
 
-        const { data, error } = await supabase.functions.invoke('detect-country', { method: 'GET' });
+        const { data, error } = await supabase.functions.invoke('detect-country');
         if (error) return;
         const detected = data?.countryCode as CountryCode | null;
         if (!detected || !(detected in COUNTRY_TO_CURRENCY) || cancelled) return;

@@ -364,7 +364,7 @@ The next6MonthsFocus should weave together professional, personal, and spiritual
   return basePrompt + (focusAdditions[readingType] || focusAdditions.full);
 };
 
-const generatePalmReading = async (
+const generatePalmReadingAttempt = async (
   imageUrl: string,
   name: string,
   age: string,
@@ -373,6 +373,7 @@ const generatePalmReading = async (
   context: AiCaptureContext,
   language: "english" | "hinglish",
   countryContext: string,
+  isRetry = false,
 ) => {
   console.log("Step 2: Generating palm reading...");
   const startedAt = Date.now();
@@ -395,7 +396,7 @@ const generatePalmReading = async (
           content: [
             {
               type: "text",
-              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.`,
+              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.${isRetry && language === 'hinglish' ? ' IMPORTANT RETRY: The previous response was too English-heavy. Rewrite every customer-facing sentence in natural Roman-script Hinglish, using familiar Hindi words throughout.' : ''}`,
             },
             {
               type: "image_url",
@@ -409,6 +410,7 @@ const generatePalmReading = async (
       ],
       max_tokens: 4000,
       temperature: 0.7,
+      response_format: { type: "json_object" },
     }),
   });
 
@@ -442,16 +444,9 @@ const generatePalmReading = async (
     return JSON.parse(cleanContent);
   } catch (parseError) {
     console.error("Failed to parse GPT response as JSON:", parseError);
-    console.log("Raw content:", content);
-
-    const now = new Date();
-    const currentMonth = now.toLocaleString("en-US", { month: "long" });
-    const currentYear = now.getFullYear();
-    const futureDate = new Date(now);
-    futureDate.setMonth(futureDate.getMonth() + 6);
-    const futureMonth = futureDate.toLocaleString("en-US", { month: "long" });
-    const futureYear = futureDate.getFullYear();
-
+    throw new Error("AI_INVALID_REPORT_JSON");
+    /* Previous English fallback intentionally removed: a malformed response must
+       never be stored as a valid Hinglish report.
     return {
       confidenceScore: 82,
       headlineSummary: `${name}, there is a quiet authority in the lines of your palm — a story of someone who has weathered inner storms and emerged with a rare kind of clarity. At ${age}, the patterns etched across your hand suggest you are entering a period where long-held potential begins to crystallize into tangible reality.`,
@@ -519,8 +514,47 @@ const generatePalmReading = async (
         marriageTiming: `Your heart line and Venus mount together reveal a significant relationship window opening between ${currentYear + 1} and ${currentYear + 3}. The patterns suggest a connection that begins through shared intellectual or creative interests before deepening into something profound.`,
         careerBreakthrough: `The progressive deepening of your fate line points to a notable career inflection around ${currentYear + 2}, where accumulated expertise and expanding visibility converge to create opportunities that significantly elevate your professional standing.`,
       },
-    };
+    }; */
   }
+};
+
+const HINGLISH_MARKERS = /\b(aap|aapka|aapki|aapke|hai|hain|ka|ki|ke|aur|mein|yeh|jo|liye|saath|apne|karta|karti|hoga|hogi|rahe|wali|wala)\b/gi;
+
+const isHinglishReading = (reading: unknown): boolean => {
+  const sample = JSON.stringify(reading).toLowerCase();
+  return (sample.match(HINGLISH_MARKERS) ?? []).length >= 8;
+};
+
+const generatePalmReading = async (
+  imageUrl: string,
+  name: string,
+  age: string,
+  readingType: string,
+  apiKey: string,
+  context: AiCaptureContext,
+  language: "english" | "hinglish",
+  countryContext: string,
+) => {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const reading = await generatePalmReadingAttempt(
+        imageUrl, name, age, readingType, apiKey, context, language, countryContext, attempt > 0,
+      );
+      if (language === "hinglish" && !isHinglishReading(reading)) {
+        throw new Error("AI_LANGUAGE_MISMATCH");
+      }
+      return reading;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0 && error instanceof Error && ["AI_INVALID_REPORT_JSON", "AI_LANGUAGE_MISMATCH"].includes(error.message)) {
+        console.warn(`Retrying palm report after ${error.message}`);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("AI_REPORT_GENERATION_FAILED");
 };
 
 serve(async (req) => {
@@ -529,6 +563,7 @@ serve(async (req) => {
   }
 
   try {
+    const requestStartedAt = Date.now();
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -642,7 +677,10 @@ serve(async (req) => {
     const aiCaptureContext = { sessionId: crypto.randomUUID(), traceId: crypto.randomUUID() };
 
     // STEP 1: Validate the palm image
+    const validationStartedAt = Date.now();
     const validation = await validatePalmImage(imageUrl, OPENAI_API_KEY, aiCaptureContext);
+    const validationMs = Date.now() - validationStartedAt;
+    console.log(`Palm validation completed in ${validationMs}ms`);
 
     if (!validation.is_palm || validation.confidence < 70) {
       console.log("Palm validation failed:", validation);
@@ -660,6 +698,7 @@ serve(async (req) => {
     }
 
     // STEP 2: Generate the palm reading
+    const generationStartedAt = Date.now();
     const palmReading = await generatePalmReading(
       imageUrl,
       cleanName,
@@ -670,6 +709,8 @@ serve(async (req) => {
       safeLanguage,
       countryContext,
     );
+    const generationMs = Date.now() - generationStartedAt;
+    console.log(`Palm report generation completed in ${generationMs}ms`);
 
     // STEP 3: Save to database
     const { data: reportData, error: dbError } = await supabase
@@ -694,6 +735,7 @@ serve(async (req) => {
       console.error("Database error:", dbError);
     }
 
+    console.log(`Palm analysis completed in ${Date.now() - requestStartedAt}ms`);
     return new Response(
       JSON.stringify({
         success: true,
@@ -733,6 +775,12 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "The reading engine is temporarily unavailable. Please try again shortly.", code: "AI_TEMPORARILY_UNAVAILABLE" }),
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
+      );
+    }
+    if (["AI_INVALID_REPORT_JSON", "AI_LANGUAGE_MISMATCH", "AI_REPORT_GENERATION_FAILED"].includes(msg)) {
+      return new Response(
+        JSON.stringify({ error: "The reading could not be completed in your selected language. Please try again.", code: msg }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "10" } },
       );
     }
     return new Response(
