@@ -176,8 +176,10 @@ export default function UploadPalm() {
       reader.onload = (event) => setImage(event.target?.result as string);
       reader.readAsDataURL(file);
     }
-    // Kick off storage upload in background so it's ready by the time user submits
-    uploadPromiseRef.current = uploadToStorage(file)
+    // Start uploading while the user fills in their details. Keep the rejection
+    // available for submit, but consume it here so mobile browsers do not report
+    // an unhandled promise rejection before the user taps the CTA.
+    const uploadPromise = uploadToStorage(file)
       .then((url) => {
         const uploadProperties = { file_size_kb: Math.round(file.size / 1024) };
         analytics.track('palm_image_uploaded', uploadProperties);
@@ -186,11 +188,16 @@ export default function UploadPalm() {
       })
       .catch((err) => {
         uploadPromiseRef.current = null;
-        const errorProperties = { error_category: 'network_error' };
+        const errorProperties = {
+          error_category: 'upload_error',
+          error_message: err instanceof Error ? err.message.slice(0, 120) : 'unknown',
+        };
         analytics.track('palm_image_upload_failed', errorProperties);
         posthog.capture('palm_image_upload_failed', errorProperties);
         throw err;
       });
+    uploadPromiseRef.current = uploadPromise;
+    void uploadPromise.catch(() => undefined);
   };
 
   const removeImage = () => {
@@ -201,13 +208,26 @@ export default function UploadPalm() {
   };
 
   const uploadToStorage = async (file: File): Promise<string> => {
-    const ext = file.name.split('.').pop() || 'jpg';
+    const extensionByType: Record<string, string> = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/webp': 'webp',
+      'image/heic': 'heic',
+      'image/heif': 'heif',
+    };
+    const ext = extensionByType[file.type] ?? file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
     const supabase = await getSupabase();
     const { data, error } = await supabase.storage
       .from('palm-uploads')
-      .upload(fileName, file, { cacheControl: '3600', upsert: false });
-    if (error) throw new Error('Failed to upload image');
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        contentType: file.type || 'application/octet-stream',
+        upsert: false,
+      });
+    if (error) {
+      throw new Error(`Image upload failed: ${error.message || 'storage service rejected the file'}`);
+    }
     const { data: { publicUrl } } = supabase.storage.from('palm-uploads').getPublicUrl(data.path);
     return publicUrl;
   };
