@@ -39,7 +39,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 const createImageFile = () =>
-  new File(["fake image"], "palm.png", { type: "image/png" });
+  new File([new Uint8Array(25 * 1024)], "palm.png", { type: "image/png" });
 
 describe("UploadPalm", () => {
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe("UploadPalm", () => {
   it("disables submission until the form is complete", () => {
     renderWithRouter(<UploadPalm />);
     expect(
-      screen.getByRole("button", { name: /start palm scan/i })
+      screen.getByRole("button", { name: /begin my free reading/i })
     ).toBeDisabled();
   });
 
@@ -68,7 +68,7 @@ describe("UploadPalm", () => {
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "Invalid file type",
+        title: "Unsupported file type.",
       })
     );
   });
@@ -105,7 +105,7 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
 
     await waitFor(() => {
       expect(mockUpload).toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe("UploadPalm", () => {
     mockInvoke.mockResolvedValue({
       data: {
         validated: false,
-        message: "Not a palm image",
+        message: "This does not look like a clear palm photo",
         validation: { reason: "Not a palm" },
       },
       error: null,
@@ -161,7 +161,7 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
 
     expect(
       await screen.findByText(/this does not look like a clear palm photo/i)

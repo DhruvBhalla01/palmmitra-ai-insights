@@ -4,7 +4,7 @@ Disallow: /report/
 Disallow: /palmmatch-report/
 Disallow: /auth/
 
-Sitemap: https://palmmitra.com/sitemap.xml
+Sitemap: https://palmmitra.in/sitemap.xml
 
 # --- Search engine crawlers ---
 User-agent: Googlebot

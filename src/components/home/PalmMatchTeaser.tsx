@@ -1,6 +1,6 @@
 import { m } from '@/lib/motion';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Target, Sparkles, Infinity, ArrowRight, Users } from 'lucide-react';
+import { Heart, MessageCircle, Target, Sparkles, Infinity as InfinityIcon, ArrowRight, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AnimatedSection } from '@/components/AnimatedSection';
 
@@ -11,7 +11,7 @@ const dimensions = [
   { icon: MessageCircle, label: 'Communication', score: 74, color: 'bg-blue-500' },
   { icon: Target, label: 'Life Goals', score: 82, color: 'bg-accent' },
   { icon: Sparkles, label: 'Romance', score: 91, color: 'bg-amber-500' },
-  { icon: Infinity, label: 'Spiritual Alignment', score: 79, color: 'bg-purple-500' },
+  { icon: InfinityIcon, label: 'Spiritual Alignment', score: 79, color: 'bg-purple-500' },
 ];
 
 export function PalmMatchTeaser() {

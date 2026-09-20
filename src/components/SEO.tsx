@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { SITE_URL } from "@/config/brand";
 
 interface SEOProps {
   title: string;
@@ -8,8 +9,6 @@ interface SEOProps {
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
-
-const SITE_URL = "https://palmmitra.com";
 
 /**
  * Per-route <head> metadata for AI/search crawlers that execute JS

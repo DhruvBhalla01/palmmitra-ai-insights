@@ -222,7 +222,7 @@ serve(async (req) => {
     const isValidImageUrl = (u: unknown) => typeof u === "string" && u.length <= 512 && u.startsWith(allowedPrefix);
     const isValidName = (n: unknown): n is string =>
       typeof n === "string" &&
-      (() => { const t = n.replace(/\s+/g, " ").trim(); return t.length >= 2 && t.length <= 60 && !/[<>{}$]/.test(t) && /[A-Za-z\u00C0-\u024F\u0900-\u097F]/.test(t); })();
+      (() => { const t = n.replace(/\s+/g, " ").trim(); return t.length >= 2 && t.length <= 60 && !/[<>{}$]/.test(t) && /[\p{Script=Latin}\p{Script=Devanagari}]/u.test(t); })();
     const parseAge = (a: unknown) => {
       const n = parseInt(String(a ?? "").trim(), 10);
       return Number.isInteger(n) && n >= 13 && n <= 100 ? n : null;

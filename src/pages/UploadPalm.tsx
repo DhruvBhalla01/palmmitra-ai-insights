@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
 import { z } from 'zod';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
+import { defaultReportLanguage, detectVisitorLocation, type ReportLanguage, type VisitorLocation } from '@/lib/location';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -30,6 +31,7 @@ interface FormData {
   age: string;
   email: string;
   readingType: ReadingType;
+  language: ReportLanguage;
 }
 
 interface ValidationError {
@@ -85,12 +87,15 @@ export default function UploadPalm() {
     age: '',
     email: '',
     readingType: 'full',
+    language: defaultReportLanguage(),
   });
+  const [visitorLocation, setVisitorLocation] = useState<VisitorLocation | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
   const formAnalytics = useFormAnalytics('palm_upload');
 
   useEffect(() => {
     analytics.track('palm_reading_started', { entry_page: '/upload' });
+    void detectVisitorLocation().then(setVisitorLocation);
   }, []);
 
   const uploadFormSchema = useMemo(
@@ -237,7 +242,16 @@ export default function UploadPalm() {
 
       const supabase = await getSupabase();
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
-        body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
+        body: {
+          imageUrl,
+          name: cleanName,
+          age: cleanAge,
+          email: cleanEmail,
+          readingType: formData.readingType,
+          language: formData.language,
+          countryCode: visitorLocation?.countryCode,
+          countryName: visitorLocation?.countryName,
+        },
       });
 
       if (fnError) {
@@ -277,6 +291,9 @@ export default function UploadPalm() {
       sessionStorage.setItem('palmMitraData', JSON.stringify({
         name: cleanName, age: cleanAge, email: cleanEmail,
         readingType: formData.readingType,
+        language: formData.language,
+        countryCode: visitorLocation?.countryCode,
+        countryName: visitorLocation?.countryName,
         imageUrl,
         reportId: response.reportId,
         reading: response.reading,
@@ -772,6 +789,28 @@ export default function UploadPalm() {
                             ) : (
                               <p id="age-help" className="text-[11px] text-muted-foreground/80">Anchors your life timeline (13–100).</p>
                             )}
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <Label htmlFor="report-language" className="text-[13px] font-medium text-foreground/90 flex items-center gap-1.5">
+                              <span className="w-1 h-1 rounded-full bg-accent" />
+                              Report Language
+                            </Label>
+                            <select
+                              id="report-language"
+                              value={formData.language}
+                              onChange={(e) => setFormData({
+                                ...formData,
+                                language: e.target.value as ReportLanguage,
+                              })}
+                              className="flex h-12 w-full rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-[15px] text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40"
+                            >
+                              <option value="english">English</option>
+                              <option value="hinglish">Hinglish (Hindi + English)</option>
+                            </select>
+                            <p className="text-[11px] text-muted-foreground/80">
+                              Choose the language that feels easiest for you to understand.
+                            </p>
                           </div>
                         </div>
 

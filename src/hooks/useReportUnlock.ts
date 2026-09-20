@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
-import { PRODUCTS } from '@/config/pricing';
+import { currencyForCountry, PRODUCTS } from '@/config/pricing';
+import { detectVisitorLocation } from '@/lib/location';
 
 declare global {
   interface Window {
@@ -110,11 +111,13 @@ export function useReportUnlock(
     setIsProcessing(true);
 
     const product = plan === 'unlimited999' ? PRODUCTS.elite : PRODUCTS.insight;
+    const location = await detectVisitorLocation();
+    const currency = currencyForCountry(location.countryCode);
     const commerce = {
       plan_id: product.id,
       plan_name: product.name,
-      amount: product.prices.INR.major,
-      currency: 'INR',
+      amount: product.prices[currency].major,
+      currency,
     } as const;
     analytics.track('checkout_payment_initiated', { ...commerce, checkout_step: 'create_order' });
 
@@ -126,6 +129,7 @@ export function useReportUnlock(
             user_email: userEmail,
             report_id: plan === 'report99' ? reportId : undefined,
             plan,
+            country_code: location.countryCode,
             analytics_context: getServerCorrelationContext(),
           },
         }

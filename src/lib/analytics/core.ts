@@ -10,6 +10,7 @@ import {
   getAnonymousId, getSession, touchSession, getUserId, getUserEmail, setUser,
   getDeviceContext, getEnvironment, getFirstTouch, getLatestTouch, uuid,
 } from './context';
+import { capturePostHogEvent } from './posthog';
 
 const INGEST_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analytics-ingest`;
 const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
@@ -141,6 +142,18 @@ function enqueue(name: AnalyticsEventName, props: AnalyticsProps = {}, immediate
       properties: props,
     };
     queue.push(event);
+    capturePostHogEvent(name, props, {
+      page_path: event.page_path as string,
+      page_title: event.page_title as string,
+      session_id: event.session_id as string,
+      anonymous_id: event.anonymous_id as string,
+      environment: event.environment as string,
+      device_type: event.device_type as string,
+      browser: event.browser as string,
+      utm_source: event.utm_source as string | null,
+      utm_medium: event.utm_medium as string | null,
+      utm_campaign: event.utm_campaign as string | null,
+    });
     if (DEBUG) console.debug('[analytics]', name, props);
     if (immediate) flushSync();
     else if (queue.length >= MAX_BATCH) void flush();

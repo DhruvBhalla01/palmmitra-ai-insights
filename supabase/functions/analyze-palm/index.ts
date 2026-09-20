@@ -13,6 +13,9 @@ interface PalmAnalysisRequest {
   age: string;
   email: string;
   readingType: "full" | "career" | "love" | "wealth";
+  language?: "english" | "hinglish";
+  countryCode?: string;
+  countryName?: string;
 }
 
 interface ValidationResult {
@@ -137,7 +140,13 @@ Return this exact JSON structure:
 };
 
 // Step 2: Generate palm reading
-const getReadingPrompt = (name: string, age: string, readingType: string) => {
+const getReadingPrompt = (
+  name: string,
+  age: string,
+  readingType: string,
+  language: "english" | "hinglish",
+  countryName: string,
+) => {
   const now = new Date();
   const currentMonth = now.toLocaleString("en-US", { month: "long" });
   const currentYear = now.getFullYear();
@@ -147,9 +156,20 @@ const getReadingPrompt = (name: string, age: string, readingType: string) => {
   const futureYear = futureDate.getFullYear();
   const sixMonthPeriod = `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`;
 
-  const basePrompt = `You are PalmMitra AI — India's most respected digital palmistry expert, trained in the ancient science of Hast Rekha Shastra and modern psychological profiling.
+  const languageInstruction = language === "hinglish"
+    ? `LANGUAGE: Write the entire report in natural, easy-to-understand Hinglish: Hindi expressed mainly in Latin/Roman script, blended naturally with familiar English words. Do not use Devanagari. Keep technical palmistry terms in English with a short Hinglish explanation. Never translate JSON keys.`
+    : `LANGUAGE: Write the entire report in clear, warm, internationally understandable English. Avoid overly complex vocabulary and explain palmistry terms in plain language. Never translate JSON keys.`;
+
+  const locationInstruction = countryName
+    ? `LOCATION CONTEXT: The reader is currently in ${countryName}. Use this only for culturally relevant examples, spelling, date conventions, and practical advice. Do not make claims about nationality, religion, income, or personality from location.`
+    : "";
+
+  const basePrompt = `You are PalmMitra AI — a responsible digital palmistry guide, trained in the ancient science of Hast Rekha Shastra and modern psychological profiling.
 
 You are composing a premium destiny report for ${name}, age ${age}. This report must read like a deeply personal consultation from a seasoned palmist who has studied this individual's palm with great care — not a templated AI output.
+
+${languageInstruction}
+${locationInstruction}
 
 ═══════════════════════════════════════
 WRITING STYLE & QUALITY STANDARDS
@@ -165,6 +185,7 @@ WRITING STYLE & QUALITY STANDARDS
 - Every field must contain 2-4 rich sentences minimum. One-line responses are UNACCEPTABLE.
 - Connect palmistry observations to real psychological and behavioral patterns.
 - Describe WHAT you see in the palm (line depth, curve, length, intersections, markings) THEN interpret its meaning.
+- Only describe features that are reasonably visible in the supplied image. If a feature is unclear, say that it is less distinct and interpret cautiously instead of inventing detail.
 - Use vivid, evocative language: "a deeply etched life line that curves generously around the mount of Venus" not "a strong life line."
 
 3. PERSONALIZATION WITHOUT REPETITION
@@ -185,6 +206,7 @@ WRITING STYLE & QUALITY STANDARDS
 - Never use "guaranteed", "will definitely", "destined to", "certain".
 - Preferred: "your palm reveals", "the patterns suggest", "there are strong indications of", "this points toward".
 - This is about sounding confident yet responsible — like a doctor giving an informed assessment, not a fortune teller making promises.
+- Never present palmistry as medical, financial, legal, or mental-health diagnosis. Do not predict death, disease, pregnancy, exact wealth, or unavoidable events.
 
 7. FUTURE-ONLY TIMELINES
 - Current date: ${currentMonth} ${currentYear}. ALL predictions from ${currentYear} onward.
@@ -196,6 +218,7 @@ WRITING STYLE & QUALITY STANDARDS
 
 9. OUTPUT FORMAT
 - Return ONLY a valid JSON object. No markdown, no backticks, no commentary.
+- Include every key in the requested schema, even when a palm feature is unclear. Use a transparent limitation rather than null, omitted sections, or placeholder text.
 
 ═══════════════════════════════════════
 REPORT STRUCTURE
@@ -349,6 +372,8 @@ const generatePalmReading = async (
   name: string,
   age: string,
   readingType: string,
+  language: "english" | "hinglish",
+  countryName: string,
   apiKey: string,
 ) => {
   console.log("Step 2: Generating palm reading...");
@@ -364,14 +389,14 @@ const generatePalmReading = async (
       messages: [
         {
           role: "system",
-          content: getReadingPrompt(name, age, readingType),
+          content: getReadingPrompt(name, age, readingType, language, countryName),
         },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.`,
+              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Follow the requested language and location context. Return ONLY the JSON object.`,
             },
             {
               type: "image_url",
@@ -553,7 +578,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { imageUrl, name, age, email, readingType } = body ?? {} as PalmAnalysisRequest;
+    const { imageUrl, name, age, email, readingType, language, countryName } = body ?? {} as PalmAnalysisRequest;
 
     // ── Server-side input validation (never trust the client) ──
     if (typeof imageUrl !== "string" || typeof name !== "string" || typeof age !== "string") {
@@ -563,7 +588,7 @@ serve(async (req) => {
       });
     }
     const cleanName = name.replace(/\s+/g, " ").trim();
-    if (cleanName.length < 2 || cleanName.length > 60 || /[<>{}$]/.test(cleanName) || !/[A-Za-z\u00C0-\u024F\u0900-\u097F]/.test(cleanName)) {
+    if (cleanName.length < 2 || cleanName.length > 60 || /[<>{}$]/.test(cleanName) || !/[\p{Script=Latin}\p{Script=Devanagari}]/u.test(cleanName)) {
       return new Response(JSON.stringify({ error: "Please enter a valid name." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -582,6 +607,8 @@ serve(async (req) => {
     }
     const validReadingTypes = ["full", "career", "love", "wealth"];
     const safeReadingType = validReadingTypes.includes(readingType) ? readingType : "full";
+    const safeLanguage = language === "hinglish" ? "hinglish" : "english";
+    const safeCountryName = typeof countryName === "string" ? countryName.trim().slice(0, 80) : "";
 
     // Validate imageUrl belongs to our Supabase storage to prevent SSRF abuse of OpenAI API
     const allowedStoragePrefix = `${SUPABASE_URL}/storage/v1/object/public/palm-uploads/`;
@@ -614,7 +641,15 @@ serve(async (req) => {
     }
 
     // STEP 2: Generate the palm reading
-    const palmReading = await generatePalmReading(imageUrl, cleanName, String(ageNum), safeReadingType, OPENAI_API_KEY);
+    const palmReading = await generatePalmReading(
+      imageUrl,
+      cleanName,
+      String(ageNum),
+      safeReadingType,
+      safeLanguage,
+      safeCountryName,
+      OPENAI_API_KEY,
+    );
 
     // STEP 3: Save to database
     const { data: reportData, error: dbError } = await supabase
@@ -646,6 +681,8 @@ serve(async (req) => {
         name: cleanName,
         age: ageNum,
         readingType: safeReadingType,
+        language: safeLanguage,
+        countryName: safeCountryName || null,
         generatedAt: new Date().toISOString(),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },

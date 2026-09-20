@@ -13,6 +13,7 @@ import {
 } from './context';
 import { installMonitors } from './monitors';
 import { supabase } from '@/integrations/supabase/client';
+import { initPostHog } from './posthog';
 
 let booted = false;
 
@@ -20,6 +21,7 @@ function boot() {
   if (booted) return;
   booted = true;
   initAttribution();
+  initPostHog();
   getAnonymousId();
   startTransport();
 
@@ -128,11 +130,13 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     if (!sectionsInstalled) { sectionsInstalled = true; installSectionObserver(); }
 
     // Attach authenticated identity when available.
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const auth = supabase.auth;
+    if (!auth) return;
+    const { data: sub } = auth.onAuthStateChange((_e, s) => {
       if (s?.user) analytics.identify(s.user.id, { auth: true }, s.user.email ?? null);
       else setUser(null, null);
     });
-    supabase.auth.getSession().then(({ data }) => {
+    auth.getSession().then(({ data }) => {
       if (data.session?.user) {
         analytics.identify(data.session.user.id, { auth: true }, data.session.user.email ?? null);
       }

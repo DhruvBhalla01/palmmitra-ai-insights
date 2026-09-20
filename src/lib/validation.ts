@@ -16,7 +16,7 @@ export const nameSchema = z
       .string()
       .min(2, 'Name must be at least 2 characters')
       .max(60, 'Name must be under 60 characters')
-      .regex(/[A-Za-z\u00C0-\u024F\u0900-\u097F]/, 'Please enter a valid name')
+      .regex(/[\p{Script=Latin}\p{Script=Devanagari}]/u, 'Please enter a valid name')
       .regex(/^[^<>{}$]*$/, 'Name contains invalid characters')
       .refine((v) => !/^\d+$/.test(v), 'Name cannot be only numbers'),
   );

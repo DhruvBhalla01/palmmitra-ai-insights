@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
         provider_payment_id: razorpay_payment_id,
         plan_id: payment.plan_type,
         amount: payment.amount,
-        currency: 'INR',
+        currency: payment.currency || 'INR',
         report_id: payment.report_id || payment.palmmatch_report_id || null,
         payment_provider: 'razorpay',
         error_category: 'validation_error',
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
       provider_payment_id: razorpay_payment_id,
       plan_id: payment.plan_type,
       amount: payment.amount,
-      currency: 'INR',
+      currency: payment.currency || 'INR',
       report_id: payment.report_id || payment.palmmatch_report_id || null,
       payment_provider: 'razorpay',
     };

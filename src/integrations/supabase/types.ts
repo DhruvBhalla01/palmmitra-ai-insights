@@ -372,6 +372,7 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+            currency: string
           created_at: string
           id: string
           palmmatch_report_id: string | null
@@ -385,6 +386,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          currency?: string
           created_at?: string
           id?: string
           palmmatch_report_id?: string | null
@@ -398,6 +400,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          currency?: string
           created_at?: string
           id?: string
           palmmatch_report_id?: string | null
