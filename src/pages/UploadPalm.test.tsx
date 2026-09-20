@@ -4,6 +4,8 @@ import UploadPalm from "@/pages/UploadPalm";
 import { renderWithRouter } from "@/test/test-utils";
 import { sampleReading } from "@/test/fixtures/palmReading";
 
+vi.mock("@/components/SEO", () => ({ SEO: () => null }));
+
 const mockNavigate = vi.hoisted(() => vi.fn());
 const mockToast = vi.hoisted(() => vi.fn());
 const mockUpload = vi.hoisted(() => vi.fn());
@@ -45,6 +47,7 @@ describe("UploadPalm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it("disables submission until the form is complete", () => {
