@@ -1,6 +1,6 @@
 // Small SEO helpers shared across route <SEO /> instances.
 
-const SITE_URL = "https://palmmitra.com";
+const SITE_URL = "https://www.palmmitra.in";
 
 /**
  * Build a BreadcrumbList JSON-LD for a route.

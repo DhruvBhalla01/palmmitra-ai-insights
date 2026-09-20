@@ -1497,7 +1497,7 @@ export async function generateReportPDF(reading: PalmReading, userData: UserData
 
   sans(10, 'bold');
   rgb(C.gold);
-  doc.text('palmmitra.com/upgrade', W / 2, upsellY + 40, { align: 'center' });
+  doc.text('www.palmmitra.in/upgrade', W / 2, upsellY + 40, { align: 'center' });
 
   // ── Share CTA ──────────────────────────────────────────────────────────────
   const shareY = upsellY + upsellH + 18;
@@ -1512,7 +1512,7 @@ export async function generateReportPDF(reading: PalmReading, userData: UserData
 
   sans(10, 'bold');
   rgb(C.gold);
-  doc.text('palmmitra.com', W / 2, shareY + 22, { align: 'center' });
+  doc.text('www.palmmitra.in', W / 2, shareY + 22, { align: 'center' });
 
   // Gold rule
   stroke(C.gold);
@@ -1527,7 +1527,7 @@ export async function generateReportPDF(reading: PalmReading, userData: UserData
   doc.text('Your reading is stored permanently at:', W / 2, revisitY, { align: 'center' });
   sans(10, 'bold');
   rgb(C.gold);
-  doc.text('palmmitra.com/report', W / 2, revisitY + 10, { align: 'center' });
+  doc.text('www.palmmitra.in/report', W / 2, revisitY + 10, { align: 'center' });
 
   // Footer on CTA page
   sans(7.5);
