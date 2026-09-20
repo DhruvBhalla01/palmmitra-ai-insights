@@ -103,39 +103,42 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <m.button
-          className="lg:hidden p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          whileTap={{ scale: 0.95 }}
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="mobile-nav"
-        >
-          <AnimatePresence mode="wait">
-            {isMobileMenuOpen ? (
-              <m.div
-                key="close"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <X size={24} />
-              </m.div>
-            ) : (
-              <m.div
-                key="menu"
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Menu size={24} />
-              </m.div>
-            )}
-          </AnimatePresence>
-        </m.button>
+        <div className="lg:hidden ml-auto flex items-center gap-1.5">
+          <CurrencySelector compact />
+          {/* Mobile Menu Button */}
+          <m.button
+            className="p-2 text-foreground rounded-xl hover:bg-accent/10 transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            whileTap={{ scale: 0.95 }}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-nav"
+          >
+            <AnimatePresence mode="wait">
+              {isMobileMenuOpen ? (
+                <m.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={24} />
+                </m.div>
+              ) : (
+                <m.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={24} />
+                </m.div>
+              )}
+            </AnimatePresence>
+          </m.button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -190,10 +193,6 @@ export function Navbar() {
                 transition={{ delay: 0.35 }}
                 className="mt-1"
               >
-                <div className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm text-foreground font-medium">Currency</span>
-                  <CurrencySelector compact />
-                </div>
                 <button
                   type="button"
                   onClick={toggleTheme}
