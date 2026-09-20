@@ -4,6 +4,8 @@ import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
 import { currencyForCountry, PRODUCTS } from '@/config/pricing';
 import { detectVisitorLocation } from '@/lib/location';
+import { PRODUCTS } from '@/config/pricing';
+import posthog from '@/lib/posthog';
 
 declare global {
   interface Window {
@@ -119,7 +121,9 @@ export function useReportUnlock(
       amount: product.prices[currency].major,
       currency,
     } as const;
-    analytics.track('checkout_payment_initiated', { ...commerce, checkout_step: 'create_order' });
+    const orderProperties = { ...commerce, checkout_step: 'create_order' };
+    analytics.track('checkout_payment_initiated', orderProperties);
+    posthog.capture('checkout_payment_initiated', orderProperties);
 
     try {
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
@@ -160,7 +164,9 @@ export function useReportUnlock(
         order_id,
         handler: async (response: RazorpayResponse) => {
           try {
-            analytics.track('checkout_payment_success', { ...commerce, checkout_step: 'provider_callback' });
+            const providerSuccessProperties = { ...commerce, checkout_step: 'provider_callback' };
+            analytics.track('checkout_payment_success', providerSuccessProperties);
+            posthog.capture('checkout_payment_success', providerSuccessProperties);
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
               'verify-razorpay-payment',
               {
@@ -182,7 +188,9 @@ export function useReportUnlock(
             if (verifyData.subscription) {
               setHasSubscription(true);
             }
-            analytics.track('checkout_completed', { ...commerce, checkout_step: 'server_verified' });
+            const completionProperties = { ...commerce, checkout_step: 'server_verified' };
+            analytics.track('checkout_completed', completionProperties);
+            posthog.capture('checkout_completed', completionProperties);
 
             const successMessage =
               plan === 'report99'      ? 'Your Insight report is now fully unlocked!' :
@@ -201,11 +209,13 @@ export function useReportUnlock(
           } catch (error) {
             console.error('Payment verification error:', error);
             setIsProcessing(false);
-            analytics.track('checkout_payment_failed', {
+            const failureProperties = {
               ...commerce,
               checkout_step: 'verification',
               error_category: 'provider_error',
-            });
+            };
+            analytics.track('checkout_payment_failed', failureProperties);
+            posthog.capture('checkout_payment_failed', failureProperties);
             trackApiError('verify-razorpay-payment', error);
             toast({
               title: 'Verification Failed',
@@ -219,11 +229,13 @@ export function useReportUnlock(
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
-            analytics.track('checkout_payment_cancelled', {
+            const cancellationProperties = {
               ...commerce,
               checkout_step: 'provider_modal',
               error_category: 'user_cancelled',
-            });
+            };
+            analytics.track('checkout_payment_cancelled', cancellationProperties);
+            posthog.capture('checkout_payment_cancelled', cancellationProperties);
             toast({ title: 'Payment Cancelled', description: 'You can try again anytime.' });
           },
         },
@@ -232,12 +244,14 @@ export function useReportUnlock(
       const razorpay = new window.Razorpay(options);
       razorpay.on('payment.failed', () => {
         setIsProcessing(false);
-        analytics.track('checkout_payment_failed', {
+        const failureProperties = {
           ...commerce,
           checkout_step: 'provider_payment',
           error_category: 'provider_error',
           payment_provider: 'razorpay',
-        });
+        };
+        analytics.track('checkout_payment_failed', failureProperties);
+        posthog.capture('checkout_payment_failed', failureProperties);
         toast({
           title: 'Payment Failed',
           description: 'Please try again or use a different payment method.',
@@ -245,20 +259,24 @@ export function useReportUnlock(
         });
       });
       razorpay.open();
-      analytics.track('checkout_payment_redirected', {
+      const redirectProperties = {
         ...commerce,
         checkout_step: 'provider_modal',
         payment_provider: 'razorpay',
-      });
+      };
+      analytics.track('checkout_payment_redirected', redirectProperties);
+      posthog.capture('checkout_payment_redirected', redirectProperties);
 
     } catch (error) {
       console.error('Payment initiation error:', error);
-      analytics.track('checkout_payment_failed', {
+      const failureProperties = {
         ...commerce,
         checkout_step: 'create_order',
         error_category: 'network_error',
         payment_provider: 'razorpay',
-      });
+      };
+      analytics.track('checkout_payment_failed', failureProperties);
+      posthog.capture('checkout_payment_failed', failureProperties);
       trackApiError('create-razorpay-order', error);
       toast({
         title: 'Payment Error',

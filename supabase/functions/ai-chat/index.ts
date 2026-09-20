@@ -5,6 +5,7 @@ import {
 import { verifyReportOwner } from "../_shared/ai-owner.ts";
 import { buildReportContext, buildSystemPrompt } from "../_shared/ai-context.ts";
 import { emitServerEvent } from '../_shared/analytics.ts';
+import { captureAiGeneration } from "../_shared/posthog-ai.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -67,6 +68,7 @@ Deno.serve(async (req) => {
       .from("ai_conversations").insert({ report_id: reportId }).select("id").single();
     convId = cr!.id;
   }
+  const aiTraceId = crypto.randomUUID();
 
   // History window
   const { data: history } = await admin
@@ -221,6 +223,18 @@ Deno.serve(async (req) => {
               feature: 'palmmitra_ai', model: AI_MODEL, report_id: reportId,
               latency_ms: Date.now() - aiStartedAt, input_tokens: inTok,
               output_tokens: outTok, cached_tokens: 0, success: true,
+            });
+            await captureAiGeneration({
+              context: { sessionId: convId!, traceId: aiTraceId },
+              distinctId: reportId,
+              spanName: "ai_chat_response",
+              model: AI_MODEL,
+              input: messages,
+              output: assistant,
+              inputTokens: inTok,
+              outputTokens: outTok,
+              latencyMs: Date.now() - aiStartedAt,
+              stream: true,
             });
           } else {
             await admin.rpc("refund_ai_question_by_report", { _report_id: reportId, _source: source });

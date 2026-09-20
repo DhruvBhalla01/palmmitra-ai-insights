@@ -1,0 +1,1 @@
+const i="https://palmmitra.com";function r(t){return{"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[["Home","/"],...t].map(([e,m],s)=>({"@type":"ListItem",position:s+1,name:e,item:`${i}${m}`}))}}export{r as b};

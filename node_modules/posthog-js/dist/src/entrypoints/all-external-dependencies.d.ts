@@ -1,0 +1,10 @@
+import './lazy-recorder';
+import './surveys';
+import './logs';
+import './exception-autocapture';
+import './tracing-headers';
+import './web-vitals-with-attribution-soft-navs';
+import './web-vitals-soft-navs';
+import './web-vitals-with-attribution';
+import './web-vitals';
+import './dead-clicks-autocapture';

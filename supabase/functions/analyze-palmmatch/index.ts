@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { captureAiGeneration, type AiCaptureContext } from "../_shared/posthog-ai.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,7 +17,8 @@ interface PalmMatchRequest {
   email: string;
 }
 
-const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<{ is_palm: boolean; confidence: number }> => {
+const validatePalmImage = async (imageUrl: string, apiKey: string, context: AiCaptureContext): Promise<{ is_palm: boolean; confidence: number }> => {
+  const startedAt = Date.now();
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -43,6 +45,14 @@ const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<{ is
   if (!response.ok) throw new Error("Failed to validate image");
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content || "{}";
+  await captureAiGeneration({
+    context,
+    spanName: "validate_palmmatch_image",
+    model: "gpt-4.1",
+    input: [{ role: "user", content: [{ type: "image_url", image_url: { url: imageUrl } }] }],
+    output: content,
+    latencyMs: Date.now() - startedAt,
+  });
   const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
   try {
     return JSON.parse(cleaned);
@@ -58,8 +68,10 @@ const generateCompatibilityReading = async (
   person1: { name: string; age: string },
   person2: { name: string; age: string },
   relationshipType: string,
-  apiKey: string
+  apiKey: string,
+  context: AiCaptureContext,
 ): Promise<object> => {
+  const startedAt = Date.now();
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -157,6 +169,14 @@ Return this exact JSON structure with rich, personalized content (minimum 3 sent
 
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content || "{}";
+  await captureAiGeneration({
+    context,
+    spanName: "generate_palmmatch_reading",
+    model: "gpt-4.1",
+    input: [{ role: "user", content: [{ type: "image_url", image_url: { url: image1Url } }, { type: "image_url", image_url: { url: image2Url } }] }],
+    output: content,
+    latencyMs: Date.now() - startedAt,
+  });
   const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
   try {
     return JSON.parse(cleaned);
@@ -247,11 +267,12 @@ serve(async (req) => {
     const cleanP2 = { name: person2.name.replace(/\s+/g, " ").trim(), age: String(parseAge(person2.age)) };
 
     console.log(`PalmMatch: Validating palms`);
+    const aiCaptureContext = { sessionId: crypto.randomUUID(), traceId: crypto.randomUUID() };
 
     // Validate both palms in parallel
     const [validation1, validation2] = await Promise.all([
-      validatePalmImage(image1Url, openaiApiKey),
-      validatePalmImage(image2Url, openaiApiKey),
+      validatePalmImage(image1Url, openaiApiKey, aiCaptureContext),
+      validatePalmImage(image2Url, openaiApiKey, aiCaptureContext),
     ]);
 
     if (!validation1.is_palm || validation1.confidence < 50) {
@@ -281,7 +302,7 @@ serve(async (req) => {
     console.log("Both palms validated. Generating compatibility reading...");
 
     const reading = await generateCompatibilityReading(
-      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey
+      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext
     );
 
     const reportId = `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
