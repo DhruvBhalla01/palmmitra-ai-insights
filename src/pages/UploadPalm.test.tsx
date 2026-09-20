@@ -53,7 +53,7 @@ describe("UploadPalm", () => {
   it("disables submission until the form is complete", () => {
     renderWithRouter(<UploadPalm />);
     expect(
-      screen.getByRole("button", { name: /start palm scan/i })
+      screen.getByRole("button", { name: /begin my free reading/i })
     ).toBeDisabled();
   });
 
@@ -108,7 +108,7 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
 
     await waitFor(() => {
       expect(mockUpload).toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
 
     expect(
       await screen.findByText(/this does not look like a clear palm photo/i)
