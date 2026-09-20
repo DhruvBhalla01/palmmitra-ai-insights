@@ -3,7 +3,7 @@ import { X, Lock, Shield, Zap, Check, Eye, ShieldCheck, Gem, Sparkles, CreditCar
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import type { PlanType } from "@/hooks/useReportUnlock";
-import { PRODUCTS } from "@/config/pricing";
+import { PRODUCTS, formatCurrency } from "@/config/pricing";
 import { useCurrency } from "@/hooks/useCurrency";
 import { analytics, recordInteraction } from '@/lib/analytics';
 import posthog from '@/lib/posthog';
@@ -74,7 +74,7 @@ export function PaymentModal({
   const insightPrice = PRODUCTS.insight.prices[currency].display;
   const elitePrice = PRODUCTS.elite.prices[currency].display;
   const priceLabel = selectedPlan === "report99" ? insightPrice : elitePrice;
-  const anchorPrice = currency === 'INR' ? '₹499' : '$19.99';
+  const anchorPrice = formatCurrency(Math.round(PRODUCTS.insight.prices[currency].minor * 499 / 299), currency);
 
   return (
     <AnimatePresence>

@@ -332,9 +332,12 @@ export type Database = {
       }
       palm_reports: {
         Row: {
+          country_code: string | null
+          country_name: string | null
           created_at: string | null
           id: string
           image_url: string
+          language: string
           reading_type: string | null
           report_json: Json | null
           user_age: string | null
@@ -344,9 +347,12 @@ export type Database = {
           validation_quality: string | null
         }
         Insert: {
+          country_code?: string | null
+          country_name?: string | null
           created_at?: string | null
           id?: string
           image_url: string
+          language?: string
           reading_type?: string | null
           report_json?: Json | null
           user_age?: string | null
@@ -356,9 +362,12 @@ export type Database = {
           validation_quality?: string | null
         }
         Update: {
+          country_code?: string | null
+          country_name?: string | null
           created_at?: string | null
           id?: string
           image_url?: string
+          language?: string
           reading_type?: string | null
           report_json?: Json | null
           user_age?: string | null
@@ -373,6 +382,7 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          currency: string
           id: string
           palmmatch_report_id: string | null
           plan_type: string
@@ -386,6 +396,7 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          currency?: string
           id?: string
           palmmatch_report_id?: string | null
           plan_type: string
@@ -399,6 +410,7 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          currency?: string
           id?: string
           palmmatch_report_id?: string | null
           plan_type?: string

@@ -9,7 +9,22 @@
  * Keep that file in sync whenever you change amounts here.
  */
 
-export type Currency = 'INR' | 'USD';
+export const CURRENCIES = ['INR', 'USD', 'GBP', 'AED', 'CAD', 'AUD', 'SGD'] as const;
+export type Currency = typeof CURRENCIES[number];
+export type CountryCode = 'IN' | 'US' | 'GB' | 'AE' | 'CA' | 'AU' | 'SG';
+
+export const COUNTRY_TO_CURRENCY: Record<CountryCode, Currency> = {
+  IN: 'INR', US: 'USD', GB: 'GBP', AE: 'AED', CA: 'CAD', AU: 'AUD', SG: 'SGD',
+};
+
+export const CURRENCY_TO_COUNTRY: Record<Currency, CountryCode> = {
+  INR: 'IN', USD: 'US', GBP: 'GB', AED: 'AE', CAD: 'CA', AUD: 'AU', SGD: 'SG',
+};
+
+export const CURRENCY_LABELS: Record<Currency, string> = {
+  INR: '₹ INR', USD: '$ USD', GBP: '£ GBP', AED: 'د.إ AED',
+  CAD: 'CA$ CAD', AUD: 'A$ AUD', SGD: 'S$ SGD',
+};
 
 /** Stable internal plan identifiers (DO NOT change — DB constraints depend on these) */
 export type PlanId = 'report99' | 'palmmatch149' | 'monthly299' | 'unlimited999';
@@ -52,6 +67,11 @@ export const PRODUCTS = {
     prices: {
       INR: { minor: 29900, major: 299,  display: '₹299'   },
       USD: { minor:   999, major: 9.99, display: '$9.99'  },
+      GBP: { minor:   799, major: 7.99, display: '£7.99'  },
+      AED: { minor:  3900, major: 39,   display: 'AED 39' },
+      CAD: { minor:  1400, major: 14,   display: 'CA$14'  },
+      AUD: { minor:  1500, major: 15,   display: 'A$15'   },
+      SGD: { minor:  1400, major: 14,   display: 'S$14'   },
     },
   },
   palmmatch: {
@@ -63,6 +83,11 @@ export const PRODUCTS = {
     prices: {
       INR: { minor: 99900, major: 999,   display: '₹999'   },
       USD: { minor:  2499, major: 24.99, display: '$24.99' },
+      GBP: { minor:  1999, major: 19.99, display: '£19.99' },
+      AED: { minor:  9900, major: 99,    display: 'AED 99' },
+      CAD: { minor:  3400, major: 34,    display: 'CA$34'  },
+      AUD: { minor:  3900, major: 39,    display: 'A$39'   },
+      SGD: { minor:  3400, major: 34,    display: 'S$34'   },
     },
   },
   elite: {
@@ -74,6 +99,11 @@ export const PRODUCTS = {
     prices: {
       INR: { minor: 499900, major: 4999, display: '₹4,999' },
       USD: { minor:  14900, major: 149,  display: '$149'   },
+      GBP: { minor:  11900, major: 119,  display: '£119'   },
+      AED: { minor:  54900, major: 549,  display: 'AED 549' },
+      CAD: { minor:  19900, major: 199,  display: 'CA$199' },
+      AUD: { minor:  21900, major: 219,  display: 'A$219' },
+      SGD: { minor:  19900, major: 199,  display: 'S$199' },
     },
   },
 } as const satisfies Record<string, ProductPricing>;
@@ -92,6 +122,16 @@ export function getProductByPlanId(planId: PlanId): ProductPricing | undefined {
 /** Format a price for a product in the user's currency */
 export function priceFor(productKey: ProductKey, currency: Currency = 'INR'): string {
   return PRODUCTS[productKey].prices[currency].display;
+}
+
+export function formatCurrency(minor: number, currency: Currency): string {
+  return new Intl.NumberFormat(currency === 'INR' ? 'en-IN' : 'en-US', {
+    style: 'currency', currency, minimumFractionDigits: minor % 100 === 0 ? 0 : 2,
+  }).format(minor / 100);
+}
+
+export function countryForCurrency(currency: Currency): CountryCode {
+  return CURRENCY_TO_COUNTRY[currency];
 }
 
 /** Razorpay amount (paise) — INR only */

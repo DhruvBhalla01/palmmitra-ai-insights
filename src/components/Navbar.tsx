@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { SmartLink } from '@/components/SmartLink';
 import { useTheme } from '@/hooks/useTheme';
 import logoImg from '@/assets/logo.webp';
+import { CurrencySelector } from '@/components/CurrencySelector';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -83,6 +84,7 @@ export function Navbar() {
 
         {/* CTA Button */}
         <div className="hidden lg:flex items-center gap-3">
+          <CurrencySelector compact />
           <button
             type="button"
             onClick={toggleTheme}
@@ -188,6 +190,10 @@ export function Navbar() {
                 transition={{ delay: 0.35 }}
                 className="mt-1"
               >
+                <div className="flex items-center justify-between px-4 py-2">
+                  <span className="text-sm text-foreground font-medium">Currency</span>
+                  <CurrencySelector compact />
+                </div>
                 <button
                   type="button"
                   onClick={toggleTheme}
