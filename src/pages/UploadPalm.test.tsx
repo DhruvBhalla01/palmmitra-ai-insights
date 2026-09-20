@@ -41,7 +41,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 const createImageFile = () =>
-  new File(["fake image"], "palm.png", { type: "image/png" });
+  new File([new Uint8Array(24 * 1024)], "palm.png", { type: "image/png" });
 
 describe("UploadPalm", () => {
   beforeEach(() => {
