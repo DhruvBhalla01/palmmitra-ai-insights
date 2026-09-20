@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { emitServerEvent } from '../_shared/analytics.ts';
 
 // No CORS headers — this endpoint is called by Razorpay servers, not browsers.
 // Do NOT add Access-Control-Allow-Origin here.
@@ -100,6 +101,26 @@ Deno.serve(async (req) => {
       .update({ status: 'success', razorpay_payment_id: razorpayPaymentId })
       .eq('id', payment.id);
 
+    const eventContext = {
+      userId: payment.user_id,
+      userEmail: payment.user_email,
+      pagePath: '/checkout',
+    };
+    const eventProps = {
+      payment_id: payment.id,
+      provider_order_id: razorpayOrderId,
+      provider_payment_id: razorpayPaymentId,
+      plan_id: payment.plan_type,
+      amount: payment.amount,
+      currency: 'INR',
+      report_id: payment.report_id || payment.palmmatch_report_id || null,
+      payment_provider: 'razorpay',
+    };
+    await emitServerEvent(supabase, 'payment_success', {
+      ...eventContext,
+      dedupeKey: `payment:${razorpayPaymentId}:success`,
+    }, eventProps);
+
     // Run unlock logic based on plan
     if (payment.plan_type === 'report99') {
       const { error } = await supabase.from('report_unlocks').insert({
@@ -108,7 +129,13 @@ Deno.serve(async (req) => {
         payment_id: payment.id,
       });
       if (error) console.error('Webhook: failed to create report unlock:', error);
-      else console.log('Webhook: report unlocked via webhook:', payment.report_id);
+      else {
+        console.log('Webhook: report unlocked via webhook:', payment.report_id);
+        await emitServerEvent(supabase, 'report_unlocked', {
+          ...eventContext,
+          dedupeKey: `payment:${razorpayPaymentId}:report_unlock`,
+        }, { ...eventProps, unlock_type: 'insight_report' });
+      }
 
     } else if (payment.plan_type === 'palmmatch149') {
       if (payment.palmmatch_report_id) {
@@ -117,7 +144,13 @@ Deno.serve(async (req) => {
           .update({ is_unlocked: true, payment_id: payment.id })
           .eq('report_id', payment.palmmatch_report_id);
         if (error) console.error('Webhook: failed to unlock palmmatch:', error);
-        else console.log('Webhook: palmmatch report unlocked:', payment.palmmatch_report_id);
+        else {
+          console.log('Webhook: palmmatch report unlocked:', payment.palmmatch_report_id);
+          await emitServerEvent(supabase, 'report_unlocked', {
+            ...eventContext,
+            dedupeKey: `payment:${razorpayPaymentId}:palmmatch_unlock`,
+          }, { ...eventProps, unlock_type: 'palmmatch_report' });
+        }
       }
 
     } else if (payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999') {
@@ -168,6 +201,22 @@ Deno.serve(async (req) => {
     if (payment.status !== 'success') {
       await supabase.from('payments').update({ status: 'failed' }).eq('id', payment.id);
       console.log('Webhook: payment marked failed:', razorpayOrderId);
+      await emitServerEvent(supabase, 'payment_failed', {
+        dedupeKey: `payment:${razorpayPaymentId}:failed`,
+        userId: payment.user_id,
+        userEmail: payment.user_email,
+        pagePath: '/checkout',
+      }, {
+        payment_id: payment.id,
+        provider_order_id: razorpayOrderId,
+        provider_payment_id: razorpayPaymentId,
+        plan_id: payment.plan_type,
+        amount: payment.amount,
+        currency: 'INR',
+        report_id: payment.report_id || payment.palmmatch_report_id || null,
+        payment_provider: 'razorpay',
+        error_category: 'provider_error',
+      });
     }
   }
 

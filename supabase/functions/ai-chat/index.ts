@@ -4,6 +4,7 @@ import {
 } from "../_shared/ai-pricing.ts";
 import { verifyReportOwner } from "../_shared/ai-owner.ts";
 import { buildReportContext, buildSystemPrompt } from "../_shared/ai-context.ts";
+import { emitServerEvent } from '../_shared/analytics.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,6 +39,12 @@ Deno.serve(async (req) => {
   if (!owner.ok) return json({ error: owner.error }, owner.status ?? 400);
   const report = owner.report!;
   const reportId = report.id;
+  const aiStartedAt = Date.now();
+  await emitServerEvent(admin, 'ai_request_started', {
+    dedupeKey: `ai:${reportId}:${aiStartedAt}:started`,
+    userEmail: body.userEmail,
+    pagePath: `/report/${reportId}`,
+  }, { feature: 'palmmitra_ai', model: AI_MODEL, report_id: reportId });
 
   // Rate limit: per-report, last 60s
   const cutoff = new Date(Date.now() - 60_000).toISOString();
@@ -119,6 +126,14 @@ Deno.serve(async (req) => {
   } catch (e) {
     await admin.rpc("refund_ai_question_by_report", { _report_id: reportId, _source: source });
     console.error("openai error", e);
+    await emitServerEvent(admin, 'ai_request_failed', {
+      dedupeKey: `ai:${reportId}:${aiStartedAt}:failed`,
+      userEmail: body.userEmail,
+      pagePath: `/report/${reportId}`,
+    }, {
+      feature: 'palmmitra_ai', model: AI_MODEL, report_id: reportId,
+      latency_ms: Date.now() - aiStartedAt, error_category: 'network_error', success: false,
+    });
     return json({ error: "ai_unavailable" }, 502);
   }
 
@@ -126,6 +141,15 @@ Deno.serve(async (req) => {
     await admin.rpc("refund_ai_question_by_report", { _report_id: reportId, _source: source });
     const t = await openaiRes.text().catch(() => "");
     console.error("openai non-ok", openaiRes.status, t);
+    await emitServerEvent(admin, 'ai_request_failed', {
+      dedupeKey: `ai:${reportId}:${aiStartedAt}:failed`,
+      userEmail: body.userEmail,
+      pagePath: `/report/${reportId}`,
+    }, {
+      feature: 'palmmitra_ai', model: AI_MODEL, report_id: reportId,
+      latency_ms: Date.now() - aiStartedAt, status_code: openaiRes.status,
+      error_category: openaiRes.status === 429 ? 'rate_limited' : 'provider_error', success: false,
+    });
     return json({ error: "ai_unavailable" }, 502);
   }
 
@@ -188,6 +212,15 @@ Deno.serve(async (req) => {
               source,
               input_tokens: inTok,
               output_tokens: outTok,
+            });
+            await emitServerEvent(admin, 'ai_request_completed', {
+              dedupeKey: `ai:${reportId}:${aiStartedAt}:completed`,
+              userEmail: body.userEmail,
+              pagePath: `/report/${reportId}`,
+            }, {
+              feature: 'palmmitra_ai', model: AI_MODEL, report_id: reportId,
+              latency_ms: Date.now() - aiStartedAt, input_tokens: inTok,
+              output_tokens: outTok, cached_tokens: 0, success: true,
             });
           } else {
             await admin.rpc("refund_ai_question_by_report", { _report_id: reportId, _source: source });

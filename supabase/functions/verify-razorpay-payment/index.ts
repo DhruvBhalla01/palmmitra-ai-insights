@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { emitServerEvent } from '../_shared/analytics.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -97,6 +98,22 @@ Deno.serve(async (req) => {
       if (payment.status !== 'success') {
         await supabase.from('payments').update({ status: 'failed' }).eq('id', payment_id);
       }
+      await emitServerEvent(supabase, 'payment_failed', {
+        dedupeKey: `payment:${razorpay_payment_id}:signature`,
+        userId: payment.user_id,
+        userEmail: payment.user_email,
+        pagePath: '/checkout',
+      }, {
+        payment_id: payment.id,
+        provider_order_id: razorpay_order_id,
+        provider_payment_id: razorpay_payment_id,
+        plan_id: payment.plan_type,
+        amount: payment.amount,
+        currency: 'INR',
+        report_id: payment.report_id || payment.palmmatch_report_id || null,
+        payment_provider: 'razorpay',
+        error_category: 'validation_error',
+      });
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid payment signature' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -123,6 +140,26 @@ Deno.serve(async (req) => {
       .update({ status: 'success', razorpay_payment_id })
       .eq('id', payment_id);
 
+    const eventContext = {
+      userId: payment.user_id,
+      userEmail: payment.user_email,
+      pagePath: '/checkout',
+    };
+    const eventProps = {
+      payment_id: payment.id,
+      provider_order_id: razorpay_order_id,
+      provider_payment_id: razorpay_payment_id,
+      plan_id: payment.plan_type,
+      amount: payment.amount,
+      currency: 'INR',
+      report_id: payment.report_id || payment.palmmatch_report_id || null,
+      payment_provider: 'razorpay',
+    };
+    await emitServerEvent(supabase, 'payment_success', {
+      ...eventContext,
+      dedupeKey: `payment:${razorpay_payment_id}:success`,
+    }, eventProps);
+
     let isSubscription = false;
 
     if (payment.plan_type === 'report99') {
@@ -134,7 +171,13 @@ Deno.serve(async (req) => {
           payment_id: payment.id,
         });
       if (unlockError) console.error('Failed to create report unlock:', unlockError);
-      else console.log('Report unlock created for:', payment.report_id);
+      else {
+        console.log('Report unlock created for:', payment.report_id);
+        await emitServerEvent(supabase, 'report_unlocked', {
+          ...eventContext,
+          dedupeKey: `payment:${razorpay_payment_id}:report_unlock`,
+        }, { ...eventProps, unlock_type: 'insight_report' });
+      }
 
     } else if (payment.plan_type === 'palmmatch149') {
       if (!payment.palmmatch_report_id) {
@@ -145,7 +188,13 @@ Deno.serve(async (req) => {
           .update({ is_unlocked: true, payment_id: payment.id })
           .eq('report_id', payment.palmmatch_report_id);
         if (pmError) console.error('Failed to unlock palmmatch report:', pmError);
-        else console.log('PalmMatch report unlocked:', payment.palmmatch_report_id);
+        else {
+          console.log('PalmMatch report unlocked:', payment.palmmatch_report_id);
+          await emitServerEvent(supabase, 'report_unlocked', {
+            ...eventContext,
+            dedupeKey: `payment:${razorpay_payment_id}:palmmatch_unlock`,
+          }, { ...eventProps, unlock_type: 'palmmatch_report' });
+        }
       }
 
     } else if (payment.plan_type === 'monthly299' || payment.plan_type === 'unlimited999') {

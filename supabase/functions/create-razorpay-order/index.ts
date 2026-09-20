@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { emitServerEvent } from '../_shared/analytics.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,6 +13,12 @@ interface CreateOrderRequest {
   report_id?: string;
   palmmatch_report_id?: string;
   plan: PlanType;
+  analytics_context?: {
+    anonymous_id?: string;
+    session_id?: string;
+    environment?: string;
+    page_path?: string;
+  };
 }
 
 // Amounts in paise (INR). Keep in sync with src/config/pricing.ts
@@ -34,7 +41,7 @@ Deno.serve(async (req) => {
 
   try {
     const body: CreateOrderRequest = await req.json();
-    const { user_email, report_id, palmmatch_report_id, plan } = body;
+    const { user_email, report_id, palmmatch_report_id, plan, analytics_context } = body;
 
     if (!user_email || !plan) {
       return ok({ success: false, error: 'Missing required fields: user_email and plan' });
@@ -110,6 +117,23 @@ Deno.serve(async (req) => {
       console.error('Database error:', dbError);
       return ok({ success: false, error: 'Failed to save payment record. Please try again.' });
     }
+
+    await emitServerEvent(supabase, 'order_created', {
+      dedupeKey: `order:${razorpayRes.id}`,
+      userEmail: user_email,
+      anonymousId: analytics_context?.anonymous_id,
+      sessionId: analytics_context?.session_id,
+      environment: analytics_context?.environment,
+      pagePath: analytics_context?.page_path,
+    }, {
+      payment_id: payment.id,
+      provider_order_id: razorpayRes.id,
+      plan_id: plan,
+      amount: finalAmount,
+      currency: 'INR',
+      report_id: report_id || palmmatch_report_id || null,
+      payment_provider: 'razorpay',
+    });
 
     return ok({
       success: true,

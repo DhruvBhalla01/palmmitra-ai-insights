@@ -90,7 +90,31 @@ function installClickDelegation() {
   }, true);
 }
 
+function installSectionObserver() {
+  if (typeof IntersectionObserver === 'undefined') return;
+  const seen = new WeakSet<Element>();
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting || entry.intersectionRatio < 0.35 || seen.has(entry.target)) return;
+      seen.add(entry.target);
+      const element = entry.target as HTMLElement;
+      const sectionId = element.dataset.analyticsSection || element.id;
+      if (sectionId) markSectionViewed(sectionId);
+    });
+  }, { threshold: [0.35] });
+  const observe = () => {
+    document.querySelectorAll<HTMLElement>('[data-analytics-section], main section[id], main > section, footer').forEach((el, index) => {
+      if (!el.dataset.analyticsSection && !el.id) el.dataset.analyticsSection = `section_${index}`;
+      observer.observe(el);
+    });
+  };
+  observe();
+  const mutationObserver = new MutationObserver(observe);
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
+}
+
 let clicksInstalled = false;
+let sectionsInstalled = false;
 
 /* ------------------------------- the provider ------------------------------ */
 
@@ -101,6 +125,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     boot();
     if (!clicksInstalled) { clicksInstalled = true; installClickDelegation(); }
+    if (!sectionsInstalled) { sectionsInstalled = true; installSectionObserver(); }
 
     // Attach authenticated identity when available.
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {

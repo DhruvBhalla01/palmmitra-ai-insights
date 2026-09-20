@@ -215,19 +215,21 @@ export default function Report() {
           if (rect.top <= 200 && rect.bottom >= 200) {
             setActiveSection(section.id);
               const sectionIndex = reportSections.findIndex((candidate) => candidate.id === section.id);
-              markSectionViewed(`report_${section.id}`, {
+              const firstView = markSectionViewed(`report_${section.id}`, {
                 section_name: reportSections[sectionIndex]?.label ?? section.id,
                 section_index: sectionIndex,
               });
-              analytics.track('destiny_section_viewed', {
-                section_id: section.id,
-                section_name: reportSections[sectionIndex]?.label ?? section.id,
-                section_index: sectionIndex,
-              });
-              analytics.track('report_section_viewed', {
-                section_id: section.id,
-                section_index: sectionIndex,
-              });
+              if (firstView) {
+                analytics.track('destiny_section_viewed', {
+                  section_id: section.id,
+                  section_name: reportSections[sectionIndex]?.label ?? section.id,
+                  section_index: sectionIndex,
+                });
+                analytics.track('report_section_viewed', {
+                  section_id: section.id,
+                  section_index: sectionIndex,
+                });
+              }
             break;
           }
         }
