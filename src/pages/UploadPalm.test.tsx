@@ -108,7 +108,9 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
+    const submit = screen.getByRole("button", { name: /begin my free reading/i });
+    await waitFor(() => expect(submit).toBeEnabled());
+    fireEvent.click(submit);
 
     await waitFor(() => {
       expect(mockUpload).toHaveBeenCalled();
@@ -164,7 +166,9 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
+    const submit = screen.getByRole("button", { name: /begin my free reading/i });
+    await waitFor(() => expect(submit).toBeEnabled());
+    fireEvent.click(submit);
 
     expect(await screen.findByText(/not a palm image/i)).toBeInTheDocument();
     expect(mockNavigate).not.toHaveBeenCalled();
