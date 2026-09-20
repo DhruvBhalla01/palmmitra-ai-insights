@@ -1,0 +1,4 @@
+ALTER TABLE public.payments VALIDATE CONSTRAINT payments_currency_allowed;
+ALTER TABLE public.palm_reports VALIDATE CONSTRAINT palm_reports_language_allowed;
+ALTER TABLE public.palm_reports VALIDATE CONSTRAINT palm_reports_country_code_format;
+ALTER TABLE public.palm_reports VALIDATE CONSTRAINT palm_reports_country_name_length;

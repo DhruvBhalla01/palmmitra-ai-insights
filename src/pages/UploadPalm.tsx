@@ -381,7 +381,7 @@ export default function UploadPalm() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Palm Reading Online — Upload Your Palm Photo | PalmMitra"
-        description="Get a palm reading online in 2 minutes. Upload a photo of your dominant palm and PalmMitra reads 150+ markers to deliver a 2,000+ word personalised destiny report. Free preview, full report ₹299 / $9.99."
+        description="Get a palm reading online in 2 minutes. Upload a photo of your dominant palm and PalmMitra reads 150+ markers to deliver a personalised destiny report with a free preview and localized pricing."
         path="/upload"
         jsonLd={breadcrumbLd([["Upload Palm", "/upload"]])}
       />

@@ -485,7 +485,7 @@ export default function PalmMatch() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Palm Compatibility — AI Relationship Report for Couples | PalmMitra"
-        description="Palm compatibility analysis powered by AI. Upload two palms and get a compatibility score, dimension-by-dimension relationship breakdown, and shared destiny insights in under 3 minutes. ₹999 / $19.99."
+        description="Palm compatibility analysis powered by AI. Upload two palms and get a compatibility score, dimension-by-dimension relationship breakdown, shared destiny insights, and localized pricing."
         path="/palmmatch"
         jsonLd={breadcrumbLd([["PalmMatch", "/palmmatch"]])}
       />
