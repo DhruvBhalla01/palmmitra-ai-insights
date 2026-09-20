@@ -4,6 +4,8 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const sampleInsights = [
   {
@@ -51,6 +53,7 @@ const reportStats = [
 ];
 
 export function SampleReportTeaser() {
+  const { currency } = useCurrency();
   return (
     <section className="py-24 md:py-32 relative" aria-labelledby="sample-heading">
       <div className="container mx-auto px-4">
@@ -190,7 +193,7 @@ export function SampleReportTeaser() {
 
           {/* Below-card trust */}
           <p className="text-center text-xs text-muted-foreground mt-5">
-            2 sections free · Full 2,000-word report unlocked at ₹299 · Downloadable PDF included
+            2 sections free · Full 2,000-word report unlocked at {PRODUCTS.insight.prices[currency].display} · Downloadable PDF included
           </p>
         </m.div>
       </div>

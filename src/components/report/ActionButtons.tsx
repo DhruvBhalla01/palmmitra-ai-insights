@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { generateReportPDF } from '@/lib/generateReportPDF';
 import type { PalmReading } from './types';
 import { analytics } from '@/lib/analytics';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface UserDataForPDF {
   name: string;
@@ -32,6 +34,7 @@ export function ActionButtons({
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
+  const { currency } = useCurrency();
 
   const handleWhatsAppShare = () => {
     const name = userName ? `${userName}'s` : 'My';
@@ -39,7 +42,7 @@ export function ActionButtons({
     const message = [
       `🔮 ${name} AI Palm Reading from PalmMitra is incredible!`,
       '',
-      `Get your own reading (₹299 only) → ${reportUrl}`,
+      `Get your own reading (${PRODUCTS.insight.prices[currency].display}) → ${reportUrl}`,
     ].join('\n');
     window.open(
       `https://wa.me/?text=${encodeURIComponent(message)}`,

@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
 import { PRODUCTS } from '@/config/pricing';
 import posthog from '@/lib/posthog';
+import { useCurrency } from '@/hooks/useCurrency';
 
 declare global {
   interface Window {
@@ -51,6 +52,7 @@ export function useReportUnlock(
   userEmail: string
 ): UseReportUnlockResult {
   const { toast } = useToast();
+  const { currency: selectedCurrency, countryCode } = useCurrency();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,8 +116,8 @@ export function useReportUnlock(
     const commerce = {
       plan_id: product.id,
       plan_name: product.name,
-      amount: product.prices.INR.major,
-      currency: 'INR',
+      amount: product.prices[selectedCurrency].major,
+      currency: selectedCurrency,
     } as const;
     const orderProperties = { ...commerce, checkout_step: 'create_order' };
     analytics.track('checkout_payment_initiated', orderProperties);
@@ -129,6 +131,7 @@ export function useReportUnlock(
             user_email: userEmail,
             report_id: plan === 'report99' ? reportId : undefined,
             plan,
+            country_code: countryCode,
             analytics_context: getServerCorrelationContext(),
           },
         }
@@ -139,6 +142,7 @@ export function useReportUnlock(
       }
 
       const { order_id, amount, currency, payment_id, key_id, description } = orderData;
+      const serverCommerce = { ...commerce, amount: amount / 100, currency };
 
       if (!window.Razorpay) {
         await loadRazorpayScript();
@@ -159,7 +163,7 @@ export function useReportUnlock(
         order_id,
         handler: async (response: RazorpayResponse) => {
           try {
-            const providerSuccessProperties = { ...commerce, checkout_step: 'provider_callback' };
+            const providerSuccessProperties = { ...serverCommerce, checkout_step: 'provider_callback' };
             analytics.track('checkout_payment_success', providerSuccessProperties);
             posthog.capture('checkout_payment_success', providerSuccessProperties);
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
@@ -183,7 +187,7 @@ export function useReportUnlock(
             if (verifyData.subscription) {
               setHasSubscription(true);
             }
-            const completionProperties = { ...commerce, checkout_step: 'server_verified' };
+            const completionProperties = { ...serverCommerce, checkout_step: 'server_verified' };
             analytics.track('checkout_completed', completionProperties);
             posthog.capture('checkout_completed', completionProperties);
 
@@ -280,7 +284,7 @@ export function useReportUnlock(
       });
       setIsProcessing(false);
     }
-  }, [reportId, userEmail, toast]);
+  }, [reportId, userEmail, toast, selectedCurrency, countryCode]);
 
   return { isUnlocked, hasSubscription, isLoading, isProcessing, checkUnlockStatus, initiatePayment };
 }

@@ -95,6 +95,16 @@ Deno.serve(async (req) => {
       return new Response('ok', { status: 200 });
     }
 
+    if (
+      paymentEntity.amount !== payment.amount ||
+      paymentEntity.currency !== payment.currency ||
+      paymentEntity.order_id !== payment.razorpay_order_id ||
+      paymentEntity.status !== 'captured'
+    ) {
+      console.error('Webhook payment consistency check failed:', razorpayOrderId);
+      return new Response('Payment mismatch', { status: 400 });
+    }
+
     // Mark payment success
     await supabase
       .from('payments')
@@ -112,7 +122,7 @@ Deno.serve(async (req) => {
       provider_payment_id: razorpayPaymentId,
       plan_id: payment.plan_type,
       amount: payment.amount,
-      currency: 'INR',
+      currency: payment.currency,
       report_id: payment.report_id || payment.palmmatch_report_id || null,
       payment_provider: 'razorpay',
     };
@@ -212,7 +222,7 @@ Deno.serve(async (req) => {
         provider_payment_id: razorpayPaymentId,
         plan_id: payment.plan_type,
         amount: payment.amount,
-        currency: 'INR',
+        currency: payment.currency,
         report_id: payment.report_id || payment.palmmatch_report_id || null,
         payment_provider: 'razorpay',
         error_category: 'provider_error',

@@ -22,6 +22,9 @@ import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors }
 import { z } from 'zod';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
 import posthog from '@/lib/posthog';
+import { useCurrency } from '@/hooks/useCurrency';
+import { PRODUCTS, formatCurrency } from '@/config/pricing';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -31,6 +34,7 @@ interface FormData {
   age: string;
   email: string;
   readingType: ReadingType;
+  language: 'english' | 'hinglish';
 }
 
 interface ValidationError {
@@ -72,6 +76,7 @@ const progressSteps = [
 export default function UploadPalm() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currency, countryCode, countryName } = useCurrency();
   const [image, setImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -86,6 +91,7 @@ export default function UploadPalm() {
     age: '',
     email: '',
     readingType: 'full',
+    language: 'english',
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
   const formAnalytics = useFormAnalytics('palm_upload');
@@ -246,7 +252,11 @@ export default function UploadPalm() {
 
       const supabase = await getSupabase();
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
-        body: { imageUrl, name: cleanName, age: cleanAge, email: cleanEmail, readingType: formData.readingType },
+        body: {
+          imageUrl, name: cleanName, age: cleanAge, email: cleanEmail,
+          readingType: formData.readingType, language: formData.language,
+          countryCode, countryName,
+        },
       });
 
       if (fnError) {
@@ -288,6 +298,9 @@ export default function UploadPalm() {
       sessionStorage.setItem('palmMitraData', JSON.stringify({
         name: cleanName, age: cleanAge, email: cleanEmail,
         readingType: formData.readingType,
+        language: response.language ?? formData.language,
+        countryCode: response.countryCode ?? countryCode,
+        countryName: response.countryName ?? countryName,
         imageUrl,
         reportId: response.reportId,
         reading: response.reading,
@@ -820,6 +833,22 @@ export default function UploadPalm() {
                             </p>
                           )}
                         </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="report-language" className="text-[13px] font-medium text-foreground/90 flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-accent" />
+                            Report Language
+                          </Label>
+                          <Select value={formData.language} onValueChange={(language: 'english' | 'hinglish') => setFormData({ ...formData, language })}>
+                            <SelectTrigger id="report-language" className="h-12 rounded-xl bg-background/60 border-border/60">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="english">English</SelectItem>
+                              <SelectItem value="hinglish">Hinglish</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-[11px] text-muted-foreground/80">Choose how your complete reading is written.</p>
+                        </div>
                       </div>
                     </div>
                   </AnimatedSection>
@@ -988,9 +1017,9 @@ export default function UploadPalm() {
                           </p>
                           <div className="flex items-baseline justify-center gap-2">
                             <span className="font-serif text-3xl font-bold text-gradient-gold leading-none">
-                              ₹299
+                              {PRODUCTS.insight.prices[currency].display}
                             </span>
-                            <span className="text-xs text-muted-foreground line-through">₹499</span>
+                            <span className="text-xs text-muted-foreground line-through">{formatCurrency(Math.round(PRODUCTS.insight.prices[currency].minor * 499 / 299), currency)}</span>
                           </div>
                           <p className="text-[11px] text-muted-foreground mt-1.5">
                             One-time · Lifetime access · PDF included

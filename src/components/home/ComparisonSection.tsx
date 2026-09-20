@@ -3,6 +3,8 @@ import { Check, X, Sparkles } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const rows = [
   { label: 'Personalised to YOUR palm' },
@@ -13,7 +15,7 @@ const rows = [
   { label: 'AI-powered computer vision analysis' },
 ];
 
-const cols = [
+const getCols = (price: string) => [
   {
     name: 'Horoscope App',
     subtext: 'Generic · Birth-date based',
@@ -28,7 +30,7 @@ const cols = [
     highlight: true,
     checks: [true, true, true, true, true, true],
     price: 'From ₹0',
-    priceNote: 'Free preview, full report ₹299 / $9.99',
+    priceNote: `Free preview, full report ${price}`,
   },
   {
     name: 'Manual Palmist',
@@ -41,6 +43,8 @@ const cols = [
 ];
 
 export function ComparisonSection() {
+  const { currency } = useCurrency();
+  const cols = getCols(PRODUCTS.insight.prices[currency].display);
   return (
     <section className="py-16 md:py-32 relative overflow-hidden">
       {/* Background glow */}

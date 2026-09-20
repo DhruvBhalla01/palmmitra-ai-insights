@@ -3,6 +3,8 @@ import { m } from '@/lib/motion';
 import { Check, Flame, Lock, Sparkles, ArrowRight, Quote, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PalmMatchPlanType } from '@/hooks/usePalmMatchUnlock';
+import { PRODUCTS, formatCurrency } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface PalmMatchPaywallProps {
   person1Name: string;
@@ -39,6 +41,10 @@ const avatarStack = [
 
 export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isProcessing }: PalmMatchPaywallProps) {
   const [unlockCount, setUnlockCount] = useState(84);
+  const { currency } = useCurrency();
+  const matchPrice = PRODUCTS.palmmatch.prices[currency];
+  const elitePrice = PRODUCTS.elite.prices[currency];
+  const matchListPrice = formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency);
 
   // Animate count from 84 → 92 on mount
   useEffect(() => {
@@ -266,8 +272,8 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
           >
             <p className="text-xs text-muted-foreground mb-1.5">One-time unlock · Keep forever</p>
             <div className="flex items-baseline justify-center gap-2 mb-1.5">
-              <span className="text-4xl font-serif font-bold text-accent" style={{ textShadow: '0 0 20px hsl(42 87% 55% / 0.4)' }}>₹999</span>
-              <span className="text-sm text-muted-foreground line-through">₹1,999</span>
+              <span className="text-4xl font-serif font-bold text-accent" style={{ textShadow: '0 0 20px hsl(42 87% 55% / 0.4)' }}>{matchPrice.display}</span>
+              <span className="text-sm text-muted-foreground line-through">{matchListPrice}</span>
               <m.span
                 animate={{
                   scale: [1, 1.08, 1],
@@ -276,7 +282,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
                 className="text-xs bg-green-500/20 text-green-400 font-bold px-3 py-1.5 rounded-full border border-green-500/30"
               >
-                Save ₹1,000
+                Launch offer
               </m.span>
             </div>
             <p className="text-xs text-accent/70 font-medium">
@@ -316,7 +322,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                     Unlock Full Compatibility Report
                     <ArrowRight className="w-4 h-4" />
                   </span>
-                  <span className="text-xs font-normal opacity-80">One-time · ₹999</span>
+                  <span className="text-xs font-normal opacity-80">One-time · {matchPrice.display}</span>
                 </span>
               )}
             </Button>
@@ -324,12 +330,12 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
 
           <Button
             variant="outline"
-            onClick={() => onUnlockClick('monthly299')}
+            onClick={() => onUnlockClick('unlimited999')}
             disabled={isProcessing}
             className="border-accent/30 text-foreground hover:bg-accent/10 py-6 rounded-2xl text-sm flex flex-col gap-0.5 h-auto"
           >
             <span className="font-semibold">PalmMitra Elite</span>
-            <span className="text-xs font-normal opacity-70">₹4,999 lifetime · unlimited readings</span>
+            <span className="text-xs font-normal opacity-70">{elitePrice.display} lifetime · unlimited readings</span>
           </Button>
         </div>
 

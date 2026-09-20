@@ -21,6 +21,8 @@ import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
 import { PalmMatchReading } from '@/components/palmmatch/types';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, recordInteraction } from '@/lib/analytics';
+import { PRODUCTS, formatCurrency } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const DIMENSION_TEASERS = {
   communication: "Your communication styles decoded — where you naturally align and where friction hides.",
@@ -57,6 +59,8 @@ export default function PalmMatchReport() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currency } = useCurrency();
+  const matchPrice = PRODUCTS.palmmatch.prices[currency];
   const [reading, setReading] = useState<PalmMatchReading | null>(null);
   const [email, setEmail] = useState('');
 
@@ -76,11 +80,11 @@ export default function PalmMatchReport() {
     analytics.track('unlock_report_clicked', { reading_type: 'palmmatch', report_id: id ?? null });
     analytics.track('pricing_viewed', { context: 'palmmatch_report' });
     analytics.track('pricing_plan_selected', {
-      plan_id: 'palmmatch', plan_name: 'PalmMatch', amount: 999, currency: 'INR',
+      plan_id: 'palmmatch', plan_name: 'PalmMatch', amount: matchPrice.major, currency,
     });
     analytics.track('checkout_started', {
-      plan_id: 'palmmatch', plan_name: 'PalmMatch', amount: 999,
-      currency: 'INR', checkout_step: 'payment',
+      plan_id: 'palmmatch', plan_name: 'PalmMatch', amount: matchPrice.major,
+      currency, checkout_step: 'payment',
     });
     recordInteraction('cta_clicked', 'unlock_palmmatch');
     initiatePayment('palmmatch149');
@@ -142,8 +146,8 @@ export default function PalmMatchReport() {
           isUnlocked={isUnlocked}
           ctaLabel="Unlock Full Compatibility Report"
           subLabel={`For ${person1Name} & ${person2Name} · One-time`}
-          priceOverride="₹999"
-          listPriceOverride="₹1,999"
+          priceOverride={matchPrice.display}
+          listPriceOverride={formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency)}
           socialProof="92 couples unlocked this week · launch price"
         />
       )}

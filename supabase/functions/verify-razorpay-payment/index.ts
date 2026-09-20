@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
         provider_payment_id: razorpay_payment_id,
         plan_id: payment.plan_type,
         amount: payment.amount,
-        currency: 'INR',
+        currency: payment.currency,
         report_id: payment.report_id || payment.palmmatch_report_id || null,
         payment_provider: 'razorpay',
         error_category: 'validation_error',
@@ -136,6 +136,29 @@ Deno.serve(async (req) => {
       );
     }
 
+    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
+    if (!razorpayKeyId) {
+      return new Response(JSON.stringify({ success: false, error: 'Payment gateway not configured' }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const providerResponse = await fetch(`https://api.razorpay.com/v1/payments/${encodeURIComponent(razorpay_payment_id)}`, {
+      headers: { Authorization: `Basic ${btoa(`${razorpayKeyId}:${razorpayKeySecret}`)}` },
+    });
+    const providerPayment = await providerResponse.json();
+    if (
+      !providerResponse.ok ||
+      providerPayment.order_id !== payment.razorpay_order_id ||
+      providerPayment.amount !== payment.amount ||
+      providerPayment.currency !== payment.currency ||
+      !['authorized', 'captured'].includes(providerPayment.status)
+    ) {
+      console.error('Provider payment consistency check failed', razorpay_payment_id);
+      return new Response(JSON.stringify({ success: false, error: 'Payment details could not be verified.' }), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     await supabase.from('payments')
       .update({ status: 'success', razorpay_payment_id })
       .eq('id', payment_id);
@@ -151,7 +174,7 @@ Deno.serve(async (req) => {
       provider_payment_id: razorpay_payment_id,
       plan_id: payment.plan_type,
       amount: payment.amount,
-      currency: 'INR',
+      currency: payment.currency,
       report_id: payment.report_id || payment.palmmatch_report_id || null,
       payment_provider: 'razorpay',
     };

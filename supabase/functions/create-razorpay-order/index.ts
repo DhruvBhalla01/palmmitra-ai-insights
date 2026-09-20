@@ -1,18 +1,18 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { emitServerEvent } from '../_shared/analytics.ts';
+import { currencyForCountry, isPlanType, PLAN_LABELS, PLAN_PRICES } from '../_shared/pricing.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-type PlanType = 'report99' | 'palmmatch149' | 'monthly299' | 'unlimited999';
-
 interface CreateOrderRequest {
-  user_email: string;
-  report_id?: string;
-  palmmatch_report_id?: string;
-  plan: PlanType;
+  user_email?: unknown;
+  report_id?: unknown;
+  palmmatch_report_id?: unknown;
+  plan?: unknown;
+  country_code?: unknown;
   analytics_context?: {
     anonymous_id?: string;
     session_id?: string;
@@ -21,135 +21,118 @@ interface CreateOrderRequest {
   };
 }
 
-// Amounts in paise (INR). Keep in sync with src/config/pricing.ts
-// PalmMitra Insight ₹299 · PalmMatch ₹999 · PalmMitra Elite ₹4,999
-const PLAN_AMOUNTS: Record<PlanType, number> = {
-  report99:     29900,   // PalmMitra Insight — ₹299
-  palmmatch149: 99900,   // PalmMatch         — ₹999
-  monthly299:   29900,   // Legacy monthly    — kept in sync with Insight
-  unlimited999: 499900,  // PalmMitra Elite   — ₹4,999
-};
+const respond = (body: object, status = 200) => new Response(JSON.stringify(body), {
+  status,
+  headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+});
 
-const ok = (body: object) =>
-  new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
+const validId = (value: unknown): value is string =>
+  typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return respond({ success: false, error: 'Method not allowed' }, 405);
 
   try {
-    const body: CreateOrderRequest = await req.json();
-    const { user_email, report_id, palmmatch_report_id, plan, analytics_context } = body;
+    const body = await req.json() as CreateOrderRequest;
+    const email = typeof body.user_email === 'string' ? body.user_email.trim().toLowerCase() : '';
+    if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return respond({ success: false, error: 'Please provide a valid email address.' }, 400);
+    }
+    if (!isPlanType(body.plan)) return respond({ success: false, error: 'Invalid plan type' }, 400);
 
-    if (!user_email || !plan) {
-      return ok({ success: false, error: 'Missing required fields: user_email and plan' });
+    const reportId = validId(body.report_id) ? body.report_id : null;
+    const palmMatchReportId = validId(body.palmmatch_report_id) ? body.palmmatch_report_id : null;
+    if (body.plan === 'report99' && !reportId) return respond({ success: false, error: 'A valid report_id is required.' }, 400);
+    if (body.plan === 'palmmatch149' && !palmMatchReportId) return respond({ success: false, error: 'A valid palmmatch_report_id is required.' }, 400);
+
+    const currency = currencyForCountry(body.country_code);
+    const amount = PLAN_PRICES[body.plan][currency];
+    const keyId = Deno.env.get('RAZORPAY_KEY_ID');
+    const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!keyId || !keySecret || !supabaseUrl || !serviceRoleKey) {
+      return respond({ success: false, error: 'Payment gateway not configured' }, 500);
     }
 
-    const validPlans: PlanType[] = ['report99', 'palmmatch149', 'monthly299', 'unlimited999'];
-    if (!validPlans.includes(plan)) {
-      return ok({ success: false, error: 'Invalid plan type' });
-    }
-
-    if (plan === 'report99' && !report_id) {
-      return ok({ success: false, error: 'report_id is required for report99 plan' });
-    }
-
-    if (plan === 'palmmatch149' && !palmmatch_report_id) {
-      return ok({ success: false, error: 'palmmatch_report_id is required for palmmatch149 plan' });
-    }
-
-    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
-    if (!razorpayKeyId || !razorpayKeySecret) {
-      return ok({ success: false, error: 'Payment gateway not configured' });
-    }
-
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
-
-    const finalAmount = PLAN_AMOUNTS[plan];
-
-    const planLabels: Record<PlanType, string> = {
-      report99:     'PalmMitra Insight — Full Palm Reading',
-      palmmatch149: 'PalmMatch — Compatibility Report',
-      monthly299:   'PalmMitra Monthly Plan',
-      unlimited999: 'PalmMitra Elite — Lifetime Access',
-    };
-
-    const razorpayRes = await fetch('https://api.razorpay.com/v1/orders', {
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const referenceId = reportId ?? palmMatchReportId ?? 'subscription';
+    const razorpayResponse = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${razorpayKeyId}:${razorpayKeySecret}`)}`,
+        'Authorization': `Basic ${btoa(`${keyId}:${keySecret}`)}`,
       },
       body: JSON.stringify({
-        amount: finalAmount,
-        currency: 'INR',
-        receipt: `palm_${Date.now()}`,
-        notes: { user_email, plan, report_id: report_id || palmmatch_report_id || 'subscription' },
+        amount,
+        currency,
+        receipt: `palm_${crypto.randomUUID().replaceAll('-', '').slice(0, 24)}`,
+        notes: { user_email: email, plan: body.plan, report_id: referenceId, country_code: String(body.country_code ?? '').slice(0, 2).toUpperCase() },
       }),
-    }).then(r => r.json());
-
-    if (!razorpayRes.id) {
-      console.error('Razorpay order creation failed:', razorpayRes);
-      return ok({ success: false, error: 'Failed to create payment order. Please try again.' });
+    });
+    const razorpayOrder = await razorpayResponse.json();
+    if (!razorpayResponse.ok || typeof razorpayOrder?.id !== 'string') {
+      console.error('Razorpay order creation failed', razorpayResponse.status, razorpayOrder?.error?.code ?? 'unknown');
+      const capabilityError = currency !== 'INR' && razorpayResponse.status === 400;
+      return respond({
+        success: false,
+        error: capabilityError
+          ? `${currency} payments are not currently available. Please select another currency or contact support.`
+          : 'Failed to create payment order. Please try again.',
+        code: capabilityError ? 'CURRENCY_NOT_AVAILABLE' : 'ORDER_CREATION_FAILED',
+      }, capabilityError ? 422 : 502);
     }
 
-    const { data: payment, error: dbError } = await supabase
-      .from('payments')
-      .insert({
-        user_email,
-        report_id: plan === 'report99' ? report_id : null,
-        palmmatch_report_id: plan === 'palmmatch149' ? palmmatch_report_id : null,
-        plan_type: plan,
-        razorpay_order_id: razorpayRes.id,
-        amount: finalAmount,
-        status: 'pending',
-      })
-      .select()
-      .single();
+    if (razorpayOrder.amount !== amount || razorpayOrder.currency !== currency) {
+      console.error('Razorpay order mismatch', razorpayOrder.id);
+      return respond({ success: false, error: 'Payment order validation failed.', code: 'ORDER_MISMATCH' }, 502);
+    }
 
-    if (dbError) {
-      console.error('Database error:', dbError);
-      return ok({ success: false, error: 'Failed to save payment record. Please try again.' });
+    const { data: payment, error: dbError } = await supabase.from('payments').insert({
+      user_email: email,
+      report_id: body.plan === 'report99' ? reportId : null,
+      palmmatch_report_id: body.plan === 'palmmatch149' ? palmMatchReportId : null,
+      plan_type: body.plan,
+      razorpay_order_id: razorpayOrder.id,
+      amount,
+      currency,
+      status: 'pending',
+    }).select('id').single();
+
+    if (dbError || !payment) {
+      console.error('Payment record insert failed', dbError?.code ?? 'unknown');
+      return respond({ success: false, error: 'Failed to save payment record. Please try again.' }, 500);
     }
 
     await emitServerEvent(supabase, 'order_created', {
-      dedupeKey: `order:${razorpayRes.id}`,
-      userEmail: user_email,
-      anonymousId: analytics_context?.anonymous_id,
-      sessionId: analytics_context?.session_id,
-      environment: analytics_context?.environment,
-      pagePath: analytics_context?.page_path,
+      dedupeKey: `order:${razorpayOrder.id}`,
+      userEmail: email,
+      anonymousId: body.analytics_context?.anonymous_id,
+      sessionId: body.analytics_context?.session_id,
+      environment: body.analytics_context?.environment,
+      pagePath: body.analytics_context?.page_path,
     }, {
       payment_id: payment.id,
-      provider_order_id: razorpayRes.id,
-      plan_id: plan,
-      amount: finalAmount,
-      currency: 'INR',
-      report_id: report_id || palmmatch_report_id || null,
+      provider_order_id: razorpayOrder.id,
+      plan_id: body.plan,
+      amount,
+      currency,
+      report_id: referenceId,
       payment_provider: 'razorpay',
     });
 
-    return ok({
+    return respond({
       success: true,
-      order_id: razorpayRes.id,
-      amount: finalAmount,
-      currency: 'INR',
+      order_id: razorpayOrder.id,
+      amount,
+      currency,
       payment_id: payment.id,
-      key_id: razorpayKeyId,
-      description: planLabels[plan],
+      key_id: keyId,
+      description: PLAN_LABELS[body.plan],
     });
-
   } catch (error) {
-    console.error('Error in create-razorpay-order:', error);
-    return new Response(
-      JSON.stringify({ success: false, error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    console.error('Error in create-razorpay-order', error instanceof Error ? error.message : 'unknown');
+    return respond({ success: false, error: 'Internal server error' }, 500);
   }
 });

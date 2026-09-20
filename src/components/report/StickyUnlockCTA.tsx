@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { m, AnimatePresence } from '@/lib/motion';
 import { Sparkles, X, Shield, Zap, Lock, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PRODUCTS } from '@/config/pricing';
+import { PRODUCTS, formatCurrency } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
 
 interface StickyUnlockCTAProps {
@@ -26,7 +26,7 @@ export function StickyUnlockCTA({
   const [isDismissed, setIsDismissed] = useState(false);
   const { currency } = useCurrency();
   const price     = priceOverride ?? PRODUCTS.insight.prices[currency].display;
-  const listPrice = listPriceOverride ?? (currency === 'INR' ? '₹499' : '$19.99');
+  const listPrice = listPriceOverride ?? formatCurrency(Math.round(PRODUCTS.insight.prices[currency].minor * 499 / 299), currency);
 
   useEffect(() => {
     setIsDismissed(sessionStorage.getItem(DISMISSED_KEY) === 'true');
