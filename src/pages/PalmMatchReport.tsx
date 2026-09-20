@@ -20,6 +20,7 @@ import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
 import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
 import { PalmMatchReading } from '@/components/palmmatch/types';
 import { useToast } from '@/hooks/use-toast';
+import { analytics, recordInteraction } from '@/lib/analytics';
 
 const DIMENSION_TEASERS = {
   communication: "Your communication styles decoded — where you naturally align and where friction hides.",
@@ -65,13 +66,28 @@ export default function PalmMatchReport() {
     const data = JSON.parse(raw);
     setReading(data.reading);
     setEmail(data.email || '');
-  }, [navigate]);
+    analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
+  }, [navigate, id]);
 
   const { isUnlocked, isLoading, isProcessing, initiatePayment } = usePalmMatchUnlock(id, email);
 
-  const handleUnlockClick = () => initiatePayment('palmmatch149');
+  const handleUnlockClick = () => {
+    analytics.track('report_locked_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
+    analytics.track('unlock_report_clicked', { reading_type: 'palmmatch', report_id: id ?? null });
+    analytics.track('pricing_viewed', { context: 'palmmatch_report' });
+    analytics.track('pricing_plan_selected', {
+      plan_id: 'palmmatch', plan_name: 'PalmMatch', amount: 999, currency: 'INR',
+    });
+    analytics.track('checkout_started', {
+      plan_id: 'palmmatch', plan_name: 'PalmMatch', amount: 999,
+      currency: 'INR', checkout_step: 'payment',
+    });
+    recordInteraction('cta_clicked', 'unlock_palmmatch');
+    initiatePayment('palmmatch149');
+  };
 
   const handleShare = async () => {
+    analytics.track('button_clicked', { element_id: 'share_palmmatch' });
     const url = window.location.href;
     if (navigator.share) {
       await navigator.share({ title: 'My PalmMatch Compatibility Report', text: `See my compatibility reading on PalmMitra!`, url });
