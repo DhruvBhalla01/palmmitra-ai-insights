@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
 import { PRODUCTS } from '@/config/pricing';
 import posthog from '@/lib/posthog';
+import { useCurrency } from '@/hooks/useCurrency';
 
 declare global {
   interface Window {
@@ -35,7 +36,7 @@ interface RazorpayResponse {
   razorpay_signature: string;
 }
 
-export type PalmMatchPlanType = 'palmmatch149' | 'monthly299';
+export type PalmMatchPlanType = 'palmmatch149' | 'unlimited999';
 
 interface UsePalmMatchUnlockResult {
   isUnlocked: boolean;
@@ -61,6 +62,7 @@ export function usePalmMatchUnlock(
   userEmail: string
 ): UsePalmMatchUnlockResult {
   const { toast } = useToast();
+  const { currency: selectedCurrency, countryCode } = useCurrency();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -93,8 +95,8 @@ export function usePalmMatchUnlock(
     const commerce = {
       plan_id: product.id,
       plan_name: product.name,
-      amount: product.prices.INR.major,
-      currency: 'INR',
+      amount: product.prices[selectedCurrency].major,
+      currency: selectedCurrency,
     } as const;
     const orderProperties = { ...commerce, checkout_step: 'create_order' };
     analytics.track('checkout_payment_initiated', orderProperties);
@@ -106,6 +108,7 @@ export function usePalmMatchUnlock(
           user_email: userEmail,
           palmmatch_report_id: reportId,
           plan,
+          country_code: countryCode,
           analytics_context: getServerCorrelationContext(),
         } }
       );
@@ -115,6 +118,7 @@ export function usePalmMatchUnlock(
       }
 
       const { order_id, amount, currency, payment_id, key_id } = orderData;
+      const serverCommerce = { ...commerce, amount: amount / 100, currency };
 
       if (!window.Razorpay) await loadRazorpayScript();
 
@@ -127,7 +131,7 @@ export function usePalmMatchUnlock(
         order_id,
         handler: async (response: RazorpayResponse) => {
           try {
-            const providerSuccessProperties = { ...commerce, checkout_step: 'provider_callback' };
+            const providerSuccessProperties = { ...serverCommerce, checkout_step: 'provider_callback' };
             analytics.track('checkout_payment_success', providerSuccessProperties);
             posthog.capture('checkout_payment_success', providerSuccessProperties);
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
@@ -148,7 +152,7 @@ export function usePalmMatchUnlock(
 
             setIsUnlocked(true);
             setIsProcessing(false);
-            const completionProperties = { ...commerce, checkout_step: 'server_verified' };
+            const completionProperties = { ...serverCommerce, checkout_step: 'server_verified' };
             analytics.track('checkout_completed', completionProperties);
             posthog.capture('checkout_completed', completionProperties);
 
@@ -226,7 +230,7 @@ export function usePalmMatchUnlock(
       toast({ title: 'Payment Error', description: error instanceof Error ? error.message : 'Something went wrong', variant: 'destructive' });
       setIsProcessing(false);
     }
-  }, [reportId, userEmail, toast]);
+  }, [reportId, userEmail, toast, selectedCurrency, countryCode]);
 
   return { isUnlocked, isLoading, isProcessing, initiatePayment };
 }

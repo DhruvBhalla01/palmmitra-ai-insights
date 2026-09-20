@@ -14,6 +14,9 @@ interface PalmAnalysisRequest {
   age: string;
   email: string;
   readingType: "full" | "career" | "love" | "wealth";
+  language?: "english" | "hinglish";
+  countryCode?: string;
+  countryName?: string;
 }
 
 interface ValidationResult {
@@ -148,7 +151,7 @@ Return this exact JSON structure:
 };
 
 // Step 2: Generate palm reading
-const getReadingPrompt = (name: string, age: string, readingType: string) => {
+const getReadingPrompt = (name: string, age: string, readingType: string, language: "english" | "hinglish", countryContext: string) => {
   const now = new Date();
   const currentMonth = now.toLocaleString("en-US", { month: "long" });
   const currentYear = now.getFullYear();
@@ -158,7 +161,13 @@ const getReadingPrompt = (name: string, age: string, readingType: string) => {
   const futureYear = futureDate.getFullYear();
   const sixMonthPeriod = `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`;
 
+  const languageInstruction = language === 'hinglish'
+    ? 'Write every user-facing string in natural, premium Hinglish using Roman script. Blend Hindi and English conversationally; do not use Devanagari. Keep every JSON key exactly as specified in English.'
+    : 'Write every user-facing string in polished, warm English. Keep every JSON key exactly as specified.';
   const basePrompt = `You are PalmMitra AI — India's most respected digital palmistry expert, trained in the ancient science of Hast Rekha Shastra and modern psychological profiling.
+
+LANGUAGE: ${languageInstruction}
+LOCATION CONTEXT: ${countryContext}. Use this only for culturally neutral phrasing and familiar life context. Never infer religion, ethnicity, income, health, or legal status from location.
 
 You are composing a premium destiny report for ${name}, age ${age}. This report must read like a deeply personal consultation from a seasoned palmist who has studied this individual's palm with great care — not a templated AI output.
 
@@ -362,6 +371,8 @@ const generatePalmReading = async (
   readingType: string,
   apiKey: string,
   context: AiCaptureContext,
+  language: "english" | "hinglish",
+  countryContext: string,
 ) => {
   console.log("Step 2: Generating palm reading...");
   const startedAt = Date.now();
@@ -377,7 +388,7 @@ const generatePalmReading = async (
       messages: [
         {
           role: "system",
-          content: getReadingPrompt(name, age, readingType),
+          content: getReadingPrompt(name, age, readingType, language, countryContext),
         },
         {
           role: "user",
@@ -575,7 +586,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { imageUrl, name, age, email, readingType } = body ?? {} as PalmAnalysisRequest;
+    const { imageUrl, name, age, email, readingType, language, countryCode, countryName } = body ?? {} as PalmAnalysisRequest;
 
     // ── Server-side input validation (never trust the client) ──
     if (typeof imageUrl !== "string" || typeof name !== "string" || typeof age !== "string") {
@@ -604,6 +615,17 @@ serve(async (req) => {
     }
     const validReadingTypes = ["full", "career", "love", "wealth"];
     const safeReadingType = validReadingTypes.includes(readingType) ? readingType : "full";
+    const safeLanguage: "english" | "hinglish" = language === 'hinglish' ? 'hinglish' : 'english';
+    const safeCountryCode = typeof countryCode === 'string' && /^[A-Za-z]{2}$/.test(countryCode.trim())
+      ? countryCode.trim().toUpperCase()
+      : null;
+    const normalizedCountryName = typeof countryName === 'string'
+      ? countryName.replace(/[^\p{L}\p{M} .'-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 80)
+      : '';
+    const safeCountryName = normalizedCountryName || null;
+    const countryContext = safeCountryName
+      ? `The reader is in ${safeCountryName}${safeCountryCode ? ` (${safeCountryCode})` : ''}`
+      : safeCountryCode ? `The reader's country code is ${safeCountryCode}` : 'No location was provided';
 
     // Validate imageUrl belongs to our Supabase storage to prevent SSRF abuse of OpenAI API
     const allowedStoragePrefix = `${SUPABASE_URL}/storage/v1/object/public/palm-uploads/`;
@@ -645,6 +667,8 @@ serve(async (req) => {
       safeReadingType,
       OPENAI_API_KEY,
       aiCaptureContext,
+      safeLanguage,
+      countryContext,
     );
 
     // STEP 3: Save to database
@@ -659,6 +683,9 @@ serve(async (req) => {
         validation_confidence: validation.confidence,
         validation_quality: validation.quality,
         report_json: palmReading,
+        language: safeLanguage,
+        country_code: safeCountryCode,
+        country_name: safeCountryName,
       })
       .select()
       .single();
@@ -677,6 +704,9 @@ serve(async (req) => {
         name: cleanName,
         age: ageNum,
         readingType: safeReadingType,
+        language: safeLanguage,
+        countryCode: safeCountryCode,
+        countryName: safeCountryName,
         generatedAt: new Date().toISOString(),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
