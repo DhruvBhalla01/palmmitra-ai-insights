@@ -35,7 +35,7 @@ const faqs = [
   },
   {
     q: 'What does the free preview include?',
-    a: 'The free preview includes your palm summary, Life Line deep analysis, your first personality trait reveal, and one personalised spiritual remedy. To unlock all 5 major lines, mounts analysis, career & wealth turning points, love & marriage insights, and the 5-year Lucky Periods Timeline — upgrade to PalmMitra Insight for ₹299 / $9.99.',
+    a: 'The free preview includes your palm summary, Life Line deep analysis, your first personality trait reveal, and one personalised spiritual remedy. To unlock all 5 major lines, mounts analysis, career & wealth turning points, love & marriage insights, and the 5-year Lucky Periods Timeline, choose PalmMitra Insight. Your localized price appears before checkout.',
   },
   {
     q: 'Can I access my report later?',
@@ -43,7 +43,7 @@ const faqs = [
   },
   {
     q: 'Can I get readings for family members?',
-    a: 'Absolutely! You can upload palm photos for any family member or friend. PalmMitra Elite (₹4,999 / $149 — one-time lifetime payment) gives you unlimited readings for the whole family — our most premium offering.',
+    a: 'Absolutely! You can upload palm photos for any family member or friend. PalmMitra Elite is a one-time lifetime payment with unlimited readings for the whole family. Your localized price appears before checkout.',
   },
   {
     q: 'What payment methods do you accept?',

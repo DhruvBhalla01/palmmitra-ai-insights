@@ -3,6 +3,8 @@ import { Sparkles, Download, RefreshCw, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface UnlockSuccessOverlayProps {
   isVisible: boolean;
@@ -11,14 +13,14 @@ interface UnlockSuccessOverlayProps {
   userName?: string;
 }
 
-function buildWhatsAppUrl(userName: string | undefined, reportUrl: string): string {
+function buildWhatsAppUrl(userName: string | undefined, reportUrl: string, price: string): string {
   const name = userName ? `${userName}'s` : 'My';
   const message = [
     `🔮 ${name} AI Palm Reading is ready on PalmMitra!`,
     '',
     `The ancient science of Hast Rekha meets AI — and the results are surprisingly accurate.`,
     '',
-    `Get your own reading (₹299 only) → ${reportUrl}`,
+    `Get your own reading (${price}) → ${reportUrl}`,
   ].join('\n');
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
@@ -31,10 +33,11 @@ export function UnlockSuccessOverlay({
 }: UnlockSuccessOverlayProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currency } = useCurrency();
   const reportUrl = window.location.href;
 
   const handleWhatsApp = () => {
-    window.open(buildWhatsAppUrl(userName, reportUrl), '_blank', 'noopener,noreferrer');
+    window.open(buildWhatsAppUrl(userName, reportUrl, PRODUCTS.insight.prices[currency].display), '_blank', 'noopener,noreferrer');
   };
 
   const handleShare = async () => {
