@@ -6,6 +6,7 @@ import type { PlanType } from "@/hooks/useReportUnlock";
 import { PRODUCTS } from "@/config/pricing";
 import { useCurrency } from "@/hooks/useCurrency";
 import { analytics, recordInteraction } from '@/lib/analytics';
+import posthog from '@/lib/posthog';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -35,13 +36,15 @@ export function PaymentModal({
 
   const handleProceed = () => {
     const product = selectedPlan === 'report99' ? PRODUCTS.insight : PRODUCTS.elite;
-    analytics.track('checkout_started', {
+    const checkoutProperties = {
       plan_id: product.id,
       plan_name: product.name,
       amount: product.prices[currency].major,
       currency,
       checkout_step: 'payment',
-    });
+    };
+    analytics.track('checkout_started', checkoutProperties);
+    posthog.capture('checkout_started', checkoutProperties);
     recordInteraction('checkout_started', 'pay_now');
     onSelectPlan(selectedPlan);
   };
@@ -55,13 +58,15 @@ export function PaymentModal({
       amount: product.prices[currency].major,
       currency,
     });
-    analytics.track('checkout_plan_selected', {
+    const planProperties = {
       plan_id: product.id,
       plan_name: product.name,
       amount: product.prices[currency].major,
       currency,
       checkout_step: 'plan_selection',
-    });
+    };
+    analytics.track('checkout_plan_selected', planProperties);
+    posthog.capture('checkout_plan_selected', planProperties);
     recordInteraction('pricing_plan_selected', product.id);
   };
 

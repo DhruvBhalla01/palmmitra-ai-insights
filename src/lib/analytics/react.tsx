@@ -13,6 +13,7 @@ import {
 } from './context';
 import { installMonitors } from './monitors';
 import { supabase } from '@/integrations/supabase/client';
+import posthog from '@/lib/posthog';
 
 let booted = false;
 
@@ -121,21 +122,35 @@ let sectionsInstalled = false;
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const lastTracked = useRef<string | null>(null);
+  const posthogUserId = useRef<string | null>(null);
 
   useEffect(() => {
     boot();
     if (!clicksInstalled) { clicksInstalled = true; installClickDelegation(); }
     if (!sectionsInstalled) { sectionsInstalled = true; installSectionObserver(); }
 
-    // Attach authenticated identity when available.
+    const syncPostHogIdentity = (user: { id: string; email?: string | null } | null) => {
+      if (user) {
+        if (posthogUserId.current === user.id) return;
+        if (posthogUserId.current) posthog.reset();
+        posthog.identify(user.id, { email: user.email ?? undefined });
+        posthogUserId.current = user.id;
+      } else if (posthogUserId.current) {
+        posthog.reset();
+        posthogUserId.current = null;
+      }
+    };
+
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       if (s?.user) analytics.identify(s.user.id, { auth: true }, s.user.email ?? null);
       else setUser(null, null);
+      syncPostHogIdentity(s?.user ?? null);
     });
     supabase.auth.getSession().then(({ data }) => {
       if (data.session?.user) {
         analytics.identify(data.session.user.id, { auth: true }, data.session.user.email ?? null);
       }
+      syncPostHogIdentity(data.session?.user ?? null);
     });
     return () => sub.subscription.unsubscribe();
   }, []);

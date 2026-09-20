@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { nameSchema, ageSchema, emailSchema, validateImageFile, zodFieldErrors } from '@/lib/validation';
 import { z } from 'zod';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
+import posthog from '@/lib/posthog';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -147,10 +148,12 @@ export default function UploadPalm() {
   }, [toast]);
 
   const processImage = (file: File) => {
-    analytics.track('palm_image_upload_started', {
+    const uploadProperties = {
       file_size_kb: Math.round(file.size / 1024),
       file_type: file.type,
-    });
+    };
+    analytics.track('palm_image_upload_started', uploadProperties);
+    posthog.capture('palm_image_upload_started', uploadProperties);
     setImageFile(file);
     const reader = new FileReader();
     reader.onload = (e) => setImage(e.target?.result as string);
@@ -158,12 +161,16 @@ export default function UploadPalm() {
     // Kick off storage upload in background so it's ready by the time user submits
     uploadPromiseRef.current = uploadToStorage(file)
       .then((url) => {
-        analytics.track('palm_image_uploaded', { file_size_kb: Math.round(file.size / 1024) });
+        const uploadProperties = { file_size_kb: Math.round(file.size / 1024) };
+        analytics.track('palm_image_uploaded', uploadProperties);
+        posthog.capture('palm_image_uploaded', uploadProperties);
         return url;
       })
       .catch((err) => {
         uploadPromiseRef.current = null;
-        analytics.track('palm_image_upload_failed', { error_category: 'network_error' });
+        const errorProperties = { error_category: 'network_error' };
+        analytics.track('palm_image_upload_failed', errorProperties);
+        posthog.capture('palm_image_upload_failed', errorProperties);
         throw err;
       });
   };
@@ -213,7 +220,9 @@ export default function UploadPalm() {
     setFieldErrors({});
     submittingRef.current = true;
     formAnalytics.submit('details');
-    analytics.track('palm_analysis_started', { reading_type: formData.readingType });
+    const analysisProperties = { reading_type: formData.readingType };
+    analytics.track('palm_analysis_started', analysisProperties);
+    posthog.capture('palm_analysis_started', analysisProperties);
     analytics.track('ai_request_started', { feature: 'palm_analysis' });
     const analysisStartedAt = Date.now();
 
@@ -254,10 +263,12 @@ export default function UploadPalm() {
 
       if (!response.validated) {
         setProcessingStep('error');
-        analytics.track('palm_analysis_failed', {
+        const failureProperties = {
           error_category: 'validation_error',
           latency_ms: Date.now() - analysisStartedAt,
-        });
+        };
+        analytics.track('palm_analysis_failed', failureProperties);
+        posthog.capture('palm_analysis_failed', failureProperties);
         formAnalytics.failure('palm_validation_rejected');
         setValidationError({
           reason: response.message || response.validation?.reason || 'This does not appear to be a palm image.',
@@ -288,11 +299,13 @@ export default function UploadPalm() {
 
       setProcessingStep('complete');
       clearInterval(msgInterval);
-      analytics.track('palm_analysis_completed', {
+      const completionProperties = {
         latency_ms: Date.now() - analysisStartedAt,
         reading_type: formData.readingType,
         has_report_id: Boolean(response.reportId),
-      });
+      };
+      analytics.track('palm_analysis_completed', completionProperties);
+      posthog.capture('palm_analysis_completed', completionProperties);
       analytics.track('ai_request_completed', {
         feature: 'palm_analysis',
         latency_ms: Date.now() - analysisStartedAt,
@@ -315,11 +328,13 @@ export default function UploadPalm() {
           : /upload/i.test(msg)
           ? "Your photo couldn't be uploaded. Please try a different image or check your connection."
           : "We couldn't complete your reading right now. Please try again in a moment.";
-      analytics.track('palm_analysis_failed', {
+      const failureProperties = {
         error_category: /network|fetch/i.test(msg) ? 'network_error'
           : /rate limit|too many|capacity/i.test(msg) ? 'timeout' : 'provider_error',
         latency_ms: Date.now() - analysisStartedAt,
-      });
+      };
+      analytics.track('palm_analysis_failed', failureProperties);
+      posthog.capture('palm_analysis_failed', failureProperties);
       analytics.track('ai_request_failed', {
         feature: 'palm_analysis',
         latency_ms: Date.now() - analysisStartedAt,
