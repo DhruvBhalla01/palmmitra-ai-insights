@@ -90,9 +90,10 @@ function detectInitialCurrency(): { currency: Currency; countryCode: CountryCode
 
   // 1) Manual override
   try {
+    const isManual = localStorage.getItem(MANUAL_KEY) === 'true';
     const stored = localStorage.getItem(STORAGE_KEY) as Currency | null;
     const storedCountry = localStorage.getItem(COUNTRY_KEY) as CountryCode | null;
-    if (stored && CURRENCIES.includes(stored)) {
+    if (isManual && stored && CURRENCIES.includes(stored)) {
       return { currency: stored, countryCode: storedCountry && storedCountry in COUNTRY_TO_CURRENCY ? storedCountry : CURRENCY_TO_COUNTRY[stored] };
     }
   } catch { /* ignore */ }
