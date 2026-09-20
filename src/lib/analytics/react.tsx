@@ -12,8 +12,6 @@ import {
   setSessionListener, setUser,
 } from './context';
 import { installMonitors } from './monitors';
-import { supabase } from '@/integrations/supabase/client';
-import posthog from '@/lib/posthog';
 
 let booted = false;
 
@@ -129,30 +127,51 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     if (!clicksInstalled) { clicksInstalled = true; installClickDelegation(); }
     if (!sectionsInstalled) { sectionsInstalled = true; installSectionObserver(); }
 
-    const syncPostHogIdentity = (user: { id: string; email?: string | null } | null) => {
+    let disposed = false;
+    let unsubscribe = () => {};
+    let posthogUserId: string | null = null;
+
+    const syncPostHogIdentity = (
+      posthog: typeof import('@/lib/posthog').default,
+      user: { id: string; email?: string | null } | null,
+    ) => {
       if (user) {
-        if (posthogUserId.current === user.id) return;
-        if (posthogUserId.current) posthog.reset();
+        if (posthogUserId === user.id) return;
+        if (posthogUserId) posthog.reset();
         posthog.identify(user.id, { email: user.email ?? undefined });
-        posthogUserId.current = user.id;
-      } else if (posthogUserId.current) {
+        posthogUserId = user.id;
+      } else if (posthogUserId) {
         posthog.reset();
-        posthogUserId.current = null;
+        posthogUserId = null;
       }
     };
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (s?.user) analytics.identify(s.user.id, { auth: true }, s.user.email ?? null);
-      else setUser(null, null);
-      syncPostHogIdentity(s?.user ?? null);
+    void Promise.all([
+      import('@/integrations/supabase/client'),
+      import('@/lib/posthog'),
+    ]).then(([{ supabase }, { default: posthog }]) => {
+      if (disposed) return;
+
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+        if (s?.user) analytics.identify(s.user.id, { auth: true }, s.user.email ?? null);
+        else setUser(null, null);
+        syncPostHogIdentity(posthog, s?.user ?? null);
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+
+      void supabase.auth.getSession().then(({ data }) => {
+        if (disposed) return;
+        if (data.session?.user) {
+          analytics.identify(data.session.user.id, { auth: true }, data.session.user.email ?? null);
+        }
+        syncPostHogIdentity(posthog, data.session?.user ?? null);
+      });
     });
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        analytics.identify(data.session.user.id, { auth: true }, data.session.user.email ?? null);
-      }
-      syncPostHogIdentity(data.session?.user ?? null);
-    });
-    return () => sub.subscription.unsubscribe();
+
+    return () => {
+      disposed = true;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

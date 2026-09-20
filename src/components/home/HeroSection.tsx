@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { m } from '@/lib/motion';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
-import { SampleReportModal } from "./SampleReportModal";
 import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
+
+const SampleReportModal = lazy(() =>
+  import("./SampleReportModal").then((module) => ({
+    default: module.SampleReportModal,
+  }))
+);
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp";
 const heroPalmSrcSet = [
@@ -79,10 +84,10 @@ export function HeroSection() {
               <Link to="/upload" className="w-full sm:w-auto">
                 <Button
                   className="btn-gold text-foreground font-semibold text-base sm:text-lg px-8 py-6 sm:py-7 rounded-2xl group shadow-gold-lg w-full min-h-[56px]"
-                  aria-label="Analyze my palm — start free"
+                  aria-label="Get my free palm reading"
                 >
                   <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
-                  Analyze My Palm
+                  Get My Free Palm Reading
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Button>
               </Link>
@@ -111,7 +116,7 @@ export function HeroSection() {
             </div>
 
             <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
-              No sign-up needed · Full report {PRODUCTS.insight.prices[currency].display}
+              No sign-up or card needed · Free preview · Full report {PRODUCTS.insight.prices[currency].display}
             </p>
           </m.div>
 
@@ -180,7 +185,11 @@ export function HeroSection() {
         </div>
       </div>
 
-      <SampleReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {isModalOpen && (
+        <Suspense fallback={null}>
+          <SampleReportModal isOpen onClose={() => setIsModalOpen(false)} />
+        </Suspense>
+      )}
     </section>
   );
 }

@@ -7,16 +7,18 @@ interface SEOProps {
   ogType?: "website" | "article" | "product";
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  image?: string;
 }
 
 const SITE_URL = "https://www.palmmitra.in";
+const DEFAULT_IMAGE = `${SITE_URL}/logo.webp`;
 
 /**
  * Per-route <head> metadata for AI/search crawlers that execute JS
  * (ChatGPT, Perplexity, Claude, Gemini, Google AI Mode, Bingbot).
  *
- * Static crawlers still see index.html defaults, which is the correct
- * fallback for social-preview crawlers (LinkedIn, Slack, Facebook).
+ * Static crawlers use the deployment's initial HTML; public route metadata
+ * should therefore also be provided by SSR or prerendering.
  */
 export function SEO({
   title,
@@ -25,6 +27,7 @@ export function SEO({
   ogType = "website",
   noindex = false,
   jsonLd,
+  image,
 }: SEOProps) {
   const url = `${SITE_URL}${path}`;
   const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
@@ -39,9 +42,11 @@ export function SEO({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content={ogType} />
+      <meta property="og:image" content={image ?? DEFAULT_IMAGE} />
 
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={image ?? DEFAULT_IMAGE} />
 
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 

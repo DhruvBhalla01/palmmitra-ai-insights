@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { CURRENCIES, COUNTRY_TO_CURRENCY, CURRENCY_TO_COUNTRY, type CountryCode, type Currency } from '@/config/pricing';
-import { supabase } from '@/integrations/supabase/client';
 
 const STORAGE_KEY = 'palmmitra:currency';
 const COUNTRY_KEY = 'palmmitra:country';
@@ -48,6 +47,7 @@ export function useCurrency() {
           return;
         }
 
+        const { supabase } = await import('@/integrations/supabase/client');
         const { data, error } = await supabase.functions.invoke('detect-country');
         if (error) return;
         const detected = data?.countryCode as CountryCode | null;

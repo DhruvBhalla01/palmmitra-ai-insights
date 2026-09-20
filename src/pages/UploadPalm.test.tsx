@@ -53,7 +53,7 @@ describe("UploadPalm", () => {
   it("disables submission until the form is complete", () => {
     renderWithRouter(<UploadPalm />);
     expect(
-      screen.getByRole("button", { name: /begin my free reading/i })
+      screen.getByRole("button", { name: /see my free destiny preview/i })
     ).toBeDisabled();
   });
 
@@ -108,7 +108,7 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    const submit = screen.getByRole("button", { name: /begin my free reading/i });
+    const submit = screen.getByRole("button", { name: /see my free destiny preview/i });
     await waitFor(() => expect(submit).toBeEnabled());
     fireEvent.click(submit);
 
@@ -166,7 +166,7 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    const submit = screen.getByRole("button", { name: /begin my free reading/i });
+    const submit = screen.getByRole("button", { name: /see my free destiny preview/i });
     await waitFor(() => expect(submit).toBeEnabled());
     fireEvent.click(submit);
 

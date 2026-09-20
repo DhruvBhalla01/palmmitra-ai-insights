@@ -4,9 +4,6 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNFZN2198W"></script>
     <script>
-(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}var injected=false;var inject=function(){if(injected)return;injected=true;var s=document.createElement("script");s.src="https://www.chatbase.co/embed.min.js";s.id="aMTqnffpPgeac8pTi0nlG";s.domain="www.chatbase.co";s.async=true;document.body.appendChild(s)};var schedule=function(){var events=["pointerdown","keydown","scroll","touchstart"];var trigger=function(){events.forEach(function(e){window.removeEventListener(e,trigger,{passive:true,capture:true})});inject()};events.forEach(function(e){window.addEventListener(e,trigger,{passive:true,capture:true,once:true})});if("requestIdleCallback" in window){requestIdleCallback(inject,{timeout:8000})}else{setTimeout(inject,6000)}};if(document.readyState==="complete"){schedule()}else{window.addEventListener("load",schedule)}})();
-</script>
-    <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -42,7 +39,7 @@
     <meta property="og:description" content="Upload your palm. AI reads 15 palm markers — career, love, wealth, life path — in under 2 minutes. Rooted in ancient Indian Hasta Samudrika Shastra. Free preview." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.palmmitra.in/" />
-    <meta property="og:image" content="https://www.palmmitra.in/logo.png" />
+    <meta property="og:image" content="https://www.palmmitra.in/logo.webp" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="PalmMitra" />
@@ -54,7 +51,7 @@
     <meta name="twitter:creator" content="@PalmMitra" />
     <meta name="twitter:title" content="PalmMitra — Your Destiny in Your Palm | AI Palm Reading" />
     <meta name="twitter:description" content="Upload your palm. AI reads 15 palm markers in 2 minutes. Free preview. Full report ₹299 / $9.99. Ancient Indian wisdom meets modern AI." />
-    <meta name="twitter:image" content="https://www.palmmitra.in/logo.png" />
+    <meta name="twitter:image" content="https://www.palmmitra.in/logo.webp" />
 
     <!-- Theme bootstrap (prevents flash) -->
     <script>
@@ -72,9 +69,18 @@
       })();
     </script>
     
-    <!-- Preconnect to Google Fonts -->
+    <!-- Preconnect and preload font styles before the app stylesheet -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+    />
     
     <!-- Razorpay Checkout SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
@@ -91,7 +97,7 @@
           "url": "https://www.palmmitra.in/",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://www.palmmitra.in/logo.png",
+            "url": "https://www.palmmitra.in/logo.webp",
             "width": 512,
             "height": 512
           },
@@ -170,15 +176,7 @@
             { "@type": "Offer", "name": "PalmMitra Insight", "price": "299", "priceCurrency": "INR", "url": "https://www.palmmitra.in/upload", "description": "Complete AI palm reading — five major lines, mounts, career, love, wealth, and spiritual remedies. Includes downloadable PDF and 3 free AI follow-up questions." },
             { "@type": "Offer", "name": "PalmMatch", "price": "999", "priceCurrency": "INR", "url": "https://www.palmmitra.in/palmmatch", "description": "Relationship compatibility analysis generated from two palm readings." },
             { "@type": "Offer", "name": "PalmMitra Elite", "price": "4999", "priceCurrency": "INR", "description": "Lifetime access — unlimited readings for the family with priority AI." }
-          ],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "ratingCount": "2100",
-            "reviewCount": "2100",
-            "bestRating": "5",
-            "worstRating": "1"
-          }
+          ]
         },
         {
           "@type": "Service",

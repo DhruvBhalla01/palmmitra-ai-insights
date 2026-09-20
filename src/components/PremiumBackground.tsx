@@ -18,7 +18,10 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
-    const particleCount = intensity === 'light' ? 20 : intensity === 'medium' ? 35 : 50;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isSmallViewport = window.matchMedia('(max-width: 767px)').matches;
+    const baseCount = intensity === 'light' ? 12 : intensity === 'medium' ? 20 : 30;
+    const particleCount = reducedMotion ? 0 : isSmallViewport ? Math.round(baseCount * 0.5) : baseCount;
     const newParticles: Particle[] = [];
 
     for (let i = 0; i < particleCount; i++) {
@@ -36,7 +39,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
   }, [intensity]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
       {/* Multi-layer radial gradients */}
       <div
         className="absolute inset-0"
@@ -76,7 +79,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {showMandala && (
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
-            className="w-[800px] h-[800px] opacity-[0.03] animate-rotate-slow"
+            className="w-[800px] h-[800px] opacity-[0.03] motion-safe:animate-rotate-slow"
             style={{ animationDuration: '120s' }}
             viewBox="0 0 200 200"
           >

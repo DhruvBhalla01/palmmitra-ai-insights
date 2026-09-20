@@ -52,6 +52,23 @@ afterEach(() => {
   cleanup();
 });
 
+if (typeof window.localStorage === "undefined") {
+  const storage = new Map<string, string>();
+  Object.defineProperty(window, "localStorage", {
+    configurable: true,
+    value: {
+      getItem: (key: string) => storage.get(key) ?? null,
+      setItem: (key: string, value: string) => storage.set(key, String(value)),
+      removeItem: (key: string) => storage.delete(key),
+      clear: () => storage.clear(),
+      key: (index: number) => Array.from(storage.keys())[index] ?? null,
+      get length() {
+        return storage.size;
+      },
+    } satisfies Storage,
+  });
+}
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: string) => ({
@@ -112,6 +129,20 @@ Object.defineProperty(window, "FileReader", {
   writable: true,
   value: MockFileReader,
 });
+
+if (typeof URL.createObjectURL !== "function") {
+  Object.defineProperty(URL, "createObjectURL", {
+    writable: true,
+    value: vi.fn(() => "blob:mock-palm-preview"),
+  });
+}
+
+if (typeof URL.revokeObjectURL !== "function") {
+  Object.defineProperty(URL, "revokeObjectURL", {
+    writable: true,
+    value: vi.fn(),
+  });
+}
 
 if (!navigator.clipboard) {
   Object.assign(navigator, {

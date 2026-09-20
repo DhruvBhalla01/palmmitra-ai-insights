@@ -39,7 +39,7 @@
 | PDF | jsPDF (client-side) | 1231-line monolith |
 | Testing | Vitest + Testing Library | Some unit tests + 1 e2e spec |
 | Analytics | Google Analytics 4 (G-QNFZN2198W) | Inline gtag |
-| Chat | Chatbase embedded widget | Every page |
+| Chat | Native AI assistant surfaces | Report and PalmMatch flows |
 | Deployment | Lovable platform | lovable.app |
 | Auth | **None** | No user accounts, no sessions, no JWT in use |
 
@@ -50,7 +50,7 @@
 ```
 palmmitra-ai-insights/
 ├── .env                          ← SECRETS (see Security section)
-├── index.html                    ← Entry; GA, Razorpay SDK, Chatbase, JSON-LD
+├── index.html                    ← Entry; GA, Razorpay SDK, JSON-LD
 ├── src/
 │   ├── main.tsx                  ← React root
 │   ├── App.tsx                   ← Router + QueryClientProvider
@@ -153,7 +153,7 @@ Edge function secrets must be in `.env.local` (never `.env`) for local dev.
 | Code Duplication | 6/10 | PDF generator duplicates report section logic; stub patterns repeated in 3 files |
 | Unused Code | 5/10 | ~25 Radix packages unused; `next6MonthsFocus` field generated but never rendered; full QueryClient setup for nothing |
 | Dead Features | 4/10 | Email capture → fake; Contact form → fake; "Save to Dashboard" → stub; "Report by email" → claimed but never sent |
-| Performance | 7/10 | Lazy loading ✓; Framer Motion animations ✓; but Chatbase loads on every page including report; no image optimization pipeline |
+| Performance | 7/10 | Lazy loading ✓; Framer Motion animations ✓; no third-party chatbot startup; no image optimization pipeline |
 | Naming Conventions | 8/10 | Consistent and clear; minor: `palmMitraData` in sessionStorage is undocumented |
 | File Size | 5/10 | `generateReportPDF.ts` at 1231 lines is a maintenance liability; `analyze-palm/index.ts` ~500+ lines with 400-line hardcoded fallback |
 | Security | **3/10** | See Phase 7 — JWT disabled, no rate limiting, images stored contradicting privacy claims |
@@ -204,13 +204,12 @@ The AI generates this field and it's in `types.ts` and the PDF, but `Report.tsx`
 | No WhatsApp share button on report | High | This is India — WhatsApp sharing is viral loop gold |
 | Report paywall appears abruptly — no progressive teasing | Medium | Show more blurred/locked content to increase curiosity |
 | No urgency/scarcity signal on pricing | Medium | "47 readings completed today" or dynamic discount timer |
-| Chatbase widget loads on report page and may distract from payment CTA | Medium | Disable on `/report` pages |
 | "Image not stored" privacy claim is false | **Critical** | Either actually delete images or update the copy |
 | Contact form submits to nothing — users get no response | High | Fix immediately — trust killer |
 
 ### Outdated Patterns
 
-- FAQ uses standard accordion — fine, but a floating "ask anything" AI chat (using existing Chatbase) would be more engaging
+- FAQ uses a standard accordion — fine; native AI assistant surfaces remain available where users are already exploring a reading
 - "About" page is a wall of text — needs team photo, founding story, credibility signals
 
 ### Recommended Redesign Direction
@@ -457,7 +456,7 @@ Currently all tiers get the same model. Differentiate: free/₹99 gets 4o-mini, 
   - Architecture decision
 - [ ] **Accessibility:** Add keyboard accessibility to palm upload area
   - File: `src/pages/UploadPalm.tsx`
-- [ ] **UX:** Disable Chatbase widget on `/report` pages to avoid distraction from payment CTA
+- [x] **UX:** Removed the floating third-party chatbot so it no longer competes with payment CTAs
   - File: `index.html` or add per-route control
 
 ### 🟢 Low
@@ -480,7 +479,6 @@ Currently all tiers get the same model. Differentiate: free/₹99 gets 4o-mini, 
 |---|---|
 | ₹999 lifetime plan | Destroys LTV. Power users should pay monthly. Kills your best revenue segment. |
 | 400-line hardcoded fallback in `analyze-palm` | Silently serves fake data. Users who got this reading were scammed without knowing it. |
-| Chatbase on the report page | Competes with your own payment CTA. Remove it there specifically. |
 | ~15 unused Radix UI packages | Dead weight. Increases bundle size and npm audit surface. |
 | The "Save to Dashboard" button that does nothing | Either build the dashboard or remove the button. Stub CTAs kill trust. |
 

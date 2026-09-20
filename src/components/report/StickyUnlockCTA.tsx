@@ -102,7 +102,7 @@ export function StickyUnlockCTA({
                   aria-label={`Unlock full report for ${price}`}
                 >
                   <Sparkles className="w-4 h-4" />
-                  {ctaLabel ?? `Unlock ${userName ? `${userName.split(' ')[0]}'s` : 'Full'} Report`}
+                  {ctaLabel ?? `Reveal ${userName ? `${userName.split(' ')[0]}'s` : 'My Complete'} Report`}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </m.div>

@@ -2,10 +2,12 @@ import { fireEvent, screen, waitFor, render } from "@testing-library/react";
 import { vi } from "vitest";
 import App from "@/App";
 import { sampleReading } from "@/test/fixtures/palmReading";
+import { HelmetProvider } from "react-helmet-async";
 
 const mockUpload = vi.hoisted(() => vi.fn());
 const mockGetPublicUrl = vi.hoisted(() => vi.fn());
 const mockInvoke = vi.hoisted(() => vi.fn());
+const mockUnsubscribe = vi.hoisted(() => vi.fn());
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -17,6 +19,12 @@ vi.mock("@/integrations/supabase/client", () => ({
     },
     functions: {
       invoke: mockInvoke,
+    },
+    auth: {
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: mockUnsubscribe } },
+      })),
+      getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
     },
   },
 }));
@@ -54,14 +62,20 @@ describe("Upload -> Report flow", () => {
     });
 
     window.history.pushState({}, "", "/upload");
-    render(<App />);
+    render(
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
+    );
 
-    const input = document.querySelector(
-      "input[type=\"file\"]"
-    ) as HTMLInputElement;
+    const input = await waitFor(() => {
+      const element = document.querySelector("input[type=\"file\"]");
+      if (!element) throw new Error("Upload input has not mounted yet");
+      return element as HTMLInputElement;
+    });
     fireEvent.change(input, {
       target: {
-        files: [new File(["fake image"], "palm.png", { type: "image/png" })],
+        files: [new File(["x".repeat(25 * 1024)], "palm.png", { type: "image/png" })],
       },
     });
 
@@ -75,7 +89,7 @@ describe("Upload -> Report flow", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    fireEvent.click(screen.getByRole("button", { name: /see my free destiny preview/i }));
 
     await waitFor(() => {
       expect(mockInvoke).toHaveBeenCalled();
