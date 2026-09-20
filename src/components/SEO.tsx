@@ -9,7 +9,7 @@ interface SEOProps {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const SITE_URL = "https://palmmitra.com";
+const SITE_URL = "https://www.palmmitra.in";
 
 /**
  * Per-route <head> metadata for AI/search crawlers that execute JS
