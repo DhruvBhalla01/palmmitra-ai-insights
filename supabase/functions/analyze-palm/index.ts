@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { captureAiGeneration, type AiCaptureContext } from "../_shared/posthog-ai.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,8 +39,9 @@ const throwOpenAIError = (status: number, errorText: string): never => {
 };
 
 // Step 1: Validate if image is a palm
-const validatePalmImage = async (imageUrl: string, apiKey: string): Promise<ValidationResult> => {
+const validatePalmImage = async (imageUrl: string, apiKey: string, context: AiCaptureContext): Promise<ValidationResult> => {
   console.log("Step 1: Validating palm image...");
+  const startedAt = Date.now();
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -114,6 +116,15 @@ Return this exact JSON structure:
   if (!content) {
     throw new Error("No validation response received");
   }
+
+  await captureAiGeneration({
+    context,
+    spanName: "validate_palm_image",
+    model: "gpt-4.1",
+    input: [{ role: "user", content: [{ type: "image_url", image_url: { url: imageUrl } }] }],
+    output: content,
+    latencyMs: Date.now() - startedAt,
+  });
 
   try {
     const cleanContent = content
@@ -350,8 +361,10 @@ const generatePalmReading = async (
   age: string,
   readingType: string,
   apiKey: string,
+  context: AiCaptureContext,
 ) => {
   console.log("Step 2: Generating palm reading...");
+  const startedAt = Date.now();
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -400,6 +413,15 @@ const generatePalmReading = async (
   if (!content) {
     throw new Error("No reading content received");
   }
+
+  await captureAiGeneration({
+    context,
+    spanName: "generate_palm_reading",
+    model: "gpt-4.1",
+    input: [{ role: "user", content: [{ type: "image_url", image_url: { url: imageUrl } }] }],
+    output: content,
+    latencyMs: Date.now() - startedAt,
+  });
 
   try {
     const cleanContent = content
@@ -595,8 +617,10 @@ serve(async (req) => {
 
     console.log(`Processing palm reading, age ${ageNum}, type: ${safeReadingType}`);
 
+    const aiCaptureContext = { sessionId: crypto.randomUUID(), traceId: crypto.randomUUID() };
+
     // STEP 1: Validate the palm image
-    const validation = await validatePalmImage(imageUrl, OPENAI_API_KEY);
+    const validation = await validatePalmImage(imageUrl, OPENAI_API_KEY, aiCaptureContext);
 
     if (!validation.is_palm || validation.confidence < 70) {
       console.log("Palm validation failed:", validation);
@@ -614,7 +638,14 @@ serve(async (req) => {
     }
 
     // STEP 2: Generate the palm reading
-    const palmReading = await generatePalmReading(imageUrl, cleanName, String(ageNum), safeReadingType, OPENAI_API_KEY);
+    const palmReading = await generatePalmReading(
+      imageUrl,
+      cleanName,
+      String(ageNum),
+      safeReadingType,
+      OPENAI_API_KEY,
+      aiCaptureContext,
+    );
 
     // STEP 3: Save to database
     const { data: reportData, error: dbError } = await supabase
