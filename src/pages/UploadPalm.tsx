@@ -100,6 +100,14 @@ export default function UploadPalm() {
     analytics.track('palm_reading_started', { entry_page: '/upload' });
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (image?.startsWith('blob:') && typeof URL.revokeObjectURL === 'function') {
+        URL.revokeObjectURL(image);
+      }
+    };
+  }, [image]);
+
   const uploadFormSchema = useMemo(
     () => z.object({ name: nameSchema, age: ageSchema, email: emailSchema }),
     [],
@@ -161,9 +169,13 @@ export default function UploadPalm() {
     analytics.track('palm_image_upload_started', uploadProperties);
     posthog.capture('palm_image_upload_started', uploadProperties);
     setImageFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setImage(e.target?.result as string);
-    reader.readAsDataURL(file);
+    if (typeof URL.createObjectURL === 'function') {
+      setImage(URL.createObjectURL(file));
+    } else {
+      const reader = new FileReader();
+      reader.onload = (event) => setImage(event.target?.result as string);
+      reader.readAsDataURL(file);
+    }
     // Kick off storage upload in background so it's ready by the time user submits
     uploadPromiseRef.current = uploadToStorage(file)
       .then((url) => {
@@ -376,6 +388,13 @@ export default function UploadPalm() {
   };
 
   const progress = loadingProgress[processingStep] ?? 0;
+  const statusMessage = validationError
+    ? 'Photo verification failed. Review the guidance below.'
+    : isLoading
+      ? `${getLoadingLabel()} ${progress}% complete`
+      : image
+        ? 'Palm photo ready. Complete your details to continue.'
+        : 'Choose a palm photo to begin.';
 
   return (
     <div className="min-h-screen bg-background">
@@ -388,6 +407,7 @@ export default function UploadPalm() {
       <Navbar />
 
       <main className="pt-24 pb-20">
+        <p className="sr-only" aria-live="polite" aria-atomic="true">{statusMessage}</p>
         <div className="container mx-auto px-4">
 
           {/* ── Page Header ──────────────────────────── */}
@@ -465,6 +485,8 @@ export default function UploadPalm() {
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
+                      role="region"
+                      aria-label="Upload a palm photo"
                       className={`relative rounded-3xl border-2 border-dashed transition-all duration-300 overflow-hidden ${
                         isDragging
                           ? 'border-accent bg-accent/8 scale-[1.01]'
@@ -493,9 +515,10 @@ export default function UploadPalm() {
                             <button
                               type="button"
                               onClick={removeImage}
+                              aria-label="Remove selected palm photo"
                               className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm border border-border/60 flex items-center justify-center hover:scale-110 transition-transform shadow-md"
                             >
-                              <X className="w-4 h-4 text-foreground" />
+                              <X className="w-4 h-4 text-foreground" aria-hidden="true" />
                             </button>
                             <div className={`absolute bottom-0 left-0 right-0 px-4 py-3 backdrop-blur-md ${
                               validationError ? 'bg-destructive/80' : 'bg-card/80'
@@ -577,6 +600,19 @@ export default function UploadPalm() {
                               <br className="hidden sm:inline" />
                               Open palm facing the camera in soft, even light.
                             </p>
+                            <div className="relative grid grid-cols-3 gap-2 w-full max-w-[280px] mb-5 text-left">
+                              {[
+                                ['1', 'Open palm', 'All lines visible'],
+                                ['2', 'Good light', 'No harsh shadows'],
+                                ['3', 'Stay close', 'Fill the frame'],
+                              ].map(([step, title, detail]) => (
+                                <div key={step} className="rounded-xl border border-border/50 bg-background/35 p-2.5">
+                                  <span className="text-[10px] font-bold text-accent">{step}</span>
+                                  <p className="mt-1 text-[11px] font-semibold text-foreground leading-tight">{title}</p>
+                                  <p className="mt-1 text-[10px] text-muted-foreground leading-tight">{detail}</p>
+                                </div>
+                              ))}
+                            </div>
 
                             {/* Primary: Camera capture (opens camera directly on mobile) */}
                             <label htmlFor="camera-capture" className="relative cursor-pointer w-full max-w-[280px]">
@@ -868,7 +904,7 @@ export default function UploadPalm() {
                       ) : (
                         <span className="flex items-center gap-2.5">
                           <Sparkles className="w-5 h-5" />
-                          Begin My Free Reading
+                          See My Free Destiny Preview
                           <ArrowRight className="w-5 h-5" />
                         </span>
                       )}

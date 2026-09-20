@@ -61,7 +61,7 @@ describe("Report", () => {
       await screen.findByText(/key destiny insight/i)
     ).toBeInTheDocument();
     expect(screen.getByText(/reading for/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/unlock full report/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/reveal my complete report/i).length).toBeGreaterThan(0);
   });
 
   it("redirects to upload when no report data is found", async () => {

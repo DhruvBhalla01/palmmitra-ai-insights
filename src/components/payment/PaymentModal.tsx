@@ -171,7 +171,7 @@ export function PaymentModal({
                             <span className="text-2xl font-bold text-gradient-gold">{insightPrice}</span>
                           </div>
                         </div>
-                        <p className="text-[13px] text-muted-foreground">One-time unlock — your report, yours forever</p>
+                        <p className="text-[13px] text-muted-foreground">One-time unlock — full analysis, PDF, and lifetime access</p>
                         <div className="flex flex-wrap gap-2 mt-3">
                           <span className="text-[11px] px-2 py-1 rounded-full bg-primary/10 text-primary">Full Analysis</span>
                           <span className="text-[11px] px-2 py-1 rounded-full bg-primary/10 text-primary">PDF Download</span>
@@ -305,4 +305,3 @@ export function PaymentModal({
     </AnimatePresence>
   );
 }
-

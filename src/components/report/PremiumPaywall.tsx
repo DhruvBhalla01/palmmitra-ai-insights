@@ -240,7 +240,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    One-time payment · No subscription · Instant access
+                    One-time payment · No subscription · Instant access · PDF included
                   </p>
                 </div>
               </div>
@@ -256,7 +256,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                   aria-label={`Unlock full palm report for ${insightPrice}`}
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
-                  Unlock Full Report — {insightPrice}
+                  Reveal My Complete Report — {insightPrice}
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Button>
               </m.div>

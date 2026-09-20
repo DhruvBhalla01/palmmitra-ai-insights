@@ -29,7 +29,7 @@ export function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -64,7 +64,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+        <div className="hidden xl:flex items-center gap-6 2xl:gap-8">
           {navLinks.map((link) => (
             <SmartLink
               key={link.name}
@@ -83,7 +83,7 @@ export function Navbar() {
         </div>
 
         {/* CTA Button */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           <CurrencySelector compact />
           <button
             type="button"
@@ -103,7 +103,7 @@ export function Navbar() {
           </Link>
         </div>
 
-        <div className="lg:hidden ml-auto flex items-center gap-1.5">
+        <div className="xl:hidden ml-auto flex items-center gap-1.5">
           <CurrencySelector compact />
           {/* Mobile Menu Button */}
           <m.button
@@ -149,7 +149,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
+            className="xl:hidden glass-premium mt-3 mx-4 rounded-2xl overflow-hidden border border-accent/20"
             id="mobile-nav"
           >
             <div className="p-4 flex flex-col gap-2">

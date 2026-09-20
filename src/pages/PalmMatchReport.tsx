@@ -23,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { analytics, recordInteraction } from '@/lib/analytics';
 import { PRODUCTS, formatCurrency } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
+import { SEO } from '@/components/SEO';
 
 const DIMENSION_TEASERS = {
   communication: "Your communication styles decoded — where you naturally align and where friction hides.",
@@ -137,6 +138,12 @@ export default function PalmMatchReport() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Your PalmMatch Compatibility Report"
+        description="Your private PalmMatch relationship compatibility report."
+        path={`/palmmatch-report/${id ?? ''}`}
+        noindex
+      />
       <Navbar />
 
       {!isUnlocked && !isLoading && (

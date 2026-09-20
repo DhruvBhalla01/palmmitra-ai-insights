@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PremiumBackground } from '@/components/PremiumBackground';
+import { SEO } from '@/components/SEO';
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -28,6 +29,12 @@ export default function AuthCallback() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center">
+      <SEO
+        title="Signing in — PalmMitra"
+        description="Completing your secure PalmMitra sign-in."
+        path="/auth/callback"
+        noindex
+      />
       <PremiumBackground />
       <div className="relative z-10 text-center">
         <div className="text-amber-200/90 text-lg tracking-wide">Signing you in…</div>

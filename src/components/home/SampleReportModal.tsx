@@ -2,7 +2,7 @@ import { m, AnimatePresence } from '@/lib/motion';
 import { X, Lock, ArrowRight, Sparkles, Star, Heart, Briefcase, TrendingUp, ShieldCheck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface SampleReportModalProps {
   isOpen: boolean;
@@ -45,9 +45,25 @@ const sampleSections = [
 ];
 
 export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (isOpen) {
+      triggerRef.current = document.activeElement as HTMLElement | null;
       document.body.style.overflow = 'hidden';
+      closeButtonRef.current?.focus();
+
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') onClose();
+      };
+      document.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = '';
+        triggerRef.current?.focus();
+      };
     } else {
       document.body.style.overflow = '';
     }
@@ -87,6 +103,9 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
             className="relative w-full max-w-2xl max-h-[88vh] overflow-hidden rounded-3xl"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sample-report-title"
           >
             {/* Gradient border shell */}
             <div
@@ -122,7 +141,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                         </span>
                       </span>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground leading-tight">
+                    <h2 id="sample-report-title" className="text-2xl sm:text-3xl font-serif font-bold text-foreground leading-tight">
                       Your Destiny{' '}
                       <span className="text-gradient-gold">Report</span>
                     </h2>
@@ -132,6 +151,8 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                     </p>
                   </div>
                   <button
+                    ref={closeButtonRef}
+                    type="button"
                     onClick={onClose}
                     className="w-10 h-10 rounded-full bg-background/60 border border-accent/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-accent/50 transition-all"
                     aria-label="Close modal"

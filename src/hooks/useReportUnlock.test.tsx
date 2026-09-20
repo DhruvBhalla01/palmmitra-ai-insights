@@ -10,6 +10,16 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
 
+vi.mock("@/hooks/useCurrency", () => ({
+  useCurrency: () => ({
+    currency: "USD",
+    countryCode: "US",
+    countryName: "United States",
+    isIndia: false,
+    setCurrency: vi.fn(),
+  }),
+}));
+
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     functions: {

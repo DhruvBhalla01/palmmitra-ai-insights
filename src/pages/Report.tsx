@@ -15,6 +15,7 @@ import { PaymentModal } from '@/components/payment/PaymentModal';
 import { LockedSection } from '@/components/payment/LockedSection';
 import { UnlockSuccessOverlay } from '@/components/payment/UnlockSuccessOverlay';
 import { useAiEntitlement } from '@/hooks/useAiEntitlement';
+import { SEO } from '@/components/SEO';
 
 
 // Report components
@@ -203,43 +204,45 @@ export default function Report() {
     loadReport();
   }, [navigate, urlReportId, toast]);
 
-  // Handle scroll to update active section
+  // Track the active report section without forcing layout on every scroll event.
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = reportSections.map(s => ({
-        id: s.id,
-        element: document.getElementById(`section-${s.id}`)
-      }));
-      
-      for (const section of sections) {
-        if (section.element) {
-          const rect = section.element.getBoundingClientRect();
-          if (rect.top <= 200 && rect.bottom >= 200) {
-            setActiveSection(section.id);
-              const sectionIndex = reportSections.findIndex((candidate) => candidate.id === section.id);
-              const firstView = markSectionViewed(`report_${section.id}`, {
-                section_name: reportSections[sectionIndex]?.label ?? section.id,
-                section_index: sectionIndex,
-              });
-              if (firstView) {
-                analytics.track('destiny_section_viewed', {
-                  section_id: section.id,
-                  section_name: reportSections[sectionIndex]?.label ?? section.id,
-                  section_index: sectionIndex,
-                });
-                analytics.track('report_section_viewed', {
-                  section_id: section.id,
-                  section_index: sectionIndex,
-                });
-              }
-            break;
-          }
-        }
-      }
-    };
+    if (typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (!visible) return;
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+        const sectionId = visible.target.id.replace('section-', '');
+        const sectionIndex = reportSections.findIndex((section) => section.id === sectionId);
+        if (sectionIndex < 0) return;
+        setActiveSection(sectionId);
+
+        const firstView = markSectionViewed(`report_${sectionId}`, {
+          section_name: reportSections[sectionIndex].label,
+          section_index: sectionIndex,
+        });
+        if (firstView) {
+          analytics.track('destiny_section_viewed', {
+            section_id: sectionId,
+            section_name: reportSections[sectionIndex].label,
+            section_index: sectionIndex,
+          });
+          analytics.track('report_section_viewed', {
+            section_id: sectionId,
+            section_index: sectionIndex,
+          });
+        }
+      },
+      { rootMargin: '-120px 0px -55% 0px', threshold: 0.01 },
+    );
+
+    reportSections.forEach(({ id }) => {
+      const section = document.getElementById(`section-${id}`);
+      if (section) observer.observe(section);
+    });
+    return () => observer.disconnect();
   }, []);
 
   const handleUnlockClick = () => {
@@ -325,6 +328,12 @@ export default function Report() {
   // Success State - Premium Report with Paywall
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="Your PalmMitra Reading"
+        description="Your private PalmMitra palm reading report."
+        path={urlReportId ? `/report/${urlReportId}` : '/report'}
+        noindex
+      />
       <PremiumBackground showMandala intensity="light" />
       <Navbar />
 

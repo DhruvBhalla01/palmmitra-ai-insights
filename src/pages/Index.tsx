@@ -8,6 +8,7 @@ import { PremiumBackground } from '@/components/PremiumBackground';
 import { SectionDivider } from '@/components/SectionDivider';
 import { MobileCTABar } from '@/components/MobileCTABar';
 import { useHashScroll } from '@/hooks/useHashScroll';
+import { SEO } from '@/components/SEO';
 
 // Lazy load below-fold sections for performance
 const FeaturesSection = lazy(() => import('@/components/home/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
@@ -30,6 +31,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <SEO
+        title="PalmMitra — AI Palm Reading | Discover Your Destiny in 2 Minutes"
+        description="PalmMitra uses AI and ancient Indian Hasta Samudrika Shastra to read your palm lines and reveal insights about your career, love, wealth, and life path. Free preview."
+        path="/"
+      />
       <PremiumBackground showMandala intensity="medium" />
       <Navbar />
       <main className="relative z-10">
