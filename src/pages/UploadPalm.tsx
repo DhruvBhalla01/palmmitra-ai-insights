@@ -361,7 +361,7 @@ export default function UploadPalm() {
     }
   };
 
-  const isFormValid = image && formData.name && formData.email && formData.age;
+  const isFormValid = imageFile && formData.name && formData.email && formData.age;
   const isLoading = !['idle', 'error', 'complete'].includes(processingStep);
 
   const getLoadingLabel = () => {
