@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { m, AnimatePresence } from '@/lib/motion';
+import { m } from '@/lib/motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Crown, Activity, Brain, Zap } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
@@ -65,7 +65,6 @@ export default function Report() {
   const { toast } = useToast();
   const { id: urlReportId } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
-  const [showReveal, setShowReveal] = useState(true);
   const [reading, setReading] = useState<PalmReading | null>(null);
   const [userData, setUserData] = useState<SessionData | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
@@ -167,6 +166,9 @@ export default function Report() {
               age: report.user_age || '',
               email: persistedEmail,
               readingType: (report.reading_type as StoredData['readingType']) || 'full',
+              language: report.language === 'hinglish' ? 'hinglish' : 'english',
+              countryCode: report.country_code || undefined,
+              countryName: report.country_name || undefined,
               palmImage: report.image_url,
               imageUrl: report.image_url,
               reportId: urlReportId,
@@ -331,16 +333,6 @@ export default function Report() {
         onUnlockClick={handleUnlockClick}
         isUnlocked={isUnlocked}
       />
-
-      {/* Destiny Reveal Animation on first load */}
-      <AnimatePresence>
-        {showReveal && (
-          <DestinyRevealLoader 
-            isLoading={false} 
-            onComplete={() => setShowReveal(false)} 
-          />
-        )}
-      </AnimatePresence>
 
       {/* Payment Modal */}
       <PaymentModal

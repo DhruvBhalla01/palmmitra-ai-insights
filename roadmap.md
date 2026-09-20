@@ -9,3 +9,10 @@
 - [x] Deploy four edge functions
 - [x] Validate currency matrix, language/country sanitization, tampering rejection, provider consistency guards, and INR regression paths
 - [x] Deliver exact deployment and test report
+
+# Location, speed, and Hinglish reliability
+
+- [ ] Detect supported countries from request metadata with browser fallback
+- [ ] Remove avoidable post-generation report delays
+- [ ] Enforce and verify Hinglish before saving reports
+- [ ] Deploy affected functions and validate mobile and desktop flows
