@@ -84,8 +84,8 @@ function onScroll() {
 
 /* ------------------------------ section views ----------------------------- */
 
-export function markSectionViewed(sectionId: string, extra: Record<string, string | number> = {}) {
-  if (!page || page.firedSections.has(sectionId)) return;
+export function markSectionViewed(sectionId: string, extra: Record<string, string | number> = {}): boolean {
+  if (!page || page.firedSections.has(sectionId)) return false;
   page.firedSections.add(sectionId);
   const timeToSection = Math.round((Date.now() - page.enteredAt) / 1000);
   analytics.track('section_viewed', {
@@ -95,6 +95,7 @@ export function markSectionViewed(sectionId: string, extra: Record<string, strin
     ...extra,
   });
   recordInteraction('section_viewed', sectionId);
+  return true;
 }
 
 /* ---------------------------------- exit ---------------------------------- */
