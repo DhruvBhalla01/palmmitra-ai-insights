@@ -56,12 +56,14 @@ describe("Upload -> Report flow", () => {
     window.history.pushState({}, "", "/upload");
     render(<App />);
 
-    const input = document.querySelector(
-      "input[type=\"file\"]"
-    ) as HTMLInputElement;
+    const input = await waitFor(() => {
+      const element = document.querySelector('input[type="file"]');
+      if (!element) throw new Error("Upload input has not rendered yet");
+      return element as HTMLInputElement;
+    });
     fireEvent.change(input, {
       target: {
-        files: [new File(["fake image"], "palm.png", { type: "image/png" })],
+        files: [new File([new Uint8Array(25 * 1024)], "palm.png", { type: "image/png" })],
       },
     });
 
@@ -75,7 +77,7 @@ describe("Upload -> Report flow", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    fireEvent.click(screen.getByRole("button", { name: /begin my free reading/i }));
 
     await waitFor(() => {
       expect(mockInvoke).toHaveBeenCalled();

@@ -139,6 +139,14 @@ export default function Privacy() {
                   <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
                   <span><strong className="text-foreground">Supabase:</strong> For secure data storage</span>
                 </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
+                  <span><strong className="text-foreground">PostHog:</strong> For privacy-conscious product analytics; session replay is disabled</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
+                  <span><strong className="text-foreground">IP geolocation:</strong> A best-effort country lookup may be used to select report language context and local payment currency; exact location is not stored</span>
+                </li>
               </ul>
             </div>
           </AnimatedSection>

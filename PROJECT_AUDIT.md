@@ -35,10 +35,10 @@
 | Database | Supabase Postgres + RLS | 5 migration files |
 | Storage | Supabase Storage (`palm-uploads` bucket, **public**) | Images are permanent and public |
 | AI | OpenAI GPT-4o-mini (vision) | Two-call pipeline per reading |
-| Payments | Razorpay (INR only) | Server-side order creation + HMAC-SHA256 verification ✓ |
+| Payments | Razorpay (INR plus configured international currencies) | Server-side country-aware order creation + HMAC-SHA256 verification ✓ |
 | PDF | jsPDF (client-side) | 1231-line monolith |
 | Testing | Vitest + Testing Library | Some unit tests + 1 e2e spec |
-| Analytics | Google Analytics 4 (G-QNFZN2198W) | Inline gtag |
+| Analytics | Google Analytics 4 (G-QNFZN2198W), Supabase analytics, PostHog US | Inline gtag plus centralized event transports |
 | Chat | Chatbase embedded widget | Every page |
 | Deployment | Lovable platform | lovable.app |
 | Auth | **None** | No user accounts, no sessions, no JWT in use |
@@ -93,6 +93,8 @@ palmmitra-ai-insights/
 | `VITE_SUPABASE_URL` | Frontend `.env` | Supabase project URL |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Frontend `.env` | Supabase anon key (safe to expose) |
 | `VITE_SUPABASE_PROJECT_ID` | Frontend `.env` | Project ID |
+| `VITE_POSTHOG_KEY` | Frontend/Vercel environment | PostHog project API key |
+| `VITE_POSTHOG_HOST` | Frontend/Vercel environment | PostHog ingestion host; use `https://us.i.posthog.com` for US projects |
 | `OPENAI_API_KEY` | Supabase Edge Function secrets | GPT-4o-mini key |
 | `SUPABASE_URL` | Supabase Edge Function secrets | Auto-injected |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Edge Function secrets | Auto-injected |
@@ -378,7 +380,7 @@ Currently all tiers get the same model. Differentiate: free/₹99 gets 4o-mini, 
 | 2 | Retention | Collect birthday; trigger annual "reading update" emails |
 | 3 | Viral loop | Build WhatsApp share card with top 3 insights (1080×1080, OpenAI or html2canvas) |
 | 3 | AI quality | Remove silent fallback data; show proper retry UI on failures |
-| 4 | Analytics | Add Mixpanel/PostHog event tracking (upload started, payment modal opened, payment completed, PDF downloaded) |
+| 4 | Analytics | Configure PostHog dashboards for the centralized conversion events now forwarded by the app |
 | 4 | Dashboard | Build simple `/dashboard` page showing past readings list |
 
 ### 90-Day Scale Plan
@@ -443,8 +445,8 @@ Currently all tiers get the same model. Differentiate: free/₹99 gets 4o-mini, 
 
 - [ ] **Product:** Build `/dashboard` page with past readings list
   - New file: `src/pages/Dashboard.tsx`
-- [ ] **Analytics:** Add PostHog or Mixpanel event tracking on key conversion events
-  - Files: `src/pages/UploadPalm.tsx`, `src/components/payment/PaymentModal.tsx`, `src/lib/generateReportPDF.ts`
+- [x] **Analytics:** Add PostHog event forwarding for key conversion events without automatic pageviews, session replay, or sensitive payloads
+  - File: `src/lib/analytics/posthog.ts`
 - [ ] **Code quality:** Enable TypeScript strict mode; fix resulting type errors
   - File: `tsconfig.json`
 - [ ] **Code quality:** Move TanStack Query `useQuery` into actual data-fetching hooks; replace raw `useEffect` fetches

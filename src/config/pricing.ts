@@ -9,7 +9,7 @@
  * Keep that file in sync whenever you change amounts here.
  */
 
-export type Currency = 'INR' | 'USD';
+export type Currency = 'INR' | 'USD' | 'GBP' | 'AED' | 'CAD' | 'AUD' | 'SGD';
 
 /** Stable internal plan identifiers (DO NOT change — DB constraints depend on these) */
 export type PlanId = 'report99' | 'palmmatch149' | 'monthly299' | 'unlimited999';
@@ -51,7 +51,12 @@ export const PRODUCTS = {
     tier: 'standard',
     prices: {
       INR: { minor: 29900, major: 299,  display: '₹299'   },
-      USD: { minor:   999, major: 9.99, display: '$9.99'  },
+      USD: { minor: 999, major: 9.99, display: '$9.99' },
+      GBP: { minor: 799, major: 7.99, display: '£7.99' },
+      AED: { minor: 3900, major: 39, display: 'AED 39' },
+      CAD: { minor: 1400, major: 14, display: 'C$14' },
+      AUD: { minor: 1500, major: 15, display: 'A$15' },
+      SGD: { minor: 1400, major: 14, display: 'S$14' },
     },
   },
   palmmatch: {
@@ -62,7 +67,12 @@ export const PRODUCTS = {
     tier: 'hero',
     prices: {
       INR: { minor: 99900, major: 999,   display: '₹999'   },
-      USD: { minor:  2499, major: 24.99, display: '$24.99' },
+      USD: { minor: 2499, major: 24.99, display: '$24.99' },
+      GBP: { minor: 1999, major: 19.99, display: '£19.99' },
+      AED: { minor: 9900, major: 99, display: 'AED 99' },
+      CAD: { minor: 3400, major: 34, display: 'C$34' },
+      AUD: { minor: 3900, major: 39, display: 'A$39' },
+      SGD: { minor: 3400, major: 34, display: 'S$34' },
     },
   },
   elite: {
@@ -73,12 +83,31 @@ export const PRODUCTS = {
     tier: 'flagship',
     prices: {
       INR: { minor: 499900, major: 4999, display: '₹4,999' },
-      USD: { minor:  14900, major: 149,  display: '$149'   },
+      USD: { minor: 14900, major: 149, display: '$149' },
+      GBP: { minor: 11900, major: 119, display: '£119' },
+      AED: { minor: 54900, major: 549, display: 'AED 549' },
+      CAD: { minor: 19900, major: 199, display: 'C$199' },
+      AUD: { minor: 21900, major: 219, display: 'A$219' },
+      SGD: { minor: 19900, major: 199, display: 'S$199' },
     },
   },
 } as const satisfies Record<string, ProductPricing>;
 
 export type ProductKey = keyof typeof PRODUCTS;
+
+export const CURRENCY_BY_COUNTRY: Record<string, Currency> = {
+  IN: 'INR',
+  US: 'USD',
+  GB: 'GBP',
+  AE: 'AED',
+  CA: 'CAD',
+  AU: 'AUD',
+  SG: 'SGD',
+};
+
+export function currencyForCountry(countryCode: string | null | undefined): Currency {
+  return CURRENCY_BY_COUNTRY[countryCode?.toUpperCase() ?? ''] ?? 'USD';
+}
 
 /* ------------------------------------------------------------------ */
 /*  Lookups                                                           */
@@ -94,7 +123,7 @@ export function priceFor(productKey: ProductKey, currency: Currency = 'INR'): st
   return PRODUCTS[productKey].prices[currency].display;
 }
 
-/** Razorpay amount (paise) — INR only */
+/** Legacy INR amount helper for callers that do not yet select a country. */
 export function razorpayAmount(planId: PlanId): number {
   const product = getProductByPlanId(planId);
   return product?.prices.INR.minor ?? 0;
@@ -105,4 +134,3 @@ export function stripeAmount(planId: PlanId): number {
   const product = getProductByPlanId(planId);
   return product?.prices.USD.minor ?? 0;
 }
-

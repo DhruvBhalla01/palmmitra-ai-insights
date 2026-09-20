@@ -1,18 +1,20 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { emitServerEvent } from '../_shared/analytics.ts';
+import { amountForPlan, currencyForCountry, type PaymentPlan } from '../_shared/pricing.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-type PlanType = 'report99' | 'palmmatch149' | 'monthly299' | 'unlimited999';
+type PlanType = PaymentPlan;
 
 interface CreateOrderRequest {
   user_email: string;
   report_id?: string;
   palmmatch_report_id?: string;
   plan: PlanType;
+  country_code?: string;
   analytics_context?: {
     anonymous_id?: string;
     session_id?: string;
@@ -20,15 +22,6 @@ interface CreateOrderRequest {
     page_path?: string;
   };
 }
-
-// Amounts in paise (INR). Keep in sync with src/config/pricing.ts
-// PalmMitra Insight ₹299 · PalmMatch ₹999 · PalmMitra Elite ₹4,999
-const PLAN_AMOUNTS: Record<PlanType, number> = {
-  report99:     29900,   // PalmMitra Insight — ₹299
-  palmmatch149: 99900,   // PalmMatch         — ₹999
-  monthly299:   29900,   // Legacy monthly    — kept in sync with Insight
-  unlimited999: 499900,  // PalmMitra Elite   — ₹4,999
-};
 
 const ok = (body: object) =>
   new Response(JSON.stringify(body), {
@@ -41,7 +34,7 @@ Deno.serve(async (req) => {
 
   try {
     const body: CreateOrderRequest = await req.json();
-    const { user_email, report_id, palmmatch_report_id, plan, analytics_context } = body;
+    const { user_email, report_id, palmmatch_report_id, plan, country_code, analytics_context } = body;
 
     if (!user_email || !plan) {
       return ok({ success: false, error: 'Missing required fields: user_email and plan' });
@@ -71,7 +64,8 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const finalAmount = PLAN_AMOUNTS[plan];
+    const currency = currencyForCountry(country_code);
+    const finalAmount = amountForPlan(plan, currency);
 
     const planLabels: Record<PlanType, string> = {
       report99:     'PalmMitra Insight — Full Palm Reading',
@@ -88,7 +82,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         amount: finalAmount,
-        currency: 'INR',
+        currency,
         receipt: `palm_${Date.now()}`,
         notes: { user_email, plan, report_id: report_id || palmmatch_report_id || 'subscription' },
       }),
@@ -108,6 +102,7 @@ Deno.serve(async (req) => {
         plan_type: plan,
         razorpay_order_id: razorpayRes.id,
         amount: finalAmount,
+        currency,
         status: 'pending',
       })
       .select()
@@ -130,7 +125,7 @@ Deno.serve(async (req) => {
       provider_order_id: razorpayRes.id,
       plan_id: plan,
       amount: finalAmount,
-      currency: 'INR',
+      currency,
       report_id: report_id || palmmatch_report_id || null,
       payment_provider: 'razorpay',
     });
@@ -139,7 +134,7 @@ Deno.serve(async (req) => {
       success: true,
       order_id: razorpayRes.id,
       amount: finalAmount,
-      currency: 'INR',
+      currency,
       payment_id: payment.id,
       key_id: razorpayKeyId,
       description: planLabels[plan],

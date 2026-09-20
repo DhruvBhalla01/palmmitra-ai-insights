@@ -10,6 +10,7 @@ const loadMotionFeatures = () =>
 import Index from "./pages/Index";
 import ScrollToTop from "./components/ScrollToTop";
 import { AnalyticsProvider } from "@/lib/analytics";
+import { HelmetProvider } from "react-helmet-async";
 
 // Lazy-load non-critical routes to shrink the initial bundle.
 const UploadPalm = lazy(() => import("./pages/UploadPalm"));
@@ -31,36 +32,38 @@ const RouteFallback = () => (
 );
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <LazyMotion features={loadMotionFeatures} strict>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <ScrollToTop />
-          <AnalyticsProvider>
-          <Suspense fallback={<RouteFallback />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/upload" element={<UploadPalm />} />
-              <Route path="/report" element={<Report />} />
-              <Route path="/report/:id" element={<Report />} />
-              <Route path="/palmmatch" element={<PalmMatch />} />
-              <Route path="/palmmatch-report/:id" element={<PalmMatchReport />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-          </AnalyticsProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </LazyMotion>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <LazyMotion features={loadMotionFeatures} strict>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <ScrollToTop />
+            <AnalyticsProvider>
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/upload" element={<UploadPalm />} />
+                  <Route path="/report" element={<Report />} />
+                  <Route path="/report/:id" element={<Report />} />
+                  <Route path="/palmmatch" element={<PalmMatch />} />
+                  <Route path="/palmmatch-report/:id" element={<PalmMatchReport />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </AnalyticsProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </LazyMotion>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

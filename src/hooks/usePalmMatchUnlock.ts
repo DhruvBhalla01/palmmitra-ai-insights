@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
+import { currencyForCountry, PRODUCTS } from '@/config/pricing';
+import { detectVisitorLocation } from '@/lib/location';
 import { PRODUCTS } from '@/config/pricing';
 import posthog from '@/lib/posthog';
 
@@ -90,11 +92,13 @@ export function usePalmMatchUnlock(
     }
     setIsProcessing(true);
     const product = plan === 'palmmatch149' ? PRODUCTS.palmmatch : PRODUCTS.insight;
+    const location = await detectVisitorLocation();
+    const currency = currencyForCountry(location.countryCode);
     const commerce = {
       plan_id: product.id,
       plan_name: product.name,
-      amount: product.prices.INR.major,
-      currency: 'INR',
+      amount: product.prices[currency].major,
+      currency,
     } as const;
     const orderProperties = { ...commerce, checkout_step: 'create_order' };
     analytics.track('checkout_payment_initiated', orderProperties);
@@ -106,6 +110,7 @@ export function usePalmMatchUnlock(
           user_email: userEmail,
           palmmatch_report_id: reportId,
           plan,
+          country_code: location.countryCode,
           analytics_context: getServerCorrelationContext(),
         } }
       );
