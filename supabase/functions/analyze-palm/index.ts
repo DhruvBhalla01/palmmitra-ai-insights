@@ -364,7 +364,7 @@ The next6MonthsFocus should weave together professional, personal, and spiritual
   return basePrompt + (focusAdditions[readingType] || focusAdditions.full);
 };
 
-const generatePalmReading = async (
+const generatePalmReadingAttempt = async (
   imageUrl: string,
   name: string,
   age: string,
@@ -373,6 +373,7 @@ const generatePalmReading = async (
   context: AiCaptureContext,
   language: "english" | "hinglish",
   countryContext: string,
+  isRetry = false,
 ) => {
   console.log("Step 2: Generating palm reading...");
   const startedAt = Date.now();
@@ -395,7 +396,7 @@ const generatePalmReading = async (
           content: [
             {
               type: "text",
-              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.`,
+              text: `Analyze this palm image for ${name}, age ${age}. Generate a premium ${readingType} destiny report with deep psychological insight and rich detail in every field. Use ${name}'s name sparingly (3-5 times total). Return ONLY the JSON object.${isRetry && language === 'hinglish' ? ' IMPORTANT RETRY: The previous response was too English-heavy. Rewrite every customer-facing sentence in natural Roman-script Hinglish, using familiar Hindi words throughout.' : ''}`,
             },
             {
               type: "image_url",
@@ -409,6 +410,7 @@ const generatePalmReading = async (
       ],
       max_tokens: 4000,
       temperature: 0.7,
+      response_format: { type: "json_object" },
     }),
   });
 
@@ -442,85 +444,47 @@ const generatePalmReading = async (
     return JSON.parse(cleanContent);
   } catch (parseError) {
     console.error("Failed to parse GPT response as JSON:", parseError);
-    console.log("Raw content:", content);
-
-    const now = new Date();
-    const currentMonth = now.toLocaleString("en-US", { month: "long" });
-    const currentYear = now.getFullYear();
-    const futureDate = new Date(now);
-    futureDate.setMonth(futureDate.getMonth() + 6);
-    const futureMonth = futureDate.toLocaleString("en-US", { month: "long" });
-    const futureYear = futureDate.getFullYear();
-
-    return {
-      confidenceScore: 82,
-      headlineSummary: `${name}, there is a quiet authority in the lines of your palm — a story of someone who has weathered inner storms and emerged with a rare kind of clarity. At ${age}, the patterns etched across your hand suggest you are entering a period where long-held potential begins to crystallize into tangible reality.`,
-      majorLines: {
-        lifeLine: { strength: "Strong", meaning: "Your life line traces a deep, confident arc around the mount of Venus, suggesting robust vitality and an instinctive connection to the physical world. The depth of this line points to someone who recovers from setbacks with surprising speed — not through denial, but through a grounded acceptance that fuels forward movement.", keyInsight: "There is a resilience coded into your palm that goes beyond mere toughness. It suggests someone who transforms difficulty into wisdom — the kind of person others turn to during crisis, not because you have answers, but because your presence itself is steadying." },
-        heartLine: { strength: "Moderate", meaning: "The heart line extends with a gentle, steady curve — neither dramatically sweeping nor rigidly straight. This speaks to an emotional nature that values depth over drama, preferring meaningful connection to the intoxication of new romance.", keyInsight: "Your emotional architecture suggests someone who loves with quiet permanence. Trust does not come easily, but once given, it runs deep. The challenge revealed here is not about finding love — it is about allowing yourself to be fully seen within it." },
-        headLine: { strength: "Strong", meaning: "A clearly defined head line with good length indicates sharp analytical abilities balanced by creative intuition. The slight downward slope hints at an imaginative mind that can see possibilities others miss, while maintaining enough pragmatism to act on them.", keyInsight: "Your thinking style appears to blend logic with intuition in a way that is distinctly your own. Under pressure, you likely access a calm, almost detached clarity — an ability to step back and see the larger pattern when others are consumed by details." },
-        fateLine: { strength: "Developing", meaning: "The fate line shows progressive deepening, suggesting a career path that gains clarity and momentum over time rather than arriving fully formed. This is the mark of someone whose professional identity is self-authored rather than inherited or accidental.", keyInsight: "The developing nature of this line is not a weakness — it reveals someone who builds their path through experience and reflection rather than following a prescribed route. Your most significant professional contributions likely lie ahead, emerging from the intersection of your accumulated skills and evolving sense of purpose." },
-        sunLine: { strength: "Moderate", meaning: "A visible sun line suggests that recognition and creative fulfillment are part of your life's trajectory, though they arrive through sustained effort rather than sudden fame. The moderate presence indicates someone who earns respect through substance rather than self-promotion.", keyInsight: "Your relationship with success appears to be private rather than performative. The palm suggests that your greatest satisfaction comes not from external validation but from the quiet knowledge that your work has genuine impact." },
-      },
-      mounts: {
-        venus: { level: "High", meaning: "A well-developed Venus mount reveals a rich inner life of passion, warmth, and sensory appreciation. You likely have a strong aesthetic sensibility and a deep capacity for joy — the kind of person who notices beauty in ordinary moments and brings warmth to every room." },
-        jupiter: { level: "Medium", meaning: "The Jupiter mount suggests natural leadership qualities tempered by humility. You lead not through dominance but through competence and quiet example — earning authority rather than demanding it." },
-        saturn: { level: "Medium", meaning: "A balanced Saturn mount points to a healthy relationship with responsibility and discipline. You understand that meaningful achievement requires sustained effort, and you possess the patience to see long-term projects through to completion." },
-        apollo: { level: "High", meaning: "The prominence of the Apollo mount reveals strong creative potential and an innate desire for self-expression. Whether through art, communication, or problem-solving, there is a distinctive creative signature to everything you undertake." },
-        mercury: { level: "Medium", meaning: "The Mercury mount indicates strong communication abilities and intellectual curiosity. You likely excel at translating complex ideas into accessible language — a bridge-builder between different worlds of thought and experience." },
-      },
-      personalityTraits: [
-        { trait: "Quiet Tenacity", icon: "drive", description: "Your palm reveals someone who pursues goals with a steady, almost invisible determination. Where others announce their ambitions, you quietly work toward them — and this understated drive is precisely what makes your achievements so enduring." },
-        { trait: "Protective Loyalty", icon: "loyalty", description: "The patterns in your hand suggest a fierce loyalty to those in your inner circle. You do not give trust lightly, but once someone earns it, you become their most reliable anchor — even at personal cost." },
-        { trait: "Grounded Pragmatism", icon: "practical", description: "There is a practical intelligence in your palm that keeps you rooted even when emotions run high. You have an instinct for what is workable versus what is merely attractive — a quality that saves you from many of the pitfalls that trap more impulsive natures." },
-        { trait: "Delayed Mastery", icon: "success", description: "Your palm carries the signature of someone whose greatest achievements arrive through accumulation rather than sudden breakthrough. Each experience builds upon the last, creating a compound effect that accelerates significantly in your thirties and beyond." },
-        { trait: "Intuitive Depth", icon: "spiritual", description: "Beneath the practical exterior, your palm reveals a contemplative nature with access to intuitive knowing. You sense things before you can articulate them — and learning to trust this inner guidance is one of your life's key developmental themes." },
-      ],
-      careerWealth: {
-        bestFields: ["Strategic Advisory & Consulting", "Creative Leadership & Content Strategy", "Education & Knowledge-Based Entrepreneurship"],
-        turningPointAge: "28-33",
-        wealthStyle: "Your palm suggests a wealth pattern built on expertise and trust rather than speculation or inheritance. Financial growth comes through deepening mastery in your chosen field, with income rising in step with your growing reputation. There is an indication of multiple income streams developing naturally from a core competency.",
-        peakPeriods: [
-          { year: `${currentYear}`, intensity: "building" },
-          { year: `${currentYear + 1}`, intensity: "rising" },
-          { year: `${currentYear + 2}`, intensity: "peak" },
-          { year: `${currentYear + 3}`, intensity: "sustaining" },
-          { year: `${currentYear + 4}`, intensity: "expanding" },
-        ],
-      },
-      loveRelationships: {
-        emotionalStyle: "Your heart line and Venus mount together paint a picture of someone who loves with depth and discrimination. You are not drawn to surface-level connections — your emotional fulfillment comes from relationships that offer intellectual stimulation, emotional safety, and genuine mutual growth. You may take longer to open up, but the connections you build tend to be remarkably enduring.",
-        commitmentTendency: "Commitment for you is not a decision made in a moment of passion but a gradual deepening of trust and understanding. Once committed, you bring a steadfast presence that becomes the foundation your partner builds their life around.",
-        relationshipAdvice: "The palm suggests that your greatest growth in relationships comes from allowing vulnerability earlier in the process. Your natural self-sufficiency, while admirable, can sometimes create distance where closeness is needed. The practice of sharing your inner world before you feel entirely safe is where your deepest relational growth lies.",
-      },
-      lifePhases: {
-        growth: { period: `Jan-Apr ${currentYear}`, description: "A concentrated period of internal development where foundational skills and self-knowledge deepen significantly. The investments you make in yourself during this window — whether through learning, reflection, or strategic planning — set the stage for everything that follows." },
-        challenge: { period: `May-Jul ${currentYear}`, description: "A testing period that asks you to hold your course when external circumstances create uncertainty. The challenge here is not the difficulty itself but the temptation to abandon your longer-term vision for short-term relief. Patience is your greatest ally." },
-        opportunity: { period: `Aug-Dec ${currentYear}`, description: "A window of expanded possibility where your accumulated preparation meets favorable conditions. New professional connections, creative projects, or leadership opportunities present themselves — the key is recognizing them quickly and committing fully." },
-      },
-      next6MonthsFocus: {
-        period: `${currentMonth} ${currentYear} - ${futureMonth} ${futureYear}`,
-        focusAreas: [
-          { area: "Professional Positioning", action: "This is an ideal period to consolidate your expertise and make it visible. Whether through a project, presentation, or strategic conversation, ensure that the right people understand the depth of what you bring to the table." },
-          { area: "Physical Vitality", action: "Your life line suggests strong baseline energy, but this period calls for intentional investment in physical wellbeing. A consistent morning practice — even 20 minutes of movement and breathwork — amplifies your mental clarity and emotional resilience." },
-          { area: "Relationship Deepening", action: "Choose one or two key relationships and invest in them with deliberate attention. The connections you nurture during this period have the potential to become lifelong sources of support, collaboration, and joy." },
-        ],
-        avoidDuring: "This is not an ideal period for major financial risks or impulsive career changes. The palm patterns suggest that decisions made from anxiety or impatience during this window tend to require correction later. When in doubt, pause for 48 hours before committing to anything irreversible.",
-      },
-      spiritualRemedies: [
-        { remedy: "Sunrise Stillness Practice", benefit: "Aligns with the contemplative depth your palm reveals, creating space for intuitive guidance to surface", timing: "Daily, within 30 minutes of waking — even 10 minutes of silent sitting" },
-        { remedy: "Gratitude Journaling", benefit: "Counterbalances the analytical tendency in your head line with deliberate appreciation, opening channels for abundance", timing: "Every evening before sleep — write three specific moments of gratitude" },
-        { remedy: "Weekly Nature Immersion", benefit: "Grounds the creative energy indicated by your Apollo mount, preventing mental overwhelm and restoring perspective", timing: "Once weekly — a walk in nature lasting at least 30 minutes, without devices" },
-        { remedy: "Pranayama (Alternate Nostril Breathing)", benefit: "Balances the analytical and intuitive aspects revealed in your head line, improving decision-making clarity", timing: "Before important meetings or decisions — 5-7 minutes of Anulom Vilom" },
-        { remedy: "Acts of Quiet Generosity", benefit: "Activates the warm, compassionate energy indicated by your Venus mount and supports karmic alignment", timing: "Weekly — one act of kindness performed without expectation of recognition or return" },
-      ],
-      finalBlessing: `${name}, your palm tells the story of someone whose greatest chapter is still being written. The lines etched into your hand speak of quiet strength, deep loyalty, and a creative intelligence that grows more powerful with time. At ${age}, you stand at a threshold — the foundations you have built are solid, and what rises from them now has the potential to exceed even your own expectations. Trust the pace of your unfolding. The world needs exactly the kind of light you carry — steady, warm, and enduring.`,
-      premiumInsights: {
-        marriageTiming: `Your heart line and Venus mount together reveal a significant relationship window opening between ${currentYear + 1} and ${currentYear + 3}. The patterns suggest a connection that begins through shared intellectual or creative interests before deepening into something profound.`,
-        careerBreakthrough: `The progressive deepening of your fate line points to a notable career inflection around ${currentYear + 2}, where accumulated expertise and expanding visibility converge to create opportunities that significantly elevate your professional standing.`,
-      },
-    };
+    throw new Error("AI_INVALID_REPORT_JSON");
   }
+};
+
+const HINGLISH_MARKERS = /\b(aap|aapka|aapki|aapke|hai|hain|ka|ki|ke|aur|mein|yeh|jo|liye|saath|apne|karta|karti|hoga|hogi|rahe|wali|wala)\b/gi;
+
+const isHinglishReading = (reading: unknown): boolean => {
+  const sample = JSON.stringify(reading).toLowerCase();
+  return (sample.match(HINGLISH_MARKERS) ?? []).length >= 8;
+};
+
+const generatePalmReading = async (
+  imageUrl: string,
+  name: string,
+  age: string,
+  readingType: string,
+  apiKey: string,
+  context: AiCaptureContext,
+  language: "english" | "hinglish",
+  countryContext: string,
+) => {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const reading = await generatePalmReadingAttempt(
+        imageUrl, name, age, readingType, apiKey, context, language, countryContext, attempt > 0,
+      );
+      if (language === "hinglish" && !isHinglishReading(reading)) {
+        throw new Error("AI_LANGUAGE_MISMATCH");
+      }
+      return reading;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0 && error instanceof Error && ["AI_INVALID_REPORT_JSON", "AI_LANGUAGE_MISMATCH"].includes(error.message)) {
+        console.warn(`Retrying palm report after ${error.message}`);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("AI_REPORT_GENERATION_FAILED");
 };
 
 serve(async (req) => {
@@ -529,6 +493,7 @@ serve(async (req) => {
   }
 
   try {
+    const requestStartedAt = Date.now();
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -642,7 +607,10 @@ serve(async (req) => {
     const aiCaptureContext = { sessionId: crypto.randomUUID(), traceId: crypto.randomUUID() };
 
     // STEP 1: Validate the palm image
+    const validationStartedAt = Date.now();
     const validation = await validatePalmImage(imageUrl, OPENAI_API_KEY, aiCaptureContext);
+    const validationMs = Date.now() - validationStartedAt;
+    console.log(`Palm validation completed in ${validationMs}ms`);
 
     if (!validation.is_palm || validation.confidence < 70) {
       console.log("Palm validation failed:", validation);
@@ -660,6 +628,7 @@ serve(async (req) => {
     }
 
     // STEP 2: Generate the palm reading
+    const generationStartedAt = Date.now();
     const palmReading = await generatePalmReading(
       imageUrl,
       cleanName,
@@ -670,6 +639,8 @@ serve(async (req) => {
       safeLanguage,
       countryContext,
     );
+    const generationMs = Date.now() - generationStartedAt;
+    console.log(`Palm report generation completed in ${generationMs}ms`);
 
     // STEP 3: Save to database
     const { data: reportData, error: dbError } = await supabase
@@ -694,6 +665,7 @@ serve(async (req) => {
       console.error("Database error:", dbError);
     }
 
+    console.log(`Palm analysis completed in ${Date.now() - requestStartedAt}ms`);
     return new Response(
       JSON.stringify({
         success: true,
@@ -733,6 +705,12 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "The reading engine is temporarily unavailable. Please try again shortly.", code: "AI_TEMPORARILY_UNAVAILABLE" }),
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
+      );
+    }
+    if (["AI_INVALID_REPORT_JSON", "AI_LANGUAGE_MISMATCH", "AI_REPORT_GENERATION_FAILED"].includes(msg)) {
+      return new Response(
+        JSON.stringify({ error: "The reading could not be completed in your selected language. Please try again.", code: msg }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "10" } },
       );
     }
     return new Response(

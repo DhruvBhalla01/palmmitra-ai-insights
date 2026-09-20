@@ -95,5 +95,8 @@ export interface StoredData {
   age: string;
   email: string;
   readingType: 'full' | 'career' | 'love' | 'wealth';
+  language?: 'english' | 'hinglish';
+  countryCode?: string;
+  countryName?: string;
   palmImage: string;
 }

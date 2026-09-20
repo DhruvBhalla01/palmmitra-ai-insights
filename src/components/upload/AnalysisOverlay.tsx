@@ -33,12 +33,11 @@ const INSIGHTS = [
   'Ancient palmistry wisdom, decoded by modern AI.',
 ];
 
-// Ease-out curve: fast start, slow finish, caps at 92% until complete
+// Fast initial feedback, then an honest wait below completion until the report is ready.
 function computeProgress(elapsedMs: number): number {
-  // ~28s to reach 92%
-  const t = Math.min(elapsedMs / 28000, 1);
-  const eased = 1 - Math.pow(1 - t, 2.4);
-  return Math.min(eased * 92, 92);
+  const t = Math.min(elapsedMs / 12000, 1);
+  const eased = 1 - Math.pow(1 - t, 2.2);
+  return Math.min(eased * 88, 88);
 }
 
 export function AnalysisOverlay({ open, imageUrl, isComplete, hasError, userName }: AnalysisOverlayProps) {

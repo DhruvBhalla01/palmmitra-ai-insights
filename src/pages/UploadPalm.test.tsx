@@ -4,6 +4,8 @@ import UploadPalm from "@/pages/UploadPalm";
 import { renderWithRouter } from "@/test/test-utils";
 import { sampleReading } from "@/test/fixtures/palmReading";
 
+vi.mock("@/components/SEO", () => ({ SEO: () => null }));
+
 const mockNavigate = vi.hoisted(() => vi.fn());
 const mockToast = vi.hoisted(() => vi.fn());
 const mockUpload = vi.hoisted(() => vi.fn());
@@ -39,18 +41,19 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 const createImageFile = () =>
-  new File(["fake image"], "palm.png", { type: "image/png" });
+  new File([new Uint8Array(24 * 1024)], "palm.png", { type: "image/png" });
 
 describe("UploadPalm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it("disables submission until the form is complete", () => {
     renderWithRouter(<UploadPalm />);
     expect(
-      screen.getByRole("button", { name: /start palm scan/i })
+      screen.getByRole("button", { name: /begin my free reading/i })
     ).toBeDisabled();
   });
 
@@ -68,7 +71,7 @@ describe("UploadPalm", () => {
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "Invalid file type",
+        title: "Unsupported file type.",
       })
     );
   });
@@ -105,7 +108,9 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    const submit = screen.getByRole("button", { name: /begin my free reading/i });
+    await waitFor(() => expect(submit).toBeEnabled());
+    fireEvent.click(submit);
 
     await waitFor(() => {
       expect(mockUpload).toHaveBeenCalled();
@@ -161,11 +166,11 @@ describe("UploadPalm", () => {
       target: { value: "asha@example.com" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /start palm scan/i }));
+    const submit = screen.getByRole("button", { name: /begin my free reading/i });
+    await waitFor(() => expect(submit).toBeEnabled());
+    fireEvent.click(submit);
 
-    expect(
-      await screen.findByText(/this does not look like a clear palm photo/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/not a palm image/i)).toBeInTheDocument();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

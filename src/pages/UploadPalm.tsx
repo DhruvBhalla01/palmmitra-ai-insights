@@ -325,7 +325,7 @@ export default function UploadPalm() {
         success: true,
       });
       formAnalytics.success({ reading_type: formData.readingType });
-      setTimeout(() => navigate(response.reportId ? `/report/${response.reportId}` : '/report'), 500);
+      navigate(response.reportId ? `/report/${response.reportId}` : '/report');
 
     } catch (err) {
       setProcessingStep('error');
@@ -361,7 +361,7 @@ export default function UploadPalm() {
     }
   };
 
-  const isFormValid = image && formData.name && formData.email && formData.age;
+  const isFormValid = imageFile && formData.name && formData.email && formData.age;
   const isLoading = !['idle', 'error', 'complete'].includes(processingStep);
 
   const getLoadingLabel = () => {

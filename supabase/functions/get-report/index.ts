@@ -32,7 +32,7 @@ serve(async (req) => {
     // Fetch minimal (non-sensitive) fields first — needed for preview UI.
     const { data: report, error } = await supabase
       .from('palm_reports')
-      .select('id, user_name, user_age, user_email, reading_type, report_json, created_at, validation_confidence, validation_quality')
+      .select('id, user_name, user_age, user_email, reading_type, language, country_code, country_name, report_json, created_at, validation_confidence, validation_quality')
       .eq('id', report_id)
       .maybeSingle();
 
@@ -99,6 +99,9 @@ serve(async (req) => {
       user_name: report.user_name,
       user_age: report.user_age,
       reading_type: report.reading_type,
+      language: report.language,
+      country_code: report.country_code,
+      country_name: report.country_name,
       created_at: report.created_at,
       validation_confidence: report.validation_confidence,
       validation_quality: report.validation_quality,

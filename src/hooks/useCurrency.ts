@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { CURRENCIES, COUNTRY_TO_CURRENCY, CURRENCY_TO_COUNTRY, type CountryCode, type Currency } from '@/config/pricing';
+import { supabase } from '@/integrations/supabase/client';
 
 const STORAGE_KEY = 'palmmitra:currency';
 const COUNTRY_KEY = 'palmmitra:country';
+const MANUAL_KEY = 'palmmitra:currency-manual';
+const DETECTED_COUNTRY_KEY = 'palmmitra:detected-country';
 const CURRENCY_EVENT = 'palmmitra:currency-change';
 
 /**
@@ -33,11 +36,46 @@ export function useCurrency() {
     return () => window.removeEventListener(CURRENCY_EVENT, sync);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const detectCountry = async () => {
+      try {
+        if (localStorage.getItem(MANUAL_KEY) === 'true') return;
+        const cached = sessionStorage.getItem(DETECTED_COUNTRY_KEY) as CountryCode | null;
+        if (cached && cached in COUNTRY_TO_CURRENCY) {
+          if (!cancelled) applyDetectedCountry(cached);
+          return;
+        }
+
+        const { data, error } = await supabase.functions.invoke('detect-country');
+        if (error) return;
+        const detected = data?.countryCode as CountryCode | null;
+        if (!detected || !(detected in COUNTRY_TO_CURRENCY) || cancelled) return;
+        sessionStorage.setItem(DETECTED_COUNTRY_KEY, detected);
+        applyDetectedCountry(detected);
+      } catch {
+        // Browser timezone and locale remain the privacy-safe fallback.
+      }
+    };
+
+    const applyDetectedCountry = (detected: CountryCode) => {
+      const next = COUNTRY_TO_CURRENCY[detected];
+      setCurrencyState(next);
+      setCountryCode(detected);
+      window.dispatchEvent(new CustomEvent(CURRENCY_EVENT, { detail: { currency: next, countryCode: detected } }));
+    };
+
+    void detectCountry();
+    return () => { cancelled = true; };
+  }, []);
+
   const setCurrency = (next: Currency) => {
     const nextCountry = CURRENCY_TO_COUNTRY[next];
     try {
-      sessionStorage.setItem(STORAGE_KEY, next);
-      sessionStorage.setItem(COUNTRY_KEY, nextCountry);
+      localStorage.setItem(STORAGE_KEY, next);
+      localStorage.setItem(COUNTRY_KEY, nextCountry);
+      localStorage.setItem(MANUAL_KEY, 'true');
     } catch { /* ignore */ }
     setCurrencyState(next);
     setCountryCode(nextCountry);
@@ -52,8 +90,8 @@ function detectInitialCurrency(): { currency: Currency; countryCode: CountryCode
 
   // 1) Manual override
   try {
-    const stored = sessionStorage.getItem(STORAGE_KEY) as Currency | null;
-    const storedCountry = sessionStorage.getItem(COUNTRY_KEY) as CountryCode | null;
+    const stored = localStorage.getItem(STORAGE_KEY) as Currency | null;
+    const storedCountry = localStorage.getItem(COUNTRY_KEY) as CountryCode | null;
     if (stored && CURRENCIES.includes(stored)) {
       return { currency: stored, countryCode: storedCountry && storedCountry in COUNTRY_TO_CURRENCY ? storedCountry : CURRENCY_TO_COUNTRY[stored] };
     }
@@ -77,7 +115,10 @@ function detectInitialCurrency(): { currency: Currency; countryCode: CountryCode
   try {
     const locales = navigator.languages?.length ? navigator.languages : [navigator.language];
     for (const locale of locales) {
-      const region = locale.match(/[-_]([A-Za-z]{2})$/)?.[1]?.toUpperCase() as CountryCode | undefined;
+      const region = (() => {
+        try { return new Intl.Locale(locale).maximize().region?.toUpperCase(); }
+        catch { return locale.match(/[-_]([A-Za-z]{2})$/)?.[1]?.toUpperCase(); }
+      })() as CountryCode | undefined;
       if (region && region in COUNTRY_TO_CURRENCY) return { currency: COUNTRY_TO_CURRENCY[region], countryCode: region };
     }
   } catch { /* ignore */ }
