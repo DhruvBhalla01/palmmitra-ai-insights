@@ -3,6 +3,8 @@ import { Camera, Cpu, FileText, Sparkles, ArrowRight, CheckCircle } from 'lucide
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const steps = [
   {
@@ -48,6 +50,7 @@ const guarantees = [
 ];
 
 export function HowItWorks() {
+  const { currency } = useCurrency();
   return (
     <section id="how-it-works" className="py-16 md:py-32 relative scroll-mt-20" aria-labelledby="hiw-heading">
       <div className="container mx-auto px-4">
@@ -148,7 +151,7 @@ export function HowItWorks() {
               </Button>
             </m.div>
           </Link>
-          <p className="text-sm text-muted-foreground mt-3">No account needed · Free preview included · Full report ₹299 / $9.99</p>
+          <p className="text-sm text-muted-foreground mt-3">No account needed · Free preview included · Full report {PRODUCTS.insight.prices[currency].display}</p>
         </AnimatedSection>
       </div>
     </section>

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
 import { SampleReportModal } from "./SampleReportModal";
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp";
 const heroPalmSrcSet = [
@@ -16,6 +18,7 @@ const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { currency } = useCurrency();
 
   return (
     <section
@@ -108,7 +111,7 @@ export function HeroSection() {
             </div>
 
             <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
-              No sign-up needed · Full report ₹299 / $9.99
+              No sign-up needed · Full report {PRODUCTS.insight.prices[currency].display}
             </p>
           </m.div>
 

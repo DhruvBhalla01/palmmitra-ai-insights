@@ -4,6 +4,8 @@ import palmIconGold from '@/assets/palm-icon-gold.webp';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { PRODUCTS } from '@/config/pricing';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const features = [
   {
@@ -66,6 +68,7 @@ const reportStats = [
 ];
 
 export function FeaturesSection() {
+  const { currency } = useCurrency();
   return (
     <section id="features" className="py-16 md:py-32 relative" aria-labelledby="features-heading">
       <div className="container mx-auto px-4">
@@ -122,7 +125,7 @@ export function FeaturesSection() {
             <AnimatedSection delay={0.5} className="mt-10">
               <Link to="/upload">
                 <Button className="btn-gold text-foreground font-semibold text-lg px-10 py-7 rounded-2xl shadow-gold-lg group">
-                  Get My Full Reading — ₹299
+                  Get My Full Reading — {PRODUCTS.insight.prices[currency].display}
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
