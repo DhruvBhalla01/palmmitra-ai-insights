@@ -79,8 +79,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {showMandala && (
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
-            className="w-[800px] h-[800px] opacity-[0.03] motion-safe:animate-rotate-slow"
-            style={{ animationDuration: '120s' }}
+            className="w-[800px] h-[800px] opacity-[0.03]"
             viewBox="0 0 200 200"
           >
             {/* Outer ring */}

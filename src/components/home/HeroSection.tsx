@@ -19,7 +19,7 @@ const heroPalmSrcSet = [
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-800w.webp 800w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp 900w",
 ].join(", ");
-const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 320px";
+const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 200px";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,13 +125,8 @@ export function HeroSection() {
             <div className="absolute w-[240px] h-[240px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl animate-glow-pulse" aria-hidden="true" />
 
             <div className="relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
-              {/* Rotating gold ring */}
-              <m.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0"
-                aria-hidden="true"
-              >
+              {/* Decorative gold ring */}
+              <div className="absolute inset-0" aria-hidden="true">
                 <svg className="w-full h-full" viewBox="0 0 200 200">
                   <circle cx="100" cy="100" r="95" fill="none" stroke="hsl(var(--accent) / 0.18)" strokeWidth="0.5" strokeDasharray="3 9" />
                   {[...Array(12)].map((_, i) => (
@@ -144,7 +139,7 @@ export function HeroSection() {
                     />
                   ))}
                 </svg>
-              </m.div>
+              </div>
 
               {/* AI scan line */}
               <m.div
