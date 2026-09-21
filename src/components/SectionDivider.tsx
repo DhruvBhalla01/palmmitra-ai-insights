@@ -69,7 +69,7 @@ export function SectionDivider({ variant = 'mandala' }: SectionDividerProps) {
 
         {/* Mini mandala */}
         <svg
-          className="w-8 h-8 text-accent/50 animate-rotate-slow"
+          className="w-8 h-8 text-accent/50"
           viewBox="0 0 32 32"
         >
           <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="0.5" />

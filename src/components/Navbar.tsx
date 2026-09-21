@@ -5,7 +5,7 @@ import { Menu, X, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SmartLink } from '@/components/SmartLink';
 import { useTheme } from '@/hooks/useTheme';
-import logoImg from '@/assets/logo.webp';
+import logoImg from '@/assets/logo-80.png';
 import { CurrencySelector } from '@/components/CurrencySelector';
 
 const navLinks = [

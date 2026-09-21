@@ -55,7 +55,6 @@ export function HeroSection() {
             {/* Live trust pill */}
             <div className="inline-flex items-center gap-2 glass-premium rounded-full px-3.5 py-1.5 mb-5 border border-accent/25">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
               </span>
               <span className="text-[11px] sm:text-xs font-medium text-white/75">
@@ -122,7 +121,7 @@ export function HeroSection() {
 
           {/* ── Palm visual — smaller/compact on mobile ────── */}
           <div className="relative flex items-center justify-center order-1 lg:order-2">
-            <div className="absolute w-[240px] h-[240px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl animate-glow-pulse" aria-hidden="true" />
+            <div className="absolute w-[240px] h-[240px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl" aria-hidden="true" />
 
             <div className="relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
               {/* Decorative gold ring */}
@@ -140,19 +139,6 @@ export function HeroSection() {
                   ))}
                 </svg>
               </div>
-
-              {/* AI scan line */}
-              <m.div
-                aria-hidden="true"
-                className="absolute inset-8 rounded-full overflow-hidden pointer-events-none"
-              >
-                <m.div
-                  className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-accent to-transparent"
-                  style={{ boxShadow: "0 0 24px hsl(var(--accent) / 0.7)" }}
-                  animate={{ top: ["10%", "90%", "10%"] }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </m.div>
 
               <div className="absolute inset-0 flex items-center justify-center">
                 <m.img

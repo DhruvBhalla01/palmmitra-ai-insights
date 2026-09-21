@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logoImg from '@/assets/logo.webp';
+import logoImg from '@/assets/logo-80.png';
 import { SmartLink } from '@/components/SmartLink';
 
 const footerLinks = {
