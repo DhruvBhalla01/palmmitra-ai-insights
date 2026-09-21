@@ -176,10 +176,8 @@ export default function UploadPalm() {
       reader.onload = (event) => setImage(event.target?.result as string);
       reader.readAsDataURL(file);
     }
-    // Start uploading while the user fills in their details. Keep the rejection
-    // available for submit, but consume it here so mobile browsers do not report
-    // an unhandled promise rejection before the user taps the CTA.
-    const uploadPromise = uploadToStorage(file)
+    // Kick off storage upload in background so it's ready by the time user submits
+    uploadPromiseRef.current = uploadToStorage(file)
       .then((url) => {
         const uploadProperties = { file_size_kb: Math.round(file.size / 1024) };
         analytics.track('palm_image_uploaded', uploadProperties);

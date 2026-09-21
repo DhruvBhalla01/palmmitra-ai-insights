@@ -146,12 +146,16 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    void import('@/integrations/supabase/client').then(({ supabase }) => {
+    void Promise.all([
+      import('@/integrations/supabase/client'),
+      import('@/lib/posthog'),
+    ]).then(([{ supabase }, { default: posthog }]) => {
       if (disposed) return;
 
       const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
         if (s?.user) analytics.identify(s.user.id, { auth: true }, s.user.email ?? null);
         else setUser(null, null);
+        syncPostHogIdentity(posthog, s?.user ?? null);
       });
       unsubscribe = () => sub.subscription.unsubscribe();
 
@@ -160,22 +164,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
         if (data.session?.user) {
           analytics.identify(data.session.user.id, { auth: true }, data.session.user.email ?? null);
         }
-      });
-
-      const loadPostHog = () => import('@/lib/posthog');
-      const schedulePostHog = window.requestIdleCallback
-        ? (callback: () => void) => window.requestIdleCallback(callback, { timeout: 2500 })
-        : (callback: () => void) => window.setTimeout(callback, 1500);
-      schedulePostHog(() => {
-        void loadPostHog().then(({ default: posthog }) => {
-          if (disposed) return;
-          const syncCurrentUser = () => {
-            void supabase.auth.getSession().then(({ data }) => {
-              if (!disposed) syncPostHogIdentity(posthog, data.session?.user ?? null);
-            });
-          };
-          syncCurrentUser();
-        });
+        syncPostHogIdentity(posthog, data.session?.user ?? null);
       });
     });
 
