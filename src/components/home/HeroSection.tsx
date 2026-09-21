@@ -19,7 +19,7 @@ const heroPalmSrcSet = [
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-800w.webp 800w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp 900w",
 ].join(", ");
-const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 200px";
+const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 320px";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -121,12 +121,7 @@ export function HeroSection() {
           </m.div>
 
           {/* ── Palm visual — smaller/compact on mobile ────── */}
-          <m.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-            className="relative flex items-center justify-center order-1 lg:order-2"
-          >
+          <div className="relative flex items-center justify-center order-1 lg:order-2">
             <div className="absolute w-[240px] h-[240px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl animate-glow-pulse" aria-hidden="true" />
 
             <div className="relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
@@ -171,8 +166,6 @@ export function HeroSection() {
                   sizes={heroPalmSizes}
                   alt="AI palm reading illustration — PalmMitra decodes your life path, career, love and destiny from your palm lines"
                   className="object-contain w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] opacity-95"
-                  animate={{ y: [0, -12, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   style={{ filter: "drop-shadow(0 0 50px hsl(42 87% 55% / 0.5))" }}
                   loading="eager"
                   fetchPriority="high"
@@ -181,7 +174,7 @@ export function HeroSection() {
                 />
               </div>
             </div>
-          </m.div>
+          </div>
         </div>
       </div>
 
