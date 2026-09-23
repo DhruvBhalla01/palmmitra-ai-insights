@@ -250,14 +250,18 @@ serve(async (req) => {
     const validEmail = cleanEmail.length > 0 && cleanEmail.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail);
     const allowedRelationships = ["Partner", "Spouse", "Friend", "Sibling", "Parent-Child", "Business Partner"];
 
-    if (
-      !isValidImageUrl(image1Url) || !isValidImageUrl(image2Url) ||
-      !isValidName(person1?.name) || !isValidName(person2?.name) ||
-      parseAge(person1?.age) === null || parseAge(person2?.age) === null ||
-      !validEmail || !allowedRelationships.includes(relationshipType)
-    ) {
+    const fieldError =
+      !isValidImageUrl(image1Url) || !isValidImageUrl(image2Url) ? "One of the palm photos didn't upload correctly. Please re-select it." :
+      !isValidName(person1?.name) ? "Please enter a valid first name (at least 2 letters)." :
+      parseAge(person1?.age) === null ? "First person's age must be between 13 and 100." :
+      !isValidName(person2?.name) ? "Please enter a valid partner name (at least 2 letters)." :
+      parseAge(person2?.age) === null ? "Partner's age must be between 13 and 100." :
+      !validEmail ? "Please enter a valid email address." :
+      !allowedRelationships.includes(relationshipType) ? "Please choose a relationship type." : null;
+    if (fieldError) {
+      console.warn("PalmMatch validation failed:", fieldError);
       return new Response(
-        JSON.stringify({ success: false, error: "Please review your details and try again — some fields are missing or invalid." }),
+        JSON.stringify({ success: false, error: fieldError }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

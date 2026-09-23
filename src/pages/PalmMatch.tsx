@@ -20,7 +20,9 @@ const getSupabase = () => import('@/integrations/supabase/client').then((m) => m
 import { useToast } from '@/hooks/use-toast';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
-import { validateImageFile } from '@/lib/validation';
+import {
+  validateImageFile, nameSchema, ageSchema, emailSchema, relationshipTypeSchema,
+} from '@/lib/validation';
 
 type Step = 1 | 2;
 type ProcessingState = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
@@ -401,6 +403,25 @@ export default function PalmMatch() {
         variant: 'destructive',
       });
       formAnalytics.validationError('required_fields', 'incomplete');
+      return;
+    }
+
+    const checks: Array<[string, { success: boolean; error?: { errors: { message: string }[] } }]> = [
+      ['Your name', nameSchema.safeParse(person1Name)],
+      ['Your age', ageSchema.safeParse(person1Age)],
+      ["Partner's name", nameSchema.safeParse(person2Name)],
+      ["Partner's age", ageSchema.safeParse(person2Age)],
+      ['Email', emailSchema.safeParse(email)],
+      ['Relationship', relationshipTypeSchema.safeParse(relationshipType)],
+    ];
+    const failed = checks.find(([, r]) => !r.success);
+    if (failed) {
+      toast({
+        title: `${failed[0]} needs a quick fix`,
+        description: failed[1].error?.errors[0]?.message ?? 'Please check this field.',
+        variant: 'destructive',
+      });
+      formAnalytics.validationError(failed[0], 'invalid');
       return;
     }
 
