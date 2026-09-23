@@ -20,7 +20,7 @@
 # Concise conversion-focused report output
 
 - [x] Tighten English and Hinglish generation for concise, mobile-readable reports
-- [ ] Deploy and validate the updated report generator
+- [x] Deploy and validate the updated report generator
 
 # PalmMatch upload reliability
 
