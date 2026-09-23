@@ -177,7 +177,7 @@ export default function UploadPalm() {
       reader.readAsDataURL(file);
     }
     // Kick off storage upload in background so it's ready by the time user submits
-    uploadPromiseRef.current = uploadToStorage(file)
+    const uploadPromise = uploadToStorage(file)
       .then((url) => {
         const uploadProperties = { file_size_kb: Math.round(file.size / 1024) };
         analytics.track('palm_image_uploaded', uploadProperties);
