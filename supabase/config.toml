@@ -3,6 +3,9 @@ project_id = "wattznplwrigmjrottdy"
 [functions.analyze-palm]
 verify_jwt = true
 
+[functions.analyze-palmmatch]
+verify_jwt = true
+
 [functions.create-razorpay-order]
 verify_jwt = true
 

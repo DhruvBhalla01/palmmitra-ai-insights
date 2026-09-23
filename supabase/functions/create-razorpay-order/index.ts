@@ -29,6 +29,9 @@ const respond = (body: object, status = 200) => new Response(JSON.stringify(body
 const validId = (value: unknown): value is string =>
   typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 
+const validPalmMatchReportId = (value: unknown): value is string =>
+  typeof value === 'string' && /^pm_[0-9]{10,}_[a-z0-9]{9}$/i.test(value);
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return respond({ success: false, error: 'Method not allowed' }, 405);
@@ -42,7 +45,7 @@ Deno.serve(async (req) => {
     if (!isPlanType(body.plan)) return respond({ success: false, error: 'Invalid plan type' }, 400);
 
     const reportId = validId(body.report_id) ? body.report_id : null;
-    const palmMatchReportId = validId(body.palmmatch_report_id) ? body.palmmatch_report_id : null;
+    const palmMatchReportId = validPalmMatchReportId(body.palmmatch_report_id) ? body.palmmatch_report_id : null;
     if (body.plan === 'report99' && !reportId) return respond({ success: false, error: 'A valid report_id is required.' }, 400);
     if (body.plan === 'palmmatch149' && !palmMatchReportId) return respond({ success: false, error: 'A valid palmmatch_report_id is required.' }, 400);
 

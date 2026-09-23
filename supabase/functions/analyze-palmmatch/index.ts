@@ -156,7 +156,7 @@ Return this exact JSON structure with rich, personalized content (minimum 3 sent
           ],
         },
       ],
-      max_tokens: 3000,
+      max_tokens: 5000,
       temperature: 0.7,
     }),
   });
@@ -322,6 +322,10 @@ serve(async (req) => {
 
     if (dbError) {
       console.error("DB insert error:", dbError);
+      return new Response(
+        JSON.stringify({ success: false, error: "We couldn't save your compatibility report. Please try again." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     return new Response(
