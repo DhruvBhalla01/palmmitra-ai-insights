@@ -447,6 +447,16 @@ export default function PalmMatch() {
         },
       });
 
+      if (error && !data) {
+        let serverMessage = '';
+        try {
+          const ctx = (error as { context?: Response }).context;
+          const parsed = ctx ? await ctx.clone().json() : null;
+          serverMessage = parsed?.error || '';
+        } catch { /* ignore */ }
+        throw new Error(serverMessage || 'Analysis failed. Please try again.');
+      }
+
       if (error || !data?.success) {
         if (data?.error === 'invalid_palm') {
           toast({
