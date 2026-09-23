@@ -378,6 +378,62 @@ export type Database = {
         }
         Relationships: []
       }
+      palmmatch_reports: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_unlocked: boolean
+          overall_score: number
+          payment_id: string | null
+          person1_age: number | null
+          person1_name: string
+          person2_age: number | null
+          person2_name: string
+          reading: Json
+          relationship_type: string
+          report_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_unlocked?: boolean
+          overall_score?: number
+          payment_id?: string | null
+          person1_age?: number | null
+          person1_name: string
+          person2_age?: number | null
+          person2_name: string
+          reading: Json
+          relationship_type: string
+          report_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_unlocked?: boolean
+          overall_score?: number
+          payment_id?: string | null
+          person1_age?: number | null
+          person1_name?: string
+          person2_age?: number | null
+          person2_name?: string
+          reading?: Json
+          relationship_type?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "palmmatch_reports_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
