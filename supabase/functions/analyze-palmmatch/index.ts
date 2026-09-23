@@ -217,13 +217,12 @@ serve(async (req) => {
       .eq("identifier", identifier)
       .eq("endpoint", "analyze-palmmatch")
       .gte("created_at", windowStart.toISOString());
-    if ((rlCount ?? 0) >= 5) {
+    if ((rlCount ?? 0) >= 15) {
       return new Response(
         JSON.stringify({ success: false, error: "Rate limit exceeded. Please try again in an hour." }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-    await supabaseClient.from("api_rate_limits").insert({ identifier, endpoint: "analyze-palmmatch" });
 
 
     let body: PalmMatchRequest;
@@ -265,6 +264,9 @@ serve(async (req) => {
 
     const cleanP1 = { name: person1.name.replace(/\s+/g, " ").trim(), age: String(parseAge(person1.age)) };
     const cleanP2 = { name: person2.name.replace(/\s+/g, " ").trim(), age: String(parseAge(person2.age)) };
+
+    // Only count well-formed requests toward the hourly limit
+    await supabaseClient.from("api_rate_limits").insert({ identifier, endpoint: "analyze-palmmatch" });
 
     console.log(`PalmMatch: Validating palms`);
     const aiCaptureContext = { sessionId: crypto.randomUUID(), traceId: crypto.randomUUID() };
