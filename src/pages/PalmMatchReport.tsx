@@ -272,7 +272,8 @@ export default function PalmMatchReport() {
             </m.div>
 
             {/* Names — orchestrated cinematic reveal */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-3">
+            <h1 className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-3">
+              <span className="sr-only">PalmMatch Compatibility Report for </span>
               <m.span
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -281,24 +282,7 @@ export default function PalmMatchReport() {
               >
                 {person1Name}
               </m.span>
-
-              <m.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-                className="flex flex-col items-center gap-0.5"
-              >
-                <m.span
-                  animate={{ scale: [1, 1.4, 1] }}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-                  className="text-2xl md:text-3xl text-accent leading-none"
-                  style={{ filter: 'drop-shadow(0 0 14px hsl(42 87% 55% / 0.9))' }}
-                >
-                  ♥
-                </m.span>
-                <span className="text-[9px] text-accent/60 tracking-[0.3em] uppercase font-medium">yugal</span>
-              </m.div>
-
+...
               <m.span
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -307,7 +291,7 @@ export default function PalmMatchReport() {
               >
                 {person2Name}
               </m.span>
-            </div>
+            </h1>
 
             <m.p
               initial={{ opacity: 0 }}
