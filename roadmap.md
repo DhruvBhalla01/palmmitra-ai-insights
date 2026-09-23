@@ -21,3 +21,8 @@
 
 - [ ] Tighten English and Hinglish generation for concise, mobile-readable reports
 - [ ] Deploy and validate the updated report generator
+
+# PalmMatch upload reliability
+
+- [ ] Fix upload completion race and validate files before upload
+- [ ] Verify the two-palm upload and analysis handoff
