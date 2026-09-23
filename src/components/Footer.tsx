@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logoImg from '@/assets/logo.webp';
+import logoImg from '@/assets/logo-80.png';
 import { SmartLink } from '@/components/SmartLink';
 
 const footerLinks = {
@@ -73,7 +73,7 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h4 className="font-serif font-bold mb-5 text-lg">Company</h4>
+            <h2 className="font-serif font-bold mb-5 text-lg">Company</h2>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -91,7 +91,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className="font-serif font-bold mb-5 text-lg">Legal</h4>
+            <h2 className="font-serif font-bold mb-5 text-lg">Legal</h2>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
@@ -109,7 +109,7 @@ export function Footer() {
 
           {/* Support Links */}
           <div>
-            <h4 className="font-serif font-bold mb-5 text-lg">Support</h4>
+            <h2 className="font-serif font-bold mb-5 text-lg">Support</h2>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>

@@ -123,7 +123,6 @@ export function PricingSection() {
         <AnimatedSection delay={0.05}>
           <div className="flex items-center justify-center gap-2 text-center mb-6 py-3 px-6 rounded-2xl bg-accent/8 border border-accent/20 max-w-lg mx-auto">
             <span className="relative flex h-2 w-2 flex-shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
             <p className="text-sm font-medium text-foreground">

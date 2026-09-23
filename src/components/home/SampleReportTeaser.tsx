@@ -3,7 +3,7 @@ import { Lock, Sparkles, Eye, ArrowRight, CheckCircle, Star } from 'lucide-react
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import palmIconGold from '@/assets/palm-icon-gold.webp';
+import palmIconGold from '@/assets/palm-icon-gold-80.png';
 import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
 

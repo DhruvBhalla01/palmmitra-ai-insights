@@ -81,7 +81,7 @@ const aggregateStats = [
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex gap-0.5" aria-label={`${rating} out of 5 stars`}>
+    <div className="flex gap-0.5" role="img" aria-label={`${rating} out of 5 stars`}>
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
@@ -278,11 +278,16 @@ export function Testimonials() {
                 role="tab"
                 aria-selected={i === currentIndex}
                 onClick={() => { setDirection(i > currentIndex ? 1 : -1); setCurrentIndex(i); }}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === currentIndex ? 'w-8 bg-accent' : 'w-1.5 bg-border'
-                }`}
+                className="group flex h-11 w-11 items-center justify-center rounded-full"
                 aria-label={`Testimonial from ${testimonials[i].name}`}
-              />
+              >
+                <span
+                  aria-hidden="true"
+                  className={`block h-1.5 rounded-full transition-all duration-300 ${
+                    i === currentIndex ? 'w-8 bg-accent' : 'w-1.5 bg-border'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>
