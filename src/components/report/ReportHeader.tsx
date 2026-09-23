@@ -18,6 +18,14 @@ const readingTypeLabels: Record<string, string> = {
   wealth: 'Prosperity Focus',
 };
 
+// Page title used for the report's top-level <h1> heading
+export const reportTitles: Record<string, string> = {
+  full: 'Destiny Report',
+  career: 'Career & Wealth Report',
+  love: 'Love & Relationship Report',
+  wealth: 'Prosperity Report',
+};
+
 const readingTypeIcons: Record<string, LucideIcon> = {
   full: Crown,
   career: Briefcase,
@@ -169,7 +177,7 @@ export function ReportHeader({
                 <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-4 border-accent/40 shadow-gold-lg">
                   <img
                     src={palmImage}
-                    alt="Your palm"
+                    alt={`Your uploaded palm photograph, analyzed for this ${reportTitles[readingType] ?? 'palm reading'}`}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -197,9 +205,9 @@ export function ReportHeader({
 
               {/* User Info */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
-                <span className="font-semibold text-foreground text-xl">
-                  Reading for <span className="text-gradient-gold">{name}</span>
-                </span>
+                <p className="font-semibold text-foreground text-xl leading-snug text-balance">
+                  <span className="text-gradient-gold">{name}</span>'s reading
+                </p>
                 <span className="hidden md:inline text-accent">•</span>
                 <span className="flex items-center gap-1.5 text-muted-foreground">
                   <Calendar className="w-4 h-4" />

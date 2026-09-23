@@ -19,10 +19,17 @@
 
 # Concise conversion-focused report output
 
-- [ ] Tighten English and Hinglish generation for concise, mobile-readable reports
-- [ ] Deploy and validate the updated report generator
+- [x] Tighten English and Hinglish generation for concise, mobile-readable reports
+- [x] Deploy and validate the updated report generator
 
 # PalmMatch upload reliability
 
-- [ ] Fix upload completion race and validate files before upload
-- [ ] Verify the two-palm upload and analysis handoff
+- [x] Fix upload completion race and validate files before upload
+- [x] Verify the two-palm upload and analysis handoff
+
+# Page headings and image descriptions
+
+- [x] Add a descriptive top-level heading to the destiny report page
+- [x] Add a descriptive top-level heading to the PalmMatch report page
+- [x] Replace generic palm illustration alt text with descriptive phrasing
+- [x] Verify one heading and correct descriptions in the live preview

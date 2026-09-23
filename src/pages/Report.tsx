@@ -19,7 +19,7 @@ import { SEO } from '@/components/SEO';
 
 
 // Report components
-import { ReportHeader } from '@/components/report/ReportHeader';
+import { ReportHeader, reportTitles } from '@/components/report/ReportHeader';
 import { MajorLinesSection } from '@/components/report/MajorLinesSection';
 import { MountsSection } from '@/components/report/MountsSection';
 import { PersonalityTraits } from '@/components/report/PersonalityTraits';
@@ -305,9 +305,9 @@ export default function Report() {
             <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-destructive/10 flex items-center justify-center">
               <span className="text-5xl">😔</span>
             </div>
-            <h2 className="text-2xl font-serif font-bold text-foreground mb-4">
+            <h1 className="text-2xl font-serif font-bold text-foreground mb-4">
               Unable to Load Report
-            </h2>
+            </h1>
             <p className="text-muted-foreground mb-8">
               {error || 'Something went wrong. Please try again.'}
             </p>
@@ -372,6 +372,19 @@ export default function Report() {
 
       <main className="pt-24 pb-20 relative z-10">
         <div className="container mx-auto px-4 max-w-6xl">
+          {/* Report title — page-level <h1> */}
+          <m.header
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-7 text-center"
+          >
+            <h1 className="text-2xl md:text-4xl font-serif font-bold text-foreground leading-tight text-balance">
+              {reportTitles[userData?.readingType ?? 'full'] ?? 'Destiny Report'} for{' '}
+              <span className="text-gradient-gold">{userData?.name || 'You'}</span>
+            </h1>
+          </m.header>
+
           {/* Subscription Badge */}
           {hasSubscription && (
             <m.div

@@ -527,7 +527,7 @@ export default function UploadPalm() {
                           >
                             <img
                               src={image}
-                              alt="Palm preview"
+                              alt="Preview of the palm photo you selected, ready for your reading"
                               className="w-full max-h-72 object-cover"
                             />
                             <button
@@ -606,7 +606,7 @@ export default function UploadPalm() {
                                 transition={{ duration: 2.5, repeat: Infinity }}
                                 className="relative"
                               >
-                                <img src={palmIconGold} alt="Palm" className="w-16 h-16 sm:w-20 sm:h-20 object-contain" />
+                                <img src={palmIconGold} alt="Gold line-art illustration of an open right palm with its major life, head and heart lines, facing the camera" className="w-16 h-16 sm:w-20 sm:h-20 object-contain" />
                               </m.div>
                             </div>
 

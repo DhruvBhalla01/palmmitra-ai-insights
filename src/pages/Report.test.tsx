@@ -60,7 +60,9 @@ describe("Report", () => {
     expect(
       await screen.findByText(/key destiny insight/i)
     ).toBeInTheDocument();
-    expect(screen.getByText(/reading for/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1 })
+    ).toHaveTextContent(/destiny report for asha/i);
     expect(screen.getAllByText(/reveal my complete report/i).length).toBeGreaterThan(0);
   });
 
