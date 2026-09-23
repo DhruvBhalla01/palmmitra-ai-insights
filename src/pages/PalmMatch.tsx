@@ -20,6 +20,7 @@ const getSupabase = () => import('@/integrations/supabase/client').then((m) => m
 import { useToast } from '@/hooks/use-toast';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
+import { validateImageFile } from '@/lib/validation';
 
 type Step = 1 | 2;
 type ProcessingState = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
@@ -277,6 +278,10 @@ export default function PalmMatch() {
   const [url2, setUrl2] = useState<string | null>(null);
   const [status1, setStatus1] = useState<UploadStatus>('idle');
   const [status2, setStatus2] = useState<UploadStatus>('idle');
+  const uploadStateRef = useRef({
+    person1: { url: null as string | null, status: 'idle' as UploadStatus },
+    person2: { url: null as string | null, status: 'idle' as UploadStatus },
+  });
 
   const [person1Name, setPerson1Name] = useState('');
   const [person1Age, setPerson1Age] = useState('');
@@ -299,44 +304,81 @@ export default function PalmMatch() {
       setStatus: (s: UploadStatus) => void,
     ) => {
       setStatus('uploading');
+      uploadStateRef.current[slot] = { url: null, status: 'uploading' };
       analytics.track('palm_image_upload_started', {
         reading_type: 'palmmatch', slot, file_size_kb: Math.round(file.size / 1024),
       });
       try {
-        const ext = file.name.split('.').pop() || 'jpg';
-        const path = `palmmatch/${Date.now()}_${slot}.${ext}`;
+        const extensionByType: Record<string, string> = {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/webp': 'webp',
+        };
+        const ext = extensionByType[file.type] ?? 'jpg';
+        const path = `palmmatch/${crypto.randomUUID()}_${slot}.${ext}`;
         const supabase = await getSupabase();
         const { error } = await supabase.storage
           .from('palm-uploads')
-          .upload(path, file, { upsert: true });
+          .upload(path, file, { cacheControl: '3600', contentType: file.type, upsert: false });
         if (error) throw error;
         const { data } = supabase.storage.from('palm-uploads').getPublicUrl(path);
+        uploadStateRef.current[slot] = { url: data.publicUrl, status: 'ready' };
         setUrl(data.publicUrl);
         setStatus('ready');
         analytics.track('palm_image_uploaded', { reading_type: 'palmmatch', slot });
       } catch (e) {
         console.error('bg upload failed', e);
+        uploadStateRef.current[slot] = { url: null, status: 'error' };
         setStatus('error');
         analytics.track('palm_image_upload_failed', {
           reading_type: 'palmmatch', slot, error_category: 'network_error',
         });
+        toast({
+          title: 'Palm upload failed',
+          description: 'Please check your connection and select the photo again.',
+          variant: 'destructive',
+        });
       }
     },
-    [],
+    [toast],
   );
 
   const handleImage1 = (file: File, preview: string) => {
+    const validation = validateImageFile(file);
+    if (!validation.ok || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast({
+        title: validation.reason ?? 'Unsupported photo format',
+        description: validation.suggestion ?? 'Please upload a JPG, PNG or WEBP photo.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setImage1(preview);
     setUrl1(null);
     uploadInBackground(file, 'person1', setUrl1, setStatus1);
   };
   const handleImage2 = (file: File, preview: string) => {
+    const validation = validateImageFile(file);
+    if (!validation.ok || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast({
+        title: validation.reason ?? 'Unsupported photo format',
+        description: validation.suggestion ?? 'Please upload a JPG, PNG or WEBP photo.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setImage2(preview);
     setUrl2(null);
     uploadInBackground(file, 'person2', setUrl2, setStatus2);
   };
-  const clearImage1 = () => { setImage1(null); setUrl1(null); setStatus1('idle'); };
-  const clearImage2 = () => { setImage2(null); setUrl2(null); setStatus2('idle'); };
+  const clearImage1 = () => {
+    uploadStateRef.current.person1 = { url: null, status: 'idle' };
+    setImage1(null); setUrl1(null); setStatus1('idle');
+  };
+  const clearImage2 = () => {
+    uploadStateRef.current.person2 = { url: null, status: 'idle' };
+    setImage2(null); setUrl2(null); setStatus2('idle');
+  };
 
   // Rotate messages during processing
   useEffect(() => {
@@ -370,30 +412,34 @@ export default function PalmMatch() {
 
     try {
       // Wait for background uploads to finish
-      const waitFor = async (
-        getUrl: () => string | null,
-        getStatus: () => UploadStatus,
-      ) => {
+      const waitFor = async (slot: 'person1' | 'person2') => {
         let tries = 0;
-        while (!getUrl() && getStatus() !== 'error' && tries < 100) {
+        while (
+          !uploadStateRef.current[slot].url &&
+          uploadStateRef.current[slot].status !== 'error' &&
+          tries < 100
+        ) {
           await new Promise((r) => setTimeout(r, 200));
           tries++;
         }
+        return uploadStateRef.current[slot].url;
       };
-      await Promise.all([
-        waitFor(() => url1, () => status1),
-        waitFor(() => url2, () => status2),
+      const [uploadedUrl1, uploadedUrl2] = await Promise.all([
+        waitFor('person1'),
+        waitFor('person2'),
       ]);
 
-      if (!url1 || !url2) throw new Error('Upload failed. Please re-select your palm images.');
+      if (!uploadedUrl1 || !uploadedUrl2) {
+        throw new Error('Upload failed. Please re-select your palm images.');
+      }
 
       setProcessing('analyzing');
 
       const supabase = await getSupabase();
       const { data, error } = await supabase.functions.invoke('analyze-palmmatch', {
         body: {
-          image1Url: url1,
-          image2Url: url2,
+          image1Url: uploadedUrl1,
+          image2Url: uploadedUrl2,
           person1: { name: person1Name, age: person1Age },
           person2: { name: person2Name, age: person2Age },
           relationshipType,
@@ -427,7 +473,7 @@ export default function PalmMatch() {
           reportId: data.reportId,
           person1Name, person1Age, person2Name, person2Age,
           relationshipType, email,
-          image1Url: url1, image2Url: url2,
+          image1Url: uploadedUrl1, image2Url: uploadedUrl2,
         }),
       );
 
