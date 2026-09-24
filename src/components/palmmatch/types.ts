@@ -27,6 +27,8 @@ export interface PalmMatchReading {
   finalBlessing: string;
 }
 
+export type PalmMatchLanguage = 'english' | 'hinglish';
+
 export interface PalmMatchStoredData {
   person1Name: string;
   person1Age: string;
@@ -34,6 +36,7 @@ export interface PalmMatchStoredData {
   person2Age: string;
   relationshipType: string;
   email: string;
+  language: PalmMatchLanguage;
   image1Url: string;
   image2Url: string;
 }

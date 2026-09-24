@@ -18,7 +18,7 @@ import { AskPalmMatchAI } from '@/components/palmmatch/AskPalmMatchAI';
 import { CompareBar } from '@/components/palmmatch/CompareBar';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
 import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
-import { PalmMatchReading } from '@/components/palmmatch/types';
+import { PalmMatchReading, type PalmMatchLanguage } from '@/components/palmmatch/types';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, recordInteraction } from '@/lib/analytics';
 import { PRODUCTS, formatCurrency } from '@/config/pricing';
@@ -30,6 +30,13 @@ const DIMENSION_TEASERS = {
   lifeGoals: "Your life timelines compared — when your ambitions converge and when they diverge.",
   romance: "The romantic arc written in your palm lines — your peak connection window revealed.",
   spiritualAlignment: "Your spiritual energies mapped — and the single practice that amplifies your bond.",
+};
+
+const HINGLISH_DIMENSION_TEASERS = {
+  communication: 'Aapki baat-cheet ka natural rhythm — kahan understanding banti hai aur friction kahan chhupa hai.',
+  lifeGoals: 'Aap dono ke life goals aur timelines — ambitions kab saath aati hain aur kab alag direction leti hain.',
+  romance: 'Palm lines mein romantic connection ka pattern — aur closeness ko deepen karne wala key insight.',
+  spiritualAlignment: 'Aapki inner energies ka match — aur bond ko stronger banane wali ek meaningful practice.',
 };
 
 // Ambient floating particles in content body
@@ -64,6 +71,7 @@ export default function PalmMatchReport() {
   const matchPrice = PRODUCTS.palmmatch.prices[currency];
   const [reading, setReading] = useState<PalmMatchReading | null>(null);
   const [email, setEmail] = useState('');
+  const [language, setLanguage] = useState<PalmMatchLanguage>('english');
 
   useEffect(() => {
     const raw = sessionStorage.getItem('palmMatchData');
@@ -71,6 +79,7 @@ export default function PalmMatchReport() {
     const data = JSON.parse(raw);
     setReading(data.reading);
     setEmail(data.email || '');
+    setLanguage(data.language === 'hinglish' ? 'hinglish' : 'english');
     analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
   }, [navigate, id]);
 
@@ -135,6 +144,8 @@ export default function PalmMatchReport() {
     emotionalBond, communication, lifeGoals, romance, spiritualAlignment,
     strengthsAndChallenges, timingGuidance, remediesForPair, finalBlessing,
   } = reading;
+  const isHinglish = language === 'hinglish';
+  const dimensionTeasers = isHinglish ? HINGLISH_DIMENSION_TEASERS : DIMENSION_TEASERS;
 
   return (
     <div className="min-h-screen bg-background">
@@ -151,8 +162,8 @@ export default function PalmMatchReport() {
           userName={`${person1Name} & ${person2Name}`}
           onUnlockClick={handleUnlockClick}
           isUnlocked={isUnlocked}
-          ctaLabel="Unlock Full Compatibility Report"
-          subLabel={`For ${person1Name} & ${person2Name} · One-time`}
+          ctaLabel={isHinglish ? 'Complete Compatibility Unlock Karein' : 'Unlock Full Compatibility Report'}
+          subLabel={isHinglish ? `${person1Name} & ${person2Name} ke liye · Ek baar payment` : `For ${person1Name} & ${person2Name} · One-time`}
           priceOverride={matchPrice.display}
           listPriceOverride={formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency)}
           socialProof="92 couples unlocked this week · launch price"
@@ -612,7 +623,7 @@ export default function PalmMatchReport() {
                 isUnlocked={isUnlocked}
                 onUnlockClick={handleUnlockClick}
                 delay={0.05}
-                teaser={DIMENSION_TEASERS.communication}
+                teaser={dimensionTeasers.communication}
                 person1Name={person1Name}
                 person2Name={person2Name}
                 compareTrait="Expressiveness"
@@ -624,7 +635,7 @@ export default function PalmMatchReport() {
                 isUnlocked={isUnlocked}
                 onUnlockClick={handleUnlockClick}
                 delay={0.1}
-                teaser={DIMENSION_TEASERS.lifeGoals}
+                teaser={dimensionTeasers.lifeGoals}
                 person1Name={person1Name}
                 person2Name={person2Name}
                 compareTrait="Ambition"
@@ -636,7 +647,7 @@ export default function PalmMatchReport() {
                 isUnlocked={isUnlocked}
                 onUnlockClick={handleUnlockClick}
                 delay={0.15}
-                teaser={DIMENSION_TEASERS.romance}
+                teaser={dimensionTeasers.romance}
                 person1Name={person1Name}
                 person2Name={person2Name}
                 compareTrait="Passion"
@@ -648,7 +659,7 @@ export default function PalmMatchReport() {
                 isUnlocked={isUnlocked}
                 onUnlockClick={handleUnlockClick}
                 delay={0.2}
-                teaser={DIMENSION_TEASERS.spiritualAlignment}
+                teaser={dimensionTeasers.spiritualAlignment}
                 person1Name={person1Name}
                 person2Name={person2Name}
                 compareTrait="Inner Harmony"
@@ -663,6 +674,7 @@ export default function PalmMatchReport() {
               person2Name={person2Name}
               onUnlockClick={(plan) => initiatePayment(plan)}
               isProcessing={isProcessing}
+              language={language}
             />
           )}
 

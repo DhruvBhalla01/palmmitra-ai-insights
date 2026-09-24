@@ -19,6 +19,7 @@ import {
 const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
+import type { PalmMatchLanguage } from '@/components/palmmatch/types';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
 import {
 
@@ -319,6 +320,10 @@ export default function PalmMatch() {
   const [person2Age, setPerson2Age] = useState('');
   const [relationshipType, setRelationshipType] = useState('');
   const [email, setEmail] = useState('');
+  const [language, setLanguage] = useState<PalmMatchLanguage>(() => {
+    const saved = localStorage.getItem('palmmitra:palmmatch-language');
+    return saved === 'hinglish' ? 'hinglish' : 'english';
+  });
   const formAnalytics = useFormAnalytics('palmmatch_upload');
 
   useEffect(() => {
@@ -455,8 +460,8 @@ export default function PalmMatch() {
 
     setProcessing('uploading');
     formAnalytics.submit('details');
-    analytics.track('palm_analysis_started', { reading_type: 'palmmatch' });
-    analytics.track('ai_request_started', { feature: 'palmmatch_analysis' });
+    analytics.track('palm_analysis_started', { reading_type: 'palmmatch', language });
+    analytics.track('ai_request_started', { feature: 'palmmatch_analysis', language });
     const analysisStartedAt = Date.now();
 
     try {
@@ -493,6 +498,7 @@ export default function PalmMatch() {
           person2: { name: person2Name, age: person2Age },
           relationshipType,
           email,
+          language,
         },
       });
 
@@ -531,7 +537,7 @@ export default function PalmMatch() {
           reading: data.reading,
           reportId: data.reportId,
           person1Name, person1Age, person2Name, person2Age,
-          relationshipType, email,
+          relationshipType, email, language: data.language ?? language,
           image1Url: uploadedUrl1, image2Url: uploadedUrl2,
         }),
       );
@@ -837,6 +843,38 @@ export default function PalmMatch() {
                         We'll send your report here. No spam, ever.
                       </p>
                     </div>
+
+                    <fieldset className="mt-4">
+                      <legend className="text-xs font-semibold mb-2">Report language</legend>
+                      <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Report language">
+                        {([
+                          ['english', 'English', 'Clear, concise English'],
+                          ['hinglish', 'Hinglish', 'Natural Roman Hindi + English'],
+                        ] as const).map(([value, label, description]) => {
+                          const selected = language === value;
+                          return (
+                            <Button
+                              key={value}
+                              type="button"
+                              variant="outline"
+                              role="radio"
+                              aria-checked={selected}
+                              onClick={() => {
+                                setLanguage(value);
+                                localStorage.setItem('palmmitra:palmmatch-language', value);
+                              }}
+                              className={`h-auto min-h-14 rounded-xl px-3 py-2.5 flex-col items-start gap-0.5 ${selected ? 'border-accent bg-accent/10 shadow-gold' : 'border-border/60 bg-background/40'}`}
+                            >
+                              <span className={selected ? 'text-accent font-semibold' : 'text-foreground font-semibold'}>{label}</span>
+                              <span className="text-[10px] font-normal text-muted-foreground text-left leading-tight">{description}</span>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Your complete compatibility report will use this language.
+                      </p>
+                    </fieldset>
 
                     <div className="flex gap-2 mt-6">
                       <Button

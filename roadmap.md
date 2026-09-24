@@ -33,3 +33,10 @@
 - [x] Add a descriptive top-level heading to the PalmMatch report page
 - [x] Replace generic palm illustration alt text with descriptive phrasing
 - [x] Verify one heading and correct descriptions in the live preview
+
+# Bilingual PalmMatch reports
+
+- [x] Add English and Roman-script Hinglish selection to PalmMatch
+- [x] Enforce concise localized AI output and language validation
+- [x] Persist language and localize report unlock messaging
+- [x] Validate mobile flow and deploy the analysis function

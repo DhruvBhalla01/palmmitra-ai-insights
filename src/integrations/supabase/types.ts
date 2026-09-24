@@ -384,6 +384,7 @@ export type Database = {
           email: string
           id: string
           is_unlocked: boolean
+          language: string
           overall_score: number
           payment_id: string | null
           person1_age: number | null
@@ -399,6 +400,7 @@ export type Database = {
           email: string
           id?: string
           is_unlocked?: boolean
+          language?: string
           overall_score?: number
           payment_id?: string | null
           person1_age?: number | null
@@ -414,6 +416,7 @@ export type Database = {
           email?: string
           id?: string
           is_unlocked?: boolean
+          language?: string
           overall_score?: number
           payment_id?: string | null
           person1_age?: number | null
