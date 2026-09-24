@@ -146,10 +146,12 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    void Promise.all([
+    void new Promise<void>((resolve) => {
+      void import('@/lib/deferred').then(({ onFirstInteraction }) => onFirstInteraction(resolve, 3000));
+    }).then(() => Promise.all([
       import('@/integrations/supabase/client'),
       import('@/lib/posthog'),
-    ]).then(([{ supabase }, { default: posthog }]) => {
+    ])).then(([{ supabase }, { default: posthog }]) => {
       if (disposed) return;
 
       const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {

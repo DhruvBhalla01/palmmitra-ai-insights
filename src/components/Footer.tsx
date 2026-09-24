@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logoImg from '@/assets/logo-80.png';
+import logoImg from '@/assets/logo-80.webp';
 import { SmartLink } from '@/components/SmartLink';
 
 const footerLinks = {
@@ -15,7 +15,7 @@ const footerLinks = {
   ],
   support: [
     { name: 'Contact Us', path: '/contact' },
-    { name: 'FAQ', path: '/help#faq' },
+    { name: 'Help Center FAQ', path: '/help#faq' },
     { name: 'Help Center', path: '/help' },
   ],
 };

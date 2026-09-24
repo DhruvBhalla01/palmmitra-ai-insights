@@ -1,5 +1,4 @@
 import { lazy, Suspense, useState } from "react";
-import { m } from '@/lib/motion';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
@@ -15,12 +14,13 @@ const SampleReportModal = lazy(() =>
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp";
 const heroPalmSrcSet = [
+  "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-160w.webp 160w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-320w.webp 320w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-480w.webp 480w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-800w.webp 800w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp 900w",
 ].join(", ");
-const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 200px";
+const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 150px";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,10 +47,7 @@ export function HeroSection() {
       <div className="container mx-auto px-5 relative z-10">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 xl:gap-16 items-center">
           {/* ── Copy ───────────────────────────── */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+          <div
             className="text-center lg:text-left order-2 lg:order-1"
           >
             {/* Live trust pill */}
@@ -83,16 +80,16 @@ export function HeroSection() {
 
             {/* CTAs — thumb-friendly, mobile-first */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-5">
-              <Link to="/upload" className="w-full sm:w-auto">
-                <Button
+              <Button
+                  asChild
                   className="btn-gold text-foreground font-semibold text-base sm:text-lg px-8 py-6 sm:py-7 rounded-2xl group shadow-gold-lg w-full min-h-[56px]"
-                  aria-label="Get my free palm reading"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
-                  Get My Free Palm Reading
-                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  <Link to="/upload" className="w-full sm:w-auto">
+                    <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
+                    Get My Free Palm Reading
+                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </Link>
                 </Button>
-              </Link>
               <Button
                 variant="outline"
                 onClick={() => setIsModalOpen(true)}
@@ -120,7 +117,7 @@ export function HeroSection() {
             <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
               No sign-up or card needed · Free preview · Full report {PRODUCTS.insight.prices[currency].display}
             </p>
-          </m.div>
+          </div>
 
           {/* ── Palm visual — smaller/compact on mobile ────── */}
           <div className="relative flex items-center justify-center order-1 lg:order-2">
@@ -144,7 +141,7 @@ export function HeroSection() {
               </div>
 
               <div className="absolute inset-0 flex items-center justify-center">
-                <m.img
+                <img
                   src={heroPalmImg}
                   srcSet={heroPalmSrcSet}
                   sizes={heroPalmSizes}
