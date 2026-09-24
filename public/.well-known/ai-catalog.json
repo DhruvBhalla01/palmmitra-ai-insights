@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "name": "PalmMitra",
+  "description": "AI palm reading rooted in Indian Hasta Samudrika Shastra. Upload a palm photo for a free preview reading; full reports, PalmMatch compatibility and Elite plans are paid.",
+  "url": "https://www.palmmitra.in/",
+  "publisher": { "name": "PalmMitra", "url": "https://www.palmmitra.in/", "contact": "thepalmmitra@gmail.com" },
+  "resources": [
+    { "type": "documentation", "name": "llms.txt", "url": "https://www.palmmitra.in/llms.txt", "mediaType": "text/markdown", "description": "Site overview and reading flow for AI assistants" },
+    { "type": "webpage", "name": "Start a palm reading", "url": "https://www.palmmitra.in/upload", "description": "Upload a palm photo, enter name, age and email to receive a free preview reading" },
+    { "type": "webpage", "name": "PalmMatch compatibility", "url": "https://www.palmmitra.in/palmmatch", "description": "Two-palm relationship compatibility reading" },
+    { "type": "webpage", "name": "Help and FAQ", "url": "https://www.palmmitra.in/help", "description": "Answers to common questions" }
+  ]
+}

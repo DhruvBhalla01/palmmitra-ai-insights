@@ -21,7 +21,7 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isSmallViewport = window.matchMedia('(max-width: 767px)').matches;
     const baseCount = intensity === 'light' ? 12 : intensity === 'medium' ? 20 : 30;
-    const particleCount = reducedMotion ? 0 : isSmallViewport ? Math.round(baseCount * 0.5) : baseCount;
+    const particleCount = reducedMotion ? 0 : isSmallViewport ? 0 : baseCount;
     const newParticles: Particle[] = [];
 
     for (let i = 0; i < particleCount; i++) {
@@ -78,51 +78,10 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
       {/* Mandala watermark */}
       {showMandala && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            className="w-[800px] h-[800px] opacity-[0.03]"
-            viewBox="0 0 200 200"
-          >
-            {/* Outer ring */}
-            <circle cx="100" cy="100" r="95" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
-            <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-accent" />
-            <circle cx="100" cy="100" r="75" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
-
-            {/* Petals */}
-            {[...Array(12)].map((_, i) => (
-              <g key={i} transform={`rotate(${i * 30} 100 100)`}>
-                <ellipse cx="100" cy="30" rx="15" ry="25" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-accent" />
-                <ellipse cx="100" cy="40" rx="8" ry="15" fill="none" stroke="currentColor" strokeWidth="0.2" className="text-primary" />
-              </g>
-            ))}
-
-            {/* Inner patterns */}
-            {[...Array(8)].map((_, i) => (
-              <g key={`inner-${i}`} transform={`rotate(${i * 45} 100 100)`}>
-                <path
-                  d="M100 60 L110 80 L100 100 L90 80 Z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="0.3"
-                  className="text-accent"
-                />
-              </g>
-            ))}
-
-            {/* Center */}
-            <circle cx="100" cy="100" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-accent" />
-            <circle cx="100" cy="100" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-primary" />
-            <circle cx="100" cy="100" r="3" fill="currentColor" className="text-accent" opacity="0.5" />
-          </svg>
+          <img src="/mandala.svg" alt="" width={800} height={800} decoding="async" loading="lazy" className="w-[800px] h-[800px] opacity-[0.03]" />
         </div>
       )}
 
-      {/* Subtle noise texture overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
     </div>
   );
 }
