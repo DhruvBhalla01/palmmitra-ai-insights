@@ -26,30 +26,6 @@ export function useTheme() {
     }
   }, [theme, isUserPreference]);
 
-  useEffect(() => {
-    if (isUserPreference || typeof window === "undefined" || !window.matchMedia) {
-      return;
-    }
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (event: MediaQueryListEvent) => {
-      setTheme(event.matches ? "dark" : "light");
-    };
-
-    if (media.addEventListener) {
-      media.addEventListener("change", handler);
-    } else {
-      media.addListener(handler);
-    }
-
-    return () => {
-      if (media.removeEventListener) {
-        media.removeEventListener("change", handler);
-      } else {
-        media.removeListener(handler);
-      }
-    };
-  }, [isUserPreference]);
 
   const toggleTheme = useCallback(() => {
     setIsUserPreference(true);
