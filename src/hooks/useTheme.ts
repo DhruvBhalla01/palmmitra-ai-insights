@@ -13,10 +13,8 @@ export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = getStoredTheme();
     if (stored) return stored;
-    if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
-      return "dark";
-    }
-    return getSystemTheme();
+    // Default to dark everywhere; only an explicit user choice of light overrides it.
+    return "dark";
   });
 
   useEffect(() => {
