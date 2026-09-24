@@ -61,6 +61,15 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
     const referenceId = reportId ?? palmMatchReportId ?? 'subscription';
+    const notes: Record<string, string> = {
+      user_email: email,
+      plan: body.plan,
+      plan_name: PLAN_SHORT_NAMES[body.plan],
+      currency,
+      country_code: String(body.country_code ?? '').slice(0, 2).toUpperCase(),
+    };
+    if (reportId) notes.report_id = reportId;
+    if (palmMatchReportId) notes.palmmatch_report_id = palmMatchReportId;
     const razorpayResponse = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
@@ -70,8 +79,9 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         amount,
         currency,
-        receipt: `palm_${crypto.randomUUID().replaceAll('-', '').slice(0, 24)}`,
-        notes: { user_email: email, plan: body.plan, report_id: referenceId, country_code: String(body.country_code ?? '').slice(0, 2).toUpperCase() },
+        receipt: `${PLAN_RECEIPT_PREFIXES[body.plan]}_${crypto.randomUUID().replaceAll('-', '').slice(0, 20)}`,
+        description: orderDescription(body.plan, amount, currency),
+        notes,
       }),
     });
     const razorpayOrder = await razorpayResponse.json();
