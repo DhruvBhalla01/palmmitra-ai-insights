@@ -70,6 +70,7 @@ export default function Report() {
   const [userData, setUserData] = useState<SessionData | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
   const [error, setError] = useState<string | null>(null);
+  const [isShared, setIsShared] = useState(false);
   const [activeSection, setActiveSection] = useState('summary');
   
   // Payment state
@@ -176,12 +177,16 @@ export default function Report() {
             });
             if (report.report_json) {
               setReading(report.report_json as unknown as PalmReading);
+            } else if (report.shared_preview) {
+              setReading(report.shared_preview as unknown as PalmReading);
+              setIsShared(true);
+              analytics.track('shared_report_viewed', { report_id: urlReportId });
             }
             setGeneratedAt(report.created_at || new Date().toISOString());
             setLoading(false);
             analytics.track('reading_preview_viewed', { report_id: urlReportId });
-            if (!report.report_json) {
-              setError('This report is locked. Unlock it to view your reading.');
+            if (!report.report_json && !report.shared_preview) {
+              setError('This report is not available yet. Please try again shortly.');
               analytics.track('report_locked_viewed', { report_id: urlReportId });
             }
             return;
