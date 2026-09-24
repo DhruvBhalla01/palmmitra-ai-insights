@@ -425,7 +425,7 @@ export default function Report() {
                     aria-current={active ? 'true' : undefined}
                     ref={(el) => { if (active && el) el.scrollIntoView({ block: 'nearest', inline: 'center' }); }}
                     onClick={() => document.getElementById(`section-${s.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className={`shrink-0 min-h-9 px-3 rounded-full text-xs font-medium border transition-colors ${active ? 'bg-accent text-foreground border-accent' : 'border-accent/20 text-muted-foreground'}`}
+                    className={`shrink-0 min-h-11 px-4 rounded-full text-xs font-medium border transition-colors ${active ? 'bg-accent text-foreground border-accent' : 'border-accent/20 text-muted-foreground'}`}
                   >
                     {s.label}
                   </button>
