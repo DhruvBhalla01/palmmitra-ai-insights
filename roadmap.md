@@ -36,7 +36,7 @@
 
 # Bilingual PalmMatch reports
 
-- [ ] Add English and Roman-script Hinglish selection to PalmMatch
-- [ ] Enforce concise localized AI output and language validation
-- [ ] Persist language and localize report unlock messaging
-- [ ] Validate mobile flow and deploy the analysis function
+- [x] Add English and Roman-script Hinglish selection to PalmMatch
+- [x] Enforce concise localized AI output and language validation
+- [x] Persist language and localize report unlock messaging
+- [x] Validate mobile flow and deploy the analysis function
