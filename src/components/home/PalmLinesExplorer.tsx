@@ -10,27 +10,27 @@ const LINES: Record<LineKey, { label: string; text: string; path?: string }> = {
   heart: {
     label: 'Heart line',
     text: 'The top crease under your fingers shows how you love and recover. A line curving up loves openly; a straighter one loves carefully and privately.',
-    path: 'M40 92 C70 78 110 76 160 86',
+    path: 'M146 126 C124 116 98 115 72 119',
   },
   head: {
     label: 'Head line',
     text: 'Crossing the middle of the palm, it shows how you think and decide. Straight marks a practical planner; a gentle slope, an imaginative mind.',
-    path: 'M42 112 C80 110 118 118 152 134',
+    path: 'M56 144 C80 139 110 146 136 162',
   },
   life: {
     label: 'Life line',
     text: 'It arcs around the thumb. It never measures lifespan — palmists read it for vitality, energy and the timing of big life turns.',
-    path: 'M60 104 C48 140 56 180 86 212',
+    path: 'M60 140 C50 170 56 204 76 230',
   },
   fate: {
     label: 'Fate line',
     text: 'Rising toward the middle finger, it reflects career and direction. Many successful hands have none — that reads as a self-made path.',
-    path: 'M104 214 C102 170 102 120 104 70',
+    path: 'M104 230 C102 200 100 168 98 126',
   },
   sun: {
     label: 'Sun line',
     text: 'A short line under the ring finger, read for recognition and creative fulfilment — how visible your gifts become.',
-    path: 'M132 190 C132 160 134 130 136 100',
+    path: 'M126 212 C126 188 124 164 120 134',
   },
   mounts: {
     label: 'Mounts',
@@ -38,7 +38,7 @@ const LINES: Record<LineKey, { label: string; text: string; path?: string }> = {
   },
 };
 
-const MOUNTS = [[62, 64], [92, 56], [122, 58], [150, 70], [58, 176]];
+const MOUNTS = [[62, 108], [88, 104], [112, 106], [136, 114], [44, 176], [132, 190]];
 
 export function PalmLinesExplorer() {
   const [active, setActive] = useState<LineKey>('heart');
@@ -61,31 +61,69 @@ export function PalmLinesExplorer() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="glass-premium rounded-3xl border border-accent/20 p-6 flex justify-center">
-            <svg viewBox="0 0 200 240" className="w-full max-w-[260px]" role="img" aria-label={`Palm illustration highlighting the ${LINES[active].label}`}>
+          <div className="relative glass-premium rounded-3xl border border-accent/25 p-6 flex justify-center shadow-gold overflow-hidden">
+            <svg viewBox="0 0 200 250" className="w-full max-w-[280px]" role="img" aria-label={`Palm illustration highlighting the ${LINES[active].label}`}>
+              <defs>
+                <linearGradient id="pl-gold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="hsl(var(--accent))" stopOpacity="1" />
+                  <stop offset="1" stopColor="hsl(var(--accent))" stopOpacity="0.55" />
+                </linearGradient>
+                <radialGradient id="pl-halo" cx="50%" cy="55%" r="55%">
+                  <stop offset="0" stopColor="hsl(var(--accent))" stopOpacity="0.14" />
+                  <stop offset="1" stopColor="hsl(var(--accent))" stopOpacity="0" />
+                </radialGradient>
+                <filter id="pl-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="2.4" result="b" />
+                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+              </defs>
+              <circle cx="100" cy="135" r="104" fill="url(#pl-halo)" />
+              <circle cx="100" cy="135" r="96" fill="none" stroke="hsl(var(--accent) / 0.16)" strokeWidth="0.5" strokeDasharray="1 5" />
+              {Array.from({ length: 24 }).map((_, i) => {
+                const a = (i * 15 * Math.PI) / 180;
+                const r1 = i % 6 === 0 ? 90 : 93;
+                return <line key={i} x1={100 + r1 * Math.cos(a)} y1={135 + r1 * Math.sin(a)} x2={100 + 96 * Math.cos(a)} y2={135 + 96 * Math.sin(a)} stroke="hsl(var(--accent) / 0.35)" strokeWidth="0.5" />;
+              })}
               <path
-                d="M50 230 C30 190 28 150 36 110 L30 60 C28 44 46 42 48 58 L56 96 L58 30 C58 14 78 14 78 30 L82 88 L90 22 C92 6 112 8 110 24 L108 88 L120 30 C124 14 142 18 138 34 L130 96 L146 56 C152 42 170 50 164 64 L150 120 C168 104 186 110 178 126 L150 170 C140 196 130 214 128 230 Z"
-                fill="hsl(var(--accent) / 0.05)"
-                stroke="hsl(var(--accent) / 0.45)"
-                strokeWidth="1.2"
+                d="M62 236 C58 214 52 196 44 180 C34 162 20 142 16 124 C13 111 25 105 33 113 C41 121 46 134 52 142 L52 54 A10 10 0 0 1 72 54 L73 104 L77 38 A11 11 0 0 1 99 38 L100 102 L103 46 A10 10 0 0 1 123 46 L124 108 L129 74 A8.5 8.5 0 0 1 146 75 L148 132 C150 170 144 206 140 236 Z"
+                fill="hsl(var(--accent) / 0.04)"
+                stroke="hsl(var(--accent) / 0.5)"
+                strokeWidth="0.9"
+                strokeLinejoin="round"
               />
-              {(Object.keys(LINES) as LineKey[]).filter((k) => LINES[k].path).map((k) => (
-                <path
-                  key={k}
-                  d={LINES[k].path}
-                  fill="none"
-                  stroke="hsl(var(--accent))"
-                  strokeLinecap="round"
-                  strokeWidth={active === k ? 3.2 : 1.2}
-                  opacity={active === k ? 1 : 0.35}
-                  style={{ transition: 'opacity .3s, stroke-width .3s' }}
-                />
+              {[[62, 58], [88, 42], [113, 50], [137, 78]].map(([x, y], i) => (
+                <g key={i} stroke="hsl(var(--accent) / 0.22)" strokeWidth="0.5" strokeLinecap="round">
+                  <line x1={x - 5} y1={y + 18} x2={x + 5} y2={y + 18} />
+                  <line x1={x - 5} y1={y + 34} x2={x + 5} y2={y + 34} />
+                </g>
               ))}
               {MOUNTS.map(([cx, cy], i) => (
-                <circle key={i} cx={cx} cy={cy} r={active === 'mounts' ? 9 : 5} fill="hsl(var(--accent) / 0.18)"
-                  stroke="hsl(var(--accent))" strokeWidth={active === 'mounts' ? 1.4 : 0.4}
-                  opacity={active === 'mounts' ? 1 : 0.35} style={{ transition: 'all .3s' }} />
+                <g key={i} opacity={active === 'mounts' ? 1 : 0.4} style={{ transition: 'opacity .35s' }}>
+                  <circle cx={cx} cy={cy} r={active === 'mounts' ? 7 : 4} fill="hsl(var(--accent) / 0.12)" stroke="hsl(var(--accent) / 0.8)" strokeWidth="0.6" style={{ transition: 'r .35s' }} />
+                  <circle cx={cx} cy={cy} r="1" fill="hsl(var(--accent))" />
+                </g>
               ))}
+              {(Object.keys(LINES) as LineKey[]).filter((k) => LINES[k].path).map((k) => {
+                const on = active === k;
+                return (
+                  <g key={k}>
+                    <path d={LINES[k].path} fill="none" stroke="hsl(var(--accent) / 0.3)" strokeLinecap="round" strokeWidth="1" />
+                    <path
+                      d={LINES[k].path}
+                      fill="none"
+                      stroke="url(#pl-gold)"
+                      strokeLinecap="round"
+                      strokeWidth="2.4"
+                      filter="url(#pl-glow)"
+                      pathLength={1}
+                      strokeDasharray="1"
+                      strokeDashoffset={on ? 0 : 1}
+                      opacity={on ? 1 : 0}
+                      style={{ transition: 'stroke-dashoffset .7s cubic-bezier(.4,0,.2,1), opacity .2s' }}
+                    />
+                  </g>
+                );
+              })}
             </svg>
           </div>
 
