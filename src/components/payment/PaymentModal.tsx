@@ -267,6 +267,7 @@ export function PaymentModal({
               <div className="relative border-t border-accent/20 bg-card/85 backdrop-blur-xl px-5 py-4 sm:px-8 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <Button
                   onClick={handleProceed}
+                  aria-label="Continue to secure payment to unlock report"
                   data-analytics-id="pay_now"
                   disabled={isProcessing}
                   className="w-full btn-gold rounded-2xl py-6 text-base sm:text-lg font-semibold gap-2 min-h-[54px]"
