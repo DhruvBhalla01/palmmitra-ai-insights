@@ -736,3 +736,5 @@
     filter: drop-shadow(0 0 60px hsl(42 87% 55% / 0.4)) drop-shadow(0 0 120px hsl(42 87% 55% / 0.2));
   }
 }
+
+[id^="section-"] { scroll-margin-top: 130px; }
