@@ -10,6 +10,7 @@ import { SectionDivider } from '@/components/SectionDivider';
 import { MobileCTABar } from '@/components/MobileCTABar';
 import { useHashScroll } from '@/hooks/useHashScroll';
 import { SEO } from '@/components/SEO';
+import { Link } from 'react-router-dom';
 
 // Lazy load below-fold sections for performance
 const PalmLinesExplorer = lazy(() => import('@/components/home/PalmLinesExplorer').then(m => ({ default: m.PalmLinesExplorer })));
@@ -55,6 +56,15 @@ const Index = () => {
         <Suspense fallback={<SectionLoader />}>
           <PalmLinesExplorer />
         </Suspense>
+
+        <section aria-label="PalmMatch couple compatibility" className="container mx-auto px-4 my-10 max-w-3xl">
+          <Link to="/palmmatch" className="glass-card block rounded-2xl p-6 md:p-8 text-center border border-accent/30 hover:border-accent/60 transition-colors">
+            <p className="text-xs uppercase tracking-[0.2em] text-accent mb-2">PalmMatch</p>
+            <h2 className="font-serif text-xl md:text-2xl text-foreground mb-2">Check your couple compatibility by palm</h2>
+            <p className="text-sm text-muted-foreground mb-4">Upload both palms for a love and marriage compatibility score with emotional, mental and physical insights.</p>
+            <span className="inline-flex items-center text-sm font-medium text-accent">Try PalmMatch couple compatibility →</span>
+          </Link>
+        </section>
 
         {/* 4. Features */}
         <Suspense fallback={<SectionLoader />}>
