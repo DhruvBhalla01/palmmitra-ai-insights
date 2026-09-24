@@ -29,6 +29,13 @@
       "when": 1790178195405,
       "tag": "0003_create_palmmatch_reports",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790240308145,
+      "tag": "0004_add_palmmatch_report_language",
+      "breakpoints": true
     }
   ]
 }
