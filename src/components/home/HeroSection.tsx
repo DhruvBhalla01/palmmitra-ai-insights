@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
 import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
+import { HeroUploadDrop } from './HeroUploadDrop';
 
 const SampleReportModal = lazy(() =>
   import("./SampleReportModal").then((module) => ({
@@ -77,6 +78,8 @@ export function HeroSection() {
               Upload one photo. Get a personalised 2,000-word destiny report on your career, love,
               wealth, and life path — in under 2 minutes.
             </p>
+
+            <HeroUploadDrop />
 
             {/* CTAs — thumb-friendly, mobile-first */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-5">
