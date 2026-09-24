@@ -77,8 +77,8 @@ export function PremiumBackground({ showMandala = true, intensity = 'medium' }: 
 
       {/* Mandala watermark */}
       {showMandala && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img src="/mandala.svg" alt="" width={800} height={800} decoding="async" loading="lazy" className="w-[800px] h-[800px] opacity-[0.03]" />
+        <div className="absolute inset-0 hidden md:flex items-center justify-center">
+          <img src="/mandala.svg" alt="" width={800} height={800} decoding="async" className="w-[800px] h-[800px] opacity-[0.03]" />
         </div>
       )}
 
