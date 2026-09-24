@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { PalmMatchPlanType } from '@/hooks/usePalmMatchUnlock';
 import { PRODUCTS, formatCurrency } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
+import type { PalmMatchLanguage } from '@/components/palmmatch/types';
 
 interface PalmMatchPaywallProps {
   person1Name: string;
   person2Name: string;
   onUnlockClick: (plan: PalmMatchPlanType) => void;
   isProcessing: boolean;
+  language?: PalmMatchLanguage;
 }
 
 const unlockItems = [
@@ -26,6 +28,19 @@ const unlockItems = [
   'Downloadable PDF · shareable result link',
 ];
 
+const hinglishUnlockItems = [
+  'Communication style aur natural rhythm',
+  'Romance aur emotional chemistry',
+  'Shared goals aur sahi timing',
+  'Spiritual compatibility',
+  'Aapke bond ke liye practical guidance',
+  'Future compatibility timeline',
+  'Bade decisions ka behtar samay',
+  'Aap dono ke liye 2 personalized remedies',
+  'PalmMatch AI se follow-up sawaal',
+  'Downloadable PDF aur shareable result',
+];
+
 const teaserDimensions = [
   { label: 'Communication', icon: '💬', from: 'hsl(200 85% 55%)', to: 'hsl(170 70% 50%)' },
   { label: 'Life Goals',    icon: '🎯', from: 'hsl(145 60% 50%)', to: 'hsl(42 87% 55%)' },
@@ -39,12 +54,14 @@ const avatarStack = [
   { initial: 'M', color: 'hsl(145 60% 50%)' },
 ];
 
-export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isProcessing }: PalmMatchPaywallProps) {
+export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isProcessing, language = 'english' }: PalmMatchPaywallProps) {
   const [unlockCount, setUnlockCount] = useState(84);
   const { currency } = useCurrency();
   const matchPrice = PRODUCTS.palmmatch.prices[currency];
   const elitePrice = PRODUCTS.elite.prices[currency];
   const matchListPrice = formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency);
+  const isHinglish = language === 'hinglish';
+  const visibleUnlockItems = isHinglish ? hinglishUnlockItems : unlockItems;
 
   // Animate count from 84 → 92 on mount
   useEffect(() => {
@@ -114,21 +131,23 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
               >
                 {unlockCount}
               </m.span>
-              {' '}couples unlocked this week · Launch price ending soon
+              {' '}{isHinglish ? 'couples ne is week unlock kiya' : 'couples unlocked this week'}
             </span>
           </m.div>
         </div>
 
         <div className="text-center mb-7">
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-2">
-            Reveal{' '}
+             {isHinglish ? 'Samjhein ' : 'Reveal '}
             <span className="text-gradient-gold">
               {person1Name} & {person2Name}'s
             </span>
-            <br />Full Compatibility
+             <br />{isHinglish ? 'Ki Complete Compatibility' : 'Full Compatibility'}
           </h2>
           <p className="text-muted-foreground text-sm">
-            You've unlocked Emotional Bond. 4 deeper dimensions await:
+            {isHinglish
+              ? 'Emotional Bond aap dekh chuke hain. Ab 4 deeper dimensions samjhein.'
+              : 'You’ve seen your Emotional Bond. Unlock four deeper dimensions.'}
           </p>
         </div>
 
@@ -221,10 +240,10 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
         {/* "You'll unlock" checklist — payment psychology */}
         <div className="mb-7 max-w-md mx-auto rounded-2xl border border-accent/20 bg-accent/[0.04] p-5">
           <p className="text-[10px] uppercase tracking-[0.22em] text-accent font-bold mb-3 text-center">
-            You'll Unlock 4 Remaining Dimensions
+            {isHinglish ? 'Complete Report Mein Kya Milega' : 'What Your Complete Report Includes'}
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
-            {unlockItems.map((item, i) => (
+            {visibleUnlockItems.map((item, i) => (
               <m.li
                 key={item}
                 initial={{ opacity: 0, x: -8 }}
@@ -270,7 +289,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
               boxShadow: '0 0 32px hsl(42 87% 55% / 0.12)',
             }}
           >
-            <p className="text-xs text-muted-foreground mb-1.5">One-time unlock · Keep forever</p>
+            <p className="text-xs text-muted-foreground mb-1.5">{isHinglish ? 'Ek baar unlock · Hamesha access' : 'One-time unlock · Keep forever'}</p>
             <div className="flex items-baseline justify-center gap-2 mb-1.5">
               <span className="text-4xl font-serif font-bold text-accent" style={{ textShadow: '0 0 20px hsl(42 87% 55% / 0.4)' }}>{matchPrice.display}</span>
               <span className="text-sm text-muted-foreground line-through">{matchListPrice}</span>
@@ -319,7 +338,7 @@ export function PalmMatchPaywall({ person1Name, person2Name, onUnlockClick, isPr
                 <span className="flex flex-col items-center gap-0.5 w-full">
                   <span className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    Unlock Full Compatibility Report
+                    {isHinglish ? 'Complete Compatibility Unlock Karein' : 'Unlock Full Compatibility Report'}
                     <ArrowRight className="w-4 h-4" />
                   </span>
                   <span className="text-xs font-normal opacity-80">One-time · {matchPrice.display}</span>
