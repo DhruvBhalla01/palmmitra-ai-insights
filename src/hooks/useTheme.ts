@@ -3,7 +3,6 @@ import {
   applyTheme,
   clearStoredTheme,
   getStoredTheme,
-  getSystemTheme,
   persistTheme,
   type Theme,
 } from "@/lib/theme";
