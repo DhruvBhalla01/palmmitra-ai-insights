@@ -30,7 +30,7 @@ const Index = () => {
   useHashScroll();
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative overflow-x-clip">
       <SEO
         title="PalmMitra — AI Palm Reading | Discover Your Destiny in 2 Minutes"
         description="PalmMitra uses AI and ancient Indian Hasta Samudrika Shastra to read your palm lines and reveal insights about your career, love, wealth, and life path. Free preview."
