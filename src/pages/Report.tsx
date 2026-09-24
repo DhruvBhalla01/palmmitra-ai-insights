@@ -71,6 +71,13 @@ export default function Report() {
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
   const [error, setError] = useState<string | null>(null);
   const [isShared, setIsShared] = useState(false);
+  const [showSectionBar, setShowSectionBar] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowSectionBar(window.scrollY > 380);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   const [activeSection, setActiveSection] = useState('summary');
   
   // Payment state
@@ -350,7 +357,7 @@ export default function Report() {
       <StickyUnlockCTA
         userName={userData?.name}
         onUnlockClick={handleUnlockClick}
-        isUnlocked={isUnlocked}
+        isUnlocked={isUnlocked || isShared}
       />
 
       {/* Payment Modal */}
@@ -394,6 +401,45 @@ export default function Report() {
               <span className="text-gradient-gold">{userData?.name || 'You'}</span>
             </h1>
           </m.header>
+
+          {isShared && (
+            <div className="mb-6 glass-premium rounded-2xl border border-accent/25 p-4 flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+              <p className="flex-1 text-sm text-foreground">
+                <span className="font-semibold">{userData?.name || 'Someone'}</span> shared a preview of their reading. Curious what your palm says?
+              </p>
+              <Button
+                onClick={() => {
+                  analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null, placement: 'top' });
+                  navigate('/upload');
+                }}
+                className="btn-gold rounded-xl min-h-11 px-5 text-sm font-semibold"
+              >
+                Get your own reading
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile section bar */}
+          <nav aria-label="Report sections" className={`lg:hidden fixed inset-x-0 top-[70px] z-30 px-4 py-2 bg-background/90 backdrop-blur-md border-b border-accent/15 transition-all duration-300 ${showSectionBar ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar" style={{ scrollbarWidth: 'none' }}>
+              {reportSections.map((s) => {
+                const active = s.id === activeSection;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    aria-label={`Go to ${s.label}`}
+                    aria-current={active ? 'true' : undefined}
+                    ref={(el) => { if (active && el) el.scrollIntoView({ block: 'nearest', inline: 'center' }); }}
+                    onClick={() => document.getElementById(`section-${s.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className={`shrink-0 min-h-11 px-4 rounded-full text-xs font-medium border transition-colors ${active ? 'bg-accent text-foreground border-accent' : 'border-accent/20 text-muted-foreground'}`}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
 
           {/* Subscription Badge */}
           {hasSubscription && (

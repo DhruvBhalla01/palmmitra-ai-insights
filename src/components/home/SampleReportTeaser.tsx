@@ -104,7 +104,7 @@ export function SampleReportTeaser() {
                 }}
                 transition={{ duration: 2.5, repeat: Infinity }}
               >
-                <img src={palmIconGold} alt="Palm Reading Report" width={80} height={80} className="w-20 h-20 object-contain" />
+                <img src={palmIconGold} alt="" aria-hidden="true" loading="lazy" decoding="async" width={80} height={80} className="w-20 h-20 object-contain" />
               </m.div>
               <h3 className="text-xl font-serif font-bold text-primary-foreground relative z-10">
                 Sample Destiny Report

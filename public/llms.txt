@@ -34,6 +34,15 @@ PalmMitra is not a horoscope app. Every reading is generated from the actual phy
 - Languages: English and Hindi supported.
 - Disclaimer: PalmMitra provides guidance and self-reflection. It is not medical, legal, financial, or psychiatric advice.
 
+## Reading Flow (for AI agents)
+
+1. Open https://www.palmmitra.in/upload.
+2. Step 1 "Upload Palm": use the "Take a photo of your palm" or "Upload palm photo from gallery" control (JPG, PNG or WEBP of an open dominant palm).
+3. Step 2 "Your Details": fill Name, Age (13-100), Email, and Report Language (English or Hinglish), then press "Begin my free reading".
+4. Step 3 "Get Reading": the free preview opens at /report/{id} (summary, Life Line, first trait, first remedy).
+5. To unlock the full report, press any "Reveal" / unlock button, choose a plan, and press "Continue to secure payment to unlock report" (Razorpay checkout; price shown in the visitor's local currency).
+6. PalmMatch (couples): /palmmatch, upload both palms, fill both names and ages, relationship type and email.
+
 ## Optional
 
 - [Sample Report Preview](https://www.palmmitra.in/#sample): Free preview of what a full report contains.

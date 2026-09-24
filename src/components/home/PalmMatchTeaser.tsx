@@ -77,7 +77,12 @@ export function PalmMatchTeaser() {
                 <div className="relative">
                   <img
                     src={heroPalmImg}
-                    alt="Palm 1"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    decoding="async"
+                    width={80}
+                    height={80}
                     className="w-20 h-20 object-contain rounded-2xl"
                     style={{ filter: 'drop-shadow(0 0 16px hsl(42 87% 55% / 0.4))' }}
                   />
@@ -94,7 +99,12 @@ export function PalmMatchTeaser() {
                 <div className="relative">
                   <img
                     src={heroPalmImg}
-                    alt="Palm 2"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    decoding="async"
+                    width={80}
+                    height={80}
                     className="w-20 h-20 object-contain rounded-2xl scale-x-[-1]"
                     style={{ filter: 'drop-shadow(0 0 16px hsl(42 87% 55% / 0.4))' }}
                   />
