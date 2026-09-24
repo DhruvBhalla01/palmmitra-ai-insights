@@ -58,7 +58,7 @@ const Index = () => {
         </Suspense>
 
         <section aria-label="PalmMatch couple compatibility" className="container mx-auto px-4 my-10 max-w-3xl">
-          <Link to="/palmmatch" className="glass-card block rounded-2xl p-6 md:p-8 text-center border border-accent/30 hover:border-accent/60 transition-colors">
+          <Link to="/palmmatch" className="block rounded-2xl bg-card/60 backdrop-blur p-6 md:p-8 text-center border border-accent/30 hover:border-accent/60 transition-colors">
             <p className="text-xs uppercase tracking-[0.2em] text-accent mb-2">PalmMatch</p>
             <h2 className="font-serif text-xl md:text-2xl text-foreground mb-2">Check your couple compatibility by palm</h2>
             <p className="text-sm text-muted-foreground mb-4">Upload both palms for a love and marriage compatibility score with emotional, mental and physical insights.</p>

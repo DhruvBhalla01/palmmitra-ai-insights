@@ -22,6 +22,9 @@ import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalys
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
 import {
 
+  validateImageFile, nameSchema, ageSchema, emailSchema, relationshipTypeSchema,
+} from '@/lib/validation';
+
 const PALMMATCH_FAQS = [
   { q: 'How does palm compatibility work?', a: 'PalmMatch reads both partners\' heart, head, life and fate lines plus the mounts, then compares them to show where you naturally align and where you may need more understanding.' },
   { q: 'Can palm reading show marriage compatibility?', a: 'Palmistry offers a reflective view of emotional style, commitment tendency and communication. PalmMatch turns this into a couple compatibility score with emotional, mental, physical and spiritual dimensions. It is for guidance and reflection, not a prediction.' },
@@ -48,8 +51,6 @@ const PALMMATCH_SERVICE_LD = {
   ].map(([price, priceCurrency]) => ({ '@type': 'Offer', price, priceCurrency, url: 'https://www.palmmitra.in/palmmatch' })),
 };
 
-  validateImageFile, nameSchema, ageSchema, emailSchema, relationshipTypeSchema,
-} from '@/lib/validation';
 
 type Step = 1 | 2;
 type ProcessingState = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
@@ -886,7 +887,7 @@ export default function PalmMatch() {
           </h2>
           <div className="space-y-3">
             {PALMMATCH_FAQS.map(({ q, a }) => (
-              <details key={q} className="glass-card rounded-2xl px-5 py-4 group">
+              <details key={q} className="rounded-2xl border border-border bg-card/60 backdrop-blur px-5 py-4 group">
                 <summary className="cursor-pointer text-sm md:text-base font-medium text-foreground list-none flex justify-between gap-4">
                   {q}<span className="text-accent group-open:rotate-45 transition-transform">+</span>
                 </summary>
