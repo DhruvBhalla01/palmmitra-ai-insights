@@ -3,6 +3,7 @@ import { Navbar } from '@/components/Navbar';
 import { HeroSection } from '@/components/home/HeroSection';
 import { TrustStrip } from '@/components/home/TrustStrip';
 import { HowItWorks } from '@/components/home/HowItWorks';
+import { PromiseMarquee } from '@/components/home/PromiseMarquee';
 import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { SectionDivider } from '@/components/SectionDivider';
@@ -11,6 +12,7 @@ import { useHashScroll } from '@/hooks/useHashScroll';
 import { SEO } from '@/components/SEO';
 
 // Lazy load below-fold sections for performance
+const PalmLinesExplorer = lazy(() => import('@/components/home/PalmLinesExplorer').then(m => ({ default: m.PalmLinesExplorer })));
 const FeaturesSection = lazy(() => import('@/components/home/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
 const SampleReportTeaser = lazy(() => import('@/components/home/SampleReportTeaser').then(m => ({ default: m.SampleReportTeaser })));
 const ComparisonSection = lazy(() => import('@/components/home/ComparisonSection').then(m => ({ default: m.ComparisonSection })));
@@ -44,10 +46,15 @@ const Index = () => {
 
         {/* 2. Social Proof */}
         <TrustStrip />
+        <PromiseMarquee />
 
         {/* 3. How It Works */}
         <SectionDivider variant="gradient" />
         <HowItWorks />
+
+        <Suspense fallback={<SectionLoader />}>
+          <PalmLinesExplorer />
+        </Suspense>
 
         {/* 4. Features */}
         <Suspense fallback={<SectionLoader />}>

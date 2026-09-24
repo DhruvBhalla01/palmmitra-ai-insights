@@ -22,6 +22,14 @@ const faqs = [
     a: 'We recommend photographing your dominant hand (right for right-handed people, left for left-handed). Your dominant hand shows your current path and potential, while the non-dominant hand shows inherited traits.',
   },
   {
+    q: 'Can AI really read palms?',
+    a: 'Yes, in the way that matters: PalmMitra detects the actual lines on your photo — it is not a quiz with canned answers — then interprets them through classical Indian palmistry, the way a human palmist would. The interpretation comes from tradition, not laboratory science, and we say so plainly.',
+  },
+  {
+    q: 'What do the mounts on my palm mean?',
+    a: 'Mounts are the fleshy pads at the base of each finger and below the thumb, each named for a planet: Venus, Jupiter, Saturn, Sun (Apollo) and Mercury. A full, firm mount reads as strength in that area — warmth for Venus, ambition for Jupiter. Your reading weighs mounts alongside your lines.',
+  },
+  {
     q: 'How long does it take to get my reading?',
     a: 'Your palm reading is generated quickly! Once you upload your palm image, our AI analyses it in under 2 minutes and presents your personalised report.',
   },

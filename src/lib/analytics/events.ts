@@ -41,6 +41,8 @@ export const ANALYTICS_EVENTS = [
 
   // PalmMitra journey
   'palm_reading_started',
+  'hero_upload_selected',
+  'palm_line_explored',
   'palm_image_upload_started',
   'palm_image_uploaded',
   'palm_image_upload_failed',

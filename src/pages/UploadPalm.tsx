@@ -1,3 +1,4 @@
+import { takePendingPalm } from '@/lib/pendingPalm';
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { m, AnimatePresence } from '@/lib/motion';
 import palmIconGold from '@/assets/palm-icon-gold.webp';
@@ -197,6 +198,13 @@ export default function UploadPalm() {
     uploadPromiseRef.current = uploadPromise;
     void uploadPromise.catch(() => undefined);
   };
+
+  // Photo picked on the home page hero — load it straight in
+  useEffect(() => {
+    const pending = takePendingPalm();
+    if (pending) processImage(pending);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const removeImage = () => {
     setImage(null);
