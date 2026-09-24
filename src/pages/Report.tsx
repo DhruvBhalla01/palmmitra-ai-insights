@@ -70,6 +70,7 @@ export default function Report() {
   const [userData, setUserData] = useState<SessionData | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
   const [error, setError] = useState<string | null>(null);
+  const [isShared, setIsShared] = useState(false);
   const [activeSection, setActiveSection] = useState('summary');
   
   // Payment state
@@ -176,12 +177,16 @@ export default function Report() {
             });
             if (report.report_json) {
               setReading(report.report_json as unknown as PalmReading);
+            } else if (report.shared_preview) {
+              setReading(report.shared_preview as unknown as PalmReading);
+              setIsShared(true);
+              analytics.track('shared_report_viewed', { report_id: urlReportId });
             }
             setGeneratedAt(report.created_at || new Date().toISOString());
             setLoading(false);
             analytics.track('reading_preview_viewed', { report_id: urlReportId });
-            if (!report.report_json) {
-              setError('This report is locked. Unlock it to view your reading.');
+            if (!report.report_json && !report.shared_preview) {
+              setError('This report is not available yet. Please try again shortly.');
               analytics.track('report_locked_viewed', { report_id: urlReportId });
             }
             return;
@@ -246,6 +251,11 @@ export default function Report() {
   }, []);
 
   const handleUnlockClick = () => {
+    if (isShared) {
+      analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null });
+      navigate('/upload');
+      return;
+    }
     analytics.track('unlock_report_clicked', { report_id: resolvedReportId ?? null });
     analytics.track('pricing_cta_clicked', { element_id: 'unlock_report', plan_id: 'insight' });
     recordInteraction('cta_clicked', 'unlock_report');
@@ -761,18 +771,20 @@ export default function Report() {
                 </LockedSection>
               </div>
 
-              {/* 10. Action Buttons - PDF locked */}
-              <ActionButtons
-                isUnlocked={isUnlocked}
-                onUnlockClick={handleUnlockClick}
-                reading={reading}
-                userData={{
-                  name: userData?.name || 'User',
-                  readingType: userData?.readingType || 'full',
-                  generatedAt: generatedAt,
-                }}
-                userName={userData?.name}
-              />
+              {/* 10. Action Buttons - PDF locked (hidden on shared links) */}
+              {!isShared && (
+                <ActionButtons
+                  isUnlocked={isUnlocked}
+                  onUnlockClick={handleUnlockClick}
+                  reading={reading}
+                  userData={{
+                    name: userData?.name || 'User',
+                    readingType: userData?.readingType || 'full',
+                    generatedAt: generatedAt,
+                  }}
+                  userName={userData?.name}
+                />
+              )}
 
               {/* Continue with PalmMitra AI — end-of-report premium section */}
               {isUnlocked && resolvedReportId && (
@@ -782,16 +794,32 @@ export default function Report() {
                 />
               )}
 
-
-
-              {/* 11. Premium Paywall - Only show if not unlocked */}
-              {!isUnlocked && (
+              {/* 11. Shared-link invite or Premium Paywall */}
+              {isShared ? (
+                <section className="glass-premium rounded-3xl p-8 md:p-10 border border-accent/20 text-center mb-12">
+                  <Crown className="w-10 h-10 text-accent mx-auto mb-4" aria-hidden="true" />
+                  <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-3 text-balance">
+                    {userData?.name ? `${userData.name} shared their reading with you` : 'A reading was shared with you'}
+                  </h2>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    Discover what your own palm reveals about your career, love and life path in under a minute.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null });
+                      navigate('/upload');
+                    }}
+                    className="btn-gold rounded-2xl px-8 py-6 text-base font-semibold"
+                  >
+                    Get your own palm reading
+                  </Button>
+                </section>
+              ) : !isUnlocked && (
                 <PremiumPaywall 
                   premiumInsights={reading.premiumInsights} 
                   userName={userData?.name}
                   onUnlockClick={handleUnlockClick}
                 />
-
               )}
 
               {/* 12. Legal Disclaimer */}

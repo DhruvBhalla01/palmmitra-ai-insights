@@ -93,6 +93,32 @@ serve(async (req) => {
       }
     }
 
+    // Shared-link viewers get only the free-preview fields; paid fields are blanked
+    // but kept structurally so the preview page renders safely.
+    const buildSharedPreview = (rj: any) => {
+      if (!rj || typeof rj !== 'object') return null;
+      const emptyLine = { strength: 'Moderate', meaning: '', keyInsight: '' };
+      const emptyMount = { level: 'Medium', meaning: '' };
+      const emptyPhase = { period: '', description: '' };
+      return {
+        confidenceScore: typeof rj.confidenceScore === 'number' ? rj.confidenceScore : 0,
+        headlineSummary: typeof rj.headlineSummary === 'string' ? rj.headlineSummary : '',
+        majorLines: {
+          lifeLine: rj.majorLines?.lifeLine ?? emptyLine,
+          heartLine: emptyLine, headLine: emptyLine, fateLine: emptyLine, sunLine: emptyLine,
+        },
+        mounts: { venus: emptyMount, jupiter: emptyMount, saturn: emptyMount, apollo: emptyMount, mercury: emptyMount },
+        personalityTraits: Array.isArray(rj.personalityTraits) ? rj.personalityTraits.slice(0, 1) : [],
+        careerWealth: { bestFields: [], turningPointAge: '', wealthStyle: '', peakPeriods: [] },
+        loveRelationships: { emotionalStyle: '', commitmentTendency: '', relationshipAdvice: '' },
+        lifePhases: { growth: emptyPhase, challenge: emptyPhase, opportunity: emptyPhase },
+        spiritualRemedies: Array.isArray(rj.spiritualRemedies) ? rj.spiritualRemedies.slice(0, 1) : [],
+        next6MonthsFocus: { period: '', focusAreas: [], avoidDuring: '' },
+        finalBlessing: '',
+        premiumInsights: { marriageTiming: '', careerBreakthrough: '' },
+      };
+    };
+
     // Strip PII and paid content for unauthenticated callers.
     const safeReport = {
       id: report.id,
@@ -106,10 +132,11 @@ serve(async (req) => {
       validation_confidence: report.validation_confidence,
       validation_quality: report.validation_quality,
       report_json: isUnlocked ? report.report_json : null,
+      shared_preview: isUnlocked ? null : buildSharedPreview(report.report_json),
     };
 
     return new Response(
-      JSON.stringify({ success: true, report: safeReport, isUnlocked }),
+      JSON.stringify({ success: true, report: safeReport, isUnlocked, isShared: !isUnlocked }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
