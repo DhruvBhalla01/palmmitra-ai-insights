@@ -46,6 +46,7 @@ export function ReportProgressIndicator({ sections, activeSection }: ReportProgr
                 whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
                 title={section.label}
+                aria-label={`Go to ${section.label}`}
               >
                 {/* Pulse ring for active */}
                 {isActive && (

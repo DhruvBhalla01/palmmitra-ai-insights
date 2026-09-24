@@ -53,11 +53,11 @@ export function HeroSection() {
             className="text-center lg:text-left order-2 lg:order-1"
           >
             {/* Live trust pill */}
-            <div className="inline-flex items-center gap-2 glass-premium rounded-full px-3.5 py-1.5 mb-5 border border-accent/25">
+            <div className="inline-flex items-center gap-2 glass-dark rounded-full px-3.5 py-1.5 mb-5 border border-accent/25">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
               </span>
-              <span className="text-[11px] sm:text-xs font-medium text-white/75">
+              <span className="text-[11px] sm:text-xs font-medium text-primary-foreground">
                 12,400+ readings · 4.9<span className="text-accent">★</span> from 2,100 reviews
               </span>
             </div>
@@ -121,9 +121,9 @@ export function HeroSection() {
 
           {/* ── Palm visual — smaller/compact on mobile ────── */}
           <div className="relative flex items-center justify-center order-1 lg:order-2">
-            <div className="absolute w-[240px] h-[240px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl" aria-hidden="true" />
+            <div className="absolute w-[180px] h-[180px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] rounded-full bg-accent/15 blur-3xl" aria-hidden="true" />
 
-            <div className="relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
+            <div className="relative w-[160px] h-[160px] sm:w-[300px] sm:h-[300px] md:w-[440px] md:h-[440px] lg:w-[580px] lg:h-[580px]">
               {/* Decorative gold ring */}
               <div className="absolute inset-0" aria-hidden="true">
                 <svg className="w-full h-full" viewBox="0 0 200 200">
@@ -146,7 +146,7 @@ export function HeroSection() {
                   srcSet={heroPalmSrcSet}
                   sizes={heroPalmSizes}
                   alt="AI palm reading illustration — PalmMitra decodes your life path, career, love and destiny from your palm lines"
-                  className="object-contain w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] opacity-95"
+                  className="object-contain w-[150px] h-[150px] sm:w-[280px] sm:h-[280px] md:w-[420px] md:h-[420px] lg:w-[560px] lg:h-[560px] opacity-95"
                   style={{ filter: "drop-shadow(0 0 50px hsl(42 87% 55% / 0.5))" }}
                   loading="eager"
                   fetchPriority="high"
