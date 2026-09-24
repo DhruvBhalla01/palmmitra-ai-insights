@@ -311,7 +311,7 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-    const { image1Url, image2Url, person1, person2, relationshipType, email } = body ?? {} as PalmMatchRequest;
+    const { image1Url, image2Url, person1, person2, relationshipType, email, language } = body ?? {} as PalmMatchRequest;
 
     // ── Server-side validation ──
     const allowedPrefix = `${supabaseUrl}/storage/v1/object/public/palm-uploads/`;
@@ -326,6 +326,7 @@ serve(async (req) => {
     const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
     const validEmail = cleanEmail.length > 0 && cleanEmail.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail);
     const allowedRelationships = ["Partner", "Spouse", "Friend", "Sibling", "Parent-Child", "Business Partner"];
+    const safeLanguage: PalmMatchLanguage = language === "hinglish" ? "hinglish" : "english";
 
     const fieldError =
       !isValidImageUrl(image1Url) || !isValidImageUrl(image2Url) ? "One of the palm photos didn't upload correctly. Please re-select it." :
@@ -385,7 +386,7 @@ serve(async (req) => {
     console.log("Both palms validated. Generating compatibility reading...");
 
     const reading = await generateCompatibilityReading(
-      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext
+      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext, safeLanguage
     );
 
     const reportId = `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -400,6 +401,7 @@ serve(async (req) => {
       email: cleanEmail,
       overall_score: (reading as { overallScore?: number }).overallScore || 75,
       reading,
+      language: safeLanguage,
       is_unlocked: false,
     });
 
@@ -412,14 +414,21 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, reading, reportId, generatedAt: new Date().toISOString() }),
+      JSON.stringify({ success: true, reading, reportId, language: safeLanguage, generatedAt: new Date().toISOString() }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("PalmMatch edge function error:", error);
+    const message = error instanceof Error ? error.message : "";
+    const isOutputError = ["AI_INVALID_REPORT_JSON", "AI_INVALID_REPORT_SHAPE", "AI_LANGUAGE_MISMATCH"].includes(message);
     return new Response(
-      JSON.stringify({ success: false, error: "We couldn't generate your compatibility report right now. Please try again." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        success: false,
+        error: isOutputError
+          ? "We couldn't complete the report in your selected language. Please try again."
+          : "We couldn't generate your compatibility report right now. Please try again.",
+      }),
+      { status: isOutputError ? 503 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
