@@ -15,12 +15,13 @@ const SampleReportModal = lazy(() =>
 
 const heroPalmImg = "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp";
 const heroPalmSrcSet = [
+  "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-160w.webp 160w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-320w.webp 320w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-480w.webp 480w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb-800w.webp 800w",
   "/lovable-uploads/41f937d2-cf0d-4793-a69c-892bf8c421eb.webp 900w",
 ].join(", ");
-const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 200px";
+const heroPalmSizes = "(min-width: 1024px) 560px, (min-width: 768px) 420px, (min-width: 640px) 280px, 150px";
 
 export function HeroSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,16 +84,16 @@ export function HeroSection() {
 
             {/* CTAs — thumb-friendly, mobile-first */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-5">
-              <Link to="/upload" className="w-full sm:w-auto">
-                <Button
+              <Button
+                  asChild
                   className="btn-gold text-foreground font-semibold text-base sm:text-lg px-8 py-6 sm:py-7 rounded-2xl group shadow-gold-lg w-full min-h-[56px]"
-                  aria-label="Get my free palm reading"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
-                  Get My Free Palm Reading
-                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  <Link to="/upload" className="w-full sm:w-auto">
+                    <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
+                    Get My Free Palm Reading
+                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </Link>
                 </Button>
-              </Link>
               <Button
                 variant="outline"
                 onClick={() => setIsModalOpen(true)}
@@ -144,7 +145,7 @@ export function HeroSection() {
               </div>
 
               <div className="absolute inset-0 flex items-center justify-center">
-                <m.img
+                <img
                   src={heroPalmImg}
                   srcSet={heroPalmSrcSet}
                   sizes={heroPalmSizes}

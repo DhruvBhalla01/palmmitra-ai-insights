@@ -5,7 +5,7 @@ import { Menu, X, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SmartLink } from '@/components/SmartLink';
 import { useTheme } from '@/hooks/useTheme';
-import logoImg from '@/assets/logo-40.webp';
+import logoImg from '@/assets/logo-80.webp';
 import { CurrencySelector } from '@/components/CurrencySelector';
 
 const navLinks = [
@@ -73,7 +73,7 @@ export function Navbar() {
             >
               {link.name}
               {'badge' in link && link.badge && (
-                <span className="text-[10px] font-bold text-foreground bg-accent px-1.5 py-0.5 rounded-full leading-none">
+                <span className="text-[10px] font-bold text-background bg-accent px-1.5 py-0.5 rounded-full leading-none">
                   {link.badge}
                 </span>
               )}
@@ -180,7 +180,7 @@ export function Navbar() {
                   >
                     {link.name}
                     {'badge' in link && link.badge && (
-                      <span className="text-[10px] font-bold text-foreground bg-accent px-1.5 py-0.5 rounded-full leading-none">
+                      <span className="text-[10px] font-bold text-background bg-accent px-1.5 py-0.5 rounded-full leading-none">
                         {link.badge}
                       </span>
                     )}
