@@ -1,5 +1,4 @@
 import { lazy, Suspense, useState } from "react";
-import { m } from '@/lib/motion';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye, Shield, Zap, Star } from "lucide-react";
@@ -48,10 +47,7 @@ export function HeroSection() {
       <div className="container mx-auto px-5 relative z-10">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 xl:gap-16 items-center">
           {/* ── Copy ───────────────────────────── */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+          <div
             className="text-center lg:text-left order-2 lg:order-1"
           >
             {/* Live trust pill */}
@@ -121,7 +117,7 @@ export function HeroSection() {
             <p className="text-[11px] text-white/35 mt-4 text-center lg:text-left">
               No sign-up or card needed · Free preview · Full report {PRODUCTS.insight.prices[currency].display}
             </p>
-          </m.div>
+          </div>
 
           {/* ── Palm visual — smaller/compact on mobile ────── */}
           <div className="relative flex items-center justify-center order-1 lg:order-2">
