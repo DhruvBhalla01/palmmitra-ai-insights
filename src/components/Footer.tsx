@@ -5,6 +5,8 @@ import { SmartLink } from '@/components/SmartLink';
 const footerLinks = {
   company: [
     { name: 'About PalmMitra', path: '/about' },
+    { name: 'PalmMatch Couple Compatibility', path: '/palmmatch' },
+    { name: 'Free Palm Reading', path: '/upload' },
     { name: 'How It Works', path: '/#how-it-works' },
     { name: 'Pricing', path: '/#pricing' },
   ],
