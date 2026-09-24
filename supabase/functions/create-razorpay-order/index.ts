@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { emitServerEvent } from '../_shared/analytics.ts';
-import { currencyForCountry, isPlanType, PLAN_LABELS, PLAN_PRICES } from '../_shared/pricing.ts';
+import { currencyForCountry, isPlanType, orderDescription, PLAN_LABELS, PLAN_PRICES, PLAN_RECEIPT_PREFIXES, PLAN_SHORT_NAMES } from '../_shared/pricing.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
