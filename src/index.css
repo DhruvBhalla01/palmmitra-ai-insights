@@ -1,3 +1,6 @@
+/* Metric-matched fallbacks so the swap to web fonts doesn't shift layout */
+@font-face { font-family: 'Playfair Fallback'; src: local('Times New Roman'), local('Liberation Serif'), local('DejaVu Serif'); size-adjust: 111%; ascent-override: 97%; descent-override: 22%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; src: local('Arial'), local('Liberation Sans'), local('Helvetica'); size-adjust: 107%; ascent-override: 90%; descent-override: 22%; line-gap-override: 0%; }
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
