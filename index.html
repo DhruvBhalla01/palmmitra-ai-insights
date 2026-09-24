@@ -77,8 +77,7 @@
         try {
           var storageKey = "theme";
           var stored = localStorage.getItem(storageKey);
-          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-          var theme = stored === "dark" || stored === "light" ? stored : (prefersDark ? "dark" : "light");
+          var theme = stored === "dark" || stored === "light" ? stored : "dark";
           var root = document.documentElement;
           if (theme === "dark") root.classList.add("dark");
           else root.classList.remove("dark");
