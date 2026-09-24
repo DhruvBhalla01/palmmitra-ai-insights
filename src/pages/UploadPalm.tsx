@@ -424,12 +424,25 @@ export default function UploadPalm() {
       />
       <Navbar />
 
-      <main className="pt-24 pb-20">
+      {!image && processingStep === 'idle' && (
+        <div className="sm:hidden fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 bg-background/90 backdrop-blur-md border-t border-accent/20">
+          <label
+            htmlFor="camera-capture"
+            aria-label="Take or choose a palm photo"
+            className="btn-gold text-foreground font-semibold min-h-12 rounded-2xl flex items-center justify-center gap-2 w-full active:scale-[0.98] transition-transform text-[15px] cursor-pointer"
+          >
+            <Camera className="w-[18px] h-[18px]" aria-hidden="true" />
+            Take / choose photo
+          </label>
+        </div>
+      )}
+
+      <main className="pt-24 pb-28 sm:pb-20">
         <p className="sr-only" aria-live="polite" aria-atomic="true">{statusMessage}</p>
         <div className="container mx-auto px-4">
 
           {/* ── Page Header ──────────────────────────── */}
-          <AnimatedSection className="text-center mb-8">
+          <AnimatedSection className="text-center mb-5 sm:mb-8">
             <m.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -449,7 +462,7 @@ export default function UploadPalm() {
           </AnimatedSection>
 
           {/* ── Progress Steps ────────────────────────── */}
-          <AnimatedSection delay={0.1} className="max-w-xs mx-auto mb-10">
+          <AnimatedSection delay={0.1} className="max-w-xs mx-auto mb-6 sm:mb-10">
             <div className="flex items-center justify-center">
               {progressSteps.map((s, i) => (
                 <div key={s.n} className="flex items-center">
@@ -563,7 +576,7 @@ export default function UploadPalm() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="relative flex flex-col items-center py-10 sm:py-12 px-5 sm:px-6 text-center"
+                            className="relative flex flex-col items-center py-7 sm:py-12 px-5 sm:px-6 text-center"
                           >
                             {/* Ambient gold radiance */}
                             <div
@@ -633,7 +646,7 @@ export default function UploadPalm() {
                             </div>
 
                             {/* Primary: Camera capture (opens camera directly on mobile) */}
-                            <label htmlFor="camera-capture" className="relative cursor-pointer w-full max-w-[280px]">
+                            <label htmlFor="camera-capture" aria-label="Take a photo of your palm" className="relative cursor-pointer w-full max-w-[280px]">
                               <div className="btn-gold text-foreground font-semibold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 w-full active:scale-[0.98] transition-transform text-[15px] shadow-gold-lg">
                                 <Camera className="w-[18px] h-[18px]" />
                                 Take Photo Now
@@ -657,7 +670,7 @@ export default function UploadPalm() {
                             </div>
 
                             {/* Secondary: Upload from gallery */}
-                            <label htmlFor="gallery-upload" className="relative cursor-pointer w-full max-w-[280px]">
+                            <label htmlFor="gallery-upload" aria-label="Upload palm photo from gallery" className="relative cursor-pointer w-full max-w-[280px]">
                               <div className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl border border-accent/25 bg-background/40 text-sm text-foreground/90 hover:bg-accent/5 hover:border-accent/45 transition-all">
                                 <Upload className="w-4 h-4 text-accent" />
                                 Upload from Gallery
