@@ -251,6 +251,11 @@ export default function Report() {
   }, []);
 
   const handleUnlockClick = () => {
+    if (isShared) {
+      analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null });
+      navigate('/upload');
+      return;
+    }
     analytics.track('unlock_report_clicked', { report_id: resolvedReportId ?? null });
     analytics.track('pricing_cta_clicked', { element_id: 'unlock_report', plan_id: 'insight' });
     recordInteraction('cta_clicked', 'unlock_report');
