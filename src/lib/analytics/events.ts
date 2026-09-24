@@ -49,6 +49,8 @@ export const ANALYTICS_EVENTS = [
   'palm_analysis_failed',
   'reading_preview_viewed',
   'report_locked_viewed',
+  'shared_report_viewed',
+  'shared_report_cta_clicked',
   'report_section_viewed',
   'destiny_section_viewed',
   'ai_guide_opened',
