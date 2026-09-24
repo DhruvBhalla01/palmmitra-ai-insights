@@ -614,7 +614,7 @@ export default function UploadPalm() {
                               Photograph Your <span className="text-gradient-gold">Dominant Hand</span>
                             </h3>
                             <p className="relative text-sm text-muted-foreground mb-6 max-w-[19rem] leading-relaxed">
-                              Right hand if right-handed · Left if left-handed.
+                              Right hand if right-handed · Left if left-handed.{" "}
                               <br className="hidden sm:inline" />
                               Open palm facing the camera in soft, even light.
                             </p>

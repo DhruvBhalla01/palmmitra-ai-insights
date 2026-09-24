@@ -6,7 +6,7 @@ export function CurrencySelector({ compact = false }: { compact?: boolean }) {
   const { currency, setCurrency } = useCurrency();
   return (
     <Select value={currency} onValueChange={(value) => setCurrency(value as Currency)}>
-      <SelectTrigger aria-label="Currency" className={compact ? 'h-9 w-[102px] rounded-xl border-accent/25 bg-background/60' : 'h-10 w-[118px] rounded-xl border-accent/25 bg-background/60'}>
+      <SelectTrigger aria-label="Currency" className={compact ? 'h-11 w-[102px] rounded-xl border-accent/25 bg-background/60' : 'h-11 w-[118px] rounded-xl border-accent/25 bg-background/60'}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

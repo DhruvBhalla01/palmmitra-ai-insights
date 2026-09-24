@@ -82,19 +82,19 @@ function StepIndicator({ current }: { current: Step }) {
 function ReportPreviewCard() {
   return (
     <div
-      className="glass-premium rounded-2xl border border-accent/25 p-5 text-left mx-auto max-w-sm"
+      className="glass-dark rounded-2xl border border-accent/25 p-5 text-left mx-auto max-w-sm"
       style={{ boxShadow: '0 8px 40px hsl(42 87% 55% / 0.12)' }}
     >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-[10px] text-white/50 uppercase tracking-[0.22em] font-bold mb-0.5">
+          <p className="text-[10px] text-primary-foreground/80 uppercase tracking-[0.22em] font-bold mb-0.5">
             Sample report preview
           </p>
-          <p className="text-sm font-semibold text-white/90">Priya & Arjun</p>
+          <p className="text-sm font-semibold text-primary-foreground">Priya & Arjun</p>
         </div>
         <div className="text-right">
           <div className="text-3xl font-serif font-bold text-gradient-gold leading-none">87%</div>
-          <p className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5">Compatibility</p>
+          <p className="text-[9px] text-primary-foreground/75 uppercase tracking-widest mt-0.5">Compatibility</p>
         </div>
       </div>
 
@@ -102,14 +102,14 @@ function ReportPreviewCard() {
         {sampleDimensions.map(({ icon: Icon, label, score, color }) => (
           <div key={label} className="flex items-center gap-3">
             <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color }} />
-            <span className="text-xs text-white/75 flex-1 truncate">{label}</span>
+            <span className="text-xs text-primary-foreground flex-1 truncate">{label}</span>
             <div className="w-16 h-1 bg-white/8 rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full"
                 style={{ width: `${score}%`, background: color }}
               />
             </div>
-            <span className="text-xs font-semibold text-white/80 tabular-nums w-8 text-right">
+            <span className="text-xs font-semibold text-primary-foreground tabular-nums w-8 text-right">
               {score}%
             </span>
           </div>
@@ -119,7 +119,7 @@ function ReportPreviewCard() {
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
         <div className="flex items-center gap-1.5">
           <Heart className="w-3.5 h-3.5 text-accent" fill="currentColor" />
-          <span className="text-[11px] text-white/70">Long-term potential</span>
+          <span className="text-[11px] text-primary-foreground/90">Long-term potential</span>
         </div>
         <span className="text-[11px] font-semibold text-accent">Strong</span>
       </div>
@@ -592,9 +592,9 @@ export default function PalmMatch() {
 
           <div className="relative z-10 max-w-2xl mx-auto text-center">
             {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 glass-premium rounded-full px-3 py-1 mb-4 border border-accent/25">
+            <div className="inline-flex items-center gap-2 glass-dark rounded-full px-3 py-1 mb-4 border border-accent/25">
               <Sparkles className="w-3 h-3 text-accent" />
-              <span className="text-[11px] font-semibold text-white/80 tracking-wide">
+              <span className="text-[11px] font-semibold text-primary-foreground tracking-wide">
                 AI Compatibility · Powered by Ancient Palmistry
               </span>
             </div>
@@ -641,7 +641,7 @@ export default function PalmMatch() {
             <a
               href="#start"
               data-analytics-id="start_palmmatch"
-              className="inline-flex items-center gap-1.5 mt-5 text-xs text-accent hover:text-accent/80 transition-colors"
+              className="inline-flex items-center gap-1.5 mt-3 min-h-11 px-3 text-xs text-accent hover:text-accent/80 transition-colors"
             >
               Start your reading below <ArrowRight className="w-3 h-3" />
             </a>
