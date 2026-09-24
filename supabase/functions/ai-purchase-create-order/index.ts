@@ -34,12 +34,18 @@ Deno.serve(async (req) => {
   const email = owner.normalizedEmail!;
 
   const amount = AI_PLAN_AMOUNTS_PAISE[plan];
+  const label = AI_LABELS[plan] ?? "PalmMitra AI";
+  const isSubscription = plan.startsWith("ai_elite_");
+  const receiptPrefix = isSubscription ? "aisub" : "aipack";
   const rz = await fetch("https://api.razorpay.com/v1/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Basic ${btoa(`${kid}:${secret}`)}` },
     body: JSON.stringify({
-      amount, currency: "INR", receipt: `ai_${Date.now()}`,
-      notes: { user_email: email, plan, report_id: reportId },
+      amount,
+      currency: "INR",
+      receipt: `${receiptPrefix}_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`,
+      description: `${label} (₹${(amount / 100).toLocaleString("en-IN")} INR)`,
+      notes: { user_email: email, plan, plan_name: label, currency: "INR", report_id: reportId },
     }),
   }).then(r => r.json());
 
