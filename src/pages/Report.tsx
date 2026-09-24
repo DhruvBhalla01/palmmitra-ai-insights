@@ -71,6 +71,13 @@ export default function Report() {
   const [generatedAt, setGeneratedAt] = useState<string>(new Date().toISOString());
   const [error, setError] = useState<string | null>(null);
   const [isShared, setIsShared] = useState(false);
+  const [showSectionBar, setShowSectionBar] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowSectionBar(window.scrollY > 380);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   const [activeSection, setActiveSection] = useState('summary');
   
   // Payment state
@@ -413,7 +420,7 @@ export default function Report() {
           )}
 
           {/* Mobile section bar */}
-          <nav aria-label="Report sections" className="lg:hidden sticky top-[72px] z-30 -mx-4 mb-5 px-4 py-2 bg-background/85 backdrop-blur-md border-b border-accent/15">
+          <nav aria-label="Report sections" className={`lg:hidden fixed inset-x-0 top-[70px] z-30 px-4 py-2 bg-background/90 backdrop-blur-md border-b border-accent/15 transition-all duration-300 ${showSectionBar ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
             <div className="flex gap-2 overflow-x-auto no-scrollbar" style={{ scrollbarWidth: 'none' }}>
               {reportSections.map((s) => {
                 const active = s.id === activeSection;
