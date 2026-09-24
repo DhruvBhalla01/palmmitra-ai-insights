@@ -641,7 +641,7 @@ export default function PalmMatch() {
             <a
               href="#start"
               data-analytics-id="start_palmmatch"
-              className="inline-flex items-center gap-1.5 mt-5 text-xs text-accent hover:text-accent/80 transition-colors"
+              className="inline-flex items-center gap-1.5 mt-3 min-h-11 px-3 text-xs text-accent hover:text-accent/80 transition-colors"
             >
               Start your reading below <ArrowRight className="w-3 h-3" />
             </a>
