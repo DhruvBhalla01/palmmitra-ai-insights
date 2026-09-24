@@ -118,7 +118,8 @@ export function PalmLinesExplorer() {
                       pathLength={1}
                       strokeDasharray="1"
                       strokeDashoffset={on ? 0 : 1}
-                      style={{ transition: 'stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)' }}
+                      opacity={on ? 1 : 0}
+                      style={{ transition: 'stroke-dashoffset .7s cubic-bezier(.4,0,.2,1), opacity .2s' }}
                     />
                   </g>
                 );

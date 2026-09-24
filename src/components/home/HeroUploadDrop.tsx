@@ -52,8 +52,8 @@ export function HeroUploadDrop() {
             <Camera className="w-5 h-5 text-accent" strokeWidth={1.6} aria-hidden="true" />
           </span>
           <span className="flex-1 min-w-0">
-            <span className="block font-serif text-[17px] leading-tight font-semibold text-foreground">Snap or drop your palm</span>
-            <span className="block text-[11.5px] text-muted-foreground mt-1">Free reading begins instantly</span>
+            <span className="block font-serif text-[17px] leading-tight font-semibold text-foreground">Snap your palm</span>
+            <span className="block text-[11.5px] text-muted-foreground mt-1 truncate">Free reading begins instantly</span>
           </span>
           <span className="flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-accent group-hover:bg-accent/20 transition-colors">
             <Upload className="w-3.5 h-3.5" strokeWidth={1.8} aria-hidden="true" /> Upload
