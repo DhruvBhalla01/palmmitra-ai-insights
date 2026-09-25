@@ -119,6 +119,7 @@ export default function UploadPalm() {
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
   const formAnalytics = useFormAnalytics('palm_upload');
+  const [connectionLost, setConnectionLost] = useState(false);
 
   useEffect(() => {
     analytics.track('palm_reading_started', { entry_page: '/upload' });
