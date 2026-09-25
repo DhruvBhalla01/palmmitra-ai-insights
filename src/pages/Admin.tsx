@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { lovable } from '@/integrations/lovable';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
