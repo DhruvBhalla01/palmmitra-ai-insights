@@ -3,6 +3,7 @@ import { m, AnimatePresence } from '@/lib/motion';
 import { ChevronLeft, ChevronRight, Star, Quote, CheckCircle, TrendingUp } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 import avatarPriya from '@/assets/avatar-priya.jpg';
 import avatarRohit from '@/assets/avatar-rohit.jpg';
