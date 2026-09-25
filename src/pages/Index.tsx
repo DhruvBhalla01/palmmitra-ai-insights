@@ -4,6 +4,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { TrustStrip } from '@/components/home/TrustStrip';
 import { HowItWorks } from '@/components/home/HowItWorks';
 import { PromiseMarquee } from '@/components/home/PromiseMarquee';
+import { FestiveBanner } from '@/components/home/FestiveBanner';
 import { Footer } from '@/components/Footer';
 import { PremiumBackground } from '@/components/PremiumBackground';
 import { SectionDivider } from '@/components/SectionDivider';
@@ -47,6 +48,7 @@ const Index = () => {
 
         {/* 2. Social Proof */}
         <TrustStrip />
+        <FestiveBanner />
         <PromiseMarquee />
 
         {/* 3. How It Works */}
