@@ -17,7 +17,8 @@ import { AiSignalsRow } from '@/components/palmmatch/AiSignalsRow';
 import { AskPalmMatchAI } from '@/components/palmmatch/AskPalmMatchAI';
 import { CompareBar } from '@/components/palmmatch/CompareBar';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
-import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
+import { usePalmMatchUnlock, type PalmMatchPlanType } from '@/hooks/usePalmMatchUnlock';
+import { PaymentRecoveryDialog, type RecoveryReason } from '@/components/payment/PaymentRecoveryDialog';
 import { PalmMatchReading, type PalmMatchLanguage } from '@/components/palmmatch/types';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, recordInteraction } from '@/lib/analytics';
@@ -83,6 +84,7 @@ export default function PalmMatchReport() {
   const [email, setEmail] = useState('');
   const [language, setLanguage] = useState<PalmMatchLanguage>('english');
   const [shared, setShared] = useState<SharedPreview | null>(null);
+  const [recovery, setRecovery] = useState<{ reason: RecoveryReason; plan: PalmMatchPlanType } | null>(null);
   const [ringSize, setRingSize] = useState(() => (typeof window === 'undefined' ? 280 : Math.min(280, window.innerWidth - 96)));
   useEffect(() => {
     const onResize = () => setRingSize(Math.min(280, window.innerWidth - 96));
@@ -153,6 +155,18 @@ export default function PalmMatchReport() {
   }, [navigate, id]);
 
   const { isUnlocked, isLoading, isProcessing, initiatePayment } = usePalmMatchUnlock(shared ? undefined : id, email);
+
+  // Assisted retry when a checkout is dismissed or fails (usually a UPI hand-off)
+  useEffect(() => {
+    const onRecovery = (event: Event) => {
+      const detail = (event as CustomEvent).detail as
+        | { reason: RecoveryReason; plan: PalmMatchPlanType }
+        | undefined;
+      if (detail && !isUnlocked) setRecovery(detail);
+    };
+    window.addEventListener('paymentRecovery', onRecovery);
+    return () => window.removeEventListener('paymentRecovery', onRecovery);
+  }, [isUnlocked]);
 
   const handleUnlockClick = () => {
     analytics.track('report_locked_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
@@ -1097,6 +1111,19 @@ export default function PalmMatchReport() {
         </div>{/* end relative ambient particles wrapper */}
       </main>
       <Footer />
+
+      {/* Assisted payment retry */}
+      <PaymentRecoveryDialog
+        isOpen={!!recovery}
+        reason={recovery?.reason ?? 'cancelled'}
+        hinglish={language === 'hinglish'}
+        onClose={() => setRecovery(null)}
+        onRetry={() => {
+          const plan = recovery?.plan ?? 'palmmatch149';
+          setRecovery(null);
+          initiatePayment(plan);
+        }}
+      />
     </div>
   );
 }
