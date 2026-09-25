@@ -472,7 +472,7 @@ function RecentUsers() {
   );
 }
 
-interface Reminder { id: string; user_email: string; report_id: string | null; plan_type: string; amount: number; currency: string; status: string; error: string | null; sent_at: string; recovered: boolean }
+interface Reminder { id: string; user_email: string; report_id: string | null; palmmatch_report_id: string | null; plan_type: string; amount: number; currency: string; status: string; error: string | null; sent_at: string; recovered: boolean }
 
 function Reminders() {
   const qc = useQueryClient();

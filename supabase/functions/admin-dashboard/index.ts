@@ -162,23 +162,40 @@ Deno.serve(async (req) => {
 
     if (action === 'reminders') {
       const { data, error } = await admin.from('checkout_reminders')
-        .select('id,payment_id,user_email,report_id,plan_type,amount,currency,status,error,sent_at')
+        .select('id,payment_id,user_email,report_id,palmmatch_report_id,plan_type,amount,currency,status,error,sent_at')
         .order('sent_at', { ascending: false }).limit(100);
       if (error) throw error;
-      const ids = [...new Set((data ?? []).map((r) => r.report_id).filter(Boolean))];
-      const { data: paid } = ids.length
-        ? await admin.from('payments').select('report_id,plan_type,created_at').eq('status', 'success').in('report_id', ids)
-        : { data: [] as any[] };
-      const reminders = (data ?? []).map((r) => ({
+      const rows = data ?? [];
+      const ids = [...new Set(rows.map((r) => r.report_id).filter(Boolean))] as string[];
+      const pmIds = [...new Set(rows.map((r) => r.palmmatch_report_id).filter(Boolean))] as string[];
+      const [{ data: paid }, { data: paidPm }] = await Promise.all([
+        ids.length
+          ? admin.from('payments').select('report_id,created_at').eq('status', 'success').in('report_id', ids)
+          : Promise.resolve({ data: [] as { report_id: string; created_at: string }[] }),
+        pmIds.length
+          ? admin.from('payments').select('palmmatch_report_id,created_at').eq('status', 'success').in('palmmatch_report_id', pmIds)
+          : Promise.resolve({ data: [] as { palmmatch_report_id: string; created_at: string }[] }),
+      ]);
+      // Recovered = any successful payment on that same reading after the email
+      // went out, whichever plan they ended up buying.
+      const reminders = rows.map((r) => ({
         ...r,
-        recovered: (paid ?? []).some((p) => p.report_id === r.report_id && p.plan_type === r.plan_type && p.created_at > r.sent_at),
+        recovered: r.report_id
+          ? (paid ?? []).some((p) => p.report_id === r.report_id && p.created_at > r.sent_at)
+          : (paidPm ?? []).some((p) => p.palmmatch_report_id === r.palmmatch_report_id && p.created_at > r.sent_at),
       }));
       return json({ reminders });
     }
 
     if (action === 'send_reminders') {
       const res = await fetch(`${url}/functions/v1/checkout-reminders`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', apikey: Deno.env.get('SUPABASE_ANON_KEY') ?? '' }, body: '{}',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+          Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''}`,
+        },
+        body: '{}',
       });
       return json(await res.json().catch(() => ({ error: 'failed' })), res.ok ? 200 : 500);
     }
