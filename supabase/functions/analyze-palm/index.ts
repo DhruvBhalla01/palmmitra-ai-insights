@@ -492,7 +492,7 @@ const generatePalmReadingAttempt = async (
       messages: [
         {
           role: "system",
-          content: getReadingPrompt(name, age, readingType, language, countryContext),
+          content: getReadingPrompt(name, age, readingType, language, countryContext) + buildLockedInstruction(locked),
         },
         {
           role: "user",
