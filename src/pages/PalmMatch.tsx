@@ -566,6 +566,21 @@ export default function PalmMatch() {
       setTimeout(() => navigate(`/palmmatch-report/${data.reportId}`), 900);
     } catch (err) {
       console.error('PalmMatch error:', err);
+      // A dropped mobile connection usually still leaves a finished reading on the
+      // server — look for it before telling the couple anything went wrong.
+      const message = err instanceof Error ? err.message : '';
+      if (/failed to send a request|failed to fetch|network|load failed|timeout/i.test(message)) {
+        const recoveredId = await pollForPalmMatch(email.trim().toLowerCase(), person1Name, person2Name);
+        if (recoveredId) {
+          setProcessing('complete');
+          analytics.track('palm_analysis_completed', {
+            reading_type: 'palmmatch', latency_ms: Date.now() - analysisStartedAt, has_report_id: true,
+          });
+          formAnalytics.success({ reading_type: 'palmmatch' });
+          setTimeout(() => navigate(`/palmmatch-report/${recoveredId}`), 600);
+          return;
+        }
+      }
       analytics.track('palm_analysis_failed', {
         reading_type: 'palmmatch', error_category: 'provider_error',
         latency_ms: Date.now() - analysisStartedAt,
