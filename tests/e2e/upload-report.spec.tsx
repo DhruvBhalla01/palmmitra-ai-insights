@@ -20,6 +20,16 @@ vi.mock("@/integrations/supabase/client", () => ({
     functions: {
       invoke: mockInvoke,
     },
+    // Table queries (e.g. approved testimonials on the report paywall) resolve empty.
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          order: () => ({
+            limit: () => Promise.resolve({ data: [], error: null }),
+          }),
+        }),
+      }),
+    }),
     auth: {
       onAuthStateChange: vi.fn(() => ({
         data: { subscription: { unsubscribe: mockUnsubscribe } },
