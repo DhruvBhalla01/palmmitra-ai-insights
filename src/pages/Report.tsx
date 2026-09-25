@@ -481,7 +481,6 @@ export default function Report() {
                   name={userData?.name || 'User'}
                   readingType={userData?.readingType || 'full'}
                   generatedAt={generatedAt}
-                  confidenceScore={reading.confidenceScore}
                   headlineSummary={reading.headlineSummary}
                   palmImage={userData?.imageUrl || userData?.palmImage}
                 />

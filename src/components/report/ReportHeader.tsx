@@ -6,7 +6,6 @@ interface ReportHeaderProps {
   name: string;
   readingType: string;
   generatedAt: string;
-  confidenceScore: number;
   headlineSummary: string;
   palmImage?: string;
 }
@@ -40,48 +39,10 @@ const readingTypeSummary: Record<string, string> = {
   wealth: 'This wealth-focused analysis reveals the financial cycles, prosperity indicators, and abundance patterns mapped in your palm.',
 };
 
-// SVG circle arc for confidence score
-function ConfidenceRing({ score }: { score: number }) {
-  const r = 18;
-  const circumference = 2 * Math.PI * r; // ~113
-  const offset = circumference - (circumference * score) / 100;
-
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" className="flex-shrink-0">
-      <circle
-        cx="24" cy="24" r={r}
-        fill="none"
-        stroke="hsl(var(--accent) / 0.2)"
-        strokeWidth="3"
-      />
-      <circle
-        cx="24" cy="24" r={r}
-        fill="none"
-        stroke="hsl(var(--accent))"
-        strokeWidth="3"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform="rotate(-90 24 24)"
-      />
-      <text
-        x="24" y="28"
-        textAnchor="middle"
-        fontSize="10"
-        fontWeight="bold"
-        fill="hsl(var(--accent))"
-      >
-        {score}%
-      </text>
-    </svg>
-  );
-}
-
 export function ReportHeader({
   name,
   readingType,
   generatedAt,
-  confidenceScore,
   headlineSummary,
   palmImage,
 }: ReportHeaderProps) {
@@ -141,18 +102,6 @@ export function ReportHeader({
             </m.div>
 
             <div className="flex items-center gap-2">
-              <m.div
-                className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-xl bg-accent/10 border border-accent/20"
-                whileHover={{ scale: 1.02 }}
-                aria-label={`AI confidence score ${confidenceScore} percent`}
-              >
-                <ConfidenceRing score={confidenceScore} />
-                <div className="leading-tight">
-                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground whitespace-nowrap">AI Confidence</p>
-                  <p className="text-xs sm:text-sm font-bold text-accent whitespace-nowrap">Verified</p>
-                </div>
-              </m.div>
-
               <m.div
                 className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
                 whileHover={{ scale: 1.02 }}
