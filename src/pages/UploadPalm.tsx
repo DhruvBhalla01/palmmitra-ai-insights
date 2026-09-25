@@ -431,7 +431,12 @@ export default function UploadPalm() {
       });
       trackApiError('analyze-palm', err);
       formAnalytics.failure('analysis_failed');
-      toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
+      if (isConnectionDrop(msg) && uploadedImageUrl) {
+        // Keep the photo and the details; offer a one-tap reconnect instead of a dead end.
+        setConnectionLost(true);
+      } else {
+        toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
+      }
     } finally {
       submittingRef.current = false;
     }
