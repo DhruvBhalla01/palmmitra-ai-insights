@@ -189,6 +189,7 @@ export default function UploadPalm() {
         uploadPromiseRef.current = null;
         const errorProperties = {
           error_category: 'upload_error',
+          reason: err instanceof Error ? err.message.slice(0, 120) : 'unknown',
           error_message: err instanceof Error ? err.message.slice(0, 120) : 'unknown',
         };
         analytics.track('palm_image_upload_failed', errorProperties);
@@ -313,6 +314,7 @@ export default function UploadPalm() {
         setProcessingStep('error');
         const failureProperties = {
           error_category: 'validation_error',
+          reason: String(response.message || response.validation?.reason || 'not_a_palm').slice(0, 160),
           latency_ms: Date.now() - analysisStartedAt,
         };
         analytics.track('palm_analysis_failed', failureProperties);
@@ -382,6 +384,7 @@ export default function UploadPalm() {
       const failureProperties = {
         error_category: /network|fetch/i.test(msg) ? 'network_error'
           : /rate limit|too many|capacity/i.test(msg) ? 'timeout' : 'provider_error',
+        reason: (msg || 'unknown').slice(0, 160),
         latency_ms: Date.now() - analysisStartedAt,
       };
       analytics.track('palm_analysis_failed', failureProperties);

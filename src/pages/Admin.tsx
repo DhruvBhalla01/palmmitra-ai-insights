@@ -283,9 +283,9 @@ function Health() {
   const q = useQuery({ queryKey: ['admin', 'health'], queryFn: () => call<HealthData>({ action: 'health' }), refetchInterval: REFRESH });
   const d = q.data;
   const sections: { title: string; hint: string; rows: { when: string; main: string; sub: string }[] }[] = d ? [
-    { title: 'AI reading failures (24h)', hint: 'Palm or PalmMatch analysis that failed', rows: d.aiFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? 'unknown error'), sub: e.page_path ?? '' })) },
+    { title: 'AI reading failures (24h)', hint: 'Palm or PalmMatch analysis that failed', rows: d.aiFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.reason ?? e.properties?.error ?? e.properties?.error_category ?? 'unknown error'), sub: e.page_path ?? '' })) },
     { title: 'API errors (24h)', hint: 'Server errors seen by visitors', rows: d.apiErrors.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? e.properties?.endpoint ?? 'error'), sub: e.page_path ?? '' })) },
-    { title: 'Payment failures (24h)', hint: 'Checkout attempts that failed', rows: d.payFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? 'payment failed'), sub: e.page_path ?? '' })) },
+    { title: 'Payment failures (24h)', hint: 'Checkout attempts that failed', rows: d.payFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.reason ?? e.properties?.checkout_step ?? e.properties?.error_category ?? 'payment failed'), sub: e.page_path ?? '' })) },
     { title: 'Failed orders (24h)', hint: 'Orders marked failed', rows: d.failedPayments.map((p) => ({ when: p.created_at, main: `${money(p.amount, p.currency)} · ${p.plan_type}`, sub: p.user_email })) },
     { title: 'Abandoned checkouts', hint: 'Started over 1 hour ago, never paid — follow up with these customers', rows: d.stalePending.map((p) => ({ when: p.created_at, main: `${money(p.amount, p.currency)} · ${p.plan_type}`, sub: p.user_email })) },
   ] : [];
