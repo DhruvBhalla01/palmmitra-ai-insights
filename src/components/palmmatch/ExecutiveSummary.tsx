@@ -1,5 +1,5 @@
 import { m } from '@/lib/motion';
-import { Heart, TrendingUp, ShieldCheck, Sparkles, AlertTriangle } from 'lucide-react';
+import { Heart, TrendingUp, ShieldCheck, AlertTriangle } from 'lucide-react';
 import type { PalmMatchReading } from './types';
 
 interface Props {
