@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
           .eq('event_name', 'api_error').eq('environment', 'production')
           .gte('occurred_at', day).order('occurred_at', { ascending: false }).limit(25),
         admin.from('analytics_events').select('occurred_at,page_path,properties')
-          .eq('event_name', 'ai_request_failed').eq('environment', 'production')
+          .in('event_name', ['ai_request_failed', 'palm_analysis_failed', 'palm_image_upload_failed']).eq('environment', 'production')
           .gte('occurred_at', day).order('occurred_at', { ascending: false }).limit(25),
         admin.from('analytics_events').select('occurred_at,page_path,properties')
           .eq('event_name', 'checkout_payment_failed').eq('environment', 'production')
@@ -134,6 +134,30 @@ Deno.serve(async (req) => {
         payFailures: payFailures.data ?? [], failedPayments: failedPayments.data ?? [],
         stalePending: stalePending.data ?? [],
       });
+    }
+
+    if (action === 'recent_users') {
+      const { data: rows, error } = await admin.from('palm_reports')
+        .select('id,user_name,user_email,user_age,country_code,language,reading_type,created_at')
+        .order('created_at', { ascending: false }).limit(50);
+      if (error) throw error;
+      const ids = (rows ?? []).map((r) => r.id);
+      const emails = [...new Set((rows ?? []).map((r) => (r.user_email ?? '').toLowerCase()).filter(Boolean))];
+      const [{ data: byReport }, { data: byEmail }] = await Promise.all([
+        ids.length ? admin.from('payments').select('report_id,user_email,plan_type,status,amount,currency,created_at').in('report_id', ids) : Promise.resolve({ data: [] as any[] }),
+        emails.length ? admin.from('payments').select('report_id,user_email,plan_type,status,amount,currency,created_at').in('user_email', emails) : Promise.resolve({ data: [] as any[] }),
+      ]);
+      const users = (rows ?? []).map((r) => {
+        const em = (r.user_email ?? '').toLowerCase();
+        const own = (byReport ?? []).filter((p) => p.report_id === r.id);
+        const other = (byEmail ?? []).filter((p) => p.user_email?.toLowerCase() === em && p.report_id !== r.id);
+        const all = [...own, ...other];
+        const paid = all.find((p) => p.status === 'success');
+        const stage = paid ? 'paid' : all.some((p) => p.status === 'pending') ? 'checkout_abandoned'
+          : all.some((p) => p.status === 'failed') ? 'payment_failed' : 'report_only';
+        return { ...r, stage, plan: paid?.plan_type ?? all[0]?.plan_type ?? '', amount: paid?.amount ?? null, currency: paid?.currency ?? '', attempts: all.length };
+      });
+      return json({ users });
     }
 
     if (action === 'testimonials') {

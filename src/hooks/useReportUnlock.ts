@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, createElement } from 'react';
+import { ToastAction, type ToastActionElement } from '@/components/ui/toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
@@ -91,7 +92,10 @@ export function useReportUnlock(
     checkUnlockStatus();
   }, [checkUnlockStatus]);
 
+  const retryRef = useRef<(() => void) | null>(null);
+  const retryAction = () => createElement(ToastAction, { altText: 'Try payment again', onClick: () => retryRef.current?.() }, 'Try again') as unknown as ToastActionElement;
   const initiatePayment = useCallback(async (plan: PlanType) => {
+    retryRef.current = () => { void initiatePaymentRef.current?.(plan); };
     if (!userEmail) {
       toast({
         title: 'Email Required',
@@ -235,7 +239,7 @@ export function useReportUnlock(
             };
             analytics.track('checkout_payment_cancelled', cancellationProperties);
             posthog.capture('checkout_payment_cancelled', cancellationProperties);
-            toast({ title: 'Payment Cancelled', description: 'You can try again anytime.' });
+            toast({ title: 'Payment not completed', description: 'Tap Try again — you can switch to UPI, card or netbanking.', action: retryAction(), duration: 15000 });
           },
         },
       };
@@ -253,8 +257,10 @@ export function useReportUnlock(
         posthog.capture('checkout_payment_failed', failureProperties);
         toast({
           title: 'Payment Failed',
-          description: 'Please try again or use a different payment method.',
+          description: 'Please try again or choose a different payment method.',
           variant: 'destructive',
+          action: retryAction(),
+          duration: 15000,
         });
       });
       razorpay.open();
@@ -285,6 +291,9 @@ export function useReportUnlock(
       setIsProcessing(false);
     }
   }, [reportId, userEmail, toast, selectedCurrency, countryCode]);
+
+  const initiatePaymentRef = useRef(initiatePayment);
+  initiatePaymentRef.current = initiatePayment;
 
   return { isUnlocked, hasSubscription, isLoading, isProcessing, checkUnlockStatus, initiatePayment };
 }

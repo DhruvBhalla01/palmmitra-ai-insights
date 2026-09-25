@@ -283,9 +283,9 @@ function Health() {
   const q = useQuery({ queryKey: ['admin', 'health'], queryFn: () => call<HealthData>({ action: 'health' }), refetchInterval: REFRESH });
   const d = q.data;
   const sections: { title: string; hint: string; rows: { when: string; main: string; sub: string }[] }[] = d ? [
-    { title: 'AI reading failures (24h)', hint: 'Palm or PalmMatch analysis that failed', rows: d.aiFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? 'unknown error'), sub: e.page_path ?? '' })) },
+    { title: 'AI reading failures (24h)', hint: 'Palm or PalmMatch analysis that failed', rows: d.aiFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.reason ?? e.properties?.error ?? e.properties?.error_category ?? 'unknown error'), sub: e.page_path ?? '' })) },
     { title: 'API errors (24h)', hint: 'Server errors seen by visitors', rows: d.apiErrors.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? e.properties?.endpoint ?? 'error'), sub: e.page_path ?? '' })) },
-    { title: 'Payment failures (24h)', hint: 'Checkout attempts that failed', rows: d.payFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? 'payment failed'), sub: e.page_path ?? '' })) },
+    { title: 'Payment failures (24h)', hint: 'Checkout attempts that failed', rows: d.payFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.reason ?? e.properties?.checkout_step ?? e.properties?.error_category ?? 'payment failed'), sub: e.page_path ?? '' })) },
     { title: 'Failed orders (24h)', hint: 'Orders marked failed', rows: d.failedPayments.map((p) => ({ when: p.created_at, main: `${money(p.amount, p.currency)} · ${p.plan_type}`, sub: p.user_email })) },
     { title: 'Abandoned checkouts', hint: 'Started over 1 hour ago, never paid — follow up with these customers', rows: d.stalePending.map((p) => ({ when: p.created_at, main: `${money(p.amount, p.currency)} · ${p.plan_type}`, sub: p.user_email })) },
   ] : [];
@@ -348,6 +348,37 @@ function Reviews() {
   );
 }
 
+interface RecentUser { id: string; user_name: string; user_email: string; user_age: string | null; country_code: string | null; language: string; created_at: string; stage: string; plan: string; amount: number | null; currency: string; attempts: number }
+const STAGE: Record<string, string> = { paid: 'Paid', checkout_abandoned: 'Left at checkout', payment_failed: 'Payment failed', report_only: 'Saw report, never tried paying' };
+
+function RecentUsers() {
+  const q = useQuery({ queryKey: ['admin', 'recent'], queryFn: () => call<{ users: RecentUser[] }>({ action: 'recent_users' }), refetchInterval: REFRESH });
+  const users = q.data?.users ?? [];
+  const counts = users.reduce<Record<string, number>>((m, u) => { m[u.stage] = (m[u.stage] ?? 0) + 1; return m; }, {});
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        {Object.entries(STAGE).map(([k, l]) => <Badge key={k} variant="secondary">{l}: {counts[k] ?? 0}</Badge>)}
+        <Button size="sm" variant="outline" className="ml-auto" onClick={() => downloadCsv('last-50-users', users.map((u) => ({ date: when(u.created_at), name: u.user_name, email: u.user_email, age: u.user_age, country: u.country_code, language: u.language, stage: STAGE[u.stage] ?? u.stage, plan: u.plan, paid: u.amount != null ? money(u.amount, u.currency) : '', payment_attempts: u.attempts })))}>Download CSV</Button>
+      </div>
+      <div className="divide-y divide-border rounded-xl border border-primary/20 bg-card">
+        {users.map((u) => (
+          <div key={u.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+            <div className="min-w-0">
+              <p className="font-medium">{u.user_name} <span className="text-xs text-muted-foreground">{u.user_age ? `· ${u.user_age}` : ''} · {u.country_code ?? '—'} · {u.language}</span></p>
+              <p className="break-all text-xs text-muted-foreground">{u.user_email} · {when(u.created_at)}</p>
+            </div>
+            <Badge variant={u.stage === 'paid' ? 'default' : u.stage === 'report_only' ? 'outline' : 'secondary'}>
+              {STAGE[u.stage] ?? u.stage}{u.amount != null ? ` · ${money(u.amount, u.currency)}` : ''}
+            </Badge>
+          </div>
+        ))}
+      </div>
+      {q.isLoading && <p className="text-muted-foreground">Loading…</p>}
+    </div>
+  );
+}
+
 export default function Admin() {
   const { user, loading, signOut } = useAuth();
   const [range, setRange] = useState<Range>('today');
@@ -385,14 +416,16 @@ export default function Admin() {
               </div>
             </header>
             <Tabs defaultValue="overview">
-              <TabsList>
+              <TabsList className="flex h-auto flex-wrap">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="recent">Last 50</TabsTrigger>
                 <TabsTrigger value="customers">Customers</TabsTrigger>
                 <TabsTrigger value="payments">Payments</TabsTrigger>
                 <TabsTrigger value="health">Health</TabsTrigger>
                 <TabsTrigger value="reviews">Reviews</TabsTrigger>
               </TabsList>
               <TabsContent value="overview"><Overview range={range} /></TabsContent>
+              <TabsContent value="recent"><RecentUsers /></TabsContent>
               <TabsContent value="customers"><Customers range={range} /></TabsContent>
               <TabsContent value="payments"><Payments range={range} /></TabsContent>
               <TabsContent value="health"><Health /></TabsContent>
