@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { m, AnimatePresence } from '@/lib/motion';
 import { Sparkles, X, Shield, Zap, Lock, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PRODUCTS, formatCurrency } from '@/config/pricing';
+import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
 
 interface StickyUnlockCTAProps {
