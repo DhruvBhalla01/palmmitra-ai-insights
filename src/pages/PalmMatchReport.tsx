@@ -63,6 +63,16 @@ const CONSTELLATION_STARS = Array.from({ length: 60 }, (_, i) => ({
 
 const CONSTELLATION_LINES: [number, number][] = [[0,7],[7,14],[14,21],[3,11],[11,19],[35,42],[42,49],[21,28]];
 
+interface SharedPreview {
+  person1Name: string;
+  person2Name: string;
+  relationshipType: string;
+  overallScore: number | null;
+  compatibilityVerdict: string;
+  overallNarrative: string;
+  language: PalmMatchLanguage;
+}
+
 export default function PalmMatchReport() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -72,13 +82,13 @@ export default function PalmMatchReport() {
   const [reading, setReading] = useState<PalmMatchReading | null>(null);
   const [email, setEmail] = useState('');
   const [language, setLanguage] = useState<PalmMatchLanguage>('english');
+  const [shared, setShared] = useState<SharedPreview | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     const restoreFromServer = async () => {
-      // Opened on another device (e.g. from the reminder email): the link carries the
-      // owner's email so the saved reading can be fetched again.
+      // The owner's private link carries their email (?e=); a shared link doesn't.
       const params = new URLSearchParams(window.location.search);
       const encoded = params.get('e');
       let linkEmail = '';
@@ -87,34 +97,46 @@ export default function PalmMatchReport() {
           linkEmail = atob(encoded.replace(/-/g, '+').replace(/_/g, '/'));
         } catch { linkEmail = ''; }
       }
-      if (!id || !linkEmail) { navigate('/palmmatch'); return; }
+      if (!id) { navigate('/palmmatch'); return; }
       try {
         const { supabase } = await import('@/integrations/supabase/client');
         const { data, error } = await supabase.functions.invoke('get-palmmatch-status', {
           body: { report_id: id, email: linkEmail, include_report: true },
         });
         if (cancelled) return;
-        if (error || !data?.success || !data.report?.reading) { navigate('/palmmatch'); return; }
-        const restored = {
-          reading: data.report.reading,
-          email: data.report.email || linkEmail,
-          language: data.report.language === 'hinglish' ? 'hinglish' : 'english',
-        };
-        sessionStorage.setItem('palmMatchData', JSON.stringify(restored));
-        setReading(restored.reading);
-        setEmail(restored.email);
-        setLanguage(restored.language as PalmMatchLanguage);
-        analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id });
+        if (error || !data?.success) { navigate('/palmmatch'); return; }
+        if (data.report?.reading) {
+          const restored = {
+            reading: data.report.reading,
+            email: data.report.email || linkEmail,
+            language: data.report.language === 'hinglish' ? 'hinglish' : 'english',
+          };
+          sessionStorage.setItem('palmMatchData', JSON.stringify(restored));
+          setReading(restored.reading);
+          setEmail(restored.email);
+          setLanguage(restored.language as PalmMatchLanguage);
+          analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id });
+          return;
+        }
+        if (data.shared_preview) {
+          setShared(data.shared_preview as SharedPreview);
+          analytics.track('shared_palmmatch_viewed', { report_id: id });
+          return;
+        }
+        navigate('/palmmatch');
       } catch {
         if (!cancelled) navigate('/palmmatch');
       }
     };
 
     const raw = sessionStorage.getItem('palmMatchData');
-    if (!raw) { void restoreFromServer(); return; }
+    if (!raw) { void restoreFromServer(); return () => { cancelled = true; }; }
     try {
       const data = JSON.parse(raw);
-      setReading(data.reading);
+      const r = data.reading as PalmMatchReading | undefined;
+      // Session data belongs to a different report → treat as a fresh open.
+      if (!r) throw new Error('no reading');
+      setReading(r);
       setEmail(data.email || '');
       setLanguage(data.language === 'hinglish' ? 'hinglish' : 'english');
       analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
@@ -124,7 +146,7 @@ export default function PalmMatchReport() {
     return () => { cancelled = true; };
   }, [navigate, id]);
 
-  const { isUnlocked, isLoading, isProcessing, initiatePayment } = usePalmMatchUnlock(id, email);
+  const { isUnlocked, isLoading, isProcessing, initiatePayment } = usePalmMatchUnlock(shared ? undefined : id, email);
 
   const handleUnlockClick = () => {
     analytics.track('report_locked_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
@@ -143,7 +165,8 @@ export default function PalmMatchReport() {
 
   const handleShare = async () => {
     analytics.track('button_clicked', { element_id: 'share_palmmatch' });
-    const url = window.location.href;
+    // Clean link — never include the owner's email.
+    const url = `https://palmmitra.in/palmmatch-report/${id ?? ''}`;
     if (navigator.share) {
       await navigator.share({ title: 'My PalmMatch Compatibility Report', text: `See my compatibility reading on PalmMitra!`, url });
     } else {
@@ -151,6 +174,66 @@ export default function PalmMatchReport() {
       toast({ title: 'Link copied!', description: 'Share your PalmMatch result with them.' });
     }
   };
+
+  if (shared) {
+    const hi = shared.language === 'hinglish';
+    return (
+      <div className="min-h-screen bg-background">
+        <SEO
+          title="A PalmMatch Compatibility Reading"
+          description="See a PalmMatch compatibility preview and get your own couple palm reading."
+          path={`/palmmatch-report/${id ?? ''}`}
+          noindex
+        />
+        <Navbar />
+        <main className="max-w-2xl mx-auto px-4 pt-24 pb-16">
+          <div className="rounded-2xl border border-accent/30 bg-card/60 backdrop-blur p-4 mb-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              {hi ? 'Aap dekh rahe hain compatibility' : 'Viewing compatibility for'}
+            </p>
+            <p className="font-serif text-lg text-foreground">
+              {shared.person1Name} &amp; {shared.person2Name}
+            </p>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-4xl text-center text-foreground mb-2">
+            {shared.person1Name} &amp; {shared.person2Name}
+          </h1>
+          {shared.relationshipType && (
+            <p className="text-center text-sm text-muted-foreground capitalize mb-6">{shared.relationshipType}</p>
+          )}
+          {typeof shared.overallScore === 'number' && (
+            <div className="flex justify-center mb-6">
+              <CompatibilityScoreRing score={shared.overallScore} verdict={shared.compatibilityVerdict} size={220} />
+            </div>
+          )}
+          {shared.overallNarrative && (
+            <p className="text-foreground/85 leading-relaxed mb-8">{shared.overallNarrative}</p>
+          )}
+          <div className="rounded-2xl border border-accent/40 bg-card p-6 text-center">
+            <p className="font-serif text-xl text-foreground mb-2">
+              {hi ? 'Apni khud ki PalmMatch reading paayein' : 'Curious about your own match?'}
+            </p>
+            <p className="text-sm text-muted-foreground mb-5">
+              {hi
+                ? 'Dono ki palm photo upload karein aur apni compatibility dekhein.'
+                : 'Upload both palms and discover your own compatibility reading.'}
+            </p>
+            <Button
+              size="lg"
+              className="w-full sm:w-auto"
+              onClick={() => {
+                analytics.track('shared_palmmatch_cta_clicked', { report_id: id ?? null });
+                navigate('/palmmatch');
+              }}
+            >
+              {hi ? 'Apni PalmMatch reading shuru karein' : 'Get your own PalmMatch reading'}
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   // ── Cinematic loading state ──
   if (!reading) {

@@ -57,6 +57,7 @@ Deno.serve(async (req) => {
     // Reading content is returned only to the owner's email (link carries it) or to
     // anyone with an active subscription. Everyone else gets status only.
     let payload: Record<string, unknown> | null = null;
+    let sharedPreview: Record<string, unknown> | null = null;
     if (includeReport && report) {
       const ownerEmail = typeof report.email === 'string' ? report.email.trim().toLowerCase() : '';
       const isOwner = !!email && email === ownerEmail;
@@ -66,10 +67,30 @@ Deno.serve(async (req) => {
           language: report.language === 'hinglish' ? 'hinglish' : 'english',
           email: ownerEmail,
         };
+      } else {
+        // Safe, free-tier preview for people opening a shared link. No email, no paid sections.
+        const r = (report.reading ?? {}) as Record<string, unknown>;
+        sharedPreview = {
+          person1Name: r.person1Name ?? report.person1_name,
+          person2Name: r.person2Name ?? report.person2_name,
+          relationshipType: r.relationshipType ?? '',
+          overallScore: typeof r.overallScore === 'number' ? r.overallScore : null,
+          compatibilityVerdict: r.compatibilityVerdict ?? '',
+          overallNarrative: r.overallNarrative ?? '',
+          language: report.language === 'hinglish' ? 'hinglish' : 'english',
+        };
       }
     }
 
-    return json({ success: true, isUnlocked, hasSubscription, report: payload });
+    return json({
+      success: true,
+      isUnlocked: payload ? isUnlocked : false,
+      hasSubscription,
+      report: payload,
+      shared_preview: sharedPreview,
+      isShared: !!sharedPreview,
+      exists: !!report,
+    });
   } catch (err) {
     console.error('get-palmmatch-status error:', err);
     return json({ success: false, error: 'Internal server error' }, 500);
