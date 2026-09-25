@@ -115,6 +115,10 @@ export const PRODUCTS = {
       AUD: { minor:  21900, major: 219,  display: 'A$219' },
       SGD: { minor:  19900, major: 199,  display: 'S$199' },
     },
+    listPrices: {
+      INR: '₹9,999', USD: '$299', GBP: '£239', AED: 'AED 1,099',
+      CAD: 'CA$399', AUD: 'A$439', SGD: 'S$399',
+    },
   },
 } as const satisfies Record<string, ProductPricing>;
 
