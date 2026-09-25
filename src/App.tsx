@@ -25,6 +25,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Help = lazy(() => import("./pages/Help"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/help" element={<Help />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
