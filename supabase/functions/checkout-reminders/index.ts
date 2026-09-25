@@ -48,17 +48,19 @@ Deno.serve(async (req) => {
     const reportIds = [...new Set(candidates.map((c) => c.report_id))];
     const [{ data: paid }, { data: already }, { data: reports }] = await Promise.all([
       admin.from('payments').select('report_id,plan_type').eq('status', 'success').in('report_id', reportIds),
-      admin.from('checkout_reminders').select('report_id,user_email').in('report_id', reportIds),
+      admin.from('checkout_reminders').select('report_id,user_email,status').in('report_id', reportIds),
       admin.from('palm_reports').select('id,user_name').in('id', reportIds),
     ]);
     const paidSet = new Set((paid ?? []).map((p) => `${p.report_id}|${p.plan_type}`));
-    const doneSet = new Set((already ?? []).map((r) => `${r.user_email.toLowerCase()}|${r.report_id}`));
+    const doneSet = new Set((already ?? []).filter((r) => r.status !== 'failed').map((r) => `${r.user_email.toLowerCase()}|${r.report_id}`));
     const names = new Map((reports ?? []).map((r) => [r.id, r.user_name]));
 
     let sent = 0, skipped = 0;
     for (const p of candidates) {
       const email = p.user_email.toLowerCase();
       if (paidSet.has(`${p.report_id}|${p.plan_type}`) || doneSet.has(`${email}|${p.report_id}`)) { skipped++; continue; }
+      // Failed attempts (e.g. before the domain was verified) are retried.
+      await admin.from('checkout_reminders').delete().eq('report_id', p.report_id).ilike('user_email', email).eq('status', 'failed');
       // Claim first so concurrent runs can't double-send (unique payment_id).
       const { error: claimErr } = await admin.from('checkout_reminders').insert({
         payment_id: p.id, user_email: email, report_id: p.report_id, plan_type: p.plan_type,
