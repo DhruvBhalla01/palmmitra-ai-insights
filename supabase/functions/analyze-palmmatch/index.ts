@@ -108,6 +108,27 @@ export interface LockedScores {
 const DIMENSION_KEYS = ["emotionalBond", "communication", "lifeGoals", "romance", "spiritualAlignment"] as const;
 
 const normalizeName = (name: string) => name.replace(/\s+/g, " ").trim().toLowerCase();
+const escapeLike = (v: string) => v.replace(/[\\%_]/g, (c) => `\\${c}`);
+
+/** Stable baseline scores derived from the couple's details (order-independent). */
+export const deterministicScores = (p1: string, p2: string, rel: string): LockedScores => {
+  const key = [normalizeName(p1), normalizeName(p2)].sort().join("|") + "|" + rel;
+  let h = 0x811c9dc5;
+  const next = () => {
+    for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    h ^= h >>> 13; h = Math.imul(h, 0x5bd1e995) >>> 0;
+    return h;
+  };
+  const overall = 68 + (next() % 25);
+  const dim = () => Math.max(55, Math.min(97, overall - 8 + (next() % 17)));
+  return {
+    overallScore: overall, compatibilityVerdict: "", language: "english",
+    emotionalBond: dim(), communication: dim(), lifeGoals: dim(), romance: dim(), spiritualAlignment: dim(),
+  };
+};
+
+const verdictBand = (score: number) =>
+  score >= 85 ? "excellent, deeply harmonious" : score >= 75 ? "strong and promising" : "good with areas to nurture";
 
 export const extractLockedScores = (row: {
   overall_score?: number | null;
@@ -164,15 +185,17 @@ const findLockedScores = async (
   p1: string,
   p2: string,
   relationshipType: string,
+  email: string,
 ): Promise<LockedScores | null> => {
   try {
-    const a = normalizeName(p1);
-    const b = normalizeName(p2);
+    const a = escapeLike(normalizeName(p1));
+    const b = escapeLike(normalizeName(p2));
     const lookup = async (first: string, second: string) => {
       const { data } = await supabaseClient
         .from("palmmatch_reports")
         .select("overall_score, reading, language, created_at")
         .eq("relationship_type", relationshipType)
+        .eq("email", email)
         .ilike("person1_name", first)
         .ilike("person2_name", second)
         .order("created_at", { ascending: true })
@@ -203,8 +226,10 @@ const generateCompatibilityReadingAttempt = async (
   locked: LockedScores | null,
 ): Promise<Record<string, unknown>> => {
   const startedAt = Date.now();
-  const lockedInstruction = locked
-    ? `\nFIXED SCORES (MANDATORY): This pair already has an established reading. You MUST return exactly these values and build the narrative around them: overallScore = ${locked.overallScore}, emotionalBond.score = ${locked.emotionalBond}, communication.score = ${locked.communication}, lifeGoals.score = ${locked.lifeGoals}, romance.score = ${locked.romance}, spiritualAlignment.score = ${locked.spiritualAlignment}${locked.compatibilityVerdict ? `, compatibilityVerdict = "${locked.compatibilityVerdict}"` : ""}. Never invent different numbers.\n`
+  const lockedInstruction = locked && language !== locked.language && locked.compatibilityVerdict
+    ? `\nFIXED SCORES (MANDATORY): You MUST return exactly these values and build the narrative around them: overallScore = ${locked.overallScore}, emotionalBond.score = ${locked.emotionalBond}, communication.score = ${locked.communication}, lifeGoals.score = ${locked.lifeGoals}, romance.score = ${locked.romance}, spiritualAlignment.score = ${locked.spiritualAlignment}. The compatibilityVerdict must match the overall score band: ${verdictBand(locked.overallScore)}. Never invent different numbers.\n`
+    : locked
+    ? `\nFIXED SCORES (MANDATORY): This pair already has an established reading. You MUST return exactly these values and build the narrative around them: overallScore = ${locked.overallScore}, emotionalBond.score = ${locked.emotionalBond}, communication.score = ${locked.communication}, lifeGoals.score = ${locked.lifeGoals}, romance.score = ${locked.romance}, spiritualAlignment.score = ${locked.spiritualAlignment}${locked.compatibilityVerdict ? `, compatibilityVerdict = "${locked.compatibilityVerdict}"` : `. The compatibilityVerdict must match the overall score band: ${verdictBand(locked.overallScore)}`}. Never invent different numbers.\n`
     : "";
   const languageInstruction = language === "hinglish"
     ? "Write every customer-facing value in natural conversational Hinglish using Roman script only. Blend familiar Hindi and English naturally; never use Devanagari or formal Hindi. Keep JSON keys and person names unchanged."
@@ -496,10 +521,9 @@ serve(async (req) => {
     console.log("Both palms validated. Generating compatibility reading...");
 
     // Same couple, same scores — reuse their first reading's numbers if we have them.
-    const lockedScores = await findLockedScores(supabaseClient, cleanP1.name, cleanP2.name, relationshipType);
-    if (lockedScores) {
-      console.log("Reusing locked compatibility scores for returning couple:", lockedScores.overallScore);
-    }
+    const lockedScores = (await findLockedScores(supabaseClient, cleanP1.name, cleanP2.name, relationshipType, cleanEmail))
+      ?? deterministicScores(cleanP1.name, cleanP2.name, relationshipType);
+    console.log("Compatibility score anchor:", lockedScores.overallScore);
 
     const reading = await generateCompatibilityReading(
       image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext, safeLanguage, lockedScores

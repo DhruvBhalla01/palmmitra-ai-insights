@@ -438,7 +438,9 @@ const findLockedMetrics = async (
   age: string,
   readingType: string,
   cleanEmail: string,
+  imageUrl: string,
 ): Promise<LockedPalmMetrics | null> => {
+  const safeName = cleanName.replace(/[\\%_]/g, (c) => `\\${c}`);
   try {
     let query = supabaseClient
       .from("palm_reports")
@@ -447,8 +449,8 @@ const findLockedMetrics = async (
       .order("created_at", { ascending: true })
       .limit(1);
     query = cleanEmail
-      ? query.eq("user_email", cleanEmail).ilike("user_name", cleanName)
-      : query.ilike("user_name", cleanName).eq("user_age", age);
+      ? query.eq("user_email", cleanEmail).ilike("user_name", safeName)
+      : query.is("user_email", null).ilike("user_name", safeName).eq("user_age", age).eq("image_url", imageUrl);
     const { data } = await query;
     if (!Array.isArray(data) || data.length === 0) return null;
     return extractLockedMetrics(data[0].report_json);
@@ -736,7 +738,7 @@ serve(async (req) => {
     // STEP 2: Generate the palm reading
     // Same person, same details → same measurements as their first reading.
     const lockedMetrics = await findLockedMetrics(
-      supabase, cleanName, String(ageNum), safeReadingType, cleanEmail,
+      supabase, cleanName, String(ageNum), safeReadingType, cleanEmail, imageUrl,
     );
     if (lockedMetrics) console.log("Reusing locked palm metrics for returning user");
 
