@@ -832,6 +832,11 @@ export default function Report() {
                 />
               )}
 
+              {/* 10b. Review prompt — unlocked reports only */}
+              {isUnlocked && !isShared && (
+                <ReviewPrompt defaultName={userData?.name} source="report" />
+              )}
+
               {/* Continue with PalmMitra AI — end-of-report premium section */}
               {isUnlocked && resolvedReportId && (
                 <PalmMitraAiSection
