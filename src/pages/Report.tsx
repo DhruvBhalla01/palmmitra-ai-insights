@@ -528,6 +528,25 @@ export default function Report() {
                 )}
               </div>
 
+              {/* Authenticity certificate */}
+              <VedicCertificate
+                reading={reading}
+                name={userData?.name || 'User'}
+                reportId={resolvedReportId}
+                generatedAt={generatedAt}
+                countryCode={userData?.countryCode}
+                hinglish={userData?.language === 'hinglish'}
+              />
+
+              {/* Interactive palm map */}
+              <PalmLineExplorer
+                reading={reading}
+                isUnlocked={isUnlocked || isShared}
+                hinglish={userData?.language === 'hinglish'}
+                onUnlockClick={!isShared ? () => handleUnlockClick('palm_explorer') : undefined}
+              />
+
+
               {/* 2. Major Lines - Life Line visible, others locked */}
               <div id="section-lines">
                 {isUnlocked ? (
