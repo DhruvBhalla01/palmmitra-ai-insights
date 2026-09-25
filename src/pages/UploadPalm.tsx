@@ -75,6 +75,28 @@ const progressSteps = [
   { n: 3, label: 'Get Reading'  },
 ];
 
+/** True when the request never reached (or never returned from) the server. */
+const isConnectionDrop = (message: string) =>
+  /failed to send a request|failed to fetch|network|load failed|aborted|timeout/i.test(message || '');
+
+/**
+ * The reading usually finishes server-side even when the phone's connection drops.
+ * Poll for up to ~60s to see whether the report landed before showing an error.
+ */
+const pollForReport = async (imageUrl: string, email: string): Promise<string | null> => {
+  const supabase = await getSupabase();
+  for (let attempt = 0; attempt < 20; attempt++) {
+    await new Promise((r) => setTimeout(r, 3000));
+    try {
+      const { data } = await supabase.functions.invoke('get-report', {
+        body: { lookup_image_url: imageUrl, user_email: email },
+      });
+      if (data?.found && data.report_id) return data.report_id as string;
+    } catch { /* keep polling */ }
+  }
+  return null;
+};
+
 export default function UploadPalm() {
   const navigate = useNavigate();
   const { toast } = useToast();
