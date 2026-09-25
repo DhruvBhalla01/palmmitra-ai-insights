@@ -26,6 +26,7 @@ import posthog from '@/lib/posthog';
 import { useCurrency } from '@/hooks/useCurrency';
 import { PRODUCTS, formatCurrency } from '@/config/pricing';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { compressImage } from '@/lib/imageCompression';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -177,8 +178,10 @@ export default function UploadPalm() {
       reader.onload = (event) => setImage(event.target?.result as string);
       reader.readAsDataURL(file);
     }
-    // Kick off storage upload in background so it's ready by the time user submits
-    const uploadPromise = uploadToStorage(file)
+    // Kick off storage upload in background so it's ready by the time user submits.
+    // Large camera photos are downscaled first so mobile networks don't time out.
+    const uploadPromise = compressImage(file)
+      .then((prepared) => uploadToStorage(prepared))
       .then((url) => {
         const uploadProperties = { file_size_kb: Math.round(file.size / 1024) };
         analytics.track('palm_image_uploaded', uploadProperties);
