@@ -831,6 +831,39 @@ export default function UploadPalm() {
                     )}
                   </AnimatePresence>
 
+                  {/* Connection dropped — one-tap reconnect, details preserved */}
+                  <AnimatePresence>
+                    {connectionLost && (
+                      <m.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        className="bg-accent/8 border border-accent/30 rounded-2xl p-5"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
+                            <Zap className="w-5 h-5 text-accent" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground mb-1 text-sm">
+                              Your connection dropped mid-reading
+                            </h3>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              Your photo and details are safely saved. Tap below and we'll finish your reading — nothing needs to be entered again.
+                            </p>
+                            <Button
+                              type="button"
+                              onClick={() => { void handleSubmit(); }}
+                              className="btn-gold text-sm py-2 px-5 h-auto"
+                            >
+                              Reconnect &amp; Generate Reading
+                            </Button>
+                          </div>
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* ── About You Form ── */}
                   <AnimatedSection delay={0.25}>
                     <div className="relative">
