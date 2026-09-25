@@ -8,6 +8,7 @@ import { sendTemplateEmail } from '../_shared/transactional-email-templates/send
 
 const PLAN_NAMES: Record<string, string> = {
   report99: 'your Full Destiny Report',
+  palmmatch149: 'your PalmMatch Compatibility Report',
   ai_pack_5: 'your PalmMitra AI questions',
   ai_pack_10: 'your PalmMitra AI questions',
   ai_pack_15: 'your PalmMitra AI questions',
@@ -29,45 +30,78 @@ Deno.serve(async (req) => {
     const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const now = Date.now();
     const { data: pending, error } = await admin.from('payments')
-      .select('id,user_email,report_id,plan_type,amount,currency,created_at')
-      .eq('status', 'pending').not('report_id', 'is', null)
+      .select('id,user_email,report_id,palmmatch_report_id,plan_type,amount,currency,created_at')
+      .eq('status', 'pending')
+      .or('report_id.not.is.null,palmmatch_report_id.not.is.null')
       .in('plan_type', Object.keys(PLAN_NAMES))
       .lte('created_at', new Date(now - 3600_000).toISOString())
       .gte('created_at', new Date(now - 48 * 3600_000).toISOString())
       .order('created_at', { ascending: false }).limit(200);
     if (error) throw error;
 
+    // A reference is either a palm report (uuid) or a PalmMatch report (pm_...).
+    const refOf = (p: { report_id: string | null; palmmatch_report_id: string | null }) =>
+      p.report_id ?? p.palmmatch_report_id;
+
     // One candidate per email+report (latest attempt).
     const seen = new Set<string>();
     const candidates = (pending ?? []).filter((p) => {
-      const k = `${p.user_email.toLowerCase()}|${p.report_id}`;
+      const ref = refOf(p);
+      if (!ref) return false;
+      const k = `${p.user_email.toLowerCase()}|${ref}`;
       if (seen.has(k)) return false; seen.add(k); return true;
     });
     if (!candidates.length) return json({ sent: 0, skipped: 0 });
 
-    const reportIds = [...new Set(candidates.map((c) => c.report_id))];
-    const [{ data: paid }, { data: already }, { data: reports }] = await Promise.all([
-      admin.from('payments').select('report_id,plan_type').eq('status', 'success').in('report_id', reportIds),
-      admin.from('checkout_reminders').select('report_id,user_email,status').in('report_id', reportIds),
-      admin.from('palm_reports').select('id,user_name').in('id', reportIds),
+    const reportIds = [...new Set(candidates.map((c) => c.report_id).filter(Boolean))] as string[];
+    const matchIds = [...new Set(candidates.map((c) => c.palmmatch_report_id).filter(Boolean))] as string[];
+    const paymentIds = candidates.map((c) => c.id);
+    const [{ data: paidReports }, { data: paidMatches }, { data: already }, { data: reports }, { data: matches }] = await Promise.all([
+      reportIds.length
+        ? admin.from('payments').select('report_id,plan_type').eq('status', 'success').in('report_id', reportIds)
+        : Promise.resolve({ data: [] as { report_id: string; plan_type: string }[] }),
+      matchIds.length
+        ? admin.from('payments').select('palmmatch_report_id,plan_type').eq('status', 'success').in('palmmatch_report_id', matchIds)
+        : Promise.resolve({ data: [] as { palmmatch_report_id: string; plan_type: string }[] }),
+      // Prior reminders for the same checkouts, matched through their payment rows.
+      admin.from('checkout_reminders').select('payment_id,user_email,status').in('payment_id', paymentIds),
+      reportIds.length
+        ? admin.from('palm_reports').select('id,user_name').in('id', reportIds)
+        : Promise.resolve({ data: [] as { id: string; user_name: string }[] }),
+      matchIds.length
+        ? admin.from('palmmatch_reports').select('report_id,person1_name,person2_name').in('report_id', matchIds)
+        : Promise.resolve({ data: [] as { report_id: string; person1_name: string; person2_name: string }[] }),
     ]);
-    const paidSet = new Set((paid ?? []).map((p) => `${p.report_id}|${p.plan_type}`));
-    const doneSet = new Set((already ?? []).filter((r) => r.status !== 'failed').map((r) => `${r.user_email.toLowerCase()}|${r.report_id}`));
-    const names = new Map((reports ?? []).map((r) => [r.id, r.user_name]));
+    const paidSet = new Set([
+      ...(paidReports ?? []).map((p) => `${p.report_id}|${p.plan_type}`),
+      ...(paidMatches ?? []).map((p) => `${p.palmmatch_report_id}|${p.plan_type}`),
+    ]);
+    const doneSet = new Set((already ?? []).filter((r) => r.status !== 'failed').map((r) => r.payment_id));
+    const failedIds = new Set((already ?? []).filter((r) => r.status === 'failed').map((r) => r.payment_id));
+    const names = new Map<string, string>([
+      ...(reports ?? []).map((r) => [r.id, r.user_name] as [string, string]),
+      ...(matches ?? []).map((m) => [m.report_id, `${m.person1_name} & ${m.person2_name}`] as [string, string]),
+    ]);
 
     let sent = 0, skipped = 0;
     for (const p of candidates) {
       const email = p.user_email.toLowerCase();
-      if (paidSet.has(`${p.report_id}|${p.plan_type}`) || doneSet.has(`${email}|${p.report_id}`)) { skipped++; continue; }
+      const ref = refOf(p)!;
+      const isMatch = !p.report_id;
+      if (paidSet.has(`${ref}|${p.plan_type}`) || doneSet.has(p.id)) { skipped++; continue; }
       // Failed attempts (e.g. before the domain was verified) are retried.
-      await admin.from('checkout_reminders').delete().eq('report_id', p.report_id).ilike('user_email', email).eq('status', 'failed');
+      if (failedIds.has(p.id)) {
+        await admin.from('checkout_reminders').delete().eq('payment_id', p.id).eq('status', 'failed');
+      }
       // Claim first so concurrent runs can't double-send (unique payment_id).
       const { error: claimErr } = await admin.from('checkout_reminders').insert({
         payment_id: p.id, user_email: email, report_id: p.report_id, plan_type: p.plan_type,
         amount: p.amount, currency: p.currency, status: 'sending',
       });
       if (claimErr) { skipped++; continue; }
-      const first = String(names.get(p.report_id) ?? '').trim().split(/\s+/)[0]?.slice(0, 40) || undefined;
+      const label = String(names.get(ref) ?? '').trim();
+      const first = (isMatch ? label : label.split(/\s+/)[0] ?? '').slice(0, 60) || undefined;
+      const path = isMatch ? 'palmmatch-report' : 'report';
       try {
         const r = await sendTemplateEmail('payment-reminder', email, {
           // Hour-bucketed so a failed attempt (e.g. unverified domain) can retry next run;
@@ -77,7 +111,7 @@ Deno.serve(async (req) => {
             name: first,
             planName: PLAN_NAMES[p.plan_type],
             price: price(p.amount, p.currency),
-            reportUrl: `${SITE}/report/${p.report_id}?e=${b64url(email)}&utm_source=email&utm_medium=reminder&utm_campaign=checkout_recovery`,
+            reportUrl: `${SITE}/${path}/${ref}?e=${b64url(email)}&utm_source=email&utm_medium=reminder&utm_campaign=checkout_recovery`,
           },
         });
         await admin.from('checkout_reminders').update({ status: r.sent ? 'sent' : 'suppressed' }).eq('payment_id', p.id);

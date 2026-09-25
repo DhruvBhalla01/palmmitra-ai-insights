@@ -74,13 +74,54 @@ export default function PalmMatchReport() {
   const [language, setLanguage] = useState<PalmMatchLanguage>('english');
 
   useEffect(() => {
+    let cancelled = false;
+
+    const restoreFromServer = async () => {
+      // Opened on another device (e.g. from the reminder email): the link carries the
+      // owner's email so the saved reading can be fetched again.
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get('e');
+      let linkEmail = '';
+      if (encoded) {
+        try {
+          linkEmail = atob(encoded.replace(/-/g, '+').replace(/_/g, '/'));
+        } catch { linkEmail = ''; }
+      }
+      if (!id || !linkEmail) { navigate('/palmmatch'); return; }
+      try {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data, error } = await supabase.functions.invoke('get-palmmatch-status', {
+          body: { report_id: id, email: linkEmail, include_report: true },
+        });
+        if (cancelled) return;
+        if (error || !data?.success || !data.report?.reading) { navigate('/palmmatch'); return; }
+        const restored = {
+          reading: data.report.reading,
+          email: data.report.email || linkEmail,
+          language: data.report.language === 'hinglish' ? 'hinglish' : 'english',
+        };
+        sessionStorage.setItem('palmMatchData', JSON.stringify(restored));
+        setReading(restored.reading);
+        setEmail(restored.email);
+        setLanguage(restored.language as PalmMatchLanguage);
+        analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id });
+      } catch {
+        if (!cancelled) navigate('/palmmatch');
+      }
+    };
+
     const raw = sessionStorage.getItem('palmMatchData');
-    if (!raw) { navigate('/palmmatch'); return; }
-    const data = JSON.parse(raw);
-    setReading(data.reading);
-    setEmail(data.email || '');
-    setLanguage(data.language === 'hinglish' ? 'hinglish' : 'english');
-    analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
+    if (!raw) { void restoreFromServer(); return; }
+    try {
+      const data = JSON.parse(raw);
+      setReading(data.reading);
+      setEmail(data.email || '');
+      setLanguage(data.language === 'hinglish' ? 'hinglish' : 'english');
+      analytics.track('reading_preview_viewed', { reading_type: 'palmmatch', report_id: id ?? null });
+    } catch {
+      void restoreFromServer();
+    }
+    return () => { cancelled = true; };
   }, [navigate, id]);
 
   const { isUnlocked, isLoading, isProcessing, initiatePayment } = usePalmMatchUnlock(id, email);
