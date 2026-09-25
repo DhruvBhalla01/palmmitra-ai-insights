@@ -64,6 +64,8 @@ export const ANALYTICS_EVENTS = [
   'pricing_plan_selected',
   'pricing_cta_clicked',
   'unlock_report_clicked',
+  'review_submitted',
+  'review_submit_failed',
 
   // Checkout / payment (client-side intent signals)
   'checkout_viewed',
