@@ -8,21 +8,27 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const getReturnTo = () => {
+      const param = new URLSearchParams(window.location.search).get('next');
+      const stored = localStorage.getItem('ai_return_to');
+      localStorage.removeItem('ai_return_to');
+      const rt = param || stored;
+      // Only allow same-site paths
+      return rt && rt.startsWith('/') && !rt.startsWith('//') ? rt : '/';
+    };
+    let done = false;
+    const go = () => {
+      if (done) return;
+      done = true;
+      navigate(getReturnTo(), { replace: true });
+    };
     // Supabase handles the hash automatically; wait for the session.
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) {
-        const rt = localStorage.getItem('ai_return_to');
-        localStorage.removeItem('ai_return_to');
-        navigate(rt || '/', { replace: true });
-      }
+      if (session) go();
     });
     // If already signed in on load
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        const rt = localStorage.getItem('ai_return_to');
-        localStorage.removeItem('ai_return_to');
-        navigate(rt || '/', { replace: true });
-      }
+      if (data.session) go();
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
