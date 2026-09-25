@@ -567,16 +567,19 @@ const generatePalmReading = async (
   context: AiCaptureContext,
   language: "english" | "hinglish",
   countryContext: string,
+  locked: LockedPalmMetrics | null = null,
 ) => {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       const reading = await generatePalmReadingAttempt(
-        imageUrl, name, age, readingType, apiKey, context, language, countryContext, attempt > 0,
+        imageUrl, name, age, readingType, apiKey, context, language, countryContext, attempt > 0, locked,
       );
       if (language === "hinglish" && !isHinglishReading(reading)) {
         throw new Error("AI_LANGUAGE_MISMATCH");
       }
+      // Hard guarantee: stored measurements always win over a fresh AI guess.
+      if (locked) applyLockedMetrics(reading as Record<string, unknown>, locked);
       return reading;
     } catch (error) {
       lastError = error;
