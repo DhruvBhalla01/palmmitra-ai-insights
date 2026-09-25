@@ -734,6 +734,12 @@ serve(async (req) => {
     }
 
     // STEP 2: Generate the palm reading
+    // Same person, same details → same measurements as their first reading.
+    const lockedMetrics = await findLockedMetrics(
+      supabase, cleanName, String(ageNum), safeReadingType, cleanEmail,
+    );
+    if (lockedMetrics) console.log("Reusing locked palm metrics for returning user");
+
     const generationStartedAt = Date.now();
     const palmReading = await generatePalmReading(
       imageUrl,
@@ -744,6 +750,7 @@ serve(async (req) => {
       aiCaptureContext,
       safeLanguage,
       countryContext,
+      lockedMetrics,
     );
     const generationMs = Date.now() - generationStartedAt;
     console.log(`Palm report generation completed in ${generationMs}ms`);
