@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { SEO } from '@/components/SEO';
@@ -381,10 +381,14 @@ export default function Admin() {
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="customers">Customers</TabsTrigger>
                 <TabsTrigger value="payments">Payments</TabsTrigger>
+                <TabsTrigger value="health">Health</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
               </TabsList>
               <TabsContent value="overview"><Overview range={range} /></TabsContent>
               <TabsContent value="customers"><Customers range={range} /></TabsContent>
               <TabsContent value="payments"><Payments range={range} /></TabsContent>
+              <TabsContent value="health"><Health /></TabsContent>
+              <TabsContent value="reviews"><Reviews /></TabsContent>
             </Tabs>
           </div>
         )}
