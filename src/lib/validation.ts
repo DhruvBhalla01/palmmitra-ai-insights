@@ -107,7 +107,7 @@ export function validateImageFile(file: File): ImageValidationResult {
     return {
       ok: false,
       reason: 'Unsupported file type.',
-      suggestion: 'iPhone HEIC photos aren't supported — please upload a JPG, PNG or WEBP (or take the photo with the camera button).',
+      suggestion: "iPhone HEIC photos aren't supported — please upload a JPG, PNG or WEBP (or take the photo with the camera button).",
     };
   }
   if (file.size < MIN_IMAGE_BYTES) {
