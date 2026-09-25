@@ -26,6 +26,8 @@ const Help = lazy(() => import("./pages/Help"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Admin = lazy(() => import("./pages/Admin"));
+const Guides = lazy(() => import("./pages/Guides"));
+const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 
 const queryClient = new QueryClient();
 
@@ -68,6 +70,8 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/guides" element={<Guides />} />
+              <Route path="/guides/:slug" element={<GuideDetail />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />

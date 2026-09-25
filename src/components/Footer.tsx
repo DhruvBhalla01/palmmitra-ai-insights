@@ -7,6 +7,7 @@ const footerLinks = {
     { name: 'About PalmMitra', path: '/about' },
     { name: 'PalmMatch Couple Compatibility', path: '/palmmatch' },
     { name: 'Free Palm Reading', path: '/upload' },
+    { name: 'Palmistry Guides', path: '/guides' },
     { name: 'How It Works', path: '/#how-it-works' },
     { name: 'Pricing', path: '/#pricing' },
   ],
