@@ -48,6 +48,7 @@ export const template = {
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Georgia, "Times New Roman", serif' }
 const container = { padding: '32px 28px', maxWidth: '520px' }
+const goldRule = { borderTop: '3px solid #D4AF37', width: '48px', margin: '0 0 20px' }
 const brand = { fontSize: '12px', letterSpacing: '4px', color: '#B8912F', margin: '0 0 16px' }
 const h1 = { fontSize: '24px', fontWeight: 'normal' as const, color: '#1a1208', margin: '0 0 16px' }
 const text = { fontSize: '15px', lineHeight: '24px', color: '#3d3222', fontFamily: 'Arial, sans-serif', margin: '0 0 12px' }
