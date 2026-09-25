@@ -57,6 +57,13 @@
       "when": 1790337243406,
       "tag": "0007_checkout_reminders",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790339972327,
+      "tag": "0008_referral_rewards",
+      "breakpoints": true
     }
   ]
 }

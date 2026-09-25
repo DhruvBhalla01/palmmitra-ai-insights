@@ -537,6 +537,42 @@ export type Database = {
           },
         ]
       }
+      referral_rewards: {
+        Row: {
+          created_at: string
+          id: string
+          new_report_id: string
+          sharer_report_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          new_report_id: string
+          sharer_report_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          new_report_id?: string
+          sharer_report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_new_report_id_fkey"
+            columns: ["new_report_id"]
+            isOneToOne: true
+            referencedRelation: "palm_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_rewards_sharer_report_id_fkey"
+            columns: ["sharer_report_id"]
+            isOneToOne: false
+            referencedRelation: "palm_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_unlocks: {
         Row: {
           id: string
