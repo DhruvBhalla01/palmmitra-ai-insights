@@ -24,6 +24,7 @@ interface RazorpayOptions {
   prefill: { email: string };
   theme: { color: string };
   modal?: { ondismiss?: () => void };
+  config?: Record<string, unknown>;
 }
 
 interface RazorpayInstance {
@@ -229,6 +230,14 @@ export function useReportUnlock(
         },
         prefill: { email: userEmail },
         theme: { color: '#D4AF37' },
+        // UPI first — most Indian buyers pay via UPI apps
+        config: {
+          display: {
+            blocks: { upi: { name: 'Pay via UPI', instruments: [{ method: 'upi' }] } },
+            sequence: ['block.upi'],
+            preferences: { show_default_blocks: true },
+          },
+        },
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
@@ -257,7 +266,7 @@ export function useReportUnlock(
         posthog.capture('checkout_payment_failed', failureProperties);
         toast({
           title: 'Payment Failed',
-          description: 'Please try again or choose a different payment method.',
+          description: 'Paying via UPI? Come back to this tab after approving. Or tap Try again to use card or netbanking.',
           variant: 'destructive',
           action: retryAction(),
           duration: 15000,
