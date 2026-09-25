@@ -357,7 +357,7 @@ const generateCompatibilityReading = async (
       }
       // Hard guarantee: even if the model drifts, the stored scores win.
       // The verdict is only reused in the same language as the original reading.
-      if (locked) applyLockedScores(reading, locked, language === lockedLanguageOf(locked));
+      if (locked) applyLockedScores(reading, locked, language === locked.language);
       return reading;
     } catch (error) {
       lastError = error;
