@@ -70,7 +70,9 @@ Deno.serve(async (req) => {
       const first = String(names.get(p.report_id) ?? '').trim().split(/\s+/)[0]?.slice(0, 40) || undefined;
       try {
         const r = await sendTemplateEmail('payment-reminder', email, {
-          idempotencyKey: `payment-reminder-${p.id}`,
+          // Hour-bucketed so a failed attempt (e.g. unverified domain) can retry next run;
+          // the unique claim row above still prevents double-sends.
+          idempotencyKey: `payment-reminder-${p.id}-${Math.floor(Date.now() / 3_600_000)}`,
           templateData: {
             name: first,
             planName: PLAN_NAMES[p.plan_type],
