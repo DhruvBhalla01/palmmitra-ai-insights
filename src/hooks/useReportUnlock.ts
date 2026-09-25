@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useRef, createElement } from 'react';
-import { ToastAction, type ToastActionElement } from '@/components/ui/toast';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
