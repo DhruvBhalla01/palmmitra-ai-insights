@@ -92,7 +92,7 @@ export default function UploadPalm() {
     age: '',
     email: '',
     readingType: 'full',
-    language: 'english',
+    language: 'hinglish',
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
   const formAnalytics = useFormAnalytics('palm_upload');

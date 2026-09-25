@@ -322,7 +322,7 @@ export default function PalmMatch() {
   const [email, setEmail] = useState('');
   const [language, setLanguage] = useState<PalmMatchLanguage>(() => {
     const saved = localStorage.getItem('palmmitra:palmmatch-language');
-    return saved === 'hinglish' ? 'hinglish' : 'english';
+    return saved === 'english' ? 'english' : 'hinglish';
   });
   const formAnalytics = useFormAnalytics('palmmatch_upload');
 
