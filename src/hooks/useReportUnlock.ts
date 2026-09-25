@@ -248,7 +248,7 @@ export function useReportUnlock(
             };
             analytics.track('checkout_payment_cancelled', cancellationProperties);
             posthog.capture('checkout_payment_cancelled', cancellationProperties);
-            toast({ title: 'Payment not completed', description: 'Tap Try again — you can switch to UPI, card or netbanking.', action: retryAction(), duration: 15000 });
+            window.dispatchEvent(new CustomEvent('paymentRecovery', { detail: { reason: 'cancelled', plan } }));
           },
         },
       };
@@ -264,13 +264,7 @@ export function useReportUnlock(
         };
         analytics.track('checkout_payment_failed', failureProperties);
         posthog.capture('checkout_payment_failed', failureProperties);
-        toast({
-          title: 'Payment Failed',
-          description: 'Paying via UPI? Come back to this tab after approving. Or tap Try again to use card or netbanking.',
-          variant: 'destructive',
-          action: retryAction(),
-          duration: 15000,
-        });
+        window.dispatchEvent(new CustomEvent('paymentRecovery', { detail: { reason: 'failed', plan } }));
       });
       razorpay.open();
       const redirectProperties = {
