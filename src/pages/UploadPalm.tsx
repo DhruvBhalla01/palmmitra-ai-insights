@@ -300,11 +300,13 @@ export default function UploadPalm() {
       setProcessingStep('analyzing');
 
       const supabase = await getSupabase();
+      const referralRef = new URLSearchParams(window.location.search).get('ref');
       const { data: response, error: fnError } = await supabase.functions.invoke('analyze-palm', {
         body: {
           imageUrl, name: cleanName, age: cleanAge, email: cleanEmail,
           readingType: formData.readingType, language: formData.language,
           countryCode, countryName,
+          ...(referralRef ? { ref: referralRef } : {}),
         },
       });
 

@@ -6,6 +6,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { PRODUCTS, formatCurrency } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
+import { UnlockReviews } from './UnlockReviews';
 
 interface PremiumPaywallProps {
   premiumInsights: {
@@ -277,6 +278,8 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
               <p className="text-[11px] text-muted-foreground text-center mt-3">
                 UPI · Credit/Debit Card · Wallets · Net Banking
               </p>
+
+              <UnlockReviews />
             </div>
 
             {/* Secondary upsell */}

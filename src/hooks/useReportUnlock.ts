@@ -13,7 +13,7 @@ declare global {
   }
 }
 
-interface RazorpayOptions {
+export interface RazorpayOptions {
   key: string;
   amount: number;
   currency: string;
@@ -27,12 +27,12 @@ interface RazorpayOptions {
   config?: Record<string, unknown>;
 }
 
-interface RazorpayInstance {
+export interface RazorpayInstance {
   open: () => void;
   on: (event: string, handler: () => void) => void;
 }
 
-interface RazorpayResponse {
+export interface RazorpayResponse {
   razorpay_payment_id: string;
   razorpay_order_id: string;
   razorpay_signature: string;

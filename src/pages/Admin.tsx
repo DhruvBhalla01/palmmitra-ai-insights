@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { lovable } from '@/integrations/lovable';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -426,6 +427,7 @@ function Reminders() {
 
 export default function Admin() {
   const { user, loading, signOut } = useAuth();
+  useTheme(); // apply the dark-by-default theme on this navbar-less page
   const [range, setRange] = useState<Range>('today');
   const probe = useQuery({
     queryKey: ['admin', 'probe', user?.id], enabled: !!user,

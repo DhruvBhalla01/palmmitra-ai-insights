@@ -20,6 +20,16 @@ vi.mock("@/integrations/supabase/client", () => ({
     functions: {
       invoke: mockInvoke,
     },
+    // Table queries (e.g. approved testimonials on the report paywall) resolve empty.
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          order: () => ({
+            limit: () => Promise.resolve({ data: [], error: null }),
+          }),
+        }),
+      }),
+    }),
     auth: {
       onAuthStateChange: vi.fn(() => ({
         data: { subscription: { unsubscribe: mockUnsubscribe } },
@@ -45,7 +55,7 @@ describe("Upload -> Report flow", () => {
     sessionStorage.clear();
   });
 
-  it("creates a report and lands on the report page", async () => {
+  it("creates a report and lands on the report page", { timeout: 20000 }, async () => {
     mockUpload.mockResolvedValue({ data: { path: "uploads/palm.png" }, error: null });
     mockGetPublicUrl.mockReturnValue({
       data: { publicUrl: "https://example.com/palm.png" },

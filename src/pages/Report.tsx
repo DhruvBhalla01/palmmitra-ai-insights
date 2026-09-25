@@ -30,6 +30,7 @@ import { SpiritualRemediesSection } from '@/components/report/SpiritualRemediesS
 import { FinalBlessing } from '@/components/report/FinalBlessing';
 import { ActionButtons } from '@/components/report/ActionButtons';
 import { ReviewPrompt } from '@/components/report/ReviewPrompt';
+import { PalmMatchCrossSell } from '@/components/report/PalmMatchCrossSell';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { UnlockTeaserCard } from '@/components/report/UnlockTeaserCard';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
@@ -416,12 +417,12 @@ export default function Report() {
           {isShared && (
             <div className="mb-6 glass-premium rounded-2xl border border-accent/25 p-4 flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
               <p className="flex-1 text-sm text-foreground">
-                <span className="font-semibold">{userData?.name || 'Someone'}</span> shared a preview of their reading. Curious what your palm says?
+                <span className="font-semibold">{userData?.name || 'Someone'}</span> shared a preview of their reading. Get your own reading and you both receive a free PalmMitra AI question.
               </p>
               <Button
                 onClick={() => {
                   analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null, placement: 'top' });
-                  navigate('/upload');
+                  navigate(resolvedReportId ? `/upload?ref=${resolvedReportId}` : '/upload');
                 }}
                 className="btn-gold rounded-xl min-h-11 px-5 text-sm font-semibold"
               >
@@ -850,7 +851,10 @@ export default function Report() {
                 />
               )}
 
-              {/* 10b. Review prompt — unlocked reports only */}
+              {/* 10b. PalmMatch cross-sell + review prompt — unlocked reports only */}
+              {isUnlocked && !isShared && (
+                <PalmMatchCrossSell hinglish={userData?.language === 'hinglish'} />
+              )}
               {isUnlocked && !isShared && (
                 <ReviewPrompt defaultName={userData?.name} source="report" />
               )}
@@ -871,12 +875,12 @@ export default function Report() {
                     {userData?.name ? `${userData.name} shared their reading with you` : 'A reading was shared with you'}
                   </h2>
                   <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    Discover what your own palm reveals about your career, love and life path in under a minute.
+                    Discover what your own palm reveals about your career, love and life path in under a minute — and you both get a free PalmMitra AI question.
                   </p>
                   <Button
                     onClick={() => {
                       analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null });
-                      navigate('/upload');
+                      navigate(resolvedReportId ? `/upload?ref=${resolvedReportId}` : '/upload');
                     }}
                     className="btn-gold rounded-2xl px-8 py-6 text-base font-semibold"
                   >
