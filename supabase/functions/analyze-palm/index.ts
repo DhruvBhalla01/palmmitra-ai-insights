@@ -374,6 +374,98 @@ The next6MonthsFocus should weave together professional, personal, and spiritual
   return basePrompt + (focusAdditions[readingType] || focusAdditions.full);
 };
 
+// ── Reading consistency ──
+// If the same person reads their palm again with the same details, the measurable
+// parts of the reading (line strengths, mount levels, turning point age, confidence)
+// must stay identical. Only the wording and language may change.
+const LINE_KEYS = ["lifeLine", "heartLine", "headLine", "fateLine", "sunLine"] as const;
+const MOUNT_KEYS = ["venus", "jupiter", "saturn", "apollo", "mercury"] as const;
+
+interface LockedPalmMetrics {
+  confidenceScore: number | null;
+  lines: Record<string, string>;
+  mounts: Record<string, string>;
+  turningPointAge: string | null;
+}
+
+const extractLockedMetrics = (reportJson: unknown): LockedPalmMetrics | null => {
+  const report = reportJson as Record<string, unknown> | null;
+  if (!report || typeof report !== "object") return null;
+  const majorLines = report.majorLines as Record<string, { strength?: string }> | undefined;
+  const mounts = report.mounts as Record<string, { level?: string }> | undefined;
+  if (!majorLines || !mounts) return null;
+  const lines: Record<string, string> = {};
+  for (const key of LINE_KEYS) {
+    const strength = majorLines[key]?.strength;
+    if (typeof strength === "string" && strength.trim()) lines[key] = strength;
+  }
+  const mountLevels: Record<string, string> = {};
+  for (const key of MOUNT_KEYS) {
+    const level = mounts[key]?.level;
+    if (typeof level === "string" && level.trim()) mountLevels[key] = level;
+  }
+  if (Object.keys(lines).length === 0 || Object.keys(mountLevels).length === 0) return null;
+  const career = report.careerWealth as Record<string, unknown> | undefined;
+  const turningPointAge = career && typeof career.turningPointAge === "string" ? career.turningPointAge : null;
+  const confidence = typeof report.confidenceScore === "number" ? report.confidenceScore : null;
+  return { confidenceScore: confidence, lines, mounts: mountLevels, turningPointAge };
+};
+
+const applyLockedMetrics = (reading: Record<string, unknown>, locked: LockedPalmMetrics) => {
+  const majorLines = reading.majorLines as Record<string, Record<string, unknown>> | undefined;
+  if (majorLines) {
+    for (const [key, strength] of Object.entries(locked.lines)) {
+      if (majorLines[key] && typeof majorLines[key] === "object") majorLines[key].strength = strength;
+    }
+  }
+  const mounts = reading.mounts as Record<string, Record<string, unknown>> | undefined;
+  if (mounts) {
+    for (const [key, level] of Object.entries(locked.mounts)) {
+      if (mounts[key] && typeof mounts[key] === "object") mounts[key].level = level;
+    }
+  }
+  const career = reading.careerWealth as Record<string, unknown> | undefined;
+  if (career && locked.turningPointAge) career.turningPointAge = locked.turningPointAge;
+  if (locked.confidenceScore !== null) reading.confidenceScore = locked.confidenceScore;
+  return reading;
+};
+
+/** Find this person's first reading so repeat readings show the same measurements. */
+const findLockedMetrics = async (
+  // deno-lint-ignore no-explicit-any
+  supabaseClient: any,
+  cleanName: string,
+  age: string,
+  readingType: string,
+  cleanEmail: string,
+): Promise<LockedPalmMetrics | null> => {
+  try {
+    let query = supabaseClient
+      .from("palm_reports")
+      .select("report_json, created_at")
+      .eq("reading_type", readingType)
+      .order("created_at", { ascending: true })
+      .limit(1);
+    query = cleanEmail
+      ? query.eq("user_email", cleanEmail).ilike("user_name", cleanName)
+      : query.ilike("user_name", cleanName).eq("user_age", age);
+    const { data } = await query;
+    if (!Array.isArray(data) || data.length === 0) return null;
+    return extractLockedMetrics(data[0].report_json);
+  } catch (e) {
+    console.error("findLockedMetrics failed (non-fatal):", e);
+    return null;
+  }
+};
+
+const buildLockedInstruction = (locked: LockedPalmMetrics | null) => {
+  if (!locked) return "";
+  const lines = Object.entries(locked.lines).map(([k, v]) => `${k}.strength = "${v}"`).join(", ");
+  const mounts = Object.entries(locked.mounts).map(([k, v]) => `${k}.level = "${v}"`).join(", ");
+  return `\n═══════════════════════════════════════\nFIXED MEASUREMENTS (MANDATORY)\n═══════════════════════════════════════\nThis person already has an established reading on record. You MUST return exactly these values and write the interpretation around them:\n- majorLines: ${lines}\n- mounts: ${mounts}\n${locked.turningPointAge ? `- careerWealth.turningPointAge = "${locked.turningPointAge}"\n` : ""}${locked.confidenceScore !== null ? `- confidenceScore = ${locked.confidenceScore}\n` : ""}Never change these values. The narrative wording may differ, the measurements may not.\n`;
+};
+
+
 const generatePalmReadingAttempt = async (
   imageUrl: string,
   name: string,
@@ -384,6 +476,7 @@ const generatePalmReadingAttempt = async (
   language: "english" | "hinglish",
   countryContext: string,
   isRetry = false,
+  locked: LockedPalmMetrics | null = null,
 ) => {
   console.log("Step 2: Generating palm reading...");
   const startedAt = Date.now();
@@ -399,7 +492,7 @@ const generatePalmReadingAttempt = async (
       messages: [
         {
           role: "system",
-          content: getReadingPrompt(name, age, readingType, language, countryContext),
+          content: getReadingPrompt(name, age, readingType, language, countryContext) + buildLockedInstruction(locked),
         },
         {
           role: "user",
@@ -474,16 +567,19 @@ const generatePalmReading = async (
   context: AiCaptureContext,
   language: "english" | "hinglish",
   countryContext: string,
+  locked: LockedPalmMetrics | null = null,
 ) => {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       const reading = await generatePalmReadingAttempt(
-        imageUrl, name, age, readingType, apiKey, context, language, countryContext, attempt > 0,
+        imageUrl, name, age, readingType, apiKey, context, language, countryContext, attempt > 0, locked,
       );
       if (language === "hinglish" && !isHinglishReading(reading)) {
         throw new Error("AI_LANGUAGE_MISMATCH");
       }
+      // Hard guarantee: stored measurements always win over a fresh AI guess.
+      if (locked) applyLockedMetrics(reading as Record<string, unknown>, locked);
       return reading;
     } catch (error) {
       lastError = error;
@@ -638,6 +734,12 @@ serve(async (req) => {
     }
 
     // STEP 2: Generate the palm reading
+    // Same person, same details → same measurements as their first reading.
+    const lockedMetrics = await findLockedMetrics(
+      supabase, cleanName, String(ageNum), safeReadingType, cleanEmail,
+    );
+    if (lockedMetrics) console.log("Reusing locked palm metrics for returning user");
+
     const generationStartedAt = Date.now();
     const palmReading = await generatePalmReading(
       imageUrl,
@@ -648,6 +750,7 @@ serve(async (req) => {
       aiCaptureContext,
       safeLanguage,
       countryContext,
+      lockedMetrics,
     );
     const generationMs = Date.now() - generationStartedAt;
     console.log(`Palm report generation completed in ${generationMs}ms`);

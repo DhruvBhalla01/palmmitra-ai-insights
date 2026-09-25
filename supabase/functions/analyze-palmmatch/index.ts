@@ -90,6 +90,106 @@ const isValidCompatibilityReading = (reading: unknown): reading is Record<string
     Array.isArray(value.remediesForPair) && typeof value.finalBlessing === "string";
 };
 
+// ── Score consistency ──
+// The same couple (same two names + relationship) must always see the same scores,
+// no matter how many times they re-upload. We look up their first reading and pin
+// every score to it, so the result feels trustworthy instead of random.
+export interface LockedScores {
+  overallScore: number;
+  compatibilityVerdict: string;
+  language: PalmMatchLanguage;
+  emotionalBond: number;
+  communication: number;
+  lifeGoals: number;
+  romance: number;
+  spiritualAlignment: number;
+}
+
+const DIMENSION_KEYS = ["emotionalBond", "communication", "lifeGoals", "romance", "spiritualAlignment"] as const;
+
+const normalizeName = (name: string) => name.replace(/\s+/g, " ").trim().toLowerCase();
+
+export const extractLockedScores = (row: {
+  overall_score?: number | null;
+  reading?: unknown;
+  language?: string | null;
+}): LockedScores | null => {
+  const reading = row?.reading as Record<string, unknown> | undefined;
+  if (!reading || typeof reading !== "object") return null;
+  const dim = (key: string): number | null => {
+    const value = (reading as Record<string, unknown>)[key] as Record<string, unknown> | undefined;
+    const score = value && typeof value === "object" ? value.score : undefined;
+    return typeof score === "number" && score >= 1 && score <= 100 ? Math.round(score) : null;
+  };
+  const overall = typeof reading.overallScore === "number"
+    ? Math.round(reading.overallScore)
+    : typeof row.overall_score === "number" ? row.overall_score : null;
+  const scores = DIMENSION_KEYS.map(dim);
+  if (overall === null || scores.some((s) => s === null)) return null;
+  return {
+    overallScore: overall,
+    compatibilityVerdict: typeof reading.compatibilityVerdict === "string" ? reading.compatibilityVerdict : "",
+    language: row.language === "hinglish" ? "hinglish" : "english",
+    emotionalBond: scores[0]!,
+    communication: scores[1]!,
+    lifeGoals: scores[2]!,
+    romance: scores[3]!,
+    spiritualAlignment: scores[4]!,
+  };
+};
+
+/** Apply the locked scores to a freshly generated reading so numbers never drift. */
+export const applyLockedScores = (
+  reading: Record<string, unknown>,
+  locked: LockedScores,
+  keepVerdict: boolean,
+): Record<string, unknown> => {
+  reading.overallScore = locked.overallScore;
+  if (keepVerdict && locked.compatibilityVerdict) {
+    reading.compatibilityVerdict = locked.compatibilityVerdict;
+  }
+  for (const key of DIMENSION_KEYS) {
+    const dimension = reading[key];
+    if (dimension && typeof dimension === "object") {
+      (dimension as Record<string, unknown>).score = locked[key];
+    }
+  }
+  return reading;
+};
+
+/** Find this couple's earliest reading (names in either order) and reuse its scores. */
+const findLockedScores = async (
+  // deno-lint-ignore no-explicit-any
+  supabaseClient: any,
+  p1: string,
+  p2: string,
+  relationshipType: string,
+): Promise<LockedScores | null> => {
+  try {
+    const a = normalizeName(p1);
+    const b = normalizeName(p2);
+    const lookup = async (first: string, second: string) => {
+      const { data } = await supabaseClient
+        .from("palmmatch_reports")
+        .select("overall_score, reading, language, created_at")
+        .eq("relationship_type", relationshipType)
+        .ilike("person1_name", first)
+        .ilike("person2_name", second)
+        .order("created_at", { ascending: true })
+        .limit(1);
+      return Array.isArray(data) && data.length > 0 ? data[0] : null;
+    };
+    const [direct, reversed] = await Promise.all([lookup(a, b), lookup(b, a)]);
+    const candidates = [direct, reversed].filter(Boolean) as Array<{ created_at?: string }>;
+    if (candidates.length === 0) return null;
+    candidates.sort((x, y) => String(x.created_at ?? "").localeCompare(String(y.created_at ?? "")));
+    return extractLockedScores(candidates[0] as Parameters<typeof extractLockedScores>[0]);
+  } catch (e) {
+    console.error("findLockedScores failed (non-fatal):", e);
+    return null;
+  }
+};
+
 const generateCompatibilityReadingAttempt = async (
   image1Url: string,
   image2Url: string,
@@ -100,8 +200,12 @@ const generateCompatibilityReadingAttempt = async (
   context: AiCaptureContext,
   language: PalmMatchLanguage,
   isRetry: boolean,
+  locked: LockedScores | null,
 ): Promise<Record<string, unknown>> => {
   const startedAt = Date.now();
+  const lockedInstruction = locked
+    ? `\nFIXED SCORES (MANDATORY): This pair already has an established reading. You MUST return exactly these values and build the narrative around them: overallScore = ${locked.overallScore}, emotionalBond.score = ${locked.emotionalBond}, communication.score = ${locked.communication}, lifeGoals.score = ${locked.lifeGoals}, romance.score = ${locked.romance}, spiritualAlignment.score = ${locked.spiritualAlignment}${locked.compatibilityVerdict ? `, compatibilityVerdict = "${locked.compatibilityVerdict}"` : ""}. Never invent different numbers.\n`
+    : "";
   const languageInstruction = language === "hinglish"
     ? "Write every customer-facing value in natural conversational Hinglish using Roman script only. Blend familiar Hindi and English naturally; never use Devanagari or formal Hindi. Keep JSON keys and person names unchanged."
     : "Write every customer-facing value in warm, precise, easy-to-read English. Keep JSON keys unchanged.";
@@ -117,6 +221,8 @@ const generateCompatibilityReadingAttempt = async (
           content: `You are PalmMitra AI — a trusted relationship palmist trained in Indian Hast Rekha Shastra. Compare only palm features that are genuinely visible in the two images.
 
 LANGUAGE: ${languageInstruction}
+${lockedInstruction}
+
 
 QUALITY AND CONVERSION RULES:
 - Start with the most personally resonant contrast or alignment between the two palms, then explain one useful relationship implication.
@@ -238,16 +344,20 @@ const generateCompatibilityReading = async (
   apiKey: string,
   context: AiCaptureContext,
   language: PalmMatchLanguage,
+  locked: LockedScores | null,
 ): Promise<Record<string, unknown>> => {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       const reading = await generateCompatibilityReadingAttempt(
-        image1Url, image2Url, person1, person2, relationshipType, apiKey, context, language, attempt > 0,
+        image1Url, image2Url, person1, person2, relationshipType, apiKey, context, language, attempt > 0, locked,
       );
       if (language === "hinglish" && !isHinglishCompatibilityReading(reading)) {
         throw new Error("AI_LANGUAGE_MISMATCH");
       }
+      // Hard guarantee: even if the model drifts, the stored scores win.
+      // The verdict is only reused in the same language as the original reading.
+      if (locked) applyLockedScores(reading, locked, language === locked.language);
       return reading;
     } catch (error) {
       lastError = error;
@@ -385,8 +495,14 @@ serve(async (req) => {
 
     console.log("Both palms validated. Generating compatibility reading...");
 
+    // Same couple, same scores — reuse their first reading's numbers if we have them.
+    const lockedScores = await findLockedScores(supabaseClient, cleanP1.name, cleanP2.name, relationshipType);
+    if (lockedScores) {
+      console.log("Reusing locked compatibility scores for returning couple:", lockedScores.overallScore);
+    }
+
     const reading = await generateCompatibilityReading(
-      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext, safeLanguage
+      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext, safeLanguage, lockedScores
     );
 
     const reportId = `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
