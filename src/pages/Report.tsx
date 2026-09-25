@@ -417,7 +417,7 @@ export default function Report() {
           {isShared && (
             <div className="mb-6 glass-premium rounded-2xl border border-accent/25 p-4 flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
               <p className="flex-1 text-sm text-foreground">
-                <span className="font-semibold">{userData?.name || 'Someone'}</span> shared a preview of their reading. Curious what your palm says?
+                <span className="font-semibold">{userData?.name || 'Someone'}</span> shared a preview of their reading. Get your own reading and you both receive a free PalmMitra AI question.
               </p>
               <Button
                 onClick={() => {
@@ -875,7 +875,7 @@ export default function Report() {
                     {userData?.name ? `${userData.name} shared their reading with you` : 'A reading was shared with you'}
                   </h2>
                   <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    Discover what your own palm reveals about your career, love and life path in under a minute.
+                    Discover what your own palm reveals about your career, love and life path in under a minute — and you both get a free PalmMitra AI question.
                   </p>
                   <Button
                     onClick={() => {
