@@ -88,8 +88,6 @@ export const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
   'image/png',
   'image/webp',
-  'image/heic',
-  'image/heif',
 ] as const;
 
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB
@@ -109,7 +107,7 @@ export function validateImageFile(file: File): ImageValidationResult {
     return {
       ok: false,
       reason: 'Unsupported file type.',
-      suggestion: 'Please upload a JPG, PNG, WEBP or HEIC image.',
+      suggestion: "iPhone HEIC photos aren't supported — please upload a JPG, PNG or WEBP (or take the photo with the camera button).",
     };
   }
   if (file.size < MIN_IMAGE_BYTES) {

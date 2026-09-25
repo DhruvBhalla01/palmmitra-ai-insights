@@ -36,6 +36,9 @@ const throwOpenAIError = (status: number, errorText: string): never => {
   ) {
     throw new Error("AI_CREDITS_EXHAUSTED");
   }
+  if (status === 400 && (normalized.includes("invalid_image_format") || normalized.includes("unsupported image"))) {
+    throw new Error("AI_UNSUPPORTED_IMAGE");
+  }
   if (status === 429) throw new Error("AI_RATE_LIMITED");
   if (status >= 500) throw new Error("AI_TEMPORARILY_UNAVAILABLE");
   throw new Error("AI_REQUEST_FAILED");
@@ -706,6 +709,12 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "The reading engine is briefly busy. Please try again in a minute.", code: "AI_RATE_LIMITED" }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
+      );
+    }
+    if (msg === "AI_UNSUPPORTED_IMAGE") {
+      return new Response(
+        JSON.stringify({ error: "This photo format isn't supported. Please upload a JPG or PNG photo of your palm.", code: "AI_UNSUPPORTED_IMAGE" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
     if (msg === "AI_TEMPORARILY_UNAVAILABLE") {
