@@ -561,7 +561,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { imageUrl, name, age, email, readingType, language, countryCode, countryName } = body ?? {} as PalmAnalysisRequest;
+    const { imageUrl, name, age, email, readingType, language, countryCode, countryName, ref } = body ?? {} as PalmAnalysisRequest & { ref?: string };
 
     // ── Server-side input validation (never trust the client) ──
     if (typeof imageUrl !== "string" || typeof name !== "string" || typeof age !== "string") {
