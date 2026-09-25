@@ -31,6 +31,7 @@ import { FinalBlessing } from '@/components/report/FinalBlessing';
 import { ActionButtons } from '@/components/report/ActionButtons';
 import { ReviewPrompt } from '@/components/report/ReviewPrompt';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
+import { UnlockTeaserCard } from '@/components/report/UnlockTeaserCard';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
 import { AskPalmMitraInline } from '@/components/report/AskPalmMitraInline';
@@ -266,13 +267,14 @@ export default function Report() {
     return () => observer.disconnect();
   }, []);
 
-  const handleUnlockClick = () => {
+  const handleUnlockClick = (placementArg?: unknown) => {
+    const placement = typeof placementArg === 'string' ? placementArg : 'unknown';
     if (isShared) {
       analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null });
       navigate('/upload');
       return;
     }
-    analytics.track('unlock_report_clicked', { report_id: resolvedReportId ?? null });
+    analytics.track('unlock_report_clicked', { report_id: resolvedReportId ?? null, placement });
     analytics.track('pricing_cta_clicked', { element_id: 'unlock_report', plan_id: 'insight' });
     recordInteraction('cta_clicked', 'unlock_report');
     if (!userEmail) {
@@ -365,7 +367,7 @@ export default function Report() {
 
       <StickyUnlockCTA
         userName={userData?.name}
-        onUnlockClick={handleUnlockClick}
+        onUnlockClick={() => handleUnlockClick('sticky_bar')}
         isUnlocked={isUnlocked || isShared}
       />
 
@@ -484,6 +486,14 @@ export default function Report() {
                   headlineSummary={reading.headlineSummary}
                   palmImage={userData?.imageUrl || userData?.palmImage}
                 />
+                {!isUnlocked && !isShared && (
+                  <UnlockTeaserCard
+                    clue={reading.premiumInsights?.careerBreakthrough || reading.premiumInsights?.marriageTiming}
+                    userName={userData?.name}
+                    hinglish={userData?.language === 'hinglish'}
+                    onUnlockClick={() => handleUnlockClick('top_teaser')}
+                  />
+                )}
               </div>
 
               {/* 2. Major Lines - Life Line visible, others locked */}
@@ -877,7 +887,7 @@ export default function Report() {
                 <PremiumPaywall 
                   premiumInsights={reading.premiumInsights} 
                   userName={userData?.name}
-                  onUnlockClick={handleUnlockClick}
+                  onUnlockClick={() => handleUnlockClick('bottom_paywall')}
                 />
               )}
 

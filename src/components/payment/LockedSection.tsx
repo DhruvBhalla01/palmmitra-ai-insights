@@ -11,7 +11,7 @@ interface LockedSectionProps {
   isUnlocked: boolean;
   sectionName: string;
   children?: ReactNode;
-  onUnlockClick: () => void;
+  onUnlockClick: (placement?: string) => void;
   previewContent?: ReactNode;
   sectionKey?: SectionKey;
   userName?: string;
@@ -157,7 +157,7 @@ export function LockedSection({
           </p>
 
           <Button
-            onClick={onUnlockClick}
+            onClick={() => onUnlockClick(`section_${sectionKey ?? 'generic'}`)}
             className="btn-gold rounded-xl w-full sm:w-auto max-w-xs px-6 sm:px-7 py-3.5 gap-2 font-semibold text-sm sm:text-base whitespace-normal h-auto min-h-[48px]"
           >
             Reveal {sectionName}
@@ -165,7 +165,7 @@ export function LockedSection({
           </Button>
 
           <p className="text-[11px] sm:text-xs text-muted-foreground/60 mt-3 text-center text-balance">
-            One-time {insightPrice} · Unlocks entire report · PDF included
+            One-time {insightPrice} · Entire report + PDF · 3 free AI questions
           </p>
         </m.div>
       </div>

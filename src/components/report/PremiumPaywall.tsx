@@ -240,7 +240,7 @@ export function PremiumPaywall({ premiumInsights, userName, onUnlockClick }: Pre
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    One-time payment · No subscription · Instant access · PDF included
+                    One-time payment · Instant access · PDF + 3 free PalmMitra AI questions
                   </p>
                 </div>
               </div>
