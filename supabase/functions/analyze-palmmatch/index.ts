@@ -97,6 +97,7 @@ const isValidCompatibilityReading = (reading: unknown): reading is Record<string
 export interface LockedScores {
   overallScore: number;
   compatibilityVerdict: string;
+  language: PalmMatchLanguage;
   emotionalBond: number;
   communication: number;
   lifeGoals: number;
