@@ -334,7 +334,7 @@ export default function PalmMatch() {
   // Background upload
   const uploadInBackground = useCallback(
     async (
-      file: File,
+      original: File,
       slot: 'person1' | 'person2',
       setUrl: (u: string) => void,
       setStatus: (s: UploadStatus) => void,
@@ -342,9 +342,11 @@ export default function PalmMatch() {
       setStatus('uploading');
       uploadStateRef.current[slot] = { url: null, status: 'uploading' };
       analytics.track('palm_image_upload_started', {
-        reading_type: 'palmmatch', slot, file_size_kb: Math.round(file.size / 1024),
+        reading_type: 'palmmatch', slot, file_size_kb: Math.round(original.size / 1024),
       });
       try {
+        // Downscale big camera photos first so mobile uploads don't time out.
+        const file = await compressImage(original);
         const extensionByType: Record<string, string> = {
           'image/jpeg': 'jpg',
           'image/png': 'png',
@@ -353,9 +355,17 @@ export default function PalmMatch() {
         const ext = extensionByType[file.type] ?? 'jpg';
         const path = `palmmatch/${crypto.randomUUID()}_${slot}.${ext}`;
         const supabase = await getSupabase();
-        const { error } = await supabase.storage
-          .from('palm-uploads')
-          .upload(path, file, { cacheControl: '3600', contentType: file.type, upsert: false });
+        // Mobile connections drop mid-upload; retry transient failures.
+        let error: { message?: string } | null = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const res = await supabase.storage
+            .from('palm-uploads')
+            .upload(path, file, { cacheControl: '3600', contentType: file.type, upsert: true });
+          error = res.error;
+          if (!error) break;
+          if (!/fetch|network|timeout|load failed/i.test(String(error.message || ''))) break;
+          await new Promise((r) => setTimeout(r, 1200 * (attempt + 1)));
+        }
         if (error) throw error;
         const { data } = supabase.storage.from('palm-uploads').getPublicUrl(path);
         uploadStateRef.current[slot] = { url: data.publicUrl, status: 'ready' };
