@@ -3,7 +3,7 @@ import { SmartLink } from '@/components/SmartLink';
 import { Button } from '@/components/ui/button';
 import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
-import { trackEvent } from '@/lib/analytics';
+import { analytics } from '@/lib/analytics';
 
 interface Props {
   hinglish?: boolean;
@@ -34,7 +34,7 @@ export function PalmMatchCrossSell({ hinglish }: Props) {
       </div>
       <SmartLink
         to="/palmmatch"
-        onClick={() => trackEvent('cta_clicked', { cta: 'palmmatch_cross_sell', location: 'report_unlocked' })}
+        onClick={() => analytics.track('cta_clicked', { cta: 'palmmatch_cross_sell', location: 'report_unlocked' })}
         className="w-full sm:w-auto flex-shrink-0"
       >
         <Button className="btn-gold rounded-xl min-h-12 px-6 gap-2 font-semibold w-full">
