@@ -57,16 +57,19 @@ Deno.serve(async (req) => {
 
     const reportIds = [...new Set(candidates.map((c) => c.report_id).filter(Boolean))] as string[];
     const matchIds = [...new Set(candidates.map((c) => c.palmmatch_report_id).filter(Boolean))] as string[];
-    const paymentIds = candidates.map((c) => c.id);
+    const emails = [...new Set(candidates.map((c) => c.user_email.toLowerCase()))];
     const [{ data: paidReports }, { data: paidMatches }, { data: already }, { data: reports }, { data: matches }] = await Promise.all([
       reportIds.length
-        ? admin.from('payments').select('report_id,plan_type').eq('status', 'success').in('report_id', reportIds)
-        : Promise.resolve({ data: [] as { report_id: string; plan_type: string }[] }),
+        ? admin.from('payments').select('report_id').eq('status', 'success').in('report_id', reportIds)
+        : Promise.resolve({ data: [] as { report_id: string }[] }),
       matchIds.length
-        ? admin.from('payments').select('palmmatch_report_id,plan_type').eq('status', 'success').in('palmmatch_report_id', matchIds)
-        : Promise.resolve({ data: [] as { palmmatch_report_id: string; plan_type: string }[] }),
-      // Prior reminders for the same checkouts, matched through their payment rows.
-      admin.from('checkout_reminders').select('payment_id,user_email,status').in('payment_id', paymentIds),
+        ? admin.from('payments').select('palmmatch_report_id').eq('status', 'success').in('palmmatch_report_id', matchIds)
+        : Promise.resolve({ data: [] as { palmmatch_report_id: string }[] }),
+      // Prior reminders for these customers — matched per reading, not per checkout
+      // attempt, so a second attempt on the same reading never re-sends.
+      admin.from('checkout_reminders')
+        .select('payment_id,user_email,report_id,palmmatch_report_id,status')
+        .in('user_email', emails),
       reportIds.length
         ? admin.from('palm_reports').select('id,user_name').in('id', reportIds)
         : Promise.resolve({ data: [] as { id: string; user_name: string }[] }),
@@ -74,11 +77,17 @@ Deno.serve(async (req) => {
         ? admin.from('palmmatch_reports').select('report_id,person1_name,person2_name').in('report_id', matchIds)
         : Promise.resolve({ data: [] as { report_id: string; person1_name: string; person2_name: string }[] }),
     ]);
-    const paidSet = new Set([
-      ...(paidReports ?? []).map((p) => `${p.report_id}|${p.plan_type}`),
-      ...(paidMatches ?? []).map((p) => `${p.palmmatch_report_id}|${p.plan_type}`),
+    // Any successful payment on a reading counts — someone who abandoned the
+    // ₹99 unlock and then bought a higher plan must never be reminded.
+    const paidSet = new Set<string>([
+      ...(paidReports ?? []).map((p) => String(p.report_id)),
+      ...(paidMatches ?? []).map((p) => String(p.palmmatch_report_id)),
     ]);
-    const doneSet = new Set((already ?? []).filter((r) => r.status !== 'failed').map((r) => r.payment_id));
+    const keyOf = (email: string, ref: string) => `${email.toLowerCase()}|${ref}`;
+    const doneSet = new Set(
+      (already ?? []).filter((r) => r.status !== 'failed')
+        .map((r) => keyOf(r.user_email, String(r.report_id ?? r.palmmatch_report_id ?? ''))),
+    );
     const failedIds = new Set((already ?? []).filter((r) => r.status === 'failed').map((r) => r.payment_id));
     const names = new Map<string, string>([
       ...(reports ?? []).map((r) => [r.id, r.user_name] as [string, string]),
@@ -90,17 +99,20 @@ Deno.serve(async (req) => {
       const email = p.user_email.toLowerCase();
       const ref = refOf(p)!;
       const isMatch = !p.report_id;
-      if (paidSet.has(`${ref}|${p.plan_type}`) || doneSet.has(p.id)) { skipped++; continue; }
+      if (paidSet.has(ref) || doneSet.has(keyOf(email, ref))) { skipped++; continue; }
       // Failed attempts (e.g. before the domain was verified) are retried.
       if (failedIds.has(p.id)) {
         await admin.from('checkout_reminders').delete().eq('payment_id', p.id).eq('status', 'failed');
       }
       // Claim first so concurrent runs can't double-send (unique payment_id).
       const { error: claimErr } = await admin.from('checkout_reminders').insert({
-        payment_id: p.id, user_email: email, report_id: p.report_id, plan_type: p.plan_type,
+        payment_id: p.id, user_email: email, report_id: p.report_id,
+        palmmatch_report_id: p.palmmatch_report_id, plan_type: p.plan_type,
         amount: p.amount, currency: p.currency, status: 'sending',
       });
       if (claimErr) { skipped++; continue; }
+      // Mark this reading as handled for the rest of this run.
+      doneSet.add(keyOf(email, ref));
       const label = String(names.get(ref) ?? '').trim();
       const first = (isMatch ? label : label.split(/\s+/)[0] ?? '').slice(0, 60) || undefined;
       const path = isMatch ? 'palmmatch-report' : 'report';
