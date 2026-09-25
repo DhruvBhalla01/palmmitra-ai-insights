@@ -675,6 +675,32 @@ serve(async (req) => {
       console.error("Database error:", dbError);
     }
 
+    // Referral reward: if this reading came via a shared report link (?ref=<sharerReportId>),
+    // grant 1 free AI question to both the sharer's report and this new report — once per new report.
+    // Never let a referral failure break the analysis response.
+    try {
+      const newReportId = reportData?.id;
+      const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (newReportId && typeof ref === "string" && uuidRe.test(ref) && ref !== newReportId) {
+        const { data: sharer } = await supabase
+          .from("palm_reports").select("id").eq("id", ref).maybeSingle();
+        if (sharer?.id) {
+          const { data: reward, error: rewardError } = await supabase
+            .from("referral_rewards")
+            .insert({ sharer_report_id: sharer.id, new_report_id: newReportId })
+            .select("id")
+            .single();
+          if (reward && !rewardError) {
+            await supabase.rpc("grant_free_questions_by_report", { _report_id: sharer.id, _n: 1 });
+            await supabase.rpc("grant_free_questions_by_report", { _report_id: newReportId, _n: 1 });
+            console.log(`Referral reward granted: sharer=${sharer.id} new=${newReportId}`);
+          }
+        }
+      }
+    } catch (referralError) {
+      console.error("Referral reward failed (non-fatal):", referralError);
+    }
+
     console.log(`Palm analysis completed in ${Date.now() - requestStartedAt}ms`);
     return new Response(
       JSON.stringify({
