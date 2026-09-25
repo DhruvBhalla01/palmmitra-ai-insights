@@ -90,26 +90,26 @@ export function StickyUnlockCTA({
             </button>
 
             <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 max-w-[42%] min-w-0">
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-serif text-xl font-bold text-gradient-gold leading-none">{price}</span>
                   <span className="text-[11px] text-muted-foreground line-through">{listPrice}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
-                  <Shield className="w-2.5 h-2.5 text-accent" aria-hidden="true" />
-                  {subLabel ?? 'One-time · instant'}
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 min-w-0">
+                  <Shield className="w-2.5 h-2.5 text-accent flex-shrink-0" aria-hidden="true" />
+                  <span className="truncate">{subLabel ?? 'One-time · instant'}</span>
                 </p>
               </div>
 
-              <m.div whileTap={{ scale: 0.97 }} className="flex-1">
+              <m.div whileTap={{ scale: 0.97 }} className="flex-1 min-w-0">
                 <Button
                   onClick={onUnlockClick}
-                  className="btn-gold w-full font-bold h-12 rounded-xl flex items-center justify-center gap-1.5 text-sm shadow-gold"
+                  className="btn-gold w-full font-bold h-12 rounded-xl flex items-center justify-center gap-1.5 text-sm shadow-gold px-3"
                   aria-label={`Unlock full report for ${price}`}
                 >
-                  <Sparkles className="w-4 h-4" aria-hidden="true" />
-                  {ctaLabel ?? `Reveal ${userName ? `${userName.split(' ')[0]}'s` : 'My'} Report`}
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  <Sparkles className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                  <span className="truncate">{ctaLabel ?? `Reveal ${userName ? `${userName.split(' ')[0]}'s` : 'My'} Report`}</span>
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </Button>
               </m.div>
             </div>

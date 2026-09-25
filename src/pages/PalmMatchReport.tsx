@@ -83,6 +83,12 @@ export default function PalmMatchReport() {
   const [email, setEmail] = useState('');
   const [language, setLanguage] = useState<PalmMatchLanguage>('english');
   const [shared, setShared] = useState<SharedPreview | null>(null);
+  const [ringSize, setRingSize] = useState(() => (typeof window === 'undefined' ? 280 : Math.min(280, window.innerWidth - 96)));
+  useEffect(() => {
+    const onResize = () => setRingSize(Math.min(280, window.innerWidth - 96));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -178,7 +184,7 @@ export default function PalmMatchReport() {
   if (shared) {
     const hi = shared.language === 'hinglish';
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background overflow-x-hidden">
         <SEO
           title="A PalmMatch Compatibility Reading"
           description="See a PalmMatch compatibility preview and get your own couple palm reading."
@@ -272,7 +278,7 @@ export default function PalmMatchReport() {
   const dimensionTeasers = isHinglish ? HINGLISH_DIMENSION_TEASERS : DIMENSION_TEASERS;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <SEO
         title="Your PalmMatch Compatibility Report"
         description="Your private PalmMatch relationship compatibility report."
@@ -286,7 +292,7 @@ export default function PalmMatchReport() {
           userName={`${person1Name} & ${person2Name}`}
           onUnlockClick={handleUnlockClick}
           isUnlocked={isUnlocked}
-          ctaLabel={isHinglish ? 'Complete Compatibility Unlock Karein' : 'Unlock Full Compatibility Report'}
+          ctaLabel={isHinglish ? 'Unlock Karein' : 'Unlock Now'}
           subLabel={isHinglish ? `${person1Name} & ${person2Name} ke liye · Ek baar payment` : `For ${person1Name} & ${person2Name} · One-time`}
           priceOverride={matchPrice.display}
           listPriceOverride={formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency)}
@@ -300,11 +306,11 @@ export default function PalmMatchReport() {
         <section className="bg-gradient-mystic px-4 pt-14 pb-28 relative overflow-hidden min-h-[80vh] flex flex-col justify-center">
 
           {/* Ambient glow blobs */}
-          <div className="absolute top-0 right-0 w-[520px] h-[520px] rounded-full pointer-events-none"
+          <div className="absolute top-0 right-0 w-[300px] h-[300px] sm:w-[520px] sm:h-[520px] rounded-full pointer-events-none"
                style={{ background: 'radial-gradient(circle, hsl(42 87% 55% / 0.08), transparent)', filter: 'blur(90px)' }} />
-          <div className="absolute bottom-0 left-0 w-[620px] h-[620px] rounded-full pointer-events-none"
+          <div className="absolute bottom-0 left-0 w-[340px] h-[340px] sm:w-[620px] sm:h-[620px] rounded-full pointer-events-none"
                style={{ background: 'radial-gradient(circle, hsl(270 60% 55% / 0.07), transparent)', filter: 'blur(110px)' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full pointer-events-none"
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] sm:w-[400px] sm:h-[400px] rounded-full pointer-events-none"
                style={{ background: 'radial-gradient(circle, hsl(245 58% 45% / 0.055), transparent)', filter: 'blur(70px)' }} />
 
           {/* SVG Constellation starfield */}
@@ -335,7 +341,7 @@ export default function PalmMatchReport() {
           {/* Sacred geometry watermarks */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
             {/* Large OM */}
-            <span className="absolute text-[22rem] md:text-[30rem] text-accent/[0.028] font-serif leading-none">ॐ</span>
+            <span className="absolute text-[12rem] sm:text-[22rem] md:text-[30rem] text-accent/[0.028] font-serif leading-none">ॐ</span>
             {/* Rotating Sri Yantra hexagram */}
             <m.svg
               className="absolute w-[420px] h-[420px] opacity-[0.038]"
@@ -360,7 +366,7 @@ export default function PalmMatchReport() {
             </m.svg>
           </div>
 
-          <div className="relative z-10 max-w-xl mx-auto text-center">
+          <div className="relative z-10 w-full max-w-xl mx-auto text-center min-w-0">
             {/* Live activity pill */}
             <m.div
               initial={{ opacity: 0, y: -10 }}
@@ -394,7 +400,7 @@ export default function PalmMatchReport() {
                 className="h-px flex-shrink-0"
                 style={{ background: 'linear-gradient(90deg, transparent, hsl(42 87% 55% / 0.65))' }}
               />
-              <p className="text-sm tracking-[0.22em] text-accent italic font-medium whitespace-nowrap">
+              <p className="text-xs sm:text-sm tracking-[0.12em] sm:tracking-[0.22em] text-accent italic font-medium sm:whitespace-nowrap min-w-0">
                 ॐ Yugal Rekha · Compatibility Reading
               </p>
               <m.div
@@ -456,7 +462,7 @@ export default function PalmMatchReport() {
                 <CompatibilityScoreRing
                   score={overallScore}
                   verdict={compatibilityVerdict}
-                  size={280}
+                  size={ringSize}
                 />
               </div>
             </m.div>
@@ -506,7 +512,7 @@ export default function PalmMatchReport() {
             >
               {/* Large decorative opening quote */}
               <div
-                className="absolute top-1 left-5 text-9xl font-serif leading-none pointer-events-none select-none"
+                className="absolute top-1 left-5 text-7xl sm:text-9xl font-serif leading-none pointer-events-none select-none"
                 style={{ color: 'hsl(42 87% 55% / 0.07)', lineHeight: 1 }}
               >
                 ❝
@@ -942,7 +948,7 @@ export default function PalmMatchReport() {
                 <m.span
                   animate={{ scale: [1, 1.04, 1], opacity: [0.06, 0.11, 0.06] }}
                   transition={{ repeat: Infinity, duration: 8, ease: 'easeInOut' }}
-                  className="text-[14rem] md:text-[18rem] text-accent font-serif leading-none"
+                  className="text-[9rem] sm:text-[14rem] md:text-[18rem] text-accent font-serif leading-none"
                 >
                   ॐ
                 </m.span>
