@@ -311,6 +311,18 @@ export default function Report() {
     initiatePayment(plan);
   };
 
+  // Assisted retry when a checkout is dismissed or fails (usually a UPI hand-off)
+  useEffect(() => {
+    const onRecovery = (event: Event) => {
+      const detail = (event as CustomEvent).detail as
+        | { reason: RecoveryReason; plan: 'report99' | 'monthly299' | 'unlimited999' }
+        | undefined;
+      if (detail) setRecovery(detail);
+    };
+    window.addEventListener('paymentRecovery', onRecovery);
+    return () => window.removeEventListener('paymentRecovery', onRecovery);
+  }, []);
+
   // Loading State with Destiny Reveal
   if (loading) {
     return (
