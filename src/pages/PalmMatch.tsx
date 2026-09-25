@@ -333,6 +333,20 @@ export default function PalmMatch() {
   }, []);
 
   // Background upload
+  const pollForPalmMatch = async (mail: string, p1: string, p2: string): Promise<string | null> => {
+    const supabase = await getSupabase();
+    for (let attempt = 0; attempt < 20; attempt++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const { data } = await supabase.functions.invoke('get-palmmatch-status', {
+          body: { lookup_recent: true, email: mail, person1_name: p1, person2_name: p2 },
+        });
+        if (data?.found && data.report_id) return data.report_id as string;
+      } catch { /* keep polling */ }
+    }
+    return null;
+  };
+
   const uploadInBackground = useCallback(
     async (
       original: File,
