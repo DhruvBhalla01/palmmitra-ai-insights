@@ -26,6 +26,8 @@ const Help = lazy(() => import("./pages/Help"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Admin = lazy(() => import("./pages/Admin"));
+const Guides = lazy(() => import("./pages/Guides"));
+const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 
 const queryClient = new QueryClient();
 
