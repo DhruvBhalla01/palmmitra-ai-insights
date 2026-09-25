@@ -93,10 +93,7 @@ export function useReportUnlock(
     checkUnlockStatus();
   }, [checkUnlockStatus]);
 
-  const retryRef = useRef<(() => void) | null>(null);
-  const retryAction = () => createElement(ToastAction, { altText: 'Try payment again', onClick: () => retryRef.current?.() }, 'Try again') as unknown as ToastActionElement;
   const initiatePayment = useCallback(async (plan: PlanType) => {
-    retryRef.current = () => { void initiatePaymentRef.current?.(plan); };
     if (!userEmail) {
       toast({
         title: 'Email Required',
