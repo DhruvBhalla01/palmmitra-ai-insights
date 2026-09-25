@@ -21,7 +21,7 @@ import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
 import { PalmMatchReading, type PalmMatchLanguage } from '@/components/palmmatch/types';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, recordInteraction } from '@/lib/analytics';
-import { PRODUCTS, formatCurrency } from '@/config/pricing';
+import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
 import { SEO } from '@/components/SEO';
 
@@ -295,7 +295,7 @@ export default function PalmMatchReport() {
           ctaLabel={isHinglish ? 'Unlock Karein' : 'Unlock Now'}
           subLabel={isHinglish ? `${person1Name} & ${person2Name} ke liye · Ek baar payment` : `For ${person1Name} & ${person2Name} · One-time`}
           priceOverride={matchPrice.display}
-          listPriceOverride={formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency)}
+          listPriceOverride={PRODUCTS.palmmatch.listPrices[currency]}
           socialProof="92 couples unlocked this week · launch price"
         />
       )}
@@ -605,7 +605,7 @@ export default function PalmMatchReport() {
                 </span>
               </div>
 
-              <div className="glass-premium p-8 md:p-12">
+              <div className="glass-premium p-8 pb-24 md:p-12">
                 <div className="flex items-start gap-4 mb-5">
                   {/* Icon with glow backdrop */}
                   <div className="relative flex-shrink-0">

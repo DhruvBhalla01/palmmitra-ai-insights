@@ -49,6 +49,8 @@ export interface ProductPricing {
   tagline: string;
   /** Pricing per currency */
   prices: Record<Currency, PriceAmount>;
+  /** Crossed-out "list" price per currency (marketing anchor, display only) */
+  listPrices: Record<Currency, string>;
   /** Tier positioning */
   tier: 'standard' | 'hero' | 'flagship';
 }
@@ -73,6 +75,10 @@ export const PRODUCTS = {
       AUD: { minor:  1500, major: 15,   display: 'A$15'   },
       SGD: { minor:  1400, major: 14,   display: 'S$14'   },
     },
+    listPrices: {
+      INR: '₹499', USD: '$14.99', GBP: '£11.99', AED: 'AED 59',
+      CAD: 'CA$19', AUD: 'A$22', SGD: 'S$19',
+    },
   },
   palmmatch: {
     id: 'palmmatch',
@@ -89,6 +95,10 @@ export const PRODUCTS = {
       AUD: { minor:  3900, major: 39,    display: 'A$39'   },
       SGD: { minor:  3400, major: 34,    display: 'S$34'   },
     },
+    listPrices: {
+      INR: '₹1,999', USD: '$39.99', GBP: '£29.99', AED: 'AED 149',
+      CAD: 'CA$54', AUD: 'A$59', SGD: 'S$54',
+    },
   },
   elite: {
     id: 'elite',
@@ -104,6 +114,10 @@ export const PRODUCTS = {
       CAD: { minor:  19900, major: 199,  display: 'CA$199' },
       AUD: { minor:  21900, major: 219,  display: 'A$219' },
       SGD: { minor:  19900, major: 199,  display: 'S$199' },
+    },
+    listPrices: {
+      INR: '₹9,999', USD: '$299', GBP: '£239', AED: 'AED 1,099',
+      CAD: 'CA$399', AUD: 'A$439', SGD: 'S$399',
     },
   },
 } as const satisfies Record<string, ProductPricing>;
