@@ -27,9 +27,12 @@ export function useAuth() {
     loading,
     async signInWithOtp(email: string, returnTo?: string) {
       if (returnTo) localStorage.setItem('ai_return_to', returnTo);
+      // Carry the destination in the link itself so it works even when the
+      // email opens in a different browser (e.g. Gmail's in-app browser).
+      const next = returnTo ? `?next=${encodeURIComponent(returnTo)}` : '';
       return supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback${next}` },
       });
     },
     async signOut() {
