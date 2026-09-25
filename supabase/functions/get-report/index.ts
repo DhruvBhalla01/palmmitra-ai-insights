@@ -15,7 +15,42 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id, user_email } = await req.json().catch(() => ({}));
+    const { report_id, user_email, lookup_image_url } = await req.json().catch(() => ({}));
+
+    // Recovery lookup: a mobile connection can drop while analyze-palm is still running
+    // on the server. The reading usually completes anyway, so the client asks here whether
+    // a report already exists for this email + uploaded photo.
+    if (!report_id && typeof lookup_image_url === 'string' && lookup_image_url.length > 0) {
+      const lookupEmail =
+        typeof user_email === 'string' && emailRegex.test(user_email.trim().toLowerCase())
+          ? user_email.trim().toLowerCase()
+          : null;
+      if (!lookupEmail) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Invalid email' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      const admin = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+      const since = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const { data: match } = await admin
+        .from('palm_reports')
+        .select('id, created_at')
+        .eq('user_email', lookupEmail)
+        .eq('image_url', lookup_image_url)
+        .gte('created_at', since)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      return new Response(
+        JSON.stringify({ success: true, found: Boolean(match), report_id: match?.id ?? null }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     if (!report_id || typeof report_id !== 'string' || !uuidRegex.test(report_id)) {
       return new Response(

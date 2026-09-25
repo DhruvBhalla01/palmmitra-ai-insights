@@ -26,6 +26,7 @@ import posthog from '@/lib/posthog';
 import { useCurrency } from '@/hooks/useCurrency';
 import { PRODUCTS, formatCurrency } from '@/config/pricing';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { compressImage } from '@/lib/imageCompression';
 
 type ReadingType = 'full';
 type ProcessingStep = 'idle' | 'uploading' | 'validating' | 'analyzing' | 'saving' | 'complete' | 'error';
@@ -74,6 +75,28 @@ const progressSteps = [
   { n: 3, label: 'Get Reading'  },
 ];
 
+/** True when the request never reached (or never returned from) the server. */
+const isConnectionDrop = (message: string) =>
+  /failed to send a request|failed to fetch|network|load failed|aborted|timeout/i.test(message || '');
+
+/**
+ * The reading usually finishes server-side even when the phone's connection drops.
+ * Poll for up to ~60s to see whether the report landed before showing an error.
+ */
+const pollForReport = async (imageUrl: string, email: string): Promise<string | null> => {
+  const supabase = await getSupabase();
+  for (let attempt = 0; attempt < 20; attempt++) {
+    await new Promise((r) => setTimeout(r, 3000));
+    try {
+      const { data } = await supabase.functions.invoke('get-report', {
+        body: { lookup_image_url: imageUrl, user_email: email },
+      });
+      if (data?.found && data.report_id) return data.report_id as string;
+    } catch { /* keep polling */ }
+  }
+  return null;
+};
+
 export default function UploadPalm() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -96,6 +119,7 @@ export default function UploadPalm() {
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'age' | 'email', string>>>({});
   const formAnalytics = useFormAnalytics('palm_upload');
+  const [connectionLost, setConnectionLost] = useState(false);
 
   useEffect(() => {
     analytics.track('palm_reading_started', { entry_page: '/upload' });
@@ -177,8 +201,10 @@ export default function UploadPalm() {
       reader.onload = (event) => setImage(event.target?.result as string);
       reader.readAsDataURL(file);
     }
-    // Kick off storage upload in background so it's ready by the time user submits
-    const uploadPromise = uploadToStorage(file)
+    // Kick off storage upload in background so it's ready by the time user submits.
+    // Large camera photos are downscaled first so mobile networks don't time out.
+    const uploadPromise = compressImage(file)
+      .then((prepared) => uploadToStorage(prepared))
       .then((url) => {
         const uploadProperties = { file_size_kb: Math.round(file.size / 1024) };
         analytics.track('palm_image_uploaded', uploadProperties);
@@ -249,9 +275,10 @@ export default function UploadPalm() {
     return publicUrl;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (submittingRef.current || isLoading) return;
+    setConnectionLost(false);
     if (!imageFile) {
       toast({ title: 'Photo required', description: 'Please upload your palm photo first.', variant: 'destructive' });
       return;
@@ -292,9 +319,11 @@ export default function UploadPalm() {
       setLoadingMessageIdx((prev) => prev + 1);
     }, 2200);
 
+    let uploadedImageUrl: string | null = null;
     try {
       setProcessingStep('uploading');
-      const imageUrl = await (uploadPromiseRef.current ?? uploadToStorage(imageFile));
+      const imageUrl = await (uploadPromiseRef.current ?? compressImage(imageFile).then(uploadToStorage));
+      uploadedImageUrl = imageUrl;
 
       setProcessingStep('validating');
       setProcessingStep('analyzing');
@@ -318,6 +347,24 @@ export default function UploadPalm() {
             const payload = await context.clone().json();
             if (typeof payload?.error === 'string') message = payload.error;
           } catch { /* retain the transport error */ }
+        }
+        // A dropped mobile connection often still leaves a finished reading on the
+        // server. Wait for it before telling the user anything went wrong.
+        if (isConnectionDrop(message)) {
+          setProcessingStep('analyzing');
+          const recoveredId = await pollForReport(imageUrl, cleanEmail);
+          if (recoveredId) {
+            try { localStorage.setItem('palmMitraEmail', cleanEmail); } catch { /* ignore */ }
+            clearInterval(msgInterval);
+            setProcessingStep('complete');
+            analytics.track('palm_analysis_completed', {
+              latency_ms: Date.now() - analysisStartedAt,
+              reading_type: formData.readingType,
+              has_report_id: true,
+            });
+            navigate(`/report/${recoveredId}`);
+            return;
+          }
         }
         throw new Error(message);
       }
@@ -408,7 +455,12 @@ export default function UploadPalm() {
       });
       trackApiError('analyze-palm', err);
       formAnalytics.failure('analysis_failed');
-      toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
+      if (isConnectionDrop(msg) && uploadedImageUrl) {
+        // Keep the photo and the details; offer a one-tap reconnect instead of a dead end.
+        setConnectionLost(true);
+      } else {
+        toast({ title: 'Reading failed', description: friendly, variant: 'destructive' });
+      }
     } finally {
       submittingRef.current = false;
     }
@@ -772,6 +824,39 @@ export default function UploadPalm() {
                             </ul>
                             <Button type="button" onClick={removeImage} className="btn-gold text-sm py-2 px-5 h-auto">
                               Try Another Photo
+                            </Button>
+                          </div>
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Connection dropped — one-tap reconnect, details preserved */}
+                  <AnimatePresence>
+                    {connectionLost && (
+                      <m.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        className="bg-accent/8 border border-accent/30 rounded-2xl p-5"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
+                            <Zap className="w-5 h-5 text-accent" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground mb-1 text-sm">
+                              Your connection dropped mid-reading
+                            </h3>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              Your photo and details are safely saved. Tap below and we'll finish your reading — nothing needs to be entered again.
+                            </p>
+                            <Button
+                              type="button"
+                              onClick={() => { void handleSubmit(); }}
+                              className="btn-gold text-sm py-2 px-5 h-auto"
+                            >
+                              Reconnect &amp; Generate Reading
                             </Button>
                           </div>
                         </div>

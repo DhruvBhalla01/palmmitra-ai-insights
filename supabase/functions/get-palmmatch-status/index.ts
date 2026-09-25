@@ -22,14 +22,36 @@ Deno.serve(async (req) => {
     const email = emailRegex.test(rawEmail) ? rawEmail : '';
     const includeReport = body.include_report === true;
 
-    if (!report_id || !/^pm_[0-9]{10,}_[a-z0-9]{9}$/i.test(report_id)) {
-      return json({ success: true, isUnlocked: false, hasSubscription: false, report: null });
-    }
-
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
+
+    // Recovery lookup: the phone's connection can drop while analyze-palmmatch is still
+    // running server-side. The client asks whether the reading landed anyway.
+    if (body.lookup_recent === true) {
+      const p1 = typeof body.person1_name === 'string' ? body.person1_name.trim() : '';
+      const p2 = typeof body.person2_name === 'string' ? body.person2_name.trim() : '';
+      if (!email || !p1 || !p2) return json({ success: false, found: false }, 400);
+      const since = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const { data: recent } = await supabase
+        .from('palmmatch_reports')
+        .select('report_id, person1_name, person2_name, created_at')
+        .eq('email', email)
+        .gte('created_at', since)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      const match = (recent ?? []).find(
+        (r) =>
+          String(r.person1_name ?? '').trim().toLowerCase() === p1.toLowerCase() &&
+          String(r.person2_name ?? '').trim().toLowerCase() === p2.toLowerCase(),
+      );
+      return json({ success: true, found: Boolean(match), report_id: match?.report_id ?? null });
+    }
+
+    if (!report_id || !/^pm_[0-9]{10,}_[a-z0-9]{9}$/i.test(report_id)) {
+      return json({ success: true, isUnlocked: false, hasSubscription: false, report: null });
+    }
 
     // 1. Active subscription grants access to everything (including PalmMatch)
     let hasSubscription = false;

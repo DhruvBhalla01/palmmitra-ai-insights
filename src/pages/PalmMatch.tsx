@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
+import { compressImage } from '@/lib/imageCompression';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 import type { PalmMatchLanguage } from '@/components/palmmatch/types';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
@@ -332,9 +333,23 @@ export default function PalmMatch() {
   }, []);
 
   // Background upload
+  const pollForPalmMatch = async (mail: string, p1: string, p2: string): Promise<string | null> => {
+    const supabase = await getSupabase();
+    for (let attempt = 0; attempt < 20; attempt++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const { data } = await supabase.functions.invoke('get-palmmatch-status', {
+          body: { lookup_recent: true, email: mail, person1_name: p1, person2_name: p2 },
+        });
+        if (data?.found && data.report_id) return data.report_id as string;
+      } catch { /* keep polling */ }
+    }
+    return null;
+  };
+
   const uploadInBackground = useCallback(
     async (
-      file: File,
+      original: File,
       slot: 'person1' | 'person2',
       setUrl: (u: string) => void,
       setStatus: (s: UploadStatus) => void,
@@ -342,9 +357,11 @@ export default function PalmMatch() {
       setStatus('uploading');
       uploadStateRef.current[slot] = { url: null, status: 'uploading' };
       analytics.track('palm_image_upload_started', {
-        reading_type: 'palmmatch', slot, file_size_kb: Math.round(file.size / 1024),
+        reading_type: 'palmmatch', slot, file_size_kb: Math.round(original.size / 1024),
       });
       try {
+        // Downscale big camera photos first so mobile uploads don't time out.
+        const file = await compressImage(original);
         const extensionByType: Record<string, string> = {
           'image/jpeg': 'jpg',
           'image/png': 'png',
@@ -353,9 +370,17 @@ export default function PalmMatch() {
         const ext = extensionByType[file.type] ?? 'jpg';
         const path = `palmmatch/${crypto.randomUUID()}_${slot}.${ext}`;
         const supabase = await getSupabase();
-        const { error } = await supabase.storage
-          .from('palm-uploads')
-          .upload(path, file, { cacheControl: '3600', contentType: file.type, upsert: false });
+        // Mobile connections drop mid-upload; retry transient failures.
+        let error: { message?: string } | null = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const res = await supabase.storage
+            .from('palm-uploads')
+            .upload(path, file, { cacheControl: '3600', contentType: file.type, upsert: true });
+          error = res.error;
+          if (!error) break;
+          if (!/fetch|network|timeout|load failed/i.test(String(error.message || ''))) break;
+          await new Promise((r) => setTimeout(r, 1200 * (attempt + 1)));
+        }
         if (error) throw error;
         const { data } = supabase.storage.from('palm-uploads').getPublicUrl(path);
         uploadStateRef.current[slot] = { url: data.publicUrl, status: 'ready' };
@@ -555,6 +580,21 @@ export default function PalmMatch() {
       setTimeout(() => navigate(`/palmmatch-report/${data.reportId}`), 900);
     } catch (err) {
       console.error('PalmMatch error:', err);
+      // A dropped mobile connection usually still leaves a finished reading on the
+      // server — look for it before telling the couple anything went wrong.
+      const message = err instanceof Error ? err.message : '';
+      if (/failed to send a request|failed to fetch|network|load failed|timeout/i.test(message)) {
+        const recoveredId = await pollForPalmMatch(email.trim().toLowerCase(), person1Name, person2Name);
+        if (recoveredId) {
+          setProcessing('complete');
+          analytics.track('palm_analysis_completed', {
+            reading_type: 'palmmatch', latency_ms: Date.now() - analysisStartedAt, has_report_id: true,
+          });
+          formAnalytics.success({ reading_type: 'palmmatch' });
+          setTimeout(() => navigate(`/palmmatch-report/${recoveredId}`), 600);
+          return;
+        }
+      }
       analytics.track('palm_analysis_failed', {
         reading_type: 'palmmatch', error_category: 'provider_error',
         latency_ms: Date.now() - analysisStartedAt,
