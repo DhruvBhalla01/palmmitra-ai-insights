@@ -258,7 +258,7 @@ export default function Report() {
           });
         }
       },
-      { rootMargin: '-120px 0px -55% 0px', threshold: 0.01 },
+      { rootMargin: '-130px 0px -60% 0px', threshold: 0 },
     );
 
     reportSections.forEach(({ id }) => {
@@ -266,7 +266,7 @@ export default function Report() {
       if (section) observer.observe(section);
     });
     return () => observer.disconnect();
-  }, []);
+  }, [loading, isUnlocked]);
 
   const handleUnlockClick = (placementArg?: unknown) => {
     const placement = typeof placementArg === 'string' ? placementArg : 'unknown';
@@ -399,16 +399,16 @@ export default function Report() {
         </div>
       )}
 
-      <main className="pt-24 pb-20 relative z-10">
+      <main className="pt-20 md:pt-24 pb-20 relative z-10">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Report title — page-level <h1> */}
           <m.header
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-7 text-center"
+            className="mb-4 text-center"
           >
-            <h1 className="text-2xl md:text-4xl font-serif font-bold text-foreground leading-tight text-balance">
+            <h1 className="text-xl md:text-4xl font-serif font-bold text-foreground leading-tight text-balance">
               {reportTitles[userData?.readingType ?? 'full'] ?? 'Destiny Report'} for{' '}
               <span className="text-gradient-gold">{userData?.name || 'You'}</span>
             </h1>
@@ -486,6 +486,8 @@ export default function Report() {
                   generatedAt={generatedAt}
                   headlineSummary={reading.headlineSummary}
                   palmImage={userData?.imageUrl || userData?.palmImage}
+                  isUnlocked={isUnlocked}
+                  hinglish={userData?.language === 'hinglish'}
                 />
                 {!isUnlocked && !isShared && (
                   <UnlockTeaserCard

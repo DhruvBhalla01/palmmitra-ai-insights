@@ -437,6 +437,24 @@
     }
   }
 
+  /* Redacted gold bars for locked teasers */
+  .redacted-bar {
+    display: inline-block;
+    height: 0.8em;
+    vertical-align: middle;
+    border-radius: 4px;
+    background: linear-gradient(90deg, hsl(var(--accent) / 0.55), hsl(var(--accent) / 0.25), hsl(var(--accent) / 0.55));
+    background-size: 200% 100%;
+    animation: redacted-sheen 3.5s ease-in-out infinite;
+  }
+  @keyframes redacted-sheen {
+    0%, 100% { background-position: 0% 0; }
+    50% { background-position: 100% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .redacted-bar { animation: none; }
+  }
+
   /* Premium shimmer animation */
   .shimmer {
     position: relative;

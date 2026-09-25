@@ -30,9 +30,23 @@ export function StickyUnlockCTA({
 
   useEffect(() => {
     setIsDismissed(sessionStorage.getItem(DISMISSED_KEY) === 'true');
-    const handleScroll = () => setIsVisible(window.scrollY > 600);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Show once the top teaser has scrolled past; hide while the bottom paywall is on screen.
+    const update = () => {
+      const teaser = document.getElementById('unlock-teaser');
+      const paywall = document.getElementById('premium-paywall');
+      const vh = window.innerHeight;
+      const pastTeaser = teaser ? teaser.getBoundingClientRect().bottom < 0 : window.scrollY > 600;
+      const pr = paywall?.getBoundingClientRect();
+      const paywallVisible = pr ? pr.top < vh && pr.bottom > 0 : false;
+      setIsVisible(pastTeaser && !paywallVisible);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
   }, []);
 
   const handleDismiss = () => {
@@ -59,69 +73,47 @@ export function StickyUnlockCTA({
             style={{ background: 'linear-gradient(90deg, transparent, hsl(42 87% 55% / 0.7), transparent)' }}
           />
           <div
-            className="px-4 pt-3 pb-4 safe-area-bottom relative"
+            className="pl-4 pr-9 py-3 safe-area-bottom relative"
             style={{
               background: 'linear-gradient(180deg, hsl(245 58% 10% / 0.98), hsl(245 58% 7% / 0.99))',
               boxShadow: '0 -10px 40px hsl(42 87% 55% / 0.18)',
               backdropFilter: 'blur(24px)',
             }}
           >
-            {/* Dismiss */}
             <button
               type="button"
               onClick={handleDismiss}
               aria-label="Dismiss unlock bar"
-              className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/60 flex items-center justify-center hover:bg-background transition-colors"
+              className="absolute top-1/2 -translate-y-1/2 right-1.5 w-7 h-7 rounded-full flex items-center justify-center hover:bg-background/60 transition-colors"
             >
-              <X className="w-3 h-3 text-muted-foreground" />
+              <X className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
 
-            {/* Social proof */}
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <span className="text-accent text-[10px]">✦</span>
-              <p className="text-[11px] text-muted-foreground">
-                {socialProof ?? '23 unlocked in the last hour · launch price'}
-              </p>
-              <span className="text-accent text-[10px]">✦</span>
-            </div>
-
-            {/* Price + CTA row */}
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-serif text-2xl font-bold text-gradient-gold leading-none">{price}</span>
-                  <span className="text-xs text-muted-foreground line-through">{listPrice}</span>
+                  <span className="font-serif text-xl font-bold text-gradient-gold leading-none">{price}</span>
+                  <span className="text-[11px] text-muted-foreground line-through">{listPrice}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{subLabel ?? 'One-time · forever'}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                  <Shield className="w-2.5 h-2.5 text-accent" aria-hidden="true" />
+                  {subLabel ?? 'One-time · instant'}
+                </p>
               </div>
 
               <m.div whileTap={{ scale: 0.97 }} className="flex-1">
                 <Button
                   onClick={onUnlockClick}
-                  className="btn-gold w-full font-bold py-5 rounded-xl flex items-center justify-center gap-1.5 text-sm shadow-gold"
+                  className="btn-gold w-full font-bold h-12 rounded-xl flex items-center justify-center gap-1.5 text-sm shadow-gold"
                   aria-label={`Unlock full report for ${price}`}
                 >
-                  <Sparkles className="w-4 h-4" />
-                  {ctaLabel ?? `Reveal ${userName ? `${userName.split(' ')[0]}'s` : 'My Complete'} Report`}
-                  <ArrowRight className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4" aria-hidden="true" />
+                  {ctaLabel ?? `Reveal ${userName ? `${userName.split(' ')[0]}'s` : 'My'} Report`}
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Button>
               </m.div>
             </div>
-
-            {/* Trust chips */}
-            <div className="flex items-center justify-center gap-3 mt-2.5 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Shield className="w-3 h-3 text-accent" /> Razorpay
-              </span>
-              <span className="opacity-50">·</span>
-              <span className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-accent" /> Instant
-              </span>
-              <span className="opacity-50">·</span>
-              <span className="flex items-center gap-1">
-                <Lock className="w-3 h-3 text-accent" /> Private
-              </span>
-            </div>
+            {socialProof && <p className="sr-only">{socialProof}</p>}
           </div>
         </m.div>
       )}

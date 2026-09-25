@@ -104,71 +104,57 @@ export function LockedSection({
     '2,847+ readings unlocked this month';
 
   return (
-    <div className="relative mb-8 sm:mb-12">
-      <div className="relative overflow-hidden rounded-2xl">
-        {previewContent && (
-          <div
-            className="absolute inset-0 blur-md pointer-events-none select-none opacity-50 overflow-hidden"
-            aria-hidden="true"
-          >
-            {previewContent}
+    <div className="relative mb-6 sm:mb-10">
+      <m.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.45 }}
+        className="relative glass-premium rounded-3xl border border-accent/25 p-5 sm:p-8 overflow-hidden"
+      >
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/25 flex items-center justify-center flex-shrink-0">
+            <Lock className="w-4.5 h-4.5 text-accent" aria-hidden="true" />
           </div>
-        )}
-
-        <m.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="relative bg-gradient-to-b from-background/55 via-background/78 to-background/96 backdrop-blur-sm flex flex-col items-center justify-center px-4 py-8 sm:p-8 rounded-2xl border border-accent/25"
-        >
-          {/* Lock icon with glow */}
-          <m.div
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-            className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-3 sm:mb-4 border border-accent/25"
-          >
-            <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-accent" aria-hidden="true" />
-            <div className="absolute inset-0 rounded-2xl bg-accent/10 blur-lg" />
-          </m.div>
-
-          {/* Section title */}
-          <h3 className="text-base sm:text-lg font-serif font-bold text-foreground mb-1.5 text-center text-balance leading-snug">
+          <h3 className="text-base sm:text-lg font-serif font-bold text-foreground leading-snug text-balance">
             {personalizedName} {sectionName}
           </h3>
+        </div>
 
-          {/* Teaser text */}
-          <p className="text-[13px] sm:text-sm text-foreground/80 mb-3 text-center max-w-sm leading-relaxed text-balance">
-            {teaserData.teaser}
+        <p className="text-sm text-foreground/85 leading-relaxed mb-3">
+          {teaserData.teaser}
+        </p>
+
+        {/* Redacted preview lines */}
+        <div aria-hidden="true" className="space-y-2 mb-4">
+          <span className="redacted-bar block" style={{ width: '92%' }} />
+          <span className="redacted-bar block" style={{ width: '78%' }} />
+          <span className="redacted-bar block" style={{ width: '54%' }} />
+        </div>
+
+        {teaserData.hook && (
+          <p className="flex items-start gap-2 text-xs text-foreground/70 italic mb-4">
+            <Eye className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
+            {teaserData.hook}
           </p>
+        )}
 
-          {/* Hook */}
-          {teaserData.hook && (
-            <div className="flex items-start gap-2 mb-4 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-accent/8 border border-accent/15 max-w-sm">
-              <Eye className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <p className="text-[12px] sm:text-xs text-foreground/70 leading-relaxed italic">
-                {teaserData.hook}
-              </p>
-            </div>
-          )}
-
-          {/* Social proof — varies per section */}
-          <p className="text-[11px] sm:text-xs text-muted-foreground mb-4 sm:mb-5 flex items-center gap-1.5 text-center max-w-[19rem] justify-center">
-            <Sparkles className="w-3 h-3 text-accent flex-shrink-0" aria-hidden="true" />
-            {socialProof}
-          </p>
-
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
           <Button
             onClick={() => onUnlockClick(`section_${sectionKey ?? 'generic'}`)}
-            className="btn-gold rounded-xl w-full sm:w-auto max-w-xs px-6 sm:px-7 py-3.5 gap-2 font-semibold text-sm sm:text-base whitespace-normal h-auto min-h-[48px]"
+            className="btn-gold rounded-xl w-full sm:w-auto px-6 gap-2 font-semibold text-sm whitespace-normal h-auto min-h-12"
           >
-            Reveal {sectionName}
+            Unlock {personalizedName.toLowerCase() === 'your' ? 'your' : personalizedName} {sectionName}
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Button>
-
-          <p className="text-[11px] sm:text-xs text-muted-foreground/60 mt-3 text-center text-balance">
-            One-time {insightPrice} · Entire report + PDF · 3 free AI questions
+          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 text-accent flex-shrink-0" aria-hidden="true" />
+            {insightPrice} · {socialProof}
           </p>
-        </m.div>
-      </div>
+        </div>
+      </m.div>
     </div>
   );
 }
