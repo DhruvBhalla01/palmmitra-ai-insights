@@ -228,6 +228,98 @@ function Customers({ range }: { range: Range }) {
   );
 }
 
+interface Match {
+  id: string; report_id: string; person1_name: string; person1_age: number | null; person2_name: string; person2_age: number | null;
+  relationship_type: string; email: string; overall_score: number; language: string; is_unlocked: boolean; created_at: string;
+  paid: boolean; verdict: string; image1: string; image2: string;
+  payments: { id: string; plan_type: string; amount: number; currency: string; status: string; created_at: string; razorpay_payment_id: string | null }[];
+}
+
+function PalmMatchTab({ range }: { range: Range }) {
+  const [search, setSearch] = useState('');
+  const [paid, setPaid] = useState('');
+  const [page, setPage] = useState(0);
+  const [sel, setSel] = useState<Match | null>(null);
+  const q = useQuery({
+    queryKey: ['admin', 'palmmatch', range, search, paid, page],
+    queryFn: () => call<{ matches: Match[]; total: number; pageSize: number }>({ action: 'palmmatch', range, search, paid, page }),
+    refetchInterval: REFRESH, placeholderData: keepPreviousData,
+  });
+  const link = (m: Match) => `/palmmatch-report/${m.report_id}?e=${encodeURIComponent(m.email)}`;
+  const exportCsv = async () => {
+    const r = await call<{ matches: Match[] }>({ action: 'palmmatch', range, search, paid, export: true });
+    downloadCsv('palmmitra-palmmatch', r.matches.map((m) => ({
+      date: m.created_at, person1: m.person1_name, age1: m.person1_age, person2: m.person2_name, age2: m.person2_age,
+      relationship: m.relationship_type, email: m.email, language: m.language, score: m.overall_score, verdict: m.verdict,
+      paid: m.paid ? 'yes' : 'no',
+      plans: m.payments.filter((p) => p.status === 'success').map((p) => `${p.plan_type} ${money(p.amount, p.currency)}`).join('; '),
+      report: `${window.location.origin}${link(m)}`,
+    })));
+  };
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        <Input className="max-w-xs" placeholder="Search names or email" value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} />
+        {[['', 'All'], ['paid', 'Paid'], ['unpaid', 'Unpaid']].map(([v, l]) => (
+          <Button key={v} size="sm" variant={paid === v ? 'default' : 'outline'} onClick={() => { setPaid(v); setPage(0); }}>{l}</Button>
+        ))}
+        <Button size="sm" variant="outline" className="ml-auto" onClick={exportCsv}>Export CSV</Button>
+      </div>
+      <div className="divide-y divide-border overflow-hidden rounded-xl border border-primary/20 bg-card">
+        {q.data?.matches.map((m) => (
+          <button key={m.id} onClick={() => setSel(m)} className="flex w-full items-center gap-3 p-3 text-left hover:bg-muted/50">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-primary/30 font-serif text-lg text-primary">{m.overall_score}</div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-medium">{m.person1_name} & {m.person2_name}</p>
+              <p className="truncate text-xs text-muted-foreground">{m.email} · {m.relationship_type} · {m.language}</p>
+              <p className="text-xs text-muted-foreground">{when(m.created_at)}</p>
+            </div>
+            {m.paid ? <Badge>paid</Badge> : <Badge variant="secondary">free</Badge>}
+          </button>
+        ))}
+        {q.data && q.data.matches.length === 0 && <p className="p-4 text-muted-foreground">No PalmMatch readings found.</p>}
+        {q.isLoading && <p className="p-4 text-muted-foreground">Loading…</p>}
+      </div>
+      {q.data && <Pager page={page} setPage={setPage} total={q.data.total} size={q.data.pageSize} />}
+      <Dialog open={!!sel} onOpenChange={(o) => !o && setSel(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          {sel && (<>
+            <DialogHeader><DialogTitle>{sel.person1_name} & {sel.person2_name}</DialogTitle></DialogHeader>
+            {(sel.image1 || sel.image2) && (
+              <div className="grid grid-cols-2 gap-2">
+                {sel.image1 && <img src={sel.image1} alt={`Palm photo of ${sel.person1_name}`} className="max-h-48 w-full rounded-lg object-contain" />}
+                {sel.image2 && <img src={sel.image2} alt={`Palm photo of ${sel.person2_name}`} className="max-h-48 w-full rounded-lg object-contain" />}
+              </div>
+            )}
+            <dl className="grid grid-cols-2 gap-2 text-sm">
+              <dt className="text-muted-foreground">Person 1</dt><dd>{sel.person1_name}{sel.person1_age ? ` · ${sel.person1_age}` : ''}</dd>
+              <dt className="text-muted-foreground">Person 2</dt><dd>{sel.person2_name}{sel.person2_age ? ` · ${sel.person2_age}` : ''}</dd>
+              <dt className="text-muted-foreground">Relationship</dt><dd>{sel.relationship_type}</dd>
+              <dt className="text-muted-foreground">Email</dt><dd className="break-all">{sel.email}</dd>
+              <dt className="text-muted-foreground">Language</dt><dd>{sel.language}</dd>
+              <dt className="text-muted-foreground">Score</dt><dd>{sel.overall_score}/100</dd>
+              {sel.verdict && (<><dt className="text-muted-foreground">Verdict</dt><dd>{sel.verdict}</dd></>)}
+              <dt className="text-muted-foreground">Unlocked</dt><dd>{sel.paid ? 'Yes' : 'No'}</dd>
+              <dt className="text-muted-foreground">Created</dt><dd>{when(sel.created_at)}</dd>
+              <dt className="text-muted-foreground">Report ID</dt><dd className="break-all">{sel.report_id}</dd>
+            </dl>
+            <a className="text-sm text-primary underline" href={link(sel)} target="_blank" rel="noreferrer">Open report</a>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Payments</p>
+              {sel.payments.length === 0 && <p className="text-sm text-muted-foreground">No payments</p>}
+              {sel.payments.map((p) => (
+                <div key={p.id} className="flex items-center justify-between text-sm">
+                  <span>{p.plan_type} · {money(p.amount, p.currency)} · {when(p.created_at)}</span><StatusBadge s={p.status} />
+                </div>
+              ))}
+            </div>
+          </>)}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 function Payments({ range }: { range: Range }) {
   const [status, setStatus] = useState('');
   const [plan, setPlan] = useState('');
@@ -467,6 +559,7 @@ export default function Admin() {
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="recent">Last 50</TabsTrigger>
                 <TabsTrigger value="customers">Customers</TabsTrigger>
+                <TabsTrigger value="palmmatch">PalmMatch</TabsTrigger>
                 <TabsTrigger value="payments">Payments</TabsTrigger>
                 <TabsTrigger value="reminders">Reminders</TabsTrigger>
                 <TabsTrigger value="health">Health</TabsTrigger>
@@ -475,6 +568,7 @@ export default function Admin() {
               <TabsContent value="overview"><Overview range={range} /></TabsContent>
               <TabsContent value="recent"><RecentUsers /></TabsContent>
               <TabsContent value="customers"><Customers range={range} /></TabsContent>
+              <TabsContent value="palmmatch"><PalmMatchTab range={range} /></TabsContent>
               <TabsContent value="payments"><Payments range={range} /></TabsContent>
               <TabsContent value="reminders"><Reminders /></TabsContent>
               <TabsContent value="health"><Health /></TabsContent>

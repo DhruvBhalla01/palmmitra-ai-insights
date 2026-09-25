@@ -202,6 +202,37 @@ Deno.serve(async (req) => {
       return json({ testimonials: data ?? [] });
     }
 
+    if (action === 'palmmatch') {
+      const search = clean(body.search);
+      const paidFilter = clean(body.paid, 10);
+      let q = admin.from('palmmatch_reports')
+        .select('id,report_id,person1_name,person1_age,person2_name,person2_age,relationship_type,email,overall_score,language,is_unlocked,reading,created_at', { count: 'exact' })
+        .order('created_at', { ascending: false });
+      if (since) q = q.gte('created_at', since);
+      if (search) q = q.or(`person1_name.ilike.%${search}%,person2_name.ilike.%${search}%,email.ilike.%${search}%`);
+      if (paidFilter === 'paid') q = q.eq('is_unlocked', true);
+      if (paidFilter === 'unpaid') q = q.eq('is_unlocked', false);
+      q = body.export === true ? q.limit(5000) : q.range(page * pageSize, page * pageSize + pageSize - 1);
+      const { data: rows, count, error } = await q;
+      if (error) throw error;
+      const rids = (rows ?? []).map((r) => r.report_id);
+      const { data: pays } = rids.length
+        ? await admin.from('payments').select('id,palmmatch_report_id,plan_type,amount,currency,status,created_at,razorpay_payment_id').in('palmmatch_report_id', rids)
+        : { data: [] as any[] };
+      const matches = (rows ?? []).map(({ reading, ...r }) => {
+        const p = (pays ?? []).filter((x) => x.palmmatch_report_id === r.report_id);
+        const rd = (reading ?? {}) as Record<string, unknown>;
+        return {
+          ...r, payments: p,
+          paid: r.is_unlocked || p.some((x) => x.status === 'success'),
+          verdict: typeof rd.compatibilityVerdict === 'string' ? rd.compatibilityVerdict : '',
+          image1: typeof rd.image1Url === 'string' ? rd.image1Url : '',
+          image2: typeof rd.image2Url === 'string' ? rd.image2Url : '',
+        };
+      });
+      return json({ matches, total: count ?? 0, pageSize });
+    }
+
     if (action === 'payments') {
       const status = clean(body.status, 20);
       const plan = clean(body.plan, 30);
