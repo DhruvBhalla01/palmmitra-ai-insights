@@ -275,9 +275,10 @@ export default function UploadPalm() {
     return publicUrl;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (submittingRef.current || isLoading) return;
+    setConnectionLost(false);
     if (!imageFile) {
       toast({ title: 'Photo required', description: 'Please upload your palm photo first.', variant: 'destructive' });
       return;
