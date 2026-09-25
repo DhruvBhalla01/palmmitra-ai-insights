@@ -1,5 +1,5 @@
 import { m } from '@/lib/motion';
-import { Sparkles, Calendar, Shield, Crown, Briefcase, Heart, TrendingUp } from 'lucide-react';
+import { Sparkles, Calendar, Shield, Crown, Briefcase, Heart, TrendingUp, CheckCircle2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface ReportHeaderProps {
@@ -8,6 +8,8 @@ interface ReportHeaderProps {
   generatedAt: string;
   headlineSummary: string;
   palmImage?: string;
+  isUnlocked?: boolean;
+  hinglish?: boolean;
 }
 
 const readingTypeLabels: Record<string, string> = {
@@ -32,152 +34,90 @@ const readingTypeIcons: Record<string, LucideIcon> = {
   wealth: TrendingUp,
 };
 
-const readingTypeSummary: Record<string, string> = {
-  full: 'This comprehensive analysis reveals the unique patterns in your palm, offering insights into your personality, life path, and spiritual journey.',
-  career: 'This career-focused analysis highlights the professional strengths, turning points, and wealth patterns written into your palm lines.',
-  love: 'This love-focused analysis uncovers the emotional patterns, relationship compatibility, and romantic timing encoded in your palm.',
-  wealth: 'This wealth-focused analysis reveals the financial cycles, prosperity indicators, and abundance patterns mapped in your palm.',
-};
-
+/** Single combined "passport" card: palm photo, identity, and the key insight. */
 export function ReportHeader({
   name,
   readingType,
   generatedAt,
   headlineSummary,
   palmImage,
+  isUnlocked,
+  hinglish,
 }: ReportHeaderProps) {
   const formattedDate = new Date(generatedAt).toLocaleDateString('en-IN', {
     day: 'numeric',
-    month: 'long',
+    month: 'short',
     year: 'numeric',
   });
-
   const ReadingIcon = readingTypeIcons[readingType] || Crown;
 
   return (
     <m.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="relative mb-12"
+      transition={{ duration: 0.5 }}
+      className="relative mb-6"
     >
-      {/* Key Destiny Message Box */}
-      <m.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border border-accent/30 relative overflow-hidden"
-      >
-        <div className="absolute inset-0 shimmer pointer-events-none" />
+      <div className="relative glass-premium rounded-3xl border border-accent/30 p-5 sm:p-8 overflow-hidden">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+        <div aria-hidden="true" className="absolute -top-16 -right-16 w-56 h-56 bg-accent/10 rounded-full blur-3xl" />
 
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-accent" />
-          </div>
-          <span className="text-sm font-semibold text-accent uppercase tracking-wide">
-            Key Destiny Insight
-          </span>
-        </div>
-        <p className="text-lg md:text-xl font-serif text-foreground leading-relaxed">
-          "{headlineSummary}"
-        </p>
-      </m.div>
-
-      {/* Premium Summary Card */}
-      <div className="glass-premium rounded-3xl p-5 sm:p-8 md:p-10 overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
-
-        <div className="relative z-10">
-          {/* Top row: Badges */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 md:mb-8">
-            <m.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl glass-premium border-accent/20"
-              whileHover={{ scale: 1.02 }}
-            >
-              <ReadingIcon className="w-4 h-4 text-accent flex-shrink-0" />
-              <span className="text-xs sm:text-sm font-semibold text-foreground whitespace-nowrap">
-                {readingTypeLabels[readingType] || 'Palm Reading'}
-              </span>
-            </m.div>
-
-            <div className="flex items-center gap-2">
-              <m.div
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
-                whileHover={{ scale: 1.02 }}
-              >
-                <Shield className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">Verified</span>
-              </m.div>
-            </div>
-          </div>
-
-
-          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-            {/* Palm Image */}
-            {palmImage && (
-              <m.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="relative group"
-              >
-                <div className="absolute -inset-1 bg-gradient-gold rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
-                <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-4 border-accent/40 shadow-gold-lg">
-                  <img
-                    src={palmImage}
-                    alt={`Your uploaded palm photograph, analyzed for this ${reportTitles[readingType] ?? 'palm reading'}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+        <div className="relative flex items-center gap-4 sm:gap-6">
+          {palmImage && (
+            <div className="relative flex-shrink-0">
+              <div aria-hidden="true" className="absolute -inset-1 bg-gradient-gold rounded-2xl blur opacity-30" />
+              <div className="relative w-24 h-24 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-accent/50 shadow-gold">
+                <img
+                  src={palmImage}
+                  alt={`Your uploaded palm photograph, analyzed for this ${reportTitles[readingType] ?? 'palm reading'}`}
+                  className="w-full h-full object-cover"
+                />
                 <m.div
-                  className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <m.div
-                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent/50 to-transparent"
-                    animate={{ top: ['0%', '100%'] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                  />
-                </m.div>
-              </m.div>
-            )}
-
-            {/* Text Content */}
-            <div className="flex-1 text-center md:text-left">
-              {/* "Reading is ready" pill */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium mb-3">
-                <Sparkles className="w-3 h-3" />
-                Your reading is ready
-              </span>
-
-              {/* User Info */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
-                <p className="font-semibold text-foreground text-xl leading-snug text-balance">
-                  <span className="text-gradient-gold">{name}</span>'s reading
-                </p>
-                <span className="hidden md:inline text-accent">•</span>
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  {formattedDate}
-                </span>
+                  aria-hidden="true"
+                  className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent/70 to-transparent"
+                  animate={{ top: ['0%', '100%'] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                />
               </div>
+            </div>
+          )}
 
-              <p className="sanskrit-accent mb-3">ॐ Bhavishya Darshan</p>
-
-              <p className="text-muted-foreground leading-relaxed">
-                {readingTypeSummary[readingType] ?? readingTypeSummary.full}
-              </p>
+          <div className="flex-1 min-w-0">
+            <p className="font-serif text-lg sm:text-2xl font-semibold text-foreground leading-tight truncate">
+              <span className="text-gradient-gold">{name}</span>
+            </p>
+            <p className="mt-1 flex items-center gap-1.5 text-xs sm:text-sm text-foreground/80">
+              <ReadingIcon className="w-3.5 h-3.5 text-accent flex-shrink-0" aria-hidden="true" />
+              <span className="truncate">{readingTypeLabels[readingType] || 'Palm Reading'}</span>
+            </p>
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+              {formattedDate}
+            </p>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-medium text-primary">
+                <Shield className="w-3 h-3" aria-hidden="true" /> Verified
+              </span>
+              {isUnlocked && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/15 border border-accent/40 text-[11px] font-semibold text-accent">
+                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+                  {hinglish ? 'Full reading unlocked' : 'Full reading unlocked'}
+                </span>
+              )}
             </div>
           </div>
+        </div>
 
-          <m.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"
-          />
+        <div aria-hidden="true" className="relative my-5 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+        <div className="relative">
+          <p className="flex items-center gap-1.5 text-[11px] font-semibold text-accent uppercase tracking-[0.18em] mb-2">
+            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+            Key Destiny Insight
+          </p>
+          <p className="font-serif text-base sm:text-xl text-foreground leading-relaxed">
+            "{headlineSummary}"
+          </p>
         </div>
       </div>
     </m.div>
