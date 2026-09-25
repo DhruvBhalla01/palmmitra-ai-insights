@@ -95,8 +95,10 @@ describe("Upload -> Report flow", () => {
       expect(mockInvoke).toHaveBeenCalled();
     });
 
+    // The report route is lazy-loaded and navigation runs inside a React
+    // transition, so allow extra time for the report page to mount.
     expect(
-      await screen.findByText(/key destiny insight/i)
+      await screen.findByText(/key destiny insight/i, undefined, { timeout: 8000 })
     ).toBeInTheDocument();
   });
 });
