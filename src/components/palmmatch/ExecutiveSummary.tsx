@@ -61,10 +61,9 @@ export function ExecutiveSummary({ reading, isUnlocked }: Props) {
           style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, hsl(42 87% 55% / 0.05), transparent)' }} />
 
         <div className="relative p-5 md:p-7">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-[10px] tracking-[0.28em] text-accent uppercase font-semibold">
-              Executive Summary
-            </p>
+          <p className="text-[10px] tracking-[0.28em] text-accent uppercase font-semibold mb-4">
+            Executive Summary
+          </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {/* Overall */}
             <div className="col-span-2 md:col-span-1 rounded-2xl p-4 border border-accent/25 relative overflow-hidden"
