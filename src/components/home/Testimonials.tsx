@@ -94,7 +94,20 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; animate?: boolean }) {
+interface DisplayTestimonial {
+  name: string;
+  location?: string;
+  occupation?: string;
+  rating: number;
+  highlight?: string;
+  text: string;
+  avatar?: string;
+  verified: boolean;
+  plan?: string;
+  date?: string;
+}
+
+function TestimonialCard({ t, animate = false }: { t: DisplayTestimonial; animate?: boolean }) {
   return (
     <m.article
       initial={animate ? { opacity: 0, y: 24 } : undefined}
@@ -111,11 +124,13 @@ function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; an
       </div>
 
       {/* Highlight badge */}
-      <div className="inline-flex">
-        <span className="text-xs font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/15">
-          "{t.highlight}"
-        </span>
-      </div>
+      {t.highlight && (
+        <div className="inline-flex">
+          <span className="text-xs font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/15">
+            "{t.highlight}"
+          </span>
+        </div>
+      )}
 
       <p className="text-foreground/85 text-sm leading-relaxed flex-1">
         {t.text}
