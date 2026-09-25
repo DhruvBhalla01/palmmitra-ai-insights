@@ -53,6 +53,8 @@ export const ANALYTICS_EVENTS = [
   'report_locked_viewed',
   'shared_report_viewed',
   'shared_report_cta_clicked',
+  'shared_palmmatch_viewed',
+  'shared_palmmatch_cta_clicked',
   'report_section_viewed',
   'destiny_section_viewed',
   'ai_guide_opened',
