@@ -336,6 +336,7 @@ export type Database = {
           currency: string
           error: string | null
           id: string
+          palmmatch_report_id: string | null
           payment_id: string
           plan_type: string
           report_id: string | null
@@ -348,6 +349,7 @@ export type Database = {
           currency?: string
           error?: string | null
           id?: string
+          palmmatch_report_id?: string | null
           payment_id: string
           plan_type: string
           report_id?: string | null
@@ -360,6 +362,7 @@ export type Database = {
           currency?: string
           error?: string | null
           id?: string
+          palmmatch_report_id?: string | null
           payment_id?: string
           plan_type?: string
           report_id?: string | null
