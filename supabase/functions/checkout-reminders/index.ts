@@ -8,6 +8,7 @@ import { sendTemplateEmail } from '../_shared/transactional-email-templates/send
 
 const PLAN_NAMES: Record<string, string> = {
   report99: 'your Full Destiny Report',
+  palmmatch149: 'your PalmMatch Compatibility Report',
   ai_pack_5: 'your PalmMitra AI questions',
   ai_pack_10: 'your PalmMitra AI questions',
   ai_pack_15: 'your PalmMitra AI questions',
