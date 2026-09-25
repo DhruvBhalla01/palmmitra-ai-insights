@@ -137,14 +137,20 @@ function TestimonialCard({ t, animate = false }: { t: DisplayTestimonial; animat
       </p>
 
       <div className="flex items-start gap-3 pt-3 border-t border-accent/10">
-        <img
-          src={t.avatar}
-          alt={t.name}
-          width={40}
-          height={40}
-          className="w-10 h-10 rounded-full object-cover border-2 border-accent/25 flex-shrink-0"
-          loading="lazy"
-        />
+        {t.avatar ? (
+          <img
+            src={t.avatar}
+            alt={t.name}
+            width={40}
+            height={40}
+            className="w-10 h-10 rounded-full object-cover border-2 border-accent/25 flex-shrink-0"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full border-2 border-accent/25 bg-accent/10 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+            <span className="font-serif text-sm text-accent">{t.name.charAt(0).toUpperCase()}</span>
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <p className="font-semibold text-foreground text-sm">{t.name}</p>
@@ -155,11 +161,15 @@ function TestimonialCard({ t, animate = false }: { t: DisplayTestimonial; animat
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground">{t.occupation} · {t.location}</p>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-[10px] text-accent/80 bg-accent/8 px-1.5 py-0.5 rounded-full font-medium">{t.plan}</span>
-            <span className="text-[10px] text-muted-foreground/50">{t.date}</span>
-          </div>
+          {(t.occupation || t.location) && (
+            <p className="text-xs text-muted-foreground">{[t.occupation, t.location].filter(Boolean).join(' · ')}</p>
+          )}
+          {(t.plan || t.date) && (
+            <div className="flex items-center gap-1.5 mt-1">
+              {t.plan && <span className="text-[10px] text-accent/80 bg-accent/8 px-1.5 py-0.5 rounded-full font-medium">{t.plan}</span>}
+              {t.date && <span className="text-[10px] text-muted-foreground/50">{t.date}</span>}
+            </div>
+          )}
         </div>
       </div>
     </m.article>
@@ -169,20 +179,42 @@ function TestimonialCard({ t, animate = false }: { t: DisplayTestimonial; animat
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [customerReviews, setCustomerReviews] = useState<DisplayTestimonial[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from('testimonials')
+      .select('name,quote,rating,created_at')
+      .eq('approved', true)
+      .order('created_at', { ascending: false })
+      .limit(6)
+      .then(({ data }) => {
+        if (!data?.length) return;
+        setCustomerReviews(data.map((r) => ({
+          name: r.name,
+          rating: r.rating,
+          text: r.quote,
+          verified: true,
+          date: new Date(r.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+        })));
+      });
+  }, []);
+
+  const all = [...customerReviews, ...testimonials];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+      setCurrentIndex((prev) => (prev + 1) % all.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [all.length]);
 
   const navigate = (dir: number) => {
     setDirection(dir);
     setCurrentIndex((prev) => {
-      if (dir === 1) return (prev + 1) % testimonials.length;
-      return prev === 0 ? testimonials.length - 1 : prev - 1;
+      if (dir === 1) return (prev + 1) % all.length;
+      return prev === 0 ? all.length - 1 : prev - 1;
     });
   };
 
