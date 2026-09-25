@@ -427,6 +427,7 @@ function Reminders() {
 
 export default function Admin() {
   const { user, loading, signOut } = useAuth();
+  useTheme(); // apply the dark-by-default theme on this navbar-less page
   const [range, setRange] = useState<Range>('today');
   const probe = useQuery({
     queryKey: ['admin', 'probe', user?.id], enabled: !!user,
