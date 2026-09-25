@@ -338,16 +338,20 @@ const generateCompatibilityReading = async (
   apiKey: string,
   context: AiCaptureContext,
   language: PalmMatchLanguage,
+  locked: LockedScores | null,
 ): Promise<Record<string, unknown>> => {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       const reading = await generateCompatibilityReadingAttempt(
-        image1Url, image2Url, person1, person2, relationshipType, apiKey, context, language, attempt > 0,
+        image1Url, image2Url, person1, person2, relationshipType, apiKey, context, language, attempt > 0, locked,
       );
       if (language === "hinglish" && !isHinglishCompatibilityReading(reading)) {
         throw new Error("AI_LANGUAGE_MISMATCH");
       }
+      // Hard guarantee: even if the model drifts, the stored scores win.
+      // The verdict is only reused in the same language as the original reading.
+      if (locked) applyLockedScores(reading, locked, language === lockedLanguageOf(locked));
       return reading;
     } catch (error) {
       lastError = error;
