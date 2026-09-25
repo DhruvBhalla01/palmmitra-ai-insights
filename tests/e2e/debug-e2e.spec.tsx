@@ -32,7 +32,7 @@ it("debug navigation", async () => {
   });
   window.history.pushState({}, "", "/upload");
   render(<HelmetProvider><App /></HelmetProvider>);
-  const input = await waitFor(() => document.querySelector('input[type="file"]') as HTMLInputElement);
+  const input = await waitFor(() => { const el = document.querySelector('input[type="file"]'); if (!el) throw new Error('no input'); return el as HTMLInputElement; });
   fireEvent.change(input, { target: { files: [new File(["x".repeat(25 * 1024)], "palm.png", { type: "image/png" })] } });
   fireEvent.change(screen.getByLabelText(/your name/i), { target: { value: "Asha" } });
   fireEvent.change(screen.getByLabelText(/your age/i), { target: { value: "28" } });
