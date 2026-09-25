@@ -36,6 +36,13 @@
       "when": 1790240308145,
       "tag": "0004_add_palmmatch_report_language",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790332384891,
+      "tag": "0005_admin_roles",
+      "breakpoints": true
     }
   ]
 }
