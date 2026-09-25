@@ -203,7 +203,7 @@ export default function PalmMatchReport() {
           )}
           {typeof shared.overallScore === 'number' && (
             <div className="flex justify-center mb-6">
-              <CompatibilityScoreRing score={shared.overallScore} />
+              <CompatibilityScoreRing score={shared.overallScore} verdict={shared.compatibilityVerdict} size={220} />
             </div>
           )}
           {shared.compatibilityVerdict && (
