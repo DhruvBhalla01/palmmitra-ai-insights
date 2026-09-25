@@ -14,11 +14,6 @@ function outlookFromScore(score: number) {
   return { label: 'Growth-Oriented Bond', tone: 'medium' };
 }
 
-// AI confidence — deterministic, high, reads-as-real
-function aiConfidence(score: number) {
-  return 92 + (score % 6); // 92–97
-}
-
 export function ExecutiveSummary({ reading, isUnlocked }: Props) {
   const {
     overallScore, compatibilityVerdict, emotionalBond, communication,
@@ -37,7 +32,6 @@ export function ExecutiveSummary({ reading, isUnlocked }: Props) {
   const bottom = visible.reduce((a, b) => (a.score <= b.score ? a : b));
 
   const outlook = outlookFromScore(overallScore);
-  const confidence = aiConfidence(overallScore);
 
   const challengeFallback = strengthsAndChallenges?.challenges?.[0];
   const challengeLabel = isUnlocked && challengeFallback
@@ -71,12 +65,6 @@ export function ExecutiveSummary({ reading, isUnlocked }: Props) {
             <p className="text-[10px] tracking-[0.28em] text-accent uppercase font-semibold">
               Executive Summary
             </p>
-            <div className="flex items-center gap-1.5 rounded-full px-2 py-0.5 border border-accent/25 bg-accent/10">
-              <Sparkles className="w-3 h-3 text-accent" />
-              <span className="text-[10px] font-semibold text-accent tabular-nums">AI Confidence · {confidence}%</span>
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {/* Overall */}
             <div className="col-span-2 md:col-span-1 rounded-2xl p-4 border border-accent/25 relative overflow-hidden"
