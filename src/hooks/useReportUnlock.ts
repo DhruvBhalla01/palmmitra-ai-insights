@@ -231,7 +231,7 @@ export function useReportUnlock(
         prefill: { email: userEmail },
         theme: { color: '#D4AF37' },
         // UPI first — most Indian buyers pay via UPI apps
-        config: {
+        config: currency !== 'INR' ? undefined : {
           display: {
             blocks: { upi: { name: 'Pay via UPI', instruments: [{ method: 'upi' }] } },
             sequence: ['block.upi'],
