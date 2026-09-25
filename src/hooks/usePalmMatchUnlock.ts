@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, createElement } from 'react';
+import { ToastAction } from '@/components/ui/toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
@@ -85,7 +86,10 @@ export function usePalmMatchUnlock(
 
   useEffect(() => { checkUnlockStatus(); }, [checkUnlockStatus]);
 
+  const retryRef = useRef<(() => void) | null>(null);
+  const retryAction = () => createElement(ToastAction, { altText: 'Try payment again', onClick: () => retryRef.current?.() }, 'Try again');
   const initiatePayment = useCallback(async (plan: PalmMatchPlanType) => {
+    retryRef.current = () => { void initiatePaymentRef.current?.(plan); };
     if (!userEmail) {
       toast({ title: 'Email Required', description: 'Please provide your email.', variant: 'destructive' });
       return;
@@ -190,7 +194,7 @@ export function usePalmMatchUnlock(
             };
             analytics.track('checkout_payment_cancelled', cancellationProperties);
             posthog.capture('checkout_payment_cancelled', cancellationProperties);
-            toast({ title: 'Payment Cancelled', description: 'You can try again anytime.' });
+            toast({ title: 'Payment not completed', description: 'Tap Try again — you can switch to UPI, card or netbanking.', action: retryAction(), duration: 15000 });
           },
         },
       };
@@ -206,7 +210,7 @@ export function usePalmMatchUnlock(
         };
         analytics.track('checkout_payment_failed', failureProperties);
         posthog.capture('checkout_payment_failed', failureProperties);
-        toast({ title: 'Payment Failed', description: 'Please try again or use a different payment method.', variant: 'destructive' });
+        toast({ title: 'Payment Failed', description: 'Please try again or choose a different payment method.', variant: 'destructive', action: retryAction(), duration: 15000 });
       });
       razorpay.open();
       const redirectProperties = {
@@ -231,6 +235,9 @@ export function usePalmMatchUnlock(
       setIsProcessing(false);
     }
   }, [reportId, userEmail, toast, selectedCurrency, countryCode]);
+
+  const initiatePaymentRef = useRef(initiatePayment);
+  initiatePaymentRef.current = initiatePayment;
 
   return { isUnlocked, isLoading, isProcessing, initiatePayment };
 }
