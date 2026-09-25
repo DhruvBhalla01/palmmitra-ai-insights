@@ -5,19 +5,25 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { report_id, email } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const report_id = typeof body.report_id === 'string' ? body.report_id : '';
+    const rawEmail = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const email = emailRegex.test(rawEmail) ? rawEmail : '';
+    const includeReport = body.include_report === true;
 
-    if (!report_id) {
-      return new Response(
-        JSON.stringify({ success: true, isUnlocked: false, hasSubscription: false }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!report_id || !/^pm_[0-9]{10,}_[a-z0-9]{9}$/i.test(report_id)) {
+      return json({ success: true, isUnlocked: false, hasSubscription: false, report: null });
     }
 
     const supabase = createClient(
@@ -26,6 +32,7 @@ Deno.serve(async (req) => {
     );
 
     // 1. Active subscription grants access to everything (including PalmMatch)
+    let hasSubscription = false;
     if (email) {
       const now = new Date().toISOString();
       const { data: subscription } = await supabase
@@ -35,34 +42,36 @@ Deno.serve(async (req) => {
         .eq('status', 'active')
         .or(`expires_at.is.null,expires_at.gt.${now}`)
         .maybeSingle();
-
-      if (subscription) {
-        return new Response(
-          JSON.stringify({ success: true, isUnlocked: true, hasSubscription: true }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+      hasSubscription = !!subscription;
     }
 
-    // 2. Check if this specific palmmatch report was individually unlocked
+    // 2. Load the report (needed for unlock state and, when authorised, cross-device restore)
     const { data: report } = await supabase
       .from('palmmatch_reports')
-      .select('is_unlocked')
+      .select('report_id, email, is_unlocked, language, reading, person1_name, person2_name')
       .eq('report_id', report_id)
       .maybeSingle();
 
-    const isUnlocked = report?.is_unlocked ?? false;
+    const isUnlocked = hasSubscription || (report?.is_unlocked ?? false);
 
-    return new Response(
-      JSON.stringify({ success: true, isUnlocked, hasSubscription: false }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    // Reading content is returned only to the owner's email (link carries it) or to
+    // anyone with an active subscription. Everyone else gets status only.
+    let payload: Record<string, unknown> | null = null;
+    if (includeReport && report) {
+      const ownerEmail = typeof report.email === 'string' ? report.email.trim().toLowerCase() : '';
+      const isOwner = !!email && email === ownerEmail;
+      if (isOwner || hasSubscription) {
+        payload = {
+          reading: report.reading,
+          language: report.language === 'hinglish' ? 'hinglish' : 'english',
+          email: ownerEmail,
+        };
+      }
+    }
 
+    return json({ success: true, isUnlocked, hasSubscription, report: payload });
   } catch (err) {
     console.error('get-palmmatch-status error:', err);
-    return new Response(
-      JSON.stringify({ success: false, error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return json({ success: false, error: 'Internal server error' }, 500);
   }
 });
