@@ -47,7 +47,7 @@ export function PalmLineExplorer({ reading, isUnlocked, hinglish, onUnlockClick 
 
   const select = (key: SpotKey) => {
     setActive(key);
-    recordInteraction('palm_explorer_tapped', key);
+    recordInteraction('button_clicked', `palm_explorer_${key}`);
   };
 
   const detail = (() => {
