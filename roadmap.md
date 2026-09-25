@@ -40,3 +40,13 @@
 - [x] Enforce concise localized AI output and language validation
 - [x] Persist language and localize report unlock messaging
 - [x] Validate mobile flow and deploy the analysis function
+
+# Trust & conversion upgrades (7 features)
+
+- [x] Assisted payment retry after a cancelled or failed checkout
+- [x] Hastarekha authenticity certificate with permanent verification ID
+- [x] Tap-to-inspect interactive palm map on the report
+- [ ] Glowing line overlay on the user's own palm photo
+- [ ] Optional date of birth / Rashi alignment in the reading
+- [ ] PalmMatch karmic balance radar chart
+- [ ] 90-day palm evolution re-scan comparison

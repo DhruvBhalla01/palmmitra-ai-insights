@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useRef, createElement } from 'react';
-import { ToastAction, type ToastActionElement } from '@/components/ui/toast';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
@@ -93,10 +92,7 @@ export function useReportUnlock(
     checkUnlockStatus();
   }, [checkUnlockStatus]);
 
-  const retryRef = useRef<(() => void) | null>(null);
-  const retryAction = () => createElement(ToastAction, { altText: 'Try payment again', onClick: () => retryRef.current?.() }, 'Try again') as unknown as ToastActionElement;
   const initiatePayment = useCallback(async (plan: PlanType) => {
-    retryRef.current = () => { void initiatePaymentRef.current?.(plan); };
     if (!userEmail) {
       toast({
         title: 'Email Required',
@@ -248,7 +244,7 @@ export function useReportUnlock(
             };
             analytics.track('checkout_payment_cancelled', cancellationProperties);
             posthog.capture('checkout_payment_cancelled', cancellationProperties);
-            toast({ title: 'Payment not completed', description: 'Tap Try again — you can switch to UPI, card or netbanking.', action: retryAction(), duration: 15000 });
+            window.dispatchEvent(new CustomEvent('paymentRecovery', { detail: { reason: 'cancelled', plan } }));
           },
         },
       };
@@ -264,13 +260,7 @@ export function useReportUnlock(
         };
         analytics.track('checkout_payment_failed', failureProperties);
         posthog.capture('checkout_payment_failed', failureProperties);
-        toast({
-          title: 'Payment Failed',
-          description: 'Paying via UPI? Come back to this tab after approving. Or tap Try again to use card or netbanking.',
-          variant: 'destructive',
-          action: retryAction(),
-          duration: 15000,
-        });
+        window.dispatchEvent(new CustomEvent('paymentRecovery', { detail: { reason: 'failed', plan } }));
       });
       razorpay.open();
       const redirectProperties = {

@@ -81,6 +81,7 @@ export const ANALYTICS_EVENTS = [
   'checkout_payment_cancelled',
   'checkout_payment_timeout',
   'checkout_completed',
+  'checkout_recovery_shown',
 
   // Authoritative (server-generated) commerce events
   'order_created',

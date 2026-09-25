@@ -12,6 +12,7 @@ import { DestinyRevealLoader } from '@/components/DestinyRevealLoader';
 import { ReportProgressIndicator } from '@/components/report/ReportProgressIndicator';
 import { useReportUnlock } from '@/hooks/useReportUnlock';
 import { PaymentModal } from '@/components/payment/PaymentModal';
+import { PaymentRecoveryDialog, type RecoveryReason } from '@/components/payment/PaymentRecoveryDialog';
 import { LockedSection } from '@/components/payment/LockedSection';
 import { UnlockSuccessOverlay } from '@/components/payment/UnlockSuccessOverlay';
 import { useAiEntitlement } from '@/hooks/useAiEntitlement';
@@ -33,6 +34,8 @@ import { ReviewPrompt } from '@/components/report/ReviewPrompt';
 import { PalmMatchCrossSell } from '@/components/report/PalmMatchCrossSell';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { UnlockTeaserCard } from '@/components/report/UnlockTeaserCard';
+import { VedicCertificate } from '@/components/report/VedicCertificate';
+import { PalmLineExplorer } from '@/components/report/PalmLineExplorer';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
 import { AskPalmMitraInline } from '@/components/report/AskPalmMitraInline';
@@ -87,6 +90,7 @@ export default function Report() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
   const [successIsSubscription, setSuccessIsSubscription] = useState(false);
+  const [recovery, setRecovery] = useState<{ reason: RecoveryReason; plan: 'report99' | 'monthly299' | 'unlimited999' } | null>(null);
 
   // AI drawer state
   const [aiOpen, setAiOpen] = useState(false);
@@ -307,6 +311,18 @@ export default function Report() {
     initiatePayment(plan);
   };
 
+  // Assisted retry when a checkout is dismissed or fails (usually a UPI hand-off)
+  useEffect(() => {
+    const onRecovery = (event: Event) => {
+      const detail = (event as CustomEvent).detail as
+        | { reason: RecoveryReason; plan: 'report99' | 'monthly299' | 'unlimited999' }
+        | undefined;
+      if (detail) setRecovery(detail);
+    };
+    window.addEventListener('paymentRecovery', onRecovery);
+    return () => window.removeEventListener('paymentRecovery', onRecovery);
+  }, []);
+
   // Loading State with Destiny Reveal
   if (loading) {
     return (
@@ -379,6 +395,19 @@ export default function Report() {
         onSelectPlan={handleSelectPlan}
         isProcessing={isProcessing}
         reportName={`${userData?.name || 'Your'} Palm Reading`}
+      />
+
+      {/* Assisted payment retry */}
+      <PaymentRecoveryDialog
+        isOpen={!!recovery}
+        reason={recovery?.reason ?? 'cancelled'}
+        hinglish={userData?.language === 'hinglish'}
+        onClose={() => setRecovery(null)}
+        onRetry={() => {
+          const plan = recovery?.plan ?? 'report99';
+          setRecovery(null);
+          initiatePayment(plan);
+        }}
       />
 
       {/* Success Overlay */}
@@ -498,6 +527,25 @@ export default function Report() {
                   />
                 )}
               </div>
+
+              {/* Authenticity certificate */}
+              <VedicCertificate
+                reading={reading}
+                name={userData?.name || 'User'}
+                reportId={resolvedReportId}
+                generatedAt={generatedAt}
+                countryCode={userData?.countryCode}
+                hinglish={userData?.language === 'hinglish'}
+              />
+
+              {/* Interactive palm map */}
+              <PalmLineExplorer
+                reading={reading}
+                isUnlocked={isUnlocked || isShared}
+                hinglish={userData?.language === 'hinglish'}
+                onUnlockClick={!isShared ? () => handleUnlockClick('palm_explorer') : undefined}
+              />
+
 
               {/* 2. Major Lines - Life Line visible, others locked */}
               <div id="section-lines">
