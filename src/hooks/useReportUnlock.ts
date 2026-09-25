@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, createElement } from 'react';
-import { ToastAction } from '@/components/ui/toast';
+import { ToastAction, type ToastActionElement } from '@/components/ui/toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, getServerCorrelationContext, trackApiError } from '@/lib/analytics';
@@ -93,7 +93,7 @@ export function useReportUnlock(
   }, [checkUnlockStatus]);
 
   const retryRef = useRef<(() => void) | null>(null);
-  const retryAction = () => createElement(ToastAction, { altText: 'Try payment again', onClick: () => retryRef.current?.() }, 'Try again');
+  const retryAction = () => createElement(ToastAction, { altText: 'Try payment again', onClick: () => retryRef.current?.() }, 'Try again') as unknown as ToastActionElement;
   const initiatePayment = useCallback(async (plan: PlanType) => {
     retryRef.current = () => { void initiatePaymentRef.current?.(plan); };
     if (!userEmail) {
