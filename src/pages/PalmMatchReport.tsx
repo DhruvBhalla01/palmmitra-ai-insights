@@ -63,6 +63,16 @@ const CONSTELLATION_STARS = Array.from({ length: 60 }, (_, i) => ({
 
 const CONSTELLATION_LINES: [number, number][] = [[0,7],[7,14],[14,21],[3,11],[11,19],[35,42],[42,49],[21,28]];
 
+interface SharedPreview {
+  person1Name: string;
+  person2Name: string;
+  relationshipType: string;
+  overallScore: number | null;
+  compatibilityVerdict: string;
+  overallNarrative: string;
+  language: PalmMatchLanguage;
+}
+
 export default function PalmMatchReport() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
