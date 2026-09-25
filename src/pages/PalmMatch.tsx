@@ -614,6 +614,7 @@ export default function PalmMatch() {
       `}</style>
 
       <main className="pt-20 pb-16">
+        <FestiveBanner />
         {/* ── Compact Hero (mobile-first, above-fold value) ── */}
         <section className="bg-gradient-mystic px-4 pt-8 pb-10 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
