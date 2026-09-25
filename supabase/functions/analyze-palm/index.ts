@@ -476,6 +476,7 @@ const generatePalmReadingAttempt = async (
   language: "english" | "hinglish",
   countryContext: string,
   isRetry = false,
+  locked: LockedPalmMetrics | null = null,
 ) => {
   console.log("Step 2: Generating palm reading...");
   const startedAt = Date.now();
