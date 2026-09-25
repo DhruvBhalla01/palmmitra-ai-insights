@@ -223,17 +223,27 @@ export default function UploadPalm() {
       'image/heif': 'heif',
     };
     const ext = extensionByType[file.type] ?? file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
     const supabase = await getSupabase();
-    const { data, error } = await supabase.storage
-      .from('palm-uploads')
-      .upload(fileName, file, {
-        cacheControl: '3600',
-        contentType: file.type || 'application/octet-stream',
-        upsert: false,
-      });
-    if (error) {
-      throw new Error(`Image upload failed: ${error.message || 'storage service rejected the file'}`);
+    // Mobile connections often drop mid-upload ("Failed to fetch"); retry up to 3 times.
+    let data: { path: string } | null = null;
+    let error: { message?: string } | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+      const res = await supabase.storage
+        .from('palm-uploads')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          contentType: file.type || 'application/octet-stream',
+          upsert: false,
+        });
+      data = res.data; error = res.error;
+      if (!error) break;
+      const msg = String(error.message || '').toLowerCase();
+      if (!/fetch|network|timeout|load failed/.test(msg)) break;
+      await new Promise((r) => setTimeout(r, 1200 * (attempt + 1)));
+    }
+    if (error || !data) {
+      throw new Error(`Image upload failed: ${error?.message || 'storage service rejected the file'}`);
     }
     const { data: { publicUrl } } = supabase.storage.from('palm-uploads').getPublicUrl(data.path);
     return publicUrl;
