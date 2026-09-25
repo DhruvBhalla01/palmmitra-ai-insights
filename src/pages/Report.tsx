@@ -90,6 +90,7 @@ export default function Report() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
   const [successIsSubscription, setSuccessIsSubscription] = useState(false);
+  const [recovery, setRecovery] = useState<{ reason: RecoveryReason; plan: 'report99' | 'monthly299' | 'unlimited999' } | null>(null);
 
   // AI drawer state
   const [aiOpen, setAiOpen] = useState(false);
