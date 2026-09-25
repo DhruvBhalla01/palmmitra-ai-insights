@@ -397,6 +397,19 @@ export default function Report() {
         reportName={`${userData?.name || 'Your'} Palm Reading`}
       />
 
+      {/* Assisted payment retry */}
+      <PaymentRecoveryDialog
+        isOpen={!!recovery}
+        reason={recovery?.reason ?? 'cancelled'}
+        hinglish={userData?.language === 'hinglish'}
+        onClose={() => setRecovery(null)}
+        onRetry={() => {
+          const plan = recovery?.plan ?? 'report99';
+          setRecovery(null);
+          initiatePayment(plan);
+        }}
+      />
+
       {/* Success Overlay */}
       <UnlockSuccessOverlay
         isVisible={showSuccessOverlay}
