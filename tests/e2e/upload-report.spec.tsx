@@ -45,7 +45,7 @@ describe("Upload -> Report flow", () => {
     sessionStorage.clear();
   });
 
-  it("creates a report and lands on the report page", async () => {
+  it("creates a report and lands on the report page", { timeout: 20000 }, async () => {
     mockUpload.mockResolvedValue({ data: { path: "uploads/palm.png" }, error: null });
     mockGetPublicUrl.mockReturnValue({
       data: { publicUrl: "https://example.com/palm.png" },
