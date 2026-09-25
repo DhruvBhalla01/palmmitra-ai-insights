@@ -206,9 +206,6 @@ export default function PalmMatchReport() {
               <CompatibilityScoreRing score={shared.overallScore} verdict={shared.compatibilityVerdict} size={220} />
             </div>
           )}
-          {shared.compatibilityVerdict && (
-            <p className="text-center font-serif text-xl text-accent mb-4">{shared.compatibilityVerdict}</p>
-          )}
           {shared.overallNarrative && (
             <p className="text-foreground/85 leading-relaxed mb-8">{shared.overallNarrative}</p>
           )}
