@@ -112,7 +112,6 @@ export function LockedSection({
         transition={{ duration: 0.45 }}
         className="relative glass-premium rounded-3xl border border-accent/25 p-5 sm:p-8 overflow-hidden"
       >
-        {previewContent && <div className="hidden" aria-hidden="true" />}
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
 
         <div className="flex items-center gap-3 mb-3">
