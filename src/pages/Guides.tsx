@@ -113,10 +113,10 @@ export default function Guides() {
                 heart line, head line and fate line together — in English or Hinglish.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button asChild size="lg" variant="premium">
+                <Button asChild className="btn-gold text-foreground font-semibold px-8 py-6 rounded-2xl shadow-gold-lg">
                   <Link to="/upload">Get my palm reading</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline">
+                <Button asChild variant="outline" className="px-8 py-6 rounded-2xl border-accent/40">
                   <Link to="/palmmatch">Check couple compatibility</Link>
                 </Button>
               </div>
