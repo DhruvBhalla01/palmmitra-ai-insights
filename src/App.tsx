@@ -70,6 +70,8 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/guides" element={<Guides />} />
+              <Route path="/guides/:slug" element={<GuideDetail />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
