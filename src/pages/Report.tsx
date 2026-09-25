@@ -30,6 +30,7 @@ import { SpiritualRemediesSection } from '@/components/report/SpiritualRemediesS
 import { FinalBlessing } from '@/components/report/FinalBlessing';
 import { ActionButtons } from '@/components/report/ActionButtons';
 import { ReviewPrompt } from '@/components/report/ReviewPrompt';
+import { PalmMatchCrossSell } from '@/components/report/PalmMatchCrossSell';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { UnlockTeaserCard } from '@/components/report/UnlockTeaserCard';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
@@ -850,7 +851,10 @@ export default function Report() {
                 />
               )}
 
-              {/* 10b. Review prompt — unlocked reports only */}
+              {/* 10b. PalmMatch cross-sell + review prompt — unlocked reports only */}
+              {isUnlocked && !isShared && (
+                <PalmMatchCrossSell hinglish={userData?.language === 'hinglish'} />
+              )}
               {isUnlocked && !isShared && (
                 <ReviewPrompt defaultName={userData?.name} source="report" />
               )}
