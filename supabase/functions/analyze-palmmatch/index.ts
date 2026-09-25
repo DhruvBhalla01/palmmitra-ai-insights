@@ -112,6 +112,7 @@ const normalizeName = (name: string) => name.replace(/\s+/g, " ").trim().toLower
 export const extractLockedScores = (row: {
   overall_score?: number | null;
   reading?: unknown;
+  language?: string | null;
 }): LockedScores | null => {
   const reading = row?.reading as Record<string, unknown> | undefined;
   if (!reading || typeof reading !== "object") return null;
@@ -128,6 +129,7 @@ export const extractLockedScores = (row: {
   return {
     overallScore: overall,
     compatibilityVerdict: typeof reading.compatibilityVerdict === "string" ? reading.compatibilityVerdict : "",
+    language: row.language === "hinglish" ? "hinglish" : "english",
     emotionalBond: scores[0]!,
     communication: scores[1]!,
     lifeGoals: scores[2]!,
