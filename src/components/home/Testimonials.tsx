@@ -3,6 +3,7 @@ import { m, AnimatePresence } from '@/lib/motion';
 import { ChevronLeft, ChevronRight, Star, Quote, CheckCircle, TrendingUp } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 import avatarPriya from '@/assets/avatar-priya.jpg';
 import avatarRohit from '@/assets/avatar-rohit.jpg';
@@ -93,7 +94,20 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; animate?: boolean }) {
+interface DisplayTestimonial {
+  name: string;
+  location?: string;
+  occupation?: string;
+  rating: number;
+  highlight?: string;
+  text: string;
+  avatar?: string;
+  verified: boolean;
+  plan?: string;
+  date?: string;
+}
+
+function TestimonialCard({ t, animate = false }: { t: DisplayTestimonial; animate?: boolean }) {
   return (
     <m.article
       initial={animate ? { opacity: 0, y: 24 } : undefined}
@@ -110,25 +124,33 @@ function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; an
       </div>
 
       {/* Highlight badge */}
-      <div className="inline-flex">
-        <span className="text-xs font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/15">
-          "{t.highlight}"
-        </span>
-      </div>
+      {t.highlight && (
+        <div className="inline-flex">
+          <span className="text-xs font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/15">
+            "{t.highlight}"
+          </span>
+        </div>
+      )}
 
       <p className="text-foreground/85 text-sm leading-relaxed flex-1">
         {t.text}
       </p>
 
       <div className="flex items-start gap-3 pt-3 border-t border-accent/10">
-        <img
-          src={t.avatar}
-          alt={t.name}
-          width={40}
-          height={40}
-          className="w-10 h-10 rounded-full object-cover border-2 border-accent/25 flex-shrink-0"
-          loading="lazy"
-        />
+        {t.avatar ? (
+          <img
+            src={t.avatar}
+            alt={t.name}
+            width={40}
+            height={40}
+            className="w-10 h-10 rounded-full object-cover border-2 border-accent/25 flex-shrink-0"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full border-2 border-accent/25 bg-accent/10 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+            <span className="font-serif text-sm text-accent">{t.name.charAt(0).toUpperCase()}</span>
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <p className="font-semibold text-foreground text-sm">{t.name}</p>
@@ -139,11 +161,15 @@ function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; an
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground">{t.occupation} · {t.location}</p>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-[10px] text-accent/80 bg-accent/8 px-1.5 py-0.5 rounded-full font-medium">{t.plan}</span>
-            <span className="text-[10px] text-muted-foreground/50">{t.date}</span>
-          </div>
+          {(t.occupation || t.location) && (
+            <p className="text-xs text-muted-foreground">{[t.occupation, t.location].filter(Boolean).join(' · ')}</p>
+          )}
+          {(t.plan || t.date) && (
+            <div className="flex items-center gap-1.5 mt-1">
+              {t.plan && <span className="text-[10px] text-accent/80 bg-accent/8 px-1.5 py-0.5 rounded-full font-medium">{t.plan}</span>}
+              {t.date && <span className="text-[10px] text-muted-foreground/50">{t.date}</span>}
+            </div>
+          )}
         </div>
       </div>
     </m.article>
@@ -153,20 +179,42 @@ function TestimonialCard({ t, animate = false }: { t: typeof testimonials[0]; an
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [customerReviews, setCustomerReviews] = useState<DisplayTestimonial[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from('testimonials')
+      .select('name,quote,rating,created_at')
+      .eq('approved', true)
+      .order('created_at', { ascending: false })
+      .limit(6)
+      .then(({ data }) => {
+        if (!data?.length) return;
+        setCustomerReviews(data.map((r) => ({
+          name: r.name,
+          rating: r.rating,
+          text: r.quote,
+          verified: true,
+          date: new Date(r.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+        })));
+      });
+  }, []);
+
+  const all = [...customerReviews, ...testimonials];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+      setCurrentIndex((prev) => (prev + 1) % all.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [all.length]);
 
   const navigate = (dir: number) => {
     setDirection(dir);
     setCurrentIndex((prev) => {
-      if (dir === 1) return (prev + 1) % testimonials.length;
-      return prev === 0 ? testimonials.length - 1 : prev - 1;
+      if (dir === 1) return (prev + 1) % all.length;
+      return prev === 0 ? all.length - 1 : prev - 1;
     });
   };
 
@@ -206,7 +254,7 @@ export function Testimonials() {
 
         {/* Desktop: 3-column grid */}
         <div className="hidden lg:grid grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {testimonials.slice(0, 3).map((t, i) => (
+          {all.slice(0, 3).map((t, i) => (
             <m.div
               key={t.name}
               initial={{ opacity: 0, y: 24 }}
@@ -221,7 +269,7 @@ export function Testimonials() {
 
         {/* Bottom 2 on desktop */}
         <div className="hidden lg:grid grid-cols-2 gap-5 max-w-[672px] mx-auto mt-5">
-          {testimonials.slice(3).map((t, i) => (
+          {all.slice(3, 5).map((t, i) => (
             <m.div
               key={t.name}
               initial={{ opacity: 0, y: 24 }}
@@ -266,20 +314,20 @@ export function Testimonials() {
                 exit="exit"
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               >
-                <TestimonialCard t={testimonials[currentIndex]} />
+                <TestimonialCard t={all[currentIndex]} />
               </m.div>
             </AnimatePresence>
           </div>
 
           <div className="flex justify-center gap-2.5 mt-6" role="tablist" aria-label="Testimonials">
-            {testimonials.map((_, i) => (
+            {all.map((_, i) => (
               <button
                 key={i}
                 role="tab"
                 aria-selected={i === currentIndex}
                 onClick={() => { setDirection(i > currentIndex ? 1 : -1); setCurrentIndex(i); }}
                 className="group flex h-11 w-11 items-center justify-center rounded-full"
-                aria-label={`Testimonial from ${testimonials[i].name}`}
+                aria-label={`Testimonial from ${all[i].name}`}
               >
                 <span
                   aria-hidden="true"

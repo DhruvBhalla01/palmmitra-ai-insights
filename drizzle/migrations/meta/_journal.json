@@ -43,6 +43,13 @@
       "when": 1790332384891,
       "tag": "0005_admin_roles",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790332947813,
+      "tag": "0006_testimonials_table",
+      "breakpoints": true
     }
   ]
 }

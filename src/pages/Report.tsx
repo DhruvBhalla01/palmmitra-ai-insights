@@ -29,6 +29,7 @@ import { LifePhaseSection } from '@/components/report/LifePhaseSection';
 import { SpiritualRemediesSection } from '@/components/report/SpiritualRemediesSection';
 import { FinalBlessing } from '@/components/report/FinalBlessing';
 import { ActionButtons } from '@/components/report/ActionButtons';
+import { ReviewPrompt } from '@/components/report/ReviewPrompt';
 import { PremiumPaywall } from '@/components/report/PremiumPaywall';
 import { LegalDisclaimer } from '@/components/report/LegalDisclaimer';
 import { StickyUnlockCTA } from '@/components/report/StickyUnlockCTA';
@@ -830,6 +831,11 @@ export default function Report() {
                   }}
                   userName={userData?.name}
                 />
+              )}
+
+              {/* 10b. Review prompt — unlocked reports only */}
+              {isUnlocked && !isShared && (
+                <ReviewPrompt defaultName={userData?.name} source="report" />
               )}
 
               {/* Continue with PalmMitra AI — end-of-report premium section */}

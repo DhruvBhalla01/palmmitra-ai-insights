@@ -108,6 +108,53 @@ Deno.serve(async (req) => {
       return json({ customers, total: count ?? 0, pageSize });
     }
 
+    if (action === 'health') {
+      const day = new Date(Date.now() - 86400000).toISOString();
+      const [apiErrors, aiFailures, payFailures, failedPayments, stalePending] = await Promise.all([
+        admin.from('analytics_events').select('occurred_at,page_path,properties')
+          .eq('event_name', 'api_error').eq('environment', 'production')
+          .gte('occurred_at', day).order('occurred_at', { ascending: false }).limit(25),
+        admin.from('analytics_events').select('occurred_at,page_path,properties')
+          .eq('event_name', 'ai_request_failed').eq('environment', 'production')
+          .gte('occurred_at', day).order('occurred_at', { ascending: false }).limit(25),
+        admin.from('analytics_events').select('occurred_at,page_path,properties')
+          .eq('event_name', 'checkout_payment_failed').eq('environment', 'production')
+          .gte('occurred_at', day).order('occurred_at', { ascending: false }).limit(25),
+        admin.from('payments').select('id,created_at,user_email,plan_type,amount,currency')
+          .eq('status', 'failed').gte('created_at', day).order('created_at', { ascending: false }).limit(25),
+        admin.from('payments').select('id,created_at,user_email,plan_type,amount,currency')
+          .eq('status', 'pending').lt('created_at', new Date(Date.now() - 3600000).toISOString())
+          .order('created_at', { ascending: false }).limit(25),
+      ]);
+      for (const r of [apiErrors, aiFailures, payFailures, failedPayments, stalePending]) {
+        if (r.error) throw r.error;
+      }
+      return json({
+        apiErrors: apiErrors.data ?? [], aiFailures: aiFailures.data ?? [],
+        payFailures: payFailures.data ?? [], failedPayments: failedPayments.data ?? [],
+        stalePending: stalePending.data ?? [],
+      });
+    }
+
+    if (action === 'testimonials') {
+      const op = clean(body.op, 10);
+      if (op === 'approve' || op === 'delete') {
+        const id = clean(body.id, 40);
+        if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: 'bad_id' }, 400);
+        const q = op === 'approve'
+          ? admin.from('testimonials').update({ approved: true }).eq('id', id)
+          : admin.from('testimonials').delete().eq('id', id);
+        const { error } = await q;
+        if (error) throw error;
+        return json({ ok: true });
+      }
+      const { data, error } = await admin.from('testimonials')
+        .select('id,name,quote,rating,source,approved,created_at')
+        .order('created_at', { ascending: false }).limit(200);
+      if (error) throw error;
+      return json({ testimonials: data ?? [] });
+    }
+
     if (action === 'payments') {
       const status = clean(body.status, 20);
       const plan = clean(body.plan, 30);
