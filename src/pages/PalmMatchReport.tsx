@@ -292,7 +292,7 @@ export default function PalmMatchReport() {
           userName={`${person1Name} & ${person2Name}`}
           onUnlockClick={handleUnlockClick}
           isUnlocked={isUnlocked}
-          ctaLabel={isHinglish ? 'Poori Report Kholein' : 'Unlock Full Report'}
+          ctaLabel={isHinglish ? 'Unlock Karein' : 'Unlock Now'}
           subLabel={isHinglish ? `${person1Name} & ${person2Name} ke liye · Ek baar payment` : `For ${person1Name} & ${person2Name} · One-time`}
           priceOverride={matchPrice.display}
           listPriceOverride={formatCurrency(Math.round(matchPrice.minor * 1999 / 999), currency)}
