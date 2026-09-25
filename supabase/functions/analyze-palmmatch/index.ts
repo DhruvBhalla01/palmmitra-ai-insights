@@ -495,8 +495,14 @@ serve(async (req) => {
 
     console.log("Both palms validated. Generating compatibility reading...");
 
+    // Same couple, same scores — reuse their first reading's numbers if we have them.
+    const lockedScores = await findLockedScores(supabaseClient, cleanP1.name, cleanP2.name, relationshipType);
+    if (lockedScores) {
+      console.log("Reusing locked compatibility scores for returning couple:", lockedScores.overallScore);
+    }
+
     const reading = await generateCompatibilityReading(
-      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext, safeLanguage
+      image1Url, image2Url, cleanP1, cleanP2, relationshipType, openaiApiKey, aiCaptureContext, safeLanguage, lockedScores
     );
 
     const reportId = `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
