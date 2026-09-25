@@ -330,6 +330,53 @@ export type Database = {
         }
         Relationships: []
       }
+      checkout_reminders: {
+        Row: {
+          amount: number
+          currency: string
+          error: string | null
+          id: string
+          payment_id: string
+          plan_type: string
+          report_id: string | null
+          sent_at: string
+          status: string
+          user_email: string
+        }
+        Insert: {
+          amount?: number
+          currency?: string
+          error?: string | null
+          id?: string
+          payment_id: string
+          plan_type: string
+          report_id?: string | null
+          sent_at?: string
+          status?: string
+          user_email: string
+        }
+        Update: {
+          amount?: number
+          currency?: string
+          error?: string | null
+          id?: string
+          payment_id?: string
+          plan_type?: string
+          report_id?: string | null
+          sent_at?: string
+          status?: string
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkout_reminders_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       palm_reports: {
         Row: {
           country_code: string | null

@@ -50,6 +50,13 @@
       "when": 1790332947813,
       "tag": "0006_testimonials_table",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790337243406,
+      "tag": "0007_checkout_reminders",
+      "breakpoints": true
     }
   ]
 }
