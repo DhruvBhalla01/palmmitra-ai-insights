@@ -379,6 +379,51 @@ function RecentUsers() {
   );
 }
 
+interface Reminder { id: string; user_email: string; report_id: string | null; plan_type: string; amount: number; currency: string; status: string; error: string | null; sent_at: string; recovered: boolean }
+
+function Reminders() {
+  const qc = useQueryClient();
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState('');
+  const q = useQuery({ queryKey: ['admin', 'reminders'], queryFn: () => call<{ reminders: Reminder[] }>({ action: 'reminders' }), refetchInterval: REFRESH });
+  const list = q.data?.reminders ?? [];
+  const sent = list.filter((r) => r.status === 'sent').length;
+  const recovered = list.filter((r) => r.recovered).length;
+  const runNow = async () => {
+    setBusy(true); setNote('');
+    try {
+      const r = await call<{ sent?: number; skipped?: number }>({ action: 'send_reminders' });
+      setNote(`Sent ${r.sent ?? 0} new reminder${r.sent === 1 ? '' : 's'}.`);
+      qc.invalidateQueries({ queryKey: ['admin', 'reminders'] });
+    } catch { setNote("Couldn't send right now. Try again shortly."); }
+    setBusy(false);
+  };
+  const label = (r: Reminder) => r.recovered ? 'Paid after reminder' : r.status === 'sent' ? 'Sent' : r.status === 'suppressed' ? 'Unsubscribed' : r.status === 'failed' ? 'Failed' : 'Sending';
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="secondary">Sent: {sent}</Badge>
+        <Badge>Paid after reminder: {recovered}</Badge>
+        <Button size="sm" className="ml-auto" disabled={busy} onClick={runNow}>{busy ? 'Sending…' : 'Send due reminders now'}</Button>
+      </div>
+      <p className="text-xs text-muted-foreground">Customers who leave checkout get one reminder email about 1–2 hours later (checked every hour). Each person is reminded only once per reading. {note}</p>
+      <div className="divide-y divide-border rounded-xl border border-primary/20 bg-card">
+        {list.map((r) => (
+          <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+            <div className="min-w-0">
+              <p className="break-all font-medium">{r.user_email}</p>
+              <p className="text-xs text-muted-foreground">{when(r.sent_at)} · {r.plan_type} · {money(r.amount, r.currency)}{r.error ? ` · ${r.error}` : ''}</p>
+            </div>
+            <Badge variant={r.recovered ? 'default' : r.status === 'failed' ? 'destructive' : 'secondary'}>{label(r)}</Badge>
+          </div>
+        ))}
+        {q.data && list.length === 0 && <p className="p-4 text-muted-foreground">No reminders sent yet.</p>}
+      </div>
+      {q.isLoading && <p className="text-muted-foreground">Loading…</p>}
+    </div>
+  );
+}
+
 export default function Admin() {
   const { user, loading, signOut } = useAuth();
   const [range, setRange] = useState<Range>('today');
@@ -421,6 +466,7 @@ export default function Admin() {
                 <TabsTrigger value="recent">Last 50</TabsTrigger>
                 <TabsTrigger value="customers">Customers</TabsTrigger>
                 <TabsTrigger value="payments">Payments</TabsTrigger>
+                <TabsTrigger value="reminders">Reminders</TabsTrigger>
                 <TabsTrigger value="health">Health</TabsTrigger>
                 <TabsTrigger value="reviews">Reviews</TabsTrigger>
               </TabsList>
@@ -428,6 +474,7 @@ export default function Admin() {
               <TabsContent value="recent"><RecentUsers /></TabsContent>
               <TabsContent value="customers"><Customers range={range} /></TabsContent>
               <TabsContent value="payments"><Payments range={range} /></TabsContent>
+              <TabsContent value="reminders"><Reminders /></TabsContent>
               <TabsContent value="health"><Health /></TabsContent>
               <TabsContent value="reviews"><Reviews /></TabsContent>
             </Tabs>

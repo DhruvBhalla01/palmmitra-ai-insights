@@ -1,35 +1,31 @@
 project_id = "wattznplwrigmjrottdy"
 
-[functions.analyze-palm]
-verify_jwt = true
-
-[functions.analyze-palmmatch]
-verify_jwt = true
-
-[functions.create-razorpay-order]
-verify_jwt = true
-
-[functions.verify-razorpay-payment]
-verify_jwt = true
-
-[functions.get-report]
-verify_jwt = true
-
-[functions.get-unlock-status]
-verify_jwt = true
-
-[functions.ai-chat]
-verify_jwt = true
-
-[functions.ai-conversation]
-verify_jwt = true
-
-[functions.ai-entitlement]
-verify_jwt = true
-
-[functions.ai-purchase-create-order]
-verify_jwt = true
-
-
-[functions.analytics-ingest]
-verify_jwt = false
+[functions]
+  [functions.ai-chat]
+    verify_jwt = true
+  [functions.ai-conversation]
+    verify_jwt = true
+  [functions.ai-entitlement]
+    verify_jwt = true
+  [functions.ai-purchase-create-order]
+    verify_jwt = true
+  [functions.analytics-ingest]
+    verify_jwt = false
+  [functions.analyze-palm]
+    verify_jwt = true
+  [functions.analyze-palmmatch]
+    verify_jwt = true
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.create-razorpay-order]
+    verify_jwt = true
+  [functions.get-report]
+    verify_jwt = true
+  [functions.get-unlock-status]
+    verify_jwt = true
+  [functions.verify-razorpay-payment]
+    verify_jwt = true
+  [functions.preview-transactional-email]
+    verify_jwt = false
+  [functions.checkout-reminders]
+    verify_jwt = false
