@@ -422,7 +422,7 @@ export default function Report() {
               <Button
                 onClick={() => {
                   analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null, placement: 'top' });
-                  navigate('/upload');
+                  navigate(resolvedReportId ? `/upload?ref=${resolvedReportId}` : '/upload');
                 }}
                 className="btn-gold rounded-xl min-h-11 px-5 text-sm font-semibold"
               >
@@ -880,7 +880,7 @@ export default function Report() {
                   <Button
                     onClick={() => {
                       analytics.track('shared_report_cta_clicked', { report_id: resolvedReportId ?? null });
-                      navigate('/upload');
+                      navigate(resolvedReportId ? `/upload?ref=${resolvedReportId}` : '/upload');
                     }}
                     className="btn-gold rounded-2xl px-8 py-6 text-base font-semibold"
                   >
