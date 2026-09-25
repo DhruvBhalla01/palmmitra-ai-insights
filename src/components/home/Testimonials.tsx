@@ -254,7 +254,7 @@ export function Testimonials() {
 
         {/* Desktop: 3-column grid */}
         <div className="hidden lg:grid grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {testimonials.slice(0, 3).map((t, i) => (
+          {all.slice(0, 3).map((t, i) => (
             <m.div
               key={t.name}
               initial={{ opacity: 0, y: 24 }}
@@ -269,7 +269,7 @@ export function Testimonials() {
 
         {/* Bottom 2 on desktop */}
         <div className="hidden lg:grid grid-cols-2 gap-5 max-w-[672px] mx-auto mt-5">
-          {testimonials.slice(3).map((t, i) => (
+          {all.slice(3, 5).map((t, i) => (
             <m.div
               key={t.name}
               initial={{ opacity: 0, y: 24 }}
@@ -314,20 +314,20 @@ export function Testimonials() {
                 exit="exit"
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               >
-                <TestimonialCard t={testimonials[currentIndex]} />
+                <TestimonialCard t={all[currentIndex]} />
               </m.div>
             </AnimatePresence>
           </div>
 
           <div className="flex justify-center gap-2.5 mt-6" role="tablist" aria-label="Testimonials">
-            {testimonials.map((_, i) => (
+            {all.map((_, i) => (
               <button
                 key={i}
                 role="tab"
                 aria-selected={i === currentIndex}
                 onClick={() => { setDirection(i > currentIndex ? 1 : -1); setCurrentIndex(i); }}
                 className="group flex h-11 w-11 items-center justify-center rounded-full"
-                aria-label={`Testimonial from ${testimonials[i].name}`}
+                aria-label={`Testimonial from ${all[i].name}`}
               >
                 <span
                   aria-hidden="true"
