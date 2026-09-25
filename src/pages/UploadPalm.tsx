@@ -295,9 +295,11 @@ export default function UploadPalm() {
       setLoadingMessageIdx((prev) => prev + 1);
     }, 2200);
 
+    let uploadedImageUrl: string | null = null;
     try {
       setProcessingStep('uploading');
-      const imageUrl = await (uploadPromiseRef.current ?? uploadToStorage(imageFile));
+      const imageUrl = await (uploadPromiseRef.current ?? compressImage(imageFile).then(uploadToStorage));
+      uploadedImageUrl = imageUrl;
 
       setProcessingStep('validating');
       setProcessingStep('analyzing');
@@ -321,6 +323,24 @@ export default function UploadPalm() {
             const payload = await context.clone().json();
             if (typeof payload?.error === 'string') message = payload.error;
           } catch { /* retain the transport error */ }
+        }
+        // A dropped mobile connection often still leaves a finished reading on the
+        // server. Wait for it before telling the user anything went wrong.
+        if (isConnectionDrop(message)) {
+          setProcessingStep('analyzing');
+          const recoveredId = await pollForReport(imageUrl, cleanEmail);
+          if (recoveredId) {
+            try { localStorage.setItem('palmMitraEmail', cleanEmail); } catch { /* ignore */ }
+            clearInterval(msgInterval);
+            setProcessingStep('complete');
+            analytics.track('palm_analysis_completed', {
+              latency_ms: Date.now() - analysisStartedAt,
+              reading_type: formData.readingType,
+              has_report_id: true,
+            });
+            navigate(`/report/${recoveredId}`);
+            return;
+          }
         }
         throw new Error(message);
       }
