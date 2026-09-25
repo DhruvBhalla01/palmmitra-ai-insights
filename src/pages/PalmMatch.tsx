@@ -7,6 +7,7 @@ import {
   Infinity as InfinityIcon, Star, Lock, Loader2,
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
+import { FestiveBanner } from '@/components/home/FestiveBanner';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
 import { breadcrumbLd } from '@/lib/seo';
