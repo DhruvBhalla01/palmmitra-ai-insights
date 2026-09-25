@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 const getSupabase = () => import('@/integrations/supabase/client').then((m) => m.supabase);
 import { useToast } from '@/hooks/use-toast';
+import { compressImage } from '@/lib/imageCompression';
 import { PalmMatchAnalysisOverlay } from '@/components/palmmatch/PalmMatchAnalysisOverlay';
 import type { PalmMatchLanguage } from '@/components/palmmatch/types';
 import { analytics, useFormAnalytics, trackApiError } from '@/lib/analytics';
