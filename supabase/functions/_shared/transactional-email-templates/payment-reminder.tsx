@@ -15,6 +15,7 @@ const PaymentReminder = ({ name, planName, price, reportUrl }: Props) => (
     <Preview>Your palm reading is saved — finish unlocking it whenever you're ready</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Section style={goldRule} />
         <Text style={brand}>PALMMITRA</Text>
         <Heading style={h1}>{name ? `${name}, your reading is waiting` : 'Your reading is waiting'}</Heading>
         <Text style={text}>
