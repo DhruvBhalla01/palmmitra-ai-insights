@@ -263,6 +263,83 @@ function Payments({ range }: { range: Range }) {
   );
 }
 
+interface HealthData {
+  apiErrors: { occurred_at: string; page_path: string | null; properties: Record<string, unknown> }[];
+  aiFailures: { occurred_at: string; page_path: string | null; properties: Record<string, unknown> }[];
+  payFailures: { occurred_at: string; page_path: string | null; properties: Record<string, unknown> }[];
+  failedPayments: { id: string; created_at: string; user_email: string; plan_type: string; amount: number; currency: string }[];
+  stalePending: { id: string; created_at: string; user_email: string; plan_type: string; amount: number; currency: string }[];
+}
+
+function Health() {
+  const q = useQuery({ queryKey: ['admin', 'health'], queryFn: () => call<HealthData>({ action: 'health' }), refetchInterval: REFRESH });
+  const d = q.data;
+  const sections: { title: string; hint: string; rows: { when: string; main: string; sub: string }[] }[] = d ? [
+    { title: 'AI reading failures (24h)', hint: 'Palm or PalmMatch analysis that failed', rows: d.aiFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? 'unknown error'), sub: e.page_path ?? '' })) },
+    { title: 'API errors (24h)', hint: 'Server errors seen by visitors', rows: d.apiErrors.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? e.properties?.endpoint ?? 'error'), sub: e.page_path ?? '' })) },
+    { title: 'Payment failures (24h)', hint: 'Checkout attempts that failed', rows: d.payFailures.map((e) => ({ when: e.occurred_at, main: String(e.properties?.error ?? 'payment failed'), sub: e.page_path ?? '' })) },
+    { title: 'Failed orders (24h)', hint: 'Orders marked failed', rows: d.failedPayments.map((p) => ({ when: p.created_at, main: `${money(p.amount, p.currency)} · ${p.plan_type}`, sub: p.user_email })) },
+    { title: 'Abandoned checkouts', hint: 'Started over 1 hour ago, never paid — follow up with these customers', rows: d.stalePending.map((p) => ({ when: p.created_at, main: `${money(p.amount, p.currency)} · ${p.plan_type}`, sub: p.user_email })) },
+  ] : [];
+  const total = sections.reduce((n, s) => n + s.rows.length, 0);
+  return (
+    <div className="space-y-4">
+      {d && total === 0 && <p className="rounded-xl border border-primary/20 bg-card p-4 text-muted-foreground">All clear — no failures or abandoned checkouts right now.</p>}
+      {sections.map((s) => s.rows.length > 0 && (
+        <div key={s.title} className="rounded-xl border border-primary/20 bg-card p-4">
+          <p className="text-sm font-medium">{s.title} <span className="text-muted-foreground">({s.rows.length})</span></p>
+          <p className="mb-2 text-xs text-muted-foreground">{s.hint}</p>
+          <div className="divide-y divide-border">
+            {s.rows.map((r, i) => (
+              <div key={i} className="py-2 text-sm">
+                <p className="break-all">{r.main}</p>
+                <p className="text-xs text-muted-foreground">{when(r.when)}{r.sub && ` · ${r.sub}`}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      {q.isLoading && <p className="text-muted-foreground">Loading…</p>}
+    </div>
+  );
+}
+
+interface Testimonial { id: string; name: string; quote: string; rating: number; source: string; approved: boolean; created_at: string }
+
+function Reviews() {
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ['admin', 'testimonials'], queryFn: () => call<{ testimonials: Testimonial[] }>({ action: 'testimonials' }), refetchInterval: REFRESH });
+  const act = async (op: 'approve' | 'delete', id: string) => {
+    await call({ action: 'testimonials', op, id });
+    qc.invalidateQueries({ queryKey: ['admin', 'testimonials'] });
+  };
+  const list = q.data?.testimonials ?? [];
+  const pending = list.filter((t) => !t.approved);
+  const live = list.filter((t) => t.approved);
+  const Card = ({ t }: { t: Testimonial }) => (
+    <div className="rounded-xl border border-primary/20 bg-card p-4">
+      <div className="flex items-center justify-between gap-2">
+        <p className="font-medium">{t.name} <span className="text-xs text-muted-foreground">· {'★'.repeat(t.rating)} · {t.source}</span></p>
+        <div className="flex gap-2">
+          {!t.approved && <Button size="sm" onClick={() => act('approve', t.id)}>Approve</Button>}
+          <Button size="sm" variant="outline" onClick={() => act('delete', t.id)}>Delete</Button>
+        </div>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">“{t.quote}”</p>
+      <p className="mt-1 text-xs text-muted-foreground">{when(t.created_at)}</p>
+    </div>
+  );
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Approved reviews appear on the home page. Only approve real customer words.</p>
+      {pending.length > 0 && <div className="space-y-3"><p className="text-xs uppercase tracking-wider text-muted-foreground">Waiting for approval ({pending.length})</p>{pending.map((t) => <Card key={t.id} t={t} />)}</div>}
+      {live.length > 0 && <div className="space-y-3"><p className="text-xs uppercase tracking-wider text-muted-foreground">Live on the site ({live.length})</p>{live.map((t) => <Card key={t.id} t={t} />)}</div>}
+      {q.data && list.length === 0 && <p className="rounded-xl border border-primary/20 bg-card p-4 text-muted-foreground">No reviews submitted yet. Customers can leave one from their report page.</p>}
+      {q.isLoading && <p className="text-muted-foreground">Loading…</p>}
+    </div>
+  );
+}
+
 export default function Admin() {
   const { user, loading, signOut } = useAuth();
   const [range, setRange] = useState<Range>('today');
