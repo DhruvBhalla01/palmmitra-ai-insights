@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { lovable } from '@/integrations/lovable';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,9 +65,16 @@ function Login() {
           const { error } = await signInWithOtp(email.trim(), '/admin');
           if (error) setErr(error.message); else setSent(true);
         }}>
+          <Button type="button" variant="outline" className="w-full" onClick={async () => {
+            setErr('');
+            localStorage.setItem('ai_return_to', '/admin');
+            const r = await lovable.auth.signInWithOAuth('google', { redirect_uri: `${window.location.origin}/admin` });
+            if (r.error) setErr(r.error.message);
+          }}>Continue with Google</Button>
+          <p className="text-xs text-muted-foreground">or</p>
           <Input type="email" required placeholder="Admin email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <Button type="submit" className="w-full">Send sign-in link</Button>
-          {err && <p className="text-sm text-destructive">{err}</p>}
+          {err && <p className="text-sm text-destructive">{/rate limit/i.test(err) ? 'Too many sign-in emails were sent. Use "Continue with Google" or try again in an hour.' : err}</p>}
         </form>
       )}
     </div>
