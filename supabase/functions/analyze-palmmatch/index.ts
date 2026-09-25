@@ -166,21 +166,24 @@ const findLockedScores = async (
   relationshipType: string,
 ): Promise<LockedScores | null> => {
   try {
-    const { data, error } = await supabaseClient
-      .from("palmmatch_reports")
-      .select("overall_score, reading, person1_name, person2_name")
-      .eq("relationship_type", relationshipType)
-      .order("created_at", { ascending: true })
-      .limit(200);
-    if (error || !Array.isArray(data)) return null;
     const a = normalizeName(p1);
     const b = normalizeName(p2);
-    const match = data.find((row: { person1_name?: string; person2_name?: string }) => {
-      const r1 = normalizeName(String(row.person1_name ?? ""));
-      const r2 = normalizeName(String(row.person2_name ?? ""));
-      return (r1 === a && r2 === b) || (r1 === b && r2 === a);
-    });
-    return match ? extractLockedScores(match) : null;
+    const lookup = async (first: string, second: string) => {
+      const { data } = await supabaseClient
+        .from("palmmatch_reports")
+        .select("overall_score, reading, language, created_at")
+        .eq("relationship_type", relationshipType)
+        .ilike("person1_name", first)
+        .ilike("person2_name", second)
+        .order("created_at", { ascending: true })
+        .limit(1);
+      return Array.isArray(data) && data.length > 0 ? data[0] : null;
+    };
+    const [direct, reversed] = await Promise.all([lookup(a, b), lookup(b, a)]);
+    const candidates = [direct, reversed].filter(Boolean) as Array<{ created_at?: string }>;
+    if (candidates.length === 0) return null;
+    candidates.sort((x, y) => String(x.created_at ?? "").localeCompare(String(y.created_at ?? "")));
+    return extractLockedScores(candidates[0] as Parameters<typeof extractLockedScores>[0]);
   } catch (e) {
     console.error("findLockedScores failed (non-fatal):", e);
     return null;
