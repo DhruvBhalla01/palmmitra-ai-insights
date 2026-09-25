@@ -21,7 +21,7 @@ import { usePalmMatchUnlock } from '@/hooks/usePalmMatchUnlock';
 import { PalmMatchReading, type PalmMatchLanguage } from '@/components/palmmatch/types';
 import { useToast } from '@/hooks/use-toast';
 import { analytics, recordInteraction } from '@/lib/analytics';
-import { PRODUCTS, formatCurrency } from '@/config/pricing';
+import { PRODUCTS } from '@/config/pricing';
 import { useCurrency } from '@/hooks/useCurrency';
 import { SEO } from '@/components/SEO';
 
