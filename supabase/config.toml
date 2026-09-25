@@ -25,3 +25,7 @@ project_id = "wattznplwrigmjrottdy"
     verify_jwt = true
   [functions.verify-razorpay-payment]
     verify_jwt = true
+  [functions.preview-transactional-email]
+    verify_jwt = false
+  [functions.checkout-reminders]
+    verify_jwt = false

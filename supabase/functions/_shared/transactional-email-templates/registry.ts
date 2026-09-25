@@ -1,4 +1,5 @@
 import type { ComponentType } from 'npm:react@18.3.1'
+import { template as paymentReminder } from './payment-reminder.tsx'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -18,6 +19,7 @@ export interface TemplateEntry {
  *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
+  'payment-reminder': paymentReminder,
   // Add templates here as they are created, e.g.:
   // 'welcome': welcomeTemplate,
 }
