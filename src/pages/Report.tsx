@@ -161,6 +161,14 @@ export default function Report() {
           // Send persisted email so the edge function can gate `report_json`
           // behind ownership / subscription / unlock.
           const persistedEmail = (() => {
+            try {
+              // Reminder emails carry the owner's email (base64url) so they can reopen on any device.
+              const e = new URLSearchParams(window.location.search).get('e');
+              if (e) {
+                const decoded = atob(e.replace(/-/g, '+').replace(/_/g, '/')).trim().toLowerCase();
+                if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(decoded)) localStorage.setItem('palmMitraEmail', decoded);
+              }
+            } catch { /* ignore malformed link */ }
             try { return localStorage.getItem('palmMitraEmail') || ''; } catch { return ''; }
           })();
           const { data, error: fetchError } = await supabase.functions.invoke('get-report', {

@@ -160,6 +160,29 @@ Deno.serve(async (req) => {
       return json({ users });
     }
 
+    if (action === 'reminders') {
+      const { data, error } = await admin.from('checkout_reminders')
+        .select('id,payment_id,user_email,report_id,plan_type,amount,currency,status,error,sent_at')
+        .order('sent_at', { ascending: false }).limit(100);
+      if (error) throw error;
+      const ids = [...new Set((data ?? []).map((r) => r.report_id).filter(Boolean))];
+      const { data: paid } = ids.length
+        ? await admin.from('payments').select('report_id,plan_type,created_at').eq('status', 'success').in('report_id', ids)
+        : { data: [] as any[] };
+      const reminders = (data ?? []).map((r) => ({
+        ...r,
+        recovered: (paid ?? []).some((p) => p.report_id === r.report_id && p.plan_type === r.plan_type && p.created_at > r.sent_at),
+      }));
+      return json({ reminders });
+    }
+
+    if (action === 'send_reminders') {
+      const res = await fetch(`${url}/functions/v1/checkout-reminders`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', apikey: Deno.env.get('SUPABASE_ANON_KEY') ?? '' }, body: '{}',
+      });
+      return json(await res.json().catch(() => ({ error: 'failed' })), res.ok ? 200 : 500);
+    }
+
     if (action === 'testimonials') {
       const op = clean(body.op, 10);
       if (op === 'approve' || op === 'delete') {
