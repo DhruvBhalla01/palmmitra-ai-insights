@@ -144,14 +144,14 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Inter Fallback', sans-serif;
     overflow-x: hidden;
     transition: background-color 200ms ease, color 200ms ease;
     line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', 'Playfair Fallback', serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     line-height: 1.1;
@@ -692,7 +692,7 @@
 
   /* Premium number display (counters) */
   .num-display {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', 'Playfair Fallback', serif;
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum';
   }
