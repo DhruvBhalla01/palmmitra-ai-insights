@@ -215,6 +215,8 @@ const generateCompatibilityReadingAttempt = async (
           content: `You are PalmMitra AI — a trusted relationship palmist trained in Indian Hast Rekha Shastra. Compare only palm features that are genuinely visible in the two images.
 
 LANGUAGE: ${languageInstruction}
+${lockedInstruction}
+
 
 QUALITY AND CONVERSION RULES:
 - Start with the most personally resonant contrast or alignment between the two palms, then explain one useful relationship implication.
