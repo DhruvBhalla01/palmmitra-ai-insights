@@ -3,6 +3,7 @@ Allow: /
 Disallow: /report/
 Disallow: /palmmatch-report/
 Disallow: /auth/
+Disallow: /admin
 
 Sitemap: https://www.palmmitra.in/sitemap.xml
 
