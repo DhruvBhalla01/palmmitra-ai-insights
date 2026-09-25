@@ -506,6 +506,367 @@ export const guides: Guide[] = [
       },
     ],
   },
+
+  // ───────────────────────────────────────────────────────────── 6
+  {
+    slug: 'fate-line-bhagya-rekha-career',
+    title: 'Fate Line (Bhagya Rekha): What Your Palm Says About Career and Success',
+    metaTitle: 'Fate Line Meaning in Palmistry (Bhagya Rekha Career Guide) | PalmMitra',
+    metaDescription:
+      'The fate line is the vertical line running up the centre of your palm. Learn what a strong, broken, forked or missing Bhagya Rekha traditionally means for career and timing.',
+    excerpt:
+      'The vertical line up the centre of your palm is read as the story of your working life. Here is how traditional palmistry reads its strength, breaks and timing.',
+    category: 'Wealth & Career',
+    readTime: '7 min read',
+    publishDate: '2026-09-25',
+    cta: 'upload',
+    intro: [
+      'The fate line — Bhagya Rekha in Hast Rekha Shastra — is the vertical line that rises from the base of the palm toward the middle finger. Not everyone has a strong one, and that is the first thing worth knowing: a faint or absent fate line is not a bad sign. It is simply read differently.',
+      'Classical palmistry treats this line as the record of your outer life: career, direction, responsibility, and the degree to which circumstances carry you versus you carrying them.',
+    ],
+    sections: [
+      {
+        heading: 'What a strong fate line traditionally means',
+        id: 'strong-fate-line',
+        paragraphs: [
+          'A deep, unbroken fate line running cleanly to the middle finger is read as a life with a clear vocational spine — work that defines the person, steady progression, and a strong sense of duty. These are the hands readers associate with long careers in one field, government service, medicine, law, or a family business carried seriously.',
+          'The depth matters more than the length. A short but deeply etched fate line is read as an intense, focused working chapter; a long but faint one as a career that drifts with circumstances.',
+        ],
+        callout:
+          'A missing fate line is read as a self-directed life — someone whose path is set by choice and circumstance rather than by a single calling. Many entrepreneurs and artists have faint fate lines.',
+      },
+      {
+        heading: 'Breaks, gaps and restarts',
+        id: 'breaks-and-restarts',
+        paragraphs: [
+          'A break in the fate line is one of the most reliable markings in traditional palmistry: it is read as a career interruption or change of direction. The position of the break is read as timing — lower on the palm for early life, higher for later years.',
+          'What matters to a reader is what follows the break. If the line resumes strongly, sometimes slightly offset, it is read as a successful reinvention. If a second line rises from the life line at that point, it is read as a new direction built from personal effort rather than circumstance.',
+        ],
+        bullets: [
+          'Clean break, strong resumption: a career change that worked.',
+          'Overlapping lines at the break: the new path began before the old one ended.',
+          'Line rising from the life line: a self-made chapter.',
+          'Line fading toward the top: a working life that gently winds down.',
+        ],
+      },
+      {
+        heading: 'Where the line begins tells its own story',
+        id: 'where-it-begins',
+        paragraphs: [
+          'A fate line starting at the very base of the palm is read as a path visible early — the person who knew their direction young. One beginning midway up the palm is read as a calling found later, often in the thirties or forties.',
+          'A fate line that begins from the Mount of Luna, the outer edge of the palm, is traditionally read as a career shaped by other people — public-facing work, or success that comes through audiences, clients and supporters rather than institutions.',
+        ],
+      },
+      {
+        heading: 'The fate line and timing',
+        id: 'fate-line-timing',
+        paragraphs: [
+          'Readers divide the fate line into approximate decades: the base represents early life, the crossing with the head line falls around the mid-thirties, and the crossing with the heart line around the mid-fifties. Markings at these junctions are read as turning points at those ages.',
+          'This is why two people with similar lines can receive very different readings — the same island or fork means a different decade of life depending on where it sits.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: 'Is it bad to have no fate line?',
+        a: 'No. Traditional palmistry reads an absent fate line as a self-directed life rather than an unlucky one. The reader then looks to the sun line, head line and mounts to see where the person\'s direction actually comes from.',
+      },
+      {
+        q: 'What does a break in the fate line mean?',
+        a: 'A break is read as a career interruption or change of direction, timed by its position on the palm. What follows the break — a strong resumption, an overlap, or a new line — shapes whether the change is read as successful.',
+      },
+      {
+        q: 'What does a forked fate line mean?',
+        a: 'A fork near the top of the fate line is traditionally read as a working life that divides into two satisfying directions — two roles, two fields, or a career alongside a serious calling.',
+      },
+      {
+        q: 'Which hand\'s fate line matters?',
+        a: 'The dominant hand shows the career you are actually building; the non-dominant hand shows the path you started with. A fate line that is stronger on the dominant hand is read as a self-made direction.',
+      },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────────── 7
+  {
+    slug: 'sun-line-surya-rekha-fame-success',
+    title: 'Sun Line (Surya Rekha): The Palmistry Sign of Recognition and Creative Success',
+    metaTitle: 'Sun Line Meaning in Palmistry (Surya Rekha Fame & Success) | PalmMitra',
+    metaDescription:
+      'The sun line runs toward the ring finger and is traditionally read as the mark of recognition, reputation and creative fulfilment. Learn what yours says.',
+    excerpt:
+      'Running toward the ring finger, the sun line is the classical mark of recognition — the difference between working hard and being seen for it.',
+    category: 'Wealth & Career',
+    readTime: '6 min read',
+    publishDate: '2026-09-25',
+    cta: 'upload',
+    intro: [
+      'The sun line — Surya Rekha — runs vertically toward the ring finger, parallel to the fate line. If the fate line is the story of your work, the sun line is the story of your recognition: reputation, appreciation, and the satisfaction of being known for what you do.',
+      'It is the line people most often confuse with the fate line, and the one traditional readers most associate with creative success.',
+    ],
+    sections: [
+      {
+        heading: 'Why the sun line is read as the line of recognition',
+        id: 'line-of-recognition',
+        paragraphs: [
+          'In classical palmistry the ring finger belongs to Apollo, the sun — art, visibility, and the public eye. A clear line rising toward it is read as work that gets noticed. A person can have a strong fate line and no sun line: a solid career, quietly lived.',
+          'A strong sun line without a strong fate line is read the other way — recognition that arrives without a conventional career structure, common on the hands of performers, creators and freelancers.',
+        ],
+        callout:
+          'The sun line is read as the applause line. Its presence suggests the world sees the work; its absence suggests the work matters more than the audience.',
+      },
+      {
+        heading: 'Where it begins and what that means',
+        id: 'where-it-begins',
+        paragraphs: [
+          'A sun line rising from the fate line is read as recognition earned through the career itself. One rising from the head line is read as recognition through intellect — writing, teaching, strategy. One rising from the heart line is read as recognition through warmth and relationships.',
+          'A sun line that begins late, high on the palm, is one of the most encouraging markings in the tradition: recognition arriving later in life, after the work has matured.',
+        ],
+      },
+      {
+        heading: 'Multiple sun lines and broken sun lines',
+        id: 'multiple-and-broken',
+        paragraphs: [
+          'Two or three fine parallel sun lines are read as varied talents or several sources of reputation — the person known for more than one thing. A single deep line is read as one dominant gift.',
+          'Breaks in the sun line are read as interruptions in reputation rather than in work — periods where recognition paused while the work continued. As with every line, readers weigh what follows the break more than the break itself.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: 'What does the sun line mean in palmistry?',
+        a: 'The sun line, or Surya Rekha, runs toward the ring finger and is traditionally read as the mark of recognition, reputation and creative fulfilment — how visibly your work is appreciated.',
+      },
+      {
+        q: 'Is it bad not to have a sun line?',
+        a: 'No. Many capable, successful hands have no visible sun line. It is read as a life where the work matters more than public recognition, not as a lack of talent or success.',
+      },
+      {
+        q: 'What is the difference between the fate line and the sun line?',
+        a: 'The fate line runs to the middle finger and is read as the structure of your working life; the sun line runs to the ring finger and is read as the recognition that work receives. They often run in parallel.',
+      },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────────── 8
+  {
+    slug: 'marriage-lines-palm-meaning',
+    title: 'Marriage Lines on the Palm: How Many You Have and What They Mean',
+    metaTitle: 'Marriage Lines in Palmistry: Meaning, Count & Timing | PalmMitra',
+    metaDescription:
+      'The fine lines below your little finger are read as the lines of deep attachment. Learn how traditional palmistry reads their number, depth, forks and timing.',
+    excerpt:
+      'The small horizontal lines beneath your little finger are the most misread markings on the hand. Here is what tradition actually says about them.',
+    category: 'Marriage & Relationships',
+    readTime: '7 min read',
+    publishDate: '2026-09-25',
+    cta: 'palmmatch',
+    intro: [
+      'The marriage lines — Vivah Rekha — are the short horizontal lines on the edge of the palm, between the base of the little finger and the heart line. Despite the name, traditional readers do not count them as a tally of weddings.',
+      'They are read as the lines of deep attachment: the relationships that genuinely mark a life, whether or not they were formalised.',
+    ],
+    sections: [
+      {
+        heading: 'Why the number of lines is not a count of marriages',
+        id: 'number-of-lines',
+        paragraphs: [
+          'Most hands show two to four of these lines, and most people marry once. Classical palmistry resolves this simply: the lines mark capacity for deep attachment, not ceremonies. Faint lines are read as significant affections; the deepest line is read as the defining bond.',
+          'Readers look for the one line that is markedly deeper and longer than the rest. That line, not the count, carries the reading.',
+        ],
+        callout:
+          'One deep, clear line among faint ones is traditionally read as one central relationship that outweighs every other attachment.',
+      },
+      {
+        heading: 'Depth, length and curve',
+        id: 'depth-length-curve',
+        paragraphs: [
+          'A deep, straight, long line is read as a steady, lasting bond. A line that curves upward toward the little finger is read as an attachment that idealises — high standards, or a bond that stays aspirational. A line curving downward toward the heart line is read more cautiously, as an attachment tested by circumstance.',
+          'A fork at the end of the line is the marking people worry about most. Tradition reads it as a period where two people\'s paths diverge — distance, differing directions — not automatically as an ending.',
+        ],
+        bullets: [
+          'Deep and straight: a steady central bond.',
+          'Curving upward: idealised love, high standards.',
+          'Curving downward: a bond tested by circumstances.',
+          'Forked end: a period of diverging paths, read with the rest of the hand.',
+        ],
+      },
+      {
+        heading: 'How timing is read from these lines',
+        id: 'timing',
+        paragraphs: [
+          'The space between the heart line and the base of the little finger is divided into a rough timeline. A deep line sitting low, near the heart line, is read as an early defining attachment; one sitting high, near the finger, as a later one.',
+          'This is why two people of the same age can be told very different things — the reading is of the bond\'s position in a life, not of a birthday.',
+        ],
+      },
+      {
+        heading: 'Why compatibility readers look at both hands together',
+        id: 'both-hands-together',
+        paragraphs: [
+          'A single palm shows one person\'s pattern of attachment. Traditional compatibility reading — matching — compares two hands: the depth of each person\'s central line, the shape of each heart line, and the balance of the mounts of Venus.',
+          'Two people whose deepest lines sit at similar positions are read as arriving at commitment at the same stage of life — one of the quiet markers readers weight heavily.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: 'How many marriage lines should you have?',
+        a: 'There is no correct number. Most hands show two to four fine lines, read as the capacity for deep attachment. The reading rests on the single deepest line, not the count.',
+      },
+      {
+        q: 'What does a forked marriage line mean?',
+        a: 'A fork at the end of the line is traditionally read as a period where two paths diverge — distance or differing directions — within an attachment. It is read alongside the rest of the hand, never as an automatic ending.',
+      },
+      {
+        q: 'Which palm shows marriage, left or right?',
+        a: 'The dominant hand shows the relationships you are actively building; the non-dominant shows the patterns you inherited or started with. Serious readings compare both.',
+      },
+      {
+        q: 'Can palmistry show compatibility between two people?',
+        a: 'Traditional matching compares both partners\' hands — the depth of the central attachment lines, the heart lines, and the mounts of Venus — to read how two patterns of attachment fit together.',
+      },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────────── 9
+  {
+    slug: 'mounts-of-palm-venus-jupiter-moon',
+    title: 'The Mounts of the Palm: What Venus, Jupiter and the Moon Reveal About You',
+    metaTitle: 'Palmistry Mounts Explained: Venus, Jupiter, Moon & More | PalmMitra',
+    metaDescription:
+      'The raised pads of your palm are called mounts, and each is read as a different kind of energy. Learn what the mounts of Venus, Jupiter, Luna and the others traditionally mean.',
+    excerpt:
+      'Lines get all the attention, but traditional readers start with the raised pads of the palm — the mounts — which are read as your underlying energies.',
+    category: 'Fundamentals',
+    readTime: '8 min read',
+    publishDate: '2026-09-25',
+    cta: 'upload',
+    intro: [
+      'Open your hand and look at the fleshy pads beneath each finger and along the edges of the palm. These are the mounts, and in Hast Rekha Shastra they are read before the lines — as the underlying energies a person carries, which the lines then express.',
+      'Each mount takes the name of a planet and is read as one kind of drive: love, ambition, imagination, force, communication.',
+    ],
+    sections: [
+      {
+        heading: 'The Mount of Venus: warmth and vitality',
+        id: 'mount-of-venus',
+        paragraphs: [
+          'The large pad at the base of the thumb, wrapped by the life line, is the Mount of Venus. A full, firm Venus is read as warmth, physical energy and a capacity for affection — the person who feeds people, gathers people, loves people.',
+          'A flat or hard Venus is read as reserved energy: someone who cares deeply but shows it sparingly. In compatibility reading, the balance of two partners\' Venus mounts is one of the first things compared.',
+        ],
+      },
+      {
+        heading: 'The Mount of Jupiter: ambition and self-belief',
+        id: 'mount-of-jupiter',
+        paragraphs: [
+          'Beneath the index finger sits the Mount of Jupiter, read as ambition, confidence and the desire to lead. A well-developed Jupiter is read as natural authority; an overdeveloped one, in the classical texts, as pride that needs tempering.',
+          'Readers weigh Jupiter against the headline: strong ambition with a clear head line is read as leadership that delivers.',
+        ],
+      },
+      {
+        heading: 'The Mount of Luna: imagination and restlessness',
+        id: 'mount-of-luna',
+        paragraphs: [
+          'The outer edge of the palm, opposite the thumb, is the Mount of Luna — the moon. A full Luna is read as imagination, intuition and a pull toward travel and the unfamiliar. The travel branches of the life line reach toward this mount.',
+          'A prominent Luna with a fine head line is the classical combination for writers, dreamers and people who live partly in their inner world.',
+        ],
+        callout:
+          'Mounts are read by feel as much as sight — a traditional reader presses each pad to judge whether the energy is full, flat or hard.',
+      },
+      {
+        heading: 'The other mounts, briefly',
+        id: 'other-mounts',
+        paragraphs: [
+          'Beneath the middle finger sits Saturn, read as seriousness and depth — best when modest. Beneath the ring finger, Apollo, read as creativity and love of beauty. Beneath the little finger, Mercury, read as wit, communication and commercial instinct.',
+          'The two pads of Mars — inner and outer — are read as courage and endurance. A balanced hand, in the classical view, is not one where every mount is large, but one where no single mount overwhelms the rest.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: 'What are the mounts in palmistry?',
+        a: 'The mounts are the raised, fleshy pads of the palm — beneath each finger, at the base of the thumb, and along the outer edge. Each is named after a planet and read as a different underlying energy: love, ambition, imagination, courage, communication.',
+      },
+      {
+        q: 'Which mount is most important for love and relationships?',
+        a: 'The Mount of Venus, the large pad at the base of the thumb wrapped by the life line. It is read as warmth, vitality and the capacity for affection, and it is one of the first things compared in compatibility readings.',
+      },
+      {
+        q: 'What does a flat mount mean?',
+        a: 'A flat mount is read as that energy being quiet or reserved rather than absent. A flat Venus, for example, is read as someone who cares deeply but expresses it sparingly.',
+      },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────────── 10
+  {
+    slug: 'rare-palm-signs-m-formation-star-triangle',
+    title: 'Rare Palm Signs: The M Formation, the Star and the Triangle Explained',
+    metaTitle: 'Rare Palmistry Signs: M Formation, Star & Triangle Meanings | PalmMitra',
+    metaDescription:
+      'The M formed by your main lines, stars and triangles on the mounts — traditional palmistry reads these as special markings. Learn what each one means and how rare it really is.',
+    excerpt:
+      'Some markings appear on few hands: the M drawn by the main lines, stars on the mounts, triangles between the lines. Here is how tradition reads them.',
+    category: 'Fundamentals',
+    readTime: '6 min read',
+    publishDate: '2026-09-25',
+    cta: 'upload',
+    intro: [
+      'Beyond the major lines, palmistry reads a set of special markings formed where lines meet: the letter M drawn across the palm, small stars on the mounts, and triangles between the lines. They are rarer than forks and breaks, and tradition gives them outsized meaning.',
+      'They are also the markings most exaggerated on the internet — so it is worth knowing what the classical texts actually say.',
+    ],
+    sections: [
+      {
+        heading: 'The M formation: the mark of the self-made',
+        id: 'm-formation',
+        paragraphs: [
+          'When the life line, head line, heart line and fate line connect so that together they draw a clear letter M across the palm, traditional readers call it the mark of the self-made person. It is read as strong intuition combined with the ability to build something from nothing.',
+          'A genuine M requires all four lines to be well formed and to actually meet. Many hands show a partial M — two or three lines suggesting the shape — which is read more modestly, as potential rather than a signature.',
+        ],
+        callout:
+          'The M is read as a mark of momentum: people whose hands show it are traditionally said to do their defining work through their own judgement rather than through inheritance or luck.',
+      },
+      {
+        heading: 'Stars: a flash of emphasis',
+        id: 'stars',
+        paragraphs: [
+          'A star is a small cluster of fine lines crossing at one point, usually sitting on a mount. Tradition reads it as emphasis — a flash of that mount\'s energy. A star on Apollo is read as a moment of recognition; a star on Jupiter as a moment of achievement.',
+          'Stars are double-edged in the classical texts: the same flash can read as brilliance or as a sudden jolt, depending on the mount and the hand around it. Readers treat them as exclamation marks, not as standalone predictions.',
+        ],
+      },
+      {
+        heading: 'Triangles: the mark of a capable mind',
+        id: 'triangles',
+        paragraphs: [
+          'A triangle formed by three lines meeting is read as applied intelligence — the ability to turn thought into result. A clear triangle between the head line and the fate line is one of the markings readers most associate with professional skill.',
+          'The money triangle of popular palmistry — a large closed triangle in the centre of the palm — is read as the ability to hold what you earn, not simply to attract it. The distinction matters: tradition treats it as a sign of financial discipline.',
+        ],
+      },
+      {
+        heading: 'How rare are these signs, really?',
+        id: 'how-rare',
+        paragraphs: [
+          'Genuine, well-formed examples are uncommon — a clear M, a clean star on a mount, a closed central triangle each appear on a minority of hands. Partial versions are far more common, which is why two readers can disagree about whether a hand "has" the sign.',
+          'The classical view is that these markings amplify what the rest of the hand already shows. An M on a hand with weak lines is read as unrealised potential; the same M on a strong hand is read as a life that will likely be noticed.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: 'What does the letter M on the palm mean?',
+        a: 'When the life, head, heart and fate lines connect to draw a clear M, traditional palmistry reads it as the mark of a self-made person — strong intuition paired with the ability to build something from nothing.',
+      },
+      {
+        q: 'Is the M on the palm rare?',
+        a: 'A genuine M, where all four major lines are well formed and actually meet, appears on a minority of hands. Partial versions are much more common and are read as potential rather than as the full sign.',
+      },
+      {
+        q: 'What does a star on the palm mean?',
+        a: 'A star — fine lines crossing at one point on a mount — is read as emphasis: a flash of that mount\'s energy. On Apollo it suggests a moment of recognition; on Jupiter, a moment of achievement.',
+      },
+      {
+        q: 'What does a triangle on the palm mean?',
+        a: 'A triangle formed by three meeting lines is read as applied intelligence — turning thought into result. The large central "money triangle" is traditionally read as the ability to hold and manage what you earn.',
+      },
+    ],
+  },
 ];
 
 export const getGuide = (slug: string) => guides.find((g) => g.slug === slug);
